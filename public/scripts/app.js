@@ -86,8 +86,8 @@ $(document).ready(function() {
     function setupEventListeners() {
         // Кнопки управления
         elements.playButton.click(togglePlay);
-        elements.stopBtn.click(stopPlayback);
-        elements.nextBtn.click(() => nextPhrase(true));
+        elements.stopBtn.click(stopPlay);
+        elements.nextBtn.click(nextPhrase);
         elements.prevBtn.click(prevPhrase);
         
         // Кнопки озвучки
@@ -173,6 +173,11 @@ $(document).ready(function() {
         }
     }
 
+    function stopPlay() {
+        state.currentPhraseIndex = 0;
+        stopPlayback();
+    }
+
     function togglePlay() {
         if (state.isPaused || state.isPlaying) 
             togglePause();
@@ -222,22 +227,21 @@ $(document).ready(function() {
     }
 
     // Следующая фраза
-    function nextPhrase(manual = false) {
+    function nextPhrase() {
         clearTimeout(state.timeoutId);
         clearInterval(state.progressInterval);
-        
-        if (state.isPlaying && !manual) {
-            if (isBothDirectionsMode() && !state.showingFirstLang) {
-                state.currentPhraseIndex = (state.currentPhraseIndex + 1) % state.currentPhraseList.length;
-                state.showingFirstLang = true;
-            } else if (!isBothDirectionsMode()) {
-                state.currentPhraseIndex = (state.currentPhraseIndex + 1) % state.currentPhraseList.length;
-            }
-            playCurrentPhrase();
-        } else {
+
+        if (isBothDirectionsMode() && !state.showingFirstLang) {
             state.currentPhraseIndex = (state.currentPhraseIndex + 1) % state.currentPhraseList.length;
-            updateDisplay();
+            state.showingFirstLang = true;
+        } else if (!isBothDirectionsMode()) {
+            state.currentPhraseIndex = (state.currentPhraseIndex + 1) % state.currentPhraseList.length;
         }
+        
+        if (state.isPlaying)
+            playCurrentPhrase();
+
+        updateDisplay();
     }
 
     // Предыдущая фраза
