@@ -1,0 +1,206 @@
+/* Web 2.0 Modern Dark Theme */
+:root {
+    --primary: #0d6efd;
+    --secondary: #6c757d;
+    --success: #198754;
+    --info: #819295 !important;
+    --bs-heading-color: #dedede99;
+    --bs-badge-color: #EEE !important;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --dark: #212529;
+    --darker: #121416;
+    --light: #f8f9fa;
+    --gray: #adb5bd;
+    --bs-btn-color: gray !important;
+}
+
+.dark-theme {
+    background: linear-gradient(135deg, var(--darker) 0%, #1a1d20 100%);
+    min-height: 100vh;
+    color: var(--light);
+}
+
+.text-muted {
+    color: var(--info) !important;
+}
+
+/* Text Gradients */
+.text-gradient {
+    background: linear-gradient(
+4deg, #0067ff03, var(--info));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Card Styles */
+.bg-dark-gradient {
+    background: linear-gradient(145deg, #2d3338, #1a1d20);
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.border-primary {
+    border-color: var(--primary) !important;
+}
+
+.border-secondary {
+    border-color: var(--secondary) !important;
+}
+
+/* Animations */
+.animate-card {
+    animation: slideUp 0.5s ease-out;
+}
+
+.animate-button {
+    transition: all 0.3s ease;
+    transform: translateY(0);
+}
+
+.animate-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+}
+
+.animate-text {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.animate-hint {
+    animation: fadeIn 0.7s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Progress Bar Animation */
+.progress-bar-animated {
+    animation: progressAnimation 1s linear infinite;
+}
+
+@keyframes progressAnimation {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 40px 0;
+    }
+}
+
+/* Phrase Container */
+.phrase-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.phrase-text {
+    font-weight: 500;
+    line-height: 1.4;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    color: var(--light);
+}
+
+.phrase-hint {
+    opacity: 0.8;
+    font-weight: 300;
+}
+
+/* Status Indicator */
+.status-indicator .badge {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Range Slider Customization */
+.form-range::-webkit-slider-thumb {
+    background-color: var(--primary);
+    box-shadow: 0 0 10px rgba(13, 110, 253, 0.5);
+}
+
+.form-range::-moz-range-thumb {
+    background-color: var(--primary);
+    box-shadow: 0 0 10px rgba(13, 110, 253, 0.5);
+}
+
+/* Modal Customization */
+.modal-content.bg-dark {
+    background: linear-gradient(145deg, #2d3338, #1a1d20);
+    border: 1px solid var(--secondary);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+/* Button Group Active States */
+.btn-group .btn.active {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 0 10px rgba(13, 110, 253, 0.3);
+}
+
+/* Quick Stats */
+.quick-stats .speed-btn.active {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .display-5 {
+        font-size: 2rem;
+    }
+    
+    .phrase-container {
+        min-height: 150px;
+    }
+    
+    .btn-lg {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+/* Loading Animation */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: var(--primary);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

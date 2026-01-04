@@ -1,0 +1,141 @@
+{
+  "past_simple_active": [
+    {"english": "I worked yesterday.", "russian": "Я работал вчера."},
+    {"english": "She studied all night.", "russian": "Она училась всю ночь."},
+    {"english": "We watched a movie.", "russian": "Мы смотрели фильм."},
+    {"english": "He called you an hour ago.", "russian": "Он звонил тебе час назад."},
+    {"english": "They traveled to Spain last year.", "russian": "Они путешествовали в Испанию в прошлом году."},
+    {"english": "It happened suddenly.", "russian": "Это случилось внезапно."},
+    {"english": "I didn't like that food.", "russian": "Мне не понравилась эта еда."},
+    {"english": "Did you see him?", "russian": "Ты видел его?"},
+    {"english": "I was at home.", "russian": "Я был дома."},
+    {"english": "She was very happy.", "russian": "Она была очень счастлива."},
+    {"english": "We were late for the meeting.", "russian": "Мы опоздали на встречу."},
+    {"english": "I had a car.", "russian": "У меня была машина."},
+    {"english": "He bought a new phone.", "russian": "Он купил новый телефон."},
+    {"english": "We went to the park.", "russian": "Мы ходили в парк."},
+    {"english": "She wrote a letter.", "russian": "Она написала письмо."},
+    {"english": "I saw a beautiful bird.", "russian": "Я видел красивую птицу."},
+    {"english": "They spoke English.", "russian": "Они говорили по-английски."},
+    {"english": "I didn't understand the question.", "russian": "Я не понял вопрос."},
+    {"english": "How did it happen?", "russian": "Как это произошло?"},
+    {"english": "What did you do last weekend?", "russian": "Что ты делал в прошлые выходные?"}
+  ],
+  "past_simple_passive": [
+    {"english": "The letter was sent yesterday.", "russian": "Письмо было отправлено вчера."},
+    {"english": "The house was built in 1990.", "russian": "Дом был построен в 1990 году."},
+    {"english": "The window was broken.", "russian": "Окно было разбито."},
+    {"english": "I was invited to the party.", "russian": "Я был приглашён на вечеринку."},
+    {"english": "We were asked to help.", "russian": "Нас попросили помочь."},
+    {"english": "The car was stolen last night.", "russian": "Машину угнали прошлой ночью."},
+    {"english": "The book was written by a famous author.", "russian": "Книга была написана известным автором."},
+    {"english": "English was spoken everywhere.", "russian": "На английском говорили повсюду."},
+    {"english": "The decision was made quickly.", "russian": "Решение было принято быстро."},
+    {"english": "The keys were found in the kitchen.", "russian": "Ключи были найдены на кухне."},
+    {"english": "The movie was directed by Steven Spielberg.", "russian": "Фильм был снят Стивеном Спилбергом."},
+    {"english": "My wallet wasn't (was not) stolen.", "russian": "Мой кошелёк не был украден."},
+    {"english": "Were you born in this city?", "russian": "Ты родился в этом городе?"},
+    {"english": "When was the computer repaired?", "russian": "Когда был починен компьютер?"},
+    {"english": "How much money was saved?", "russian": "Сколько денег было сэкономлено?"},
+    {"english": "The problem wasn't solved.", "russian": "Проблема не была решена."},
+    {"english": "The children were taken to school.", "russian": "Детей отвели в школу."},
+    {"english": "This song was heard all summer.", "russian": "Эту песню слышали всё лето."},
+    {"english": "The news was announced in the morning.", "russian": "Новость была объявлена утром."},
+    {"english": "The streets were decorated for the holiday.", "russian": "Улицы были украшены к празднику."}
+  ],
+  "future_simple_passive": [
+    {"english": "The documents will be signed tomorrow.", "russian": "Документы будут подписаны завтра."},
+    {"english": "You will be contacted soon.", "russian": "С вами свяжутся в ближайшее время."},
+    {"english": "The results will be announced next week.", "russian": "Результаты будут объявлены на следующей неделе."},
+    {"english": "A new park will be built here.", "russian": "Здесь будет построен новый парк."},
+    {"english": "Dinner will be served at 7 PM.", "russian": "Ужин будет подан в 7 вечера."},
+    {"english": "I will be met at the airport.", "russian": "Меня встретят в аэропорту."},
+    {"english": "The problem will be solved.", "russian": "Проблема будет решена."},
+    {"english": "All employees will be informed.", "russian": "Все сотрудники будут проинформированы."},
+    {"english": "The car will be repaired by Friday.", "russian": "Машина будет отремонтирована к пятнице."},
+    {"english": "This song will be heard everywhere.", "russian": "Эту песню будут слышать повсюду."},
+    {"english": "The house will be sold.", "russian": "Дом будет продан."},
+    {"english": "The meeting will be held online.", "russian": "Встреча будет проведена онлайн."},
+    {"english": "The goods will be delivered to your door.", "russian": "Товары будут доставлены к вашей двери."},
+    {"english": "A decision will be made by the end of the day.", "russian": "Решение будет принято к концу дня."},
+    {"english": "He will be elected as the new manager.", "russian": "Он будет избран новым менеджером."},
+    {"english": "The old rules will be cancelled.", "russian": "Старые правила будут отменены."},
+    {"english": "The report won't (will not) be finished today.", "russian": "Отчёт не будет закончен сегодня."},
+    {"english": "Will the package be sent today?", "russian": "Посылка будет отправлена сегодня?"},
+    {"english": "When will the project be completed?", "russian": "Когда проект будет завершён?"},
+    {"english": "How will the payment be received?", "russian": "Каким образом будет получен платёж?"}
+  ],
+  "past_continuous_active": [
+    {"english": "I was working at 6 PM yesterday.", "russian": "Я работал вчера в 6 вечера."},
+    {"english": "She was studying when I called.", "russian": "Она училась, когда я позвонил."},
+    {"english": "We were watching TV all evening.", "russian": "Мы смотрели телевизор весь вечер."},
+    {"english": "They were traveling around Italy last summer.", "russian": "Они путешествовали по Италии прошлым летом."},
+    {"english": "He was cooking dinner while she was setting the table.", "russian": "Он готовил ужин, пока она накрывала на стол."},
+    {"english": "It was raining when we left the house.", "russian": "Шёл дождь, когда мы вышли из дома."},
+    {"english": "I wasn't sleeping at that time.", "russian": "Я не спал в то время."},
+    {"english": "Were you waiting for me?", "russian": "Ты ждал меня?"},
+    {"english": "What were you doing at the moment of the accident?", "russian": "Что ты делал в момент аварии?"},
+    {"english": "Why were they arguing?", "russian": "Почему они спорили?"}
+  ],
+  "past_continuous_passive": [
+    {"english": "The road was being repaired all week.", "russian": "Дорогу ремонтировали всю неделю."},
+    {"english": "A new bridge was being built when I visited the city.", "russian": "Новый мост строили, когда я посещал город."},
+    {"english": "My computer was being fixed yesterday afternoon.", "russian": "Мой компьютер вчера после обеда чинили."},
+    {"english": "The documents were being prepared for the meeting.", "russian": "Документы готовили к встрече."},
+    {"english": "Dinner was being served when we arrived.", "russian": "Ужин подавали, когда мы прибыли."}
+  ],
+  "past_perfect_active": [
+    {"english": "I had finished my work before they came.", "russian": "Я закончил свою работу до того, как они пришли."},
+    {"english": "She had already left when I called.", "russian": "Она уже ушла, когда я позвонил."},
+    {"english": "We realized we had lost the keys.", "russian": "Мы поняли, что потеряли ключи."},
+    {"english": "He had never seen such a beautiful place before.", "russian": "Он никогда раньше не видел такого красивого места."},
+    {"english": "After they had eaten, they went for a walk.", "russian": "После того как они поели, они пошли гулять."}
+  ],
+  "past_perfect_passive": [
+    {"english": "The letter had been sent before we found the mistake.", "russian": "Письмо было отправлено до того, как мы нашли ошибку."},
+    {"english": "The car had been repaired by the end of the day.", "russian": "Машина была отремонтирована к концу дня."},
+    {"english": "He was upset because his idea hadn't been accepted.", "russian": "Он был расстроен, потому что его идея не была принята."},
+    {"english": "Had the room been cleaned before the guests arrived?", "russian": "Комната была убрана до прихода гостей?"},
+    {"english": "All the tickets had been sold by the time we got there.", "russian": "Все билеты были проданы к тому времени, как мы туда добрались."}
+  ],
+  "past_perfect_continuous_active": [
+    {"english": "I had been working for 10 hours when you called.", "russian": "Я проработал уже 10 часов, когда ты позвонил."},
+    {"english": "She was tired because she had been studying all day.", "russian": "Она устала, потому что училась весь день."},
+    {"english": "They had been waiting for over an hour before the bus finally came.", "russian": "Они ждали больше часа, прежде чем автобус наконец приехал."},
+    {"english": "How long had you been living there before you moved?", "russian": "Как долго ты там жил, прежде чем переехал?"},
+    {"english": "His eyes were red. He had been crying.", "russian": "Его глаза были красными. Он плакал."}
+  ],
+  "future_simple_active": [
+    {"english": "I will call you tomorrow.", "russian": "Я позвоню тебе завтра."},
+    {"english": "She will arrive at 5 o'clock.", "russian": "Она прибудет в 5 часов."},
+    {"english": "They will help us with the project.", "russian": "Они помогут нам с проектом."},
+    {"english": "It will probably rain later.", "russian": "Позднее, вероятно, пойдет дождь."},
+    {"english": "We won't (will not) be late.", "russian": "Мы не опоздаем."}
+  ],
+  "future_continuous_active": [
+    {"english": "At this time tomorrow, I will be flying to London.", "russian": "В это же время завтра я буду лететь в Лондон."},
+    {"english": "Don't call between 6 and 8, we will be having dinner.", "russian": "Не звони между 6 и 8, мы будем ужинать."},
+    {"english": "This time next week, she will be starting her new job.", "russian": "В это же время на следующей неделе она будет начинать свою новую работу."},
+    {"english": "Will you be using the car tonight?", "russian": "Ты будешь пользоваться машиной сегодня вечером?"},
+    {"english": "I won't be working next Friday.", "russian": "Я не буду работать в следующую пятницу."}
+  ],
+  "future_perfect_active": [
+    {"english": "By next year, I will have finished my degree.", "russian": "К следующему году я закончу свою степень."},
+    {"english": "They will have built the house by summer.", "russian": "Они построят дом к лету."},
+    {"english": "She will have left by the time you get there.", "russian": "Она уже уедет к тому времени, как ты туда доберёшься."},
+    {"english": "Will you have saved enough money by December?", "russian": "Ты накопишь достаточно денег к декабрю?"},
+    {"english": "We won't have completed the report by Friday.", "russian": "Мы не завершим отчёт к пятнице."}
+  ],
+  "future_perfect_passive": [
+    {"english": "The new stadium will have been built by the start of the championship.", "russian": "Новый стадион будет построен к началу чемпионата."},
+    {"english": "All the invitations will have been sent out by tomorrow.", "russian": "Все приглашения будут разосланы к завтрашнему дню."},
+    {"english": "Will the preparations have been finished by noon?", "russian": "Подготовка будет закончена к полудню?"},
+    {"english": "The decision will have been made by the board before the meeting.", "russian": "Решение будет принято советом до собрания."}
+  ],
+  "future_perfect_continuous_active": [
+    {"english": "By the end of this month, I will have been working here for 5 years.", "russian": "К концу этого месяца я буду работать здесь уже 5 лет."},
+    {"english": "In July, they will have been living in Paris for a decade.", "russian": "В июле они будут жить в Париже уже десятилетие."},
+    {"english": "She will have been studying English for 10 hours by tonight.", "russian": "К сегодняшнему вечеру она будет учить английский уже 10 часов."},
+    {"english": "How long will you have been driving when we arrive?", "russian": "Сколько ты уже будешь за рулём, когда мы приедем?"}
+  ]
+}

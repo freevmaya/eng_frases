@@ -1,0 +1,282 @@
+<?php
+require_once '../config.php';
+?>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo APP_NAME; ?></title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dark-theme">
+    <!-- Settings Modal -->
+    <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-primary" id="settingsModalLabel">
+                        <i class="bi bi-gear me-2"></i>Настройки
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <h6 class="text-info mb-3">
+                            <i class="bi bi-speedometer2 me-2"></i>Скорость воспроизведения
+                        </h6>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-turtle text-muted me-2"></i>
+                            <input type="range" class="form-range" id="speedSlider" min="0.5" max="2" step="0.1" value="1.0">
+                            <i class="bi bi-rabbit text-muted ms-2"></i>
+                        </div>
+                        <div class="text-center mt-2">
+                            <span class="badge bg-primary" id="speedValue">1.0x</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-info mb-3">
+                            <i class="bi bi-pause-circle me-2"></i>Пауза между фразами
+                        </h6>
+                        <input type="range" class="form-range" id="pauseSlider" min="1" max="10" step="0.5" value="3">
+                        <div class="text-center mt-2">
+                            <span class="badge bg-primary" id="pauseValue">3 сек</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-info mb-3">
+                            <i class="bi bi-translate me-2"></i>Пауза между языками
+                        </h6>
+                        <input type="range" class="form-range" id="langPauseSlider" min="0.5" max="5" step="0.5" value="2">
+                        <div class="text-center mt-2">
+                            <span class="badge bg-primary" id="langPauseValue">2 сек</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-info mb-3">
+                            <i class="bi bi-card-checklist me-2"></i>Выбор списка фраз
+                        </h6>
+                        <select class="form-select bg-dark text-light border-secondary" id="phraseListSelect">
+                            <option value="all">Все фразы (смешанные)</option>
+                            <option value="past_simple_active">Past Simple (активный залог)</option>
+                            <option value="past_simple_passive">Past Simple (пассивный залог)</option>
+                            <option value="future_simple_passive">Future Simple (пассивный залог)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-info mb-3">
+                            <i class="bi bi-arrow-left-right me-2"></i>Направление перевода
+                        </h6>
+                        <div class="btn-group w-100" role="group">
+                            <button type="button" class="btn btn-outline-primary active" data-direction="ru-en">
+                                Русский → Английский
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" data-direction="en-ru">
+                                Английский → Русский
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-info mb-3">
+                            <i class="bi bi-arrow-repeat me-2"></i>Режим "Оба направления"
+                        </h6>
+                        <div class="btn-group w-100" role="group">
+                            <button type="button" class="btn btn-outline-success" data-direction="en-ru-both">
+                                Англ → Рус → Пауза
+                            </button>
+                            <button type="button" class="btn btn-outline-success" data-direction="ru-en-both">
+                                Рус → Англ → Пауза
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="text-info mb-3">
+                            <i class="bi bi-shuffle me-2"></i>Порядок фраз
+                        </h6>
+                        <div class="btn-group w-100" role="group">
+                            <button type="button" class="btn btn-outline-warning active" data-order="sequential">
+                                По порядку
+                            </button>
+                            <button type="button" class="btn btn-outline-warning" data-order="random">
+                                Случайный
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary" id="applySettings">
+                        <i class="bi bi-check-circle me-1"></i>Применить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container py-4">
+        <!-- Header -->
+        <header class="text-center mb-3">
+            <h1 class="display-4 text-gradient mb-3">
+                <i class="bi bi-translate text-primary"></i>
+                <?php echo APP_NAME; ?>
+            </h1>
+        </header>
+
+        <!-- Main Content -->
+        <div class="row">
+            <!-- Left Column - Phrase Card -->
+            <div class="col-lg-8 mb-4">
+                <div class="card bg-dark-gradient border-primary border-3 animate-card">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-4">
+                            <div class="phrase-container">
+                                <div class="phrase-text display-5 mb-4 animate-text" id="phraseText">
+                                    Нажмите "Старт" для начала
+                                </div>
+                                <div class="phrase-hint fs-4 text-muted animate-hint" id="phraseHint">
+                                    Здесь появится перевод
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="progress mb-4" style="height: 6px;">
+                            <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated" 
+                                 id="progressBar" style="width: 0%"></div>
+                        </div>
+
+                        <div>
+                            <span class="badge mb-3" id="phraseType">Past Simple (активный)</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="text-start">
+                                <div class="text-muted small">Прогресс</div>
+                                <div class="h5" id="phraseCounter">0 / 0</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="status-indicator">
+                                    <span class="badge bg-secondary" id="playbackStatus">
+                                        <i class="bi bi-pause-circle"></i> Ожидание
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <button class="btn btn-outline-secondary" id="settingsToggle">
+                                    <i class="bi bi-sliders"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Controls -->
+            <div class="col-lg-4">
+                <div class="card bg-dark border-secondary h-100 animate-card">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary mb-4">
+                            <i class="bi bi-controller me-2"></i>Управление
+                        </h5>
+                        
+                        <div class="d-grid gap-3">
+                            <button class="btn btn-success btn-lg animate-button" id="startBtn">
+                                <i class="bi bi-play-circle me-2"></i>Старт
+                            </button>
+                            
+                            <button class="btn btn-outline-primary animate-button" id="pauseBtn" disabled>
+                                <i class="bi bi-pause-circle me-2"></i>Пауза
+                            </button>
+                            
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <button class="btn btn-outline-primary w-100 animate-button" id="prevBtn" disabled>
+                                        <i class="bi bi-skip-backward"></i>
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-outline-primary w-100 animate-button" id="nextBtn">
+                                        <i class="bi bi-skip-forward"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-danger animate-button" id="stopBtn" disabled>
+                                <i class="bi bi-stop-circle me-2"></i>Стоп
+                            </button>
+                            
+                            <hr class="border-secondary">
+                            
+                            <div class="text-center">
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-outline-primary" id="speakEnglishBtn">
+                                        <i class="bi bi-volume-up"></i> Англ
+                                    </button>
+                                    <button class="btn btn-outline-primary" id="speakRussianBtn">
+                                        <i class="bi bi-volume-up"></i> Рус
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="border-secondary my-4">
+                        
+                        <div class="quick-stats">
+                            <h6 class="text-info mb-3">
+                                <i class="bi bi-graph-up me-2"></i>Быстрые настройки
+                            </h6>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="d-grid">
+                                        <button class="btn btn-sm btn-outline-secondary speed-btn" data-speed="0.8">
+                                            0.8x
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="d-grid">
+                                        <button class="btn btn-sm btn-outline-secondary speed-btn" data-speed="1.2">
+                                            1.2x
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-5 pt-4 border-top border-secondary text-center text-muted">
+            <p class="small">
+                <i class="bi bi-code-slash"></i> 
+                English Phrases Trainer v<?php echo APP_VERSION; ?> 
+                | Использует Web Speech API для синтеза речи
+            </p>
+        </footer>
+    </div>
+
+    <!-- Bootstrap & jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- App Scripts -->
+    <script type="text/javascript">
+        var phrasesData = <?=file_get_contents('data/phrases.json');?>
+    </script>
+    <script src="scripts/app.js"></script>
+</body>
+</html>
