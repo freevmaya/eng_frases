@@ -107,11 +107,24 @@
     }
 }
 
+.card-body {
+    z-index: 41;
+}
+
 /* Phrase Container */
 .phrase-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    height: min(50vw, 8em);
+}
+
+.phrase-text {
+    font-size: 1.6rem;
+} 
+
+.phrase-hint {
+    font-size: 1.2rem;
 }
 
 .phrase-text {
@@ -126,11 +139,10 @@
     font-weight: 300;
 }
 
-/* Status Indicator */
-.status-indicator .badge {
-    padding: 8px 16px;
-    font-size: 0.9rem;
-    animation: pulse 2s infinite;
+.play-buttons {
+    display: flex;
+    overflow-x: hidden;
+    gap: 0.5rem;
 }
 
 @keyframes pulse {
@@ -176,13 +188,6 @@
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-    .display-5 {
-        font-size: 2rem;
-    }
-    
-    .phrase-container {
-        min-height: 150px;
-    }
     
     .btn-lg {
         padding: 0.75rem 1.5rem;

@@ -14,6 +14,7 @@ require_once '../config.php';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style-waves.css">
 </head>
 <body class="dark-theme">
     <!-- Settings Modal -->
@@ -140,14 +141,35 @@ require_once '../config.php';
             <!-- Left Column - Phrase Card -->
             <div class="col-lg-8 mb-4">
                 <div class="card bg-dark-gradient border-primary border-3 animate-card">
+
+                    <div class="tv-screen">
+                        <div class="water-effect">
+                            <div class="water-drops">
+                                <div class="drop"></div>
+                                <div class="drop"></div>
+                                <div class="drop"></div>
+                                <div class="drop"></div>
+                                <div class="drop"></div>
+                                <div class="drop"></div>
+                                <div class="drop"></div>
+                                <div class="drop"></div>
+                            </div>
+                            
+                            <!-- Слой световых бликов -->
+                            <div class="water-highlights">
+                                <div class="highlight highlight-1"></div>
+                                <div class="highlight highlight-2"></div>
+                            </div>
+                        </div>
+                        <div class="scan-line"></div>
+                    </div>
+
                     <div class="card-body text-center p-4">
                         <div class="mb-4">
                             <div class="phrase-container">
-                                <div class="phrase-text display-5 mb-4 animate-text" id="phraseText">
-                                    Нажмите "Старт" для начала
+                                <div class="phrase-text mb-2 animate-text" id="phraseText">
                                 </div>
-                                <div class="phrase-hint fs-4 text-muted animate-hint" id="phraseHint">
-                                    Здесь появится перевод
+                                <div class="phrase-hint text-muted animate-hint" id="phraseHint">
                                 </div>
                             </div>
                         </div>
@@ -167,10 +189,16 @@ require_once '../config.php';
                                 <div class="h5" id="phraseCounter">0 / 0</div>
                             </div>
                             <div class="text-center">
-                                <div class="status-indicator">
-                                    <span class="badge bg-secondary" id="playbackStatus">
-                                        <i class="bi bi-pause-circle"></i> Ожидание
-                                    </span>
+                                <div class="play-buttons">
+                                    <button type="button" class="btn btn-secondary" id="prevBtn" disabled>
+                                        <i class="bi bi-skip-backward"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-success" id="playButton">
+                                        <i class="bi bi-play-circle"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" id="nextBtn">
+                                        <i class="bi bi-skip-forward"></i>
+                                    </button>
                                 </div>
                             </div>
                             <div class="text-end">
@@ -187,37 +215,12 @@ require_once '../config.php';
             <div class="col-lg-4">
                 <div class="card bg-dark border-secondary h-100 animate-card">
                     <div class="card-body">
-                        <h5 class="card-title text-primary mb-4">
-                            <i class="bi bi-controller me-2"></i>Управление
-                        </h5>
                         
                         <div class="d-grid gap-3">
-                            <button class="btn btn-success btn-lg animate-button" id="startBtn">
-                                <i class="bi bi-play-circle me-2"></i>Старт
-                            </button>
-                            
-                            <button class="btn btn-outline-primary animate-button" id="pauseBtn" disabled>
-                                <i class="bi bi-pause-circle me-2"></i>Пауза
-                            </button>
-                            
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <button class="btn btn-outline-primary w-100 animate-button" id="prevBtn" disabled>
-                                        <i class="bi bi-skip-backward"></i>
-                                    </button>
-                                </div>
-                                <div class="col-6">
-                                    <button class="btn btn-outline-primary w-100 animate-button" id="nextBtn">
-                                        <i class="bi bi-skip-forward"></i>
-                                    </button>
-                                </div>
-                            </div>
                             
                             <button class="btn btn-danger animate-button" id="stopBtn" disabled>
                                 <i class="bi bi-stop-circle me-2"></i>Стоп
                             </button>
-                            
-                            <hr class="border-secondary">
                             
                             <div class="text-center">
                                 <div class="btn-group" role="group">
@@ -231,10 +234,8 @@ require_once '../config.php';
                             </div>
                         </div>
                         
-                        <hr class="border-secondary my-4">
-                        
                         <div class="quick-stats">
-                            <h6 class="text-info mb-3">
+                            <h6 class="text-info mb-3 mt-2">
                                 <i class="bi bi-graph-up me-2"></i>Быстрые настройки
                             </h6>
                             <div class="row g-2">

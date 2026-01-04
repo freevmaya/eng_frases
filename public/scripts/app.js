@@ -25,9 +25,7 @@ $(document).ready(function() {
         phraseCounter: $('#phraseCounter'),
         phraseType: $('#phraseType'),
         progressBar: $('#progressBar'),
-        playbackStatus: $('#playbackStatus'),
-        startBtn: $('#startBtn'),
-        pauseBtn: $('#pauseBtn'),
+        playButton: $('#playButton'),
         stopBtn: $('#stopBtn'),
         nextBtn: $('#nextBtn'),
         prevBtn: $('#prevBtn'),
@@ -87,8 +85,7 @@ $(document).ready(function() {
     // Настройка обработчиков событий
     function setupEventListeners() {
         // Кнопки управления
-        elements.startBtn.click(startPlayback);
-        elements.pauseBtn.click(togglePause);
+        elements.playButton.click(togglePlay);
         elements.stopBtn.click(stopPlayback);
         elements.nextBtn.click(() => nextPhrase(true));
         elements.prevBtn.click(prevPhrase);
@@ -174,6 +171,13 @@ $(document).ready(function() {
         } else {
             updateDisplay();
         }
+    }
+
+    function togglePlay() {
+        if (state.isPaused || state.isPlaying) 
+            togglePause();
+        else 
+            startPlayback();
     }
 
     // Начать воспроизведение
@@ -332,16 +336,25 @@ $(document).ready(function() {
         }, calcTime(speakLang, showLang));
     }
 
+    function setText(elem, text, maxSize = 25, minSize = 16) {
+        
+        let size = Math.max(Math.min(1 / text.length * 1000, maxSize), minSize);
+        elem.text(text);
+        elem.css('font-size', size);
+    }
+
     // Показать фразу
     function showPhrase(lang) {
         if (lang === 'english') {
-            elements.phraseText.text(state.currentPhrase.english);
-            elements.phraseHint.text(state.currentPhrase.russian);
+            setText(elements.phraseText, state.currentPhrase.english);
+            setText(elements.phraseHint, state.currentPhrase.russian);
+
             elements.phraseText.addClass('text-info');
             elements.phraseHint.removeClass('text-info').addClass('text-muted');
         } else {
-            elements.phraseText.text(state.currentPhrase.russian);
-            elements.phraseHint.text(state.currentPhrase.english);
+            setText(elements.phraseText, state.currentPhrase.russian);
+            setText(elements.phraseHint, state.currentPhrase.english);
+
             elements.phraseText.removeClass('text-info');
             elements.phraseHint.addClass('text-info');
         }
@@ -403,8 +416,8 @@ $(document).ready(function() {
     // Обновить отображение
     function updateDisplay() {
         if (state.currentPhraseList.length === 0) {
-            elements.phraseText.text('Список фраз пуст');
-            elements.phraseHint.text('Выберите список фраз в настройках');
+            setText(elements.phraseText, 'Список фраз пуст');
+            setText(elements.phraseHint, 'Выберите список фраз в настройках');
             elements.phraseCounter.text('0 / 0');
             elements.phraseType.text('Не выбран');
             return;
@@ -416,8 +429,8 @@ $(document).ready(function() {
         
         if (state.currentPhrase) {
             if (!state.isPlaying) {
-                elements.phraseText.text(state.currentPhrase.russian);
-                elements.phraseHint.text(state.currentPhrase.english);
+                setText(elements.phraseText, state.currentPhrase.russian);
+                setText(elements.phraseHint, state.currentPhrase.english);
                 elements.phraseText.removeClass('text-info');
                 elements.phraseHint.addClass('text-info');
             }
@@ -429,27 +442,23 @@ $(document).ready(function() {
 
     // Обновить кнопки управления
     function updateControls() {
-        elements.startBtn.prop('disabled', state.isPlaying && !state.isPaused);
-        elements.pauseBtn.prop('disabled', !state.isPlaying);
+
         elements.stopBtn.prop('disabled', !state.isPlaying && !state.isPaused);
         elements.prevBtn.prop('disabled', !state.isPlaying && state.currentPhraseList.length === 0);
         elements.nextBtn.prop('disabled', state.currentPhraseList.length === 0);
+
+        let playBi = elements.playButton.find('.bi');
+        playBi.removeClass('bi-play-circle bi-pause-circle');
         
         // Обновить текст и иконки
         if (state.isPlaying) {
             if (state.isPaused) {
-                elements.playbackStatus.html('<i class="bi bi-pause-circle"></i> Пауза');
-                elements.playbackStatus.removeClass('bg-success').addClass('bg-warning');
-                elements.pauseBtn.html('<i class="bi bi-play-circle me-2"></i>Продолжить');
+                playBi.addClass('bi-play-circle');
             } else {
-                elements.playbackStatus.html('<i class="bi bi-play-circle"></i> Воспроизведение');
-                elements.playbackStatus.removeClass('bg-warning').addClass('bg-success');
-                elements.pauseBtn.html('<i class="bi bi-pause-circle me-2"></i>Пауза');
+                playBi.addClass('bi-pause-circle');
             }
         } else {
-            elements.playbackStatus.html('<i class="bi bi-pause-circle"></i> Ожидание');
-            elements.playbackStatus.removeClass('bg-success bg-warning').addClass('bg-secondary');
-            elements.pauseBtn.html('<i class="bi bi-pause-circle me-2"></i>Пауза');
+            playBi.addClass('bi-play-circle');
         }
         
         // Сбросить прогресс-бар
