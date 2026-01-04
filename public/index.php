@@ -1,5 +1,6 @@
 <?php
 require_once '../config.php';
+$v = 1;
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -13,8 +14,8 @@ require_once '../config.php';
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/style-waves.css">
+    <link rel="stylesheet" href="css/style.css?v=<?=$v?>">
+    <link rel="stylesheet" href="css/style-waves.css?v=<?=$v?>">
 </head>
 <body class="dark-theme">
     <!-- Settings Modal -->
@@ -278,6 +279,6 @@ require_once '../config.php';
     <script type="text/javascript">
         var phrasesData = <?=file_get_contents('data/phrases.json');?>
     </script>
-    <script src="scripts/app.js"></script>
+    <script src="scripts/app.js?v=<?=$v?>"></script>
 </body>
 </html>
