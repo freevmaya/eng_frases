@@ -385,7 +385,10 @@ $(document).ready(function() {
             return;
         }
 
-        if (!state.isSpeaking) _speakPhrase(text, isEnglish);
+        if (!state.isSpeaking) {
+            text = text.replace(/\([^()]*\)|\[[^\][]*\]/g, '').trim();
+            _speakPhrase(text, isEnglish);
+        }
     }
 
     function _speakPhrase(text, isEnglish = true) {
