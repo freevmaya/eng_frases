@@ -29,6 +29,7 @@ $v = 2;
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+
                     <div class="mb-4">
                         <h6 class="text-info mb-3">
                             <i class="bi bi-speedometer2 me-2"></i>Скорость воспроизведения
@@ -166,7 +167,7 @@ $v = 2;
                     </div>
 
                     <div class="card-body text-center p-4">
-                        <div class="mb-4">
+                        <div>
                             <div class="phrase-container">
                                 <div class="phrase-text mb-2 animate-text" id="phraseText">
                                 </div>
@@ -175,13 +176,13 @@ $v = 2;
                             </div>
                         </div>
 
-                        <div class="progress mb-4" style="height: 6px;">
-                            <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated" 
-                                 id="progressBar" style="width: 0%"></div>
+                        <div class="mb-2">
+                            <span id="phraseType">Past Simple (активный)</span>
                         </div>
 
-                        <div>
-                            <span class="badge mb-3" id="phraseType">Past Simple (активный)</span>
+                        <div class="progress mb-2" style="height: 6px;">
+                            <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated" 
+                                 id="progressBar" style="width: 0%"></div>
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center">

@@ -186,6 +186,10 @@
     color: white;
 }
 
+#phraseType {
+    color:var(--info);
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     

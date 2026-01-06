@@ -1,4 +1,8 @@
 $(document).ready(function() {
+    
+    const hasSpeechSynthesis = 'speechSynthesis' in window;
+    let speechError = false;
+
     // Состояние приложения
     const state = {
         currentPhraseIndex: 0,
@@ -15,7 +19,11 @@ $(document).ready(function() {
         timeoutId: null,
         showingFirstLang: true,
         currentPhrase: null,
-        progressInterval: null
+        progressInterval: null,
+        voices: [],
+        voicesLoaded: false,
+        useFallbackSound: false,
+        isSpeaking: false
     };
 
     // DOM элементы
@@ -231,12 +239,9 @@ $(document).ready(function() {
         clearTimeout(state.timeoutId);
         clearInterval(state.progressInterval);
 
-        if (isBothDirectionsMode() && !state.showingFirstLang) {
-            state.currentPhraseIndex = (state.currentPhraseIndex + 1) % state.currentPhraseList.length;
+        state.currentPhraseIndex = (state.currentPhraseIndex + 1) % state.currentPhraseList.length;
+        if (isBothDirectionsMode() && !state.showingFirstLang)
             state.showingFirstLang = true;
-        } else if (!isBothDirectionsMode()) {
-            state.currentPhraseIndex = (state.currentPhraseIndex + 1) % state.currentPhraseList.length;
-        }
         
         if (state.isPlaying)
             playCurrentPhrase();
@@ -374,19 +379,55 @@ $(document).ready(function() {
 
     // Озвучить фразу
     function speakPhrase(text, isEnglish = true) {
-        if (!('speechSynthesis' in window)) {
-            console.warn('Web Speech API не поддерживается');
+        if (!hasSpeechSynthesis || speechError) {
+            // Fallback: просто показываем фразу без озвучки
+            console.log('Speech synthesis not available. Text:', text);
             return;
         }
+
+        if (!state.isSpeaking) _speakPhrase(text, isEnglish);
+    }
+
+    function _speakPhrase(text, isEnglish = true) {
         
-        speechSynthesis.cancel();
-        
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = isEnglish ? 'en-US' : 'ru-RU';
-        utterance.rate = state.speed;
-        utterance.volume = 1;
-        
-        speechSynthesis.speak(utterance);
+        try {
+            state.isSpeaking = true;
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = isEnglish ? 'en-US' : 'ru-RU';
+            utterance.rate = state.speed;
+            utterance.volume = 1;
+            
+            // Ищем подходящий голос
+            if (state.voicesLoaded && state.voices.length > 0) {
+                const langPrefix = isEnglish ? 'en' : 'ru';
+                const voice = state.voices.find(v => v.lang.startsWith(langPrefix));
+                if (voice) utterance.voice = voice;
+            }
+            
+            // События для отслеживания состояния
+            /*
+            utterance.onstart = function() {
+                console.log('Speech started:', text);
+            };*/
+            
+            utterance.onend = function() {
+                setTimeout(()=>{
+                    state.isSpeaking = false;
+                }, 100);
+            };
+            
+            utterance.onerror = function(event) {
+                console.error('Speech synthesis error:', event);
+                showAlert('Ошибка озвучки. Проверьте настройки браузера.', 'danger');
+            };
+            
+            speechSynthesis.speak(utterance);
+        } catch (error) {
+            console.error('Speech synthesis failed:', error);
+            //speechError = true;
+            showAlert('Озвучка временно недоступна', 'warning');
+        }
     }
 
     // Озвучить текущую фразу
