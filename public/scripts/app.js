@@ -1,3 +1,24 @@
+let wakeLock = null;
+
+async function enableWakeLock() {
+    if ('wakeLock' in navigator) {
+        try {
+            wakeLock = await navigator.wakeLock.request('screen');
+            console.log('Wake Lock активирован');
+        } catch (err) {
+            console.error('Wake Lock ошибка:', err);
+        }
+    }
+}
+
+async function disableWakeLock() {
+    if (wakeLock !== null) {
+        await wakeLock.release();
+        wakeLock = null;
+        console.log('Wake Lock деактивирован');
+    }
+}
+
 $(document).ready(function() {
     
     const hasSpeechSynthesis = 'speechSynthesis' in window;
@@ -491,7 +512,12 @@ $(document).ready(function() {
     // Обновить кнопки управления
     function updateControls() {
 
-        elements.stopBtn.prop('disabled', !state.isPlaying && !state.isPaused);
+        let isPlay = !state.isPlaying && !state.isPaused;
+
+        if (isPlay) enableWakeLock();
+        else disableWakeLock();
+
+        elements.stopBtn.prop('disabled', isPlay);
         elements.prevBtn.prop('disabled', !state.isPlaying && state.currentPhraseList.length === 0);
         elements.nextBtn.prop('disabled', state.currentPhraseList.length === 0);
 
