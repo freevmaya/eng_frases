@@ -144,7 +144,7 @@ $v = 3;
             <div class="col-lg-8 mb-4">
                 <div class="card bg-dark-gradient border-primary border-3 animate-card">
 
-                    <div class="tv-screen">
+                    <!--<div class="tv-screen">
                         <div class="water-effect">
                             <div class="water-drops">
                                 <div class="drop"></div>
@@ -157,14 +157,13 @@ $v = 3;
                                 <div class="drop"></div>
                             </div>
                             
-                            <!-- Слой световых бликов -->
                             <div class="water-highlights">
                                 <div class="highlight highlight-1"></div>
                                 <div class="highlight highlight-2"></div>
                             </div>
                         </div>
                         <div class="scan-line"></div>
-                    </div>
+                    </div>-->
 
                     <div class="card-body text-center p-4">
                         <div>
