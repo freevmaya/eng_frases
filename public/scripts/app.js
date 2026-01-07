@@ -335,9 +335,8 @@ $(document).ready(function() {
         clearInterval(state.progressInterval);
 
         state.currentPhraseIndex = (state.currentPhraseIndex + 1) % state.currentPhraseList.length;
-        if (isBothDirectionsMode() && !state.showingFirstLang) {
+        if (isBothDirectionsMode() && !state.showingFirstLang)
             state.showingFirstLang = true;
-        }
         
         // Сохраняем состояние
         stateManager.updatePlaybackState({
@@ -345,11 +344,9 @@ $(document).ready(function() {
             showingFirstLang: state.showingFirstLang
         });
         
-        if (stateManager.isPlaying) {
+        if (stateManager.isPlaying)
             playCurrentPhrase();
-        } else {
-            updateDisplay();
-        }
+        updateDisplay();
     }
 
     // Предыдущая фраза

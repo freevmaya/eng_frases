@@ -4,11 +4,11 @@ class PlayerControls {
         this.options = {
             autoHideDelay: 5000, // 5 секунд
             showAnimationDuration: 300,
-            hideAnimationDuration: 300,
             ...options
         };
         
         this.elements = {
+            parent: null,
             container: null,
             playButton: null,
             prevBtn: null,
@@ -33,6 +33,9 @@ class PlayerControls {
         this.elements.prevBtn = $('#prevBtn');
         this.elements.nextBtn = $('#nextBtn');
         this.elements.playIcon = $('#playButton i');
+        this.elements.parent = this.elements.container.closest(".card");
+
+        this.elements.container.css('pointer-events', 'none');
         
         this.setupEventListeners();
         this.hide(); // Начальное состояние - скрыто
@@ -43,11 +46,17 @@ class PlayerControls {
         const self = this;
         
         // Показ контролов по клику на контейнер
-        $('.phrase-container, .phrase-text, .phrase-hint, .tv-screen').click(function(e) {
-            if (self.state.controlsEnabled) {
+        this.elements.parent.click(function(e) {
+            if (self.state.controlsEnabled && !self.state.visible) {
+                e.stopPropagation();
                 self.show();
                 self.resetAutoHide();
             }
+        });
+
+        $('body').click((e) => {
+            if (this.state.visible && !$(e.target).is(self.elements.container))
+                self.hide();
         });
         
         // Обработчики для кнопок
@@ -92,14 +101,10 @@ class PlayerControls {
         if (this.state.visible || !this.state.controlsEnabled) return;
         
         clearTimeout(this.state.autoHideTimeout);
-        
         this.state.visible = true;
         this.elements.container
-            .addClass('show')
-            .addClass('controls-active')
-            .css('opacity', 0)
-            .animate({ opacity: 1 }, this.options.showAnimationDuration);
-        
+            .addClass('show controls-active')
+            .css('pointer-events', 'auto')
         this.resetAutoHide();
     }
     
@@ -111,10 +116,8 @@ class PlayerControls {
         
         this.state.visible = false;
         this.elements.container
-            .removeClass('controls-active')
-            .animate({ opacity: 0 }, this.options.hideAnimationDuration, () => {
-                this.elements.container.removeClass('show');
-            });
+            .removeClass('controls-active show')
+            .css('pointer-events', 'none')
     }
     
     // Сброс таймера автоскрытия

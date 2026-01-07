@@ -61,7 +61,7 @@ class SpeechSynthesizer {
         }
 
         if (this.state.speechError || this.state.isSpeaking) {
-            console.log('Speech synthesis not available or already speaking. Text:', text);
+            //console.log('Speech synthesis not available or already speaking. Text:', text);
             return false;
         }
 
