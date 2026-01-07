@@ -8,8 +8,6 @@ $v = 9;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo APP_NAME; ?></title>
-
-    <link rel="manifest" href="manifest.json">
     
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -20,10 +18,6 @@ $v = 9;
     <link rel="stylesheet" href="css/style-waves.css?v=<?=$v?>">
 </head>
 <body class="dark-theme">
-    <audio id="bluetoothAudio" loop style="display: none;">
-        <source src="data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV" type="audio/mpeg">
-        Ваш браузер не поддерживает аудио элемент.
-    </audio>
     <!-- Settings Modal -->
     <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -250,46 +244,10 @@ $v = 9;
     <script src="scripts/speech-synthesizer.js?v=<?=$v?>"></script>
     <script src="scripts/state-manager.js?v=<?=$v?>"></script>
     <script src="scripts/player-controls.js?v=<?=$v?>"></script>
-    <script src="scripts/media-keys-handler.js?v=<?=$v?>"></script>
     <script src="scripts/app.js?v=<?=$v?>"></script>
     
     <!-- Eruda is console for mobile browsers-->
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <script>eruda.init();</script>
-
-    <!-- Отладочная панель для Bluetooth (только в development) -->
-    <div id="bluetoothDebug" style="position: fixed; bottom: 10px; left: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; border-radius: 5px; font-size: 12px; z-index: 9999; display: none;">
-        <h6>Bluetooth Media Keys Debug</h6>
-        <div>Status: <span id="bluetoothStatus">Checking...</span></div>
-        <div>Playback: <span id="bluetoothPlayback">stopped</span></div>
-        <div>Last Key: <span id="lastKey">none</span></div>
-        <button onclick="testBluetoothPlay()" class="btn btn-sm btn-success">Test Play</button>
-        <button onclick="testBluetoothPause()" class="btn btn-sm btn-warning">Test Pause</button>
-    </div>
-
-    <script>
-        // Функции для тестирования
-        function testBluetoothPlay() {
-            console.log('Manual test: Play');
-            if (window.mediaKeysHandler) {
-                window.mediaKeysHandler.handlePlay();
-            }
-        }
-
-        function testBluetoothPause() {
-            console.log('Manual test: Pause');
-            if (window.mediaKeysHandler) {
-                window.mediaKeysHandler.handlePause();
-            }
-        }
-
-        // Показать отладочную панель
-        function showBluetoothDebug() {
-            document.getElementById('bluetoothDebug').style.display = 'block';
-        }
-
-        // Экспорт хендлера в глобальную область
-        window.mediaKeysHandler = mediaKeysHandler;
-    </script>
 </body>
 </html>

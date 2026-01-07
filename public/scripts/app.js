@@ -1,7 +1,6 @@
 let wakeLock = null;
 let speechSynthesizer = null;
-let playerControls = null;
-let mediaKeysHandler = null;
+let stateManager = null;
 
 async function enableWakeLock() {
     if ('wakeLock' in navigator) {
@@ -32,27 +31,6 @@ $(document).ready(function() {
     stateManager.loadState();
 
     playerControls = new PlayerControls();
-    
-    // Инициализируем обработчик медиа-кнопок
-    mediaKeysHandler = new MediaKeysHandler(playerControls);
-
-    window.togglePlay = togglePlay;
-    window.togglePause = togglePause;
-    window.prevPhrase = prevPhrase;
-    window.nextPhrase = nextPhrase;
-    window.stopPlayback = stopPlayback;
-    window.stateManager = stateManager;
-    
-    // Функции для перемотки (если нужны)
-    window.seekBackward = function(seconds) {
-        console.log('Seek backward by', seconds, 'seconds');
-        // Можно добавить логику перемотки
-    };
-    
-    window.seekForward = function(seconds) {
-        console.log('Seek forward by', seconds, 'seconds');
-        // Можно добавить логику перемотки
-    };
 
     const AppConst = {
         charTime: {
@@ -97,6 +75,14 @@ $(document).ready(function() {
         if (state.currentPhrase) {
             updateDisplay();
         }
+
+        // Обработка события видимости страницы
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                if (stateManager.isPaused || stateManager.isPlaying)
+                    togglePause();
+            }
+        });
     }
 
     function initPhraseList() {
@@ -314,8 +300,6 @@ $(document).ready(function() {
         stateManager.isPlaying = true;
         stateManager.isPaused = false;
         state.showingFirstLang = true;
-
-        if (mediaKeysHandler) mediaKeysHandler.setPlaying(true);
         
         // Сохраняем состояние
         stateManager.updatePlaybackState({
@@ -335,10 +319,8 @@ $(document).ready(function() {
         if (stateManager.isPaused) {
             clearTimeout(state.timeoutId);
             clearInterval(state.progressInterval);
-            if (mediaKeysHandler) mediaKeysHandler.setPlaying(false);
         } else {
             playCurrentPhrase();
-            if (mediaKeysHandler) mediaKeysHandler.setPlaying(true);
         }
         
         updateControls();
@@ -351,8 +333,6 @@ $(document).ready(function() {
         clearTimeout(state.timeoutId);
         clearInterval(state.progressInterval);
         speechSynthesizer.stop();
-    
-        if (mediaKeysHandler) mediaKeysHandler.setPlaying(false);
         
         updateControls();
         updateDisplay();
@@ -562,14 +542,6 @@ $(document).ready(function() {
             
             elements.phraseCounter.text(`${state.currentPhraseIndex + 1} / ${state.currentPhraseList.length}`);
             elements.phraseType.text(formatTitle(state.currentPhrase.type));
-
-            if (mediaKeysHandler) {
-                mediaKeysHandler.updateTrackInfo(state.currentPhrase);
-                mediaKeysHandler.updateProgress(
-                    state.currentPhraseIndex + 1, 
-                    state.currentPhraseList.length
-                );
-            }
         }
     }
 
@@ -639,27 +611,4 @@ $(document).ready(function() {
 
     // Инициализация при загрузке
     init();
-
-    // Экспорт для отладки
-    window.appState = state;
-    window.appElements = elements;
-    window.appFunctions = {
-        togglePlay,
-        togglePause,
-        prevPhrase,
-        nextPhrase,
-        startPlayback,
-        stopPlayback
-    };
-
-    // Показать отладочную панель при двойном клике
-    $(document).on('dblclick', function() {
-        showBluetoothDebug();
-    });
-
-    // Инициализация после загрузки
-    setTimeout(() => {
-        console.log('App initialized. Bluetooth support:', 
-            mediaKeysHandler ? mediaKeysHandler.getSupportStatus() : 'No handler');
-    }, 1000);
 });
