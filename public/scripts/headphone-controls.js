@@ -27,27 +27,42 @@ class HeadphoneControls {
             console.warn('Media Session API not supported');
             return;
         }
+
+        function audioFocus() {
+
+            let elem = $('#audioElem');
+            elem.focus();
+            let machineEvent = new Event('click', {bubbles:true});
+            elem[0].dispatchEvent(machineEvent);
+        }
         
         // Устанавливаем действия
         navigator.mediaSession.setActionHandler('play', () => {
-            this.playerController.togglePlay();
+            console.log("Play");
+            audioFocus();
+            //this.playerController.togglePlay();
         });
         
         navigator.mediaSession.setActionHandler('pause', () => {
-            this.playerController.togglePause();
+            console.log("Pause");
+            audioFocus();
+            //this.playerController.togglePause();
         });
         
         navigator.mediaSession.setActionHandler('previoustrack', () => {
-            this.playerController.prevPhrase();
+            console.log("previoustrack");
+            //this.playerController.prevPhrase();
         });
         
         navigator.mediaSession.setActionHandler('nexttrack', () => {
-            this.playerController.nextPhrase();
+            console.log("nexttrack");
+            //this.playerController.nextPhrase();
         });
         
         // Обработка остановки
         navigator.mediaSession.setActionHandler('stop', () => {
-            this.playerController.stopPlayback();
+            console.log("stop");
+            //this.playerController.stopPlayback();
         });
         
         // Обновляем состояние медиа-сессии

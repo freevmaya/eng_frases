@@ -21,6 +21,9 @@ $v = 10;
     <link rel="stylesheet" href="css/style-waves.css?v=<?=$v?>">
 </head>
 <body class="dark-theme">
+    <audio controls style="opacity: 0; position: absolute;" id="audioElem">
+      <source src="Celtic.mp3" type="audio/mpeg">
+    </audio>
     <!-- Settings Modal -->
     <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
