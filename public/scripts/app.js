@@ -1,4 +1,5 @@
 let wakeLock = null;
+let speechSynthesizer = null;
 
 async function enableWakeLock() {
     if ('wakeLock' in navigator) {
@@ -21,31 +22,23 @@ async function disableWakeLock() {
 
 $(document).ready(function() {
     
-    const hasSpeechSynthesis = 'speechSynthesis' in window;
-    let speechError = false;
+    // Инициализируем синтезатор речи
+    speechSynthesizer = new SpeechSynthesizer();
 
-    // Состояние приложения
-    const state = {
-        currentPhraseIndex: 0,
-        charTime: {english: 60, russian: 70},
-        currentPhraseList: [],
-        isPlaying: false,
-        isPaused: false,
-        direction: 'ru-en',
-        order: 'sequential',
-        currentListType: 'all',
-        speed: 1.0,
-        pauseBetweenPhrases: 3,
-        pauseBetweenLanguages: 2,
-        timeoutId: null,
-        showingFirstLang: true,
-        currentPhrase: null,
-        progressInterval: null,
-        voices: [],
-        voicesLoaded: false,
-        useFallbackSound: false,
-        isSpeaking: false
-    };
+    // Инициализируем менеджер состояния
+    stateManager = new StateManager();
+    stateManager.loadState();
+
+    playerControls = new PlayerControls();
+
+    const AppConst = {
+        charTime: {
+            english: 60, 
+            russian: 70
+        }
+    }
+
+    const state = stateManager.getState();
 
     // DOM элементы
     const elements = {
@@ -55,7 +48,6 @@ $(document).ready(function() {
         phraseType: $('#phraseType'),
         progressBar: $('#progressBar'),
         playButton: $('#playButton'),
-        stopBtn: $('#stopBtn'),
         nextBtn: $('#nextBtn'),
         prevBtn: $('#prevBtn'),
         settingsToggle: $('#settingsToggle'),
@@ -67,8 +59,7 @@ $(document).ready(function() {
         pauseValue: $('#pauseValue'),
         langPauseValue: $('#langPauseValue'),
         phraseListSelect: $('#phraseListSelect'),
-        speakEnglishBtn: $('#speakEnglishBtn'),
-        speakRussianBtn: $('#speakRussianBtn')
+        tvScreenToggle: $('#tvScreenToggle')
     };
 
     // Инициализация
@@ -76,7 +67,13 @@ $(document).ready(function() {
         initPhraseList();
         loadPhraseList();
         setupEventListeners();
+        applyTvScreenState();
         updateDisplay();
+        
+        // Восстанавливаем отображение из сохранённого состояния
+        if (state.currentPhrase) {
+            updateDisplay();
+        }
     }
 
     function initPhraseList() {
@@ -103,29 +100,55 @@ $(document).ready(function() {
             state.currentPhraseList = phrasesData[state.currentListType] || [];
         }
         
-        // Применяем порядок
+        // Применяем порядок с сохранением seed для воспроизводимости
         if (state.order === 'random') {
-            shuffleArray(state.currentPhraseList);
+            // Используем сохранённый seed или создаём новый
+            const seed = state.randomSeed || Date.now();
+            state.randomSeed = seed;
+            shuffleArrayWithSeed(state.currentPhraseList, seed);
+            stateManager.setCurrentListData(state.currentListKey, seed);
+        } else {
+            state.randomSeed = null;
         }
         
-        state.currentPhraseIndex = 0;
+        // Восстанавливаем индекс из сохранённого состояния
+        if (state.currentPhraseIndex >= state.currentPhraseList.length) {
+            state.currentPhraseIndex = 0;
+        }
+        
+        state.currentPhrase = state.currentPhraseList[state.currentPhraseIndex];
+    }
+
+    // Функция перемешивания с seed
+    function shuffleArrayWithSeed(array, seed) {
+        let currentSeed = seed;
+        const random = () => {
+            const x = Math.sin(currentSeed++) * 10000;
+            return x - Math.floor(x);
+        };
+        
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
     }
 
     // Настройка обработчиков событий
     function setupEventListeners() {
         // Кнопки управления
         elements.playButton.click(togglePlay);
-        elements.stopBtn.click(stopPlay);
         elements.nextBtn.click(nextPhrase);
         elements.prevBtn.click(prevPhrase);
         
-        // Кнопки озвучки
-        elements.speakEnglishBtn.click(() => speakCurrentPhrase('english'));
-        elements.speakRussianBtn.click(() => speakCurrentPhrase('russian'));
-        
         // Открытие настроек
         elements.settingsToggle.click(() => {
-            $('#settingsModal').modal('show');
+
+            // Задача 1: Останавливаем воспроизведение при открытии настроек
+            if (stateManager.isPlaying) {
+                togglePause();
+            }
+            openSettingsModal();
         });
         
         // Применение настроек
@@ -150,13 +173,6 @@ $(document).ready(function() {
             elements.langPauseValue.text(value + ' сек');
         });
         
-        // Быстрые настройки скорости
-        $('.speed-btn').click(function() {
-            const speed = parseFloat($(this).data('speed'));
-            elements.speedSlider.val(speed);
-            elements.speedValue.text(speed.toFixed(1) + 'x');
-        });
-        
         // Выбор направления
         $('[data-direction]').click(function() {
             $('[data-direction]').removeClass('active');
@@ -170,36 +186,86 @@ $(document).ready(function() {
         });
     }
 
+    // Открытие модального окна настроек
+    function openSettingsModal() {
+        // Устанавливаем текущие значения в элементы управления
+        elements.speedSlider.val(state.speed);
+        elements.speedValue.text(state.speed.toFixed(1) + 'x');
+        
+        elements.pauseSlider.val(state.pauseBetweenPhrases);
+        elements.pauseValue.text(state.pauseBetweenPhrases + ' сек');
+        
+        elements.langPauseSlider.val(state.pauseBetweenLanguages);
+        elements.langPauseValue.text(state.pauseBetweenLanguages + ' сек');
+        
+        elements.phraseListSelect.val(state.currentListType);
+        elements.tvScreenToggle.prop('checked', state.showTvScreen);
+        
+        // Устанавливаем активные кнопки направления и порядка
+        $(`[data-direction="${state.direction}"]`).addClass('active').siblings().removeClass('active');
+        $(`[data-order="${state.order}"]`).addClass('active').siblings().removeClass('active');
+        
+        $('#settingsModal').modal('show');
+    }
+
     // Применение настроек из модального окна
     function applySettingsFromModal() {
-        // Обновляем состояние
-        state.speed = parseFloat(elements.speedSlider.val());
-        state.pauseBetweenPhrases = parseFloat(elements.pauseSlider.val());
-        state.pauseBetweenLanguages = parseFloat(elements.langPauseSlider.val());
-        state.currentListType = elements.phraseListSelect.val();
+        // Собираем новые настройки
+        const newSettings = {
+            speed: parseFloat(elements.speedSlider.val()),
+            pauseBetweenPhrases: parseFloat(elements.pauseSlider.val()),
+            pauseBetweenLanguages: parseFloat(elements.langPauseSlider.val()),
+            currentListType: elements.phraseListSelect.val(),
+            direction: $('[data-direction].active').data('direction'),
+            order: $('[data-order].active').data('order'),
+            showTvScreen: elements.tvScreenToggle.prop('checked')
+        };
         
-        // Направление
-        const activeDirection = $('[data-direction].active').data('direction');
-        if (activeDirection) {
-            state.direction = activeDirection;
+        // Проверяем, изменился ли список фраз
+        const listChanged = stateManager.hasListChanged(
+            newSettings.currentListType, 
+            newSettings.order, 
+            phrasesData
+        );
+        
+        // Обновляем состояние через менеджер
+        const changes = stateManager.updateSettings(newSettings);
+        Object.assign(state, stateManager.getState());
+        
+        // Задача 2: Перезагружаем список только если изменился тип списка или порядок
+        if (changes.listChanged) {
+            loadPhraseList();
+            
+            // Сохраняем ключ текущего списка
+            const listKey = stateManager.generateListKey(
+                state.currentListType, 
+                state.order, 
+                phrasesData
+            );
+            stateManager.setCurrentListData(listKey);
         }
         
-        // Порядок
-        const activeOrder = $('[data-order].active').data('order');
-        if (activeOrder) {
-            state.order = activeOrder;
-        }
-        
-        // Перезагружаем список фраз
-        loadPhraseList();
+        // Сохраняем состояние
+        stateManager.saveState();
         
         // Если воспроизведение активно, перезапускаем
-        if (state.isPlaying && !state.isPaused) {
+        if (stateManager.isPlaying && !stateManager.isPaused) {
             stopPlayback();
             startPlayback();
         } else {
             updateDisplay();
         }
+        if (changes.settingsChanged || changes.listChanged) {
+            applyTvScreenState();
+        }
+    }
+
+    // Применить состояние TV-экрана
+    function applyTvScreenState() {
+        const tvScreen = $('.tv-screen');
+        if (state.showTvScreen)
+            tvScreen.show();
+        else tvScreen.hide();
     }
 
     function stopPlay() {
@@ -208,10 +274,11 @@ $(document).ready(function() {
     }
 
     function togglePlay() {
-        if (state.isPaused || state.isPlaying) 
+        if (stateManager.isPaused || stateManager.isPlaying) {
             togglePause();
-        else 
+        } else {
             startPlayback();
+        }
     }
 
     // Начать воспроизведение
@@ -221,9 +288,14 @@ $(document).ready(function() {
             return;
         }
         
-        state.isPlaying = true;
-        state.isPaused = false;
+        stateManager.isPlaying = true;
+        stateManager.isPaused = false;
         state.showingFirstLang = true;
+        
+        // Сохраняем состояние
+        stateManager.updatePlaybackState({
+            showingFirstLang: true
+        });
         
         updateControls();
         playCurrentPhrase();
@@ -231,11 +303,11 @@ $(document).ready(function() {
 
     // Переключить паузу
     function togglePause() {
-        if (!state.isPlaying) return;
+        if (!stateManager.isPlaying) return;
         
-        state.isPaused = !state.isPaused;
+        stateManager.isPaused = !stateManager.isPaused;
         
-        if (state.isPaused) {
+        if (stateManager.isPaused) {
             clearTimeout(state.timeoutId);
             clearInterval(state.progressInterval);
         } else {
@@ -247,10 +319,12 @@ $(document).ready(function() {
 
     // Остановить воспроизведение
     function stopPlayback() {
-        state.isPlaying = false;
-        state.isPaused = false;
+        stateManager.isPlaying = false;
+        stateManager.isPaused = false;
         clearTimeout(state.timeoutId);
         clearInterval(state.progressInterval);
+        speechSynthesizer.stop();
+        
         updateControls();
         updateDisplay();
     }
@@ -261,13 +335,21 @@ $(document).ready(function() {
         clearInterval(state.progressInterval);
 
         state.currentPhraseIndex = (state.currentPhraseIndex + 1) % state.currentPhraseList.length;
-        if (isBothDirectionsMode() && !state.showingFirstLang)
+        if (isBothDirectionsMode() && !state.showingFirstLang) {
             state.showingFirstLang = true;
+        }
         
-        if (state.isPlaying)
+        // Сохраняем состояние
+        stateManager.updatePlaybackState({
+            currentPhraseIndex: state.currentPhraseIndex,
+            showingFirstLang: state.showingFirstLang
+        });
+        
+        if (stateManager.isPlaying) {
             playCurrentPhrase();
-
-        updateDisplay();
+        } else {
+            updateDisplay();
+        }
     }
 
     // Предыдущая фраза
@@ -279,7 +361,12 @@ $(document).ready(function() {
             state.currentPhraseIndex - 1 : 
             state.currentPhraseList.length - 1;
         
-        if (state.isPlaying && !state.isPaused) {
+        // Сохраняем состояние
+        stateManager.updatePlaybackState({
+            currentPhraseIndex: state.currentPhraseIndex
+        });
+        
+        if (stateManager.isPlaying && !stateManager.isPaused) {
             playCurrentPhrase();
         } else {
             updateDisplay();
@@ -288,7 +375,7 @@ $(document).ready(function() {
 
     // Воспроизвести текущую фразу
     function playCurrentPhrase() {
-        if (!state.isPlaying || state.isPaused) return;
+        if (!stateManager.isPlaying || stateManager.isPaused) return;
         
         if (state.currentPhraseIndex >= state.currentPhraseList.length) {
             state.currentPhraseIndex = 0;
@@ -312,8 +399,8 @@ $(document).ready(function() {
 
     function calcTime(firstLang, secondLang) {
         return state.pauseBetweenPhrases * 1000 + 
-                state.currentPhrase[firstLang].length * state.charTime[firstLang] * 1 / state.speed + 
-                state.currentPhrase[secondLang].length * state.charTime[secondLang] * 1 / state.speed;
+                state.currentPhrase[firstLang].length * AppConst.charTime[firstLang] * 1 / state.speed + 
+                state.currentPhrase[secondLang].length * AppConst.charTime[secondLang] * 1 / state.speed;
     }
 
     // Воспроизведение в обоих направлениях
@@ -324,9 +411,8 @@ $(document).ready(function() {
         
         if (state.showingFirstLang) {
             // Показываем и озвучиваем первый язык
-
             showPhrase(firstLang);
-            speakPhrase(state.currentPhrase[firstLang], firstLang === 'english');
+            speechSynthesizer.speak(state.currentPhrase[firstLang], firstLang === 'english', state.speed);
             startProgressTimer(state.pauseBetweenLanguages);
             
             state.timeoutId = setTimeout(() => {
@@ -335,12 +421,11 @@ $(document).ready(function() {
             }, calcTime(firstLang, secondLang));
         } else {
             // Показываем и озвучиваем второй язык
-
             let totalTime = state.pauseBetweenPhrases * 1000 + 
-                state.currentPhrase[secondLang].length * state.charTime[secondLang] * 1 / state.speed;
+                state.currentPhrase[secondLang].length * AppConst.charTime[secondLang] * 1 / state.speed;
 
             showPhrase(secondLang);
-            speakPhrase(state.currentPhrase[secondLang], secondLang === 'english');
+            speechSynthesizer.speak(state.currentPhrase[secondLang], secondLang === 'english', state.speed);
             startProgressTimer(state.pauseBetweenPhrases);
             
             state.timeoutId = setTimeout(() => {
@@ -357,7 +442,7 @@ $(document).ready(function() {
         const speakLang = state.direction === 'en-ru' ? 'russian' : 'english';
         
         showPhrase(showLang);
-        speakPhrase(state.currentPhrase[speakLang], speakLang === 'english');
+        speechSynthesizer.speak(state.currentPhrase[speakLang], speakLang === 'english', state.speed);
         startProgressTimer(state.pauseBetweenPhrases);
         
         state.timeoutId = setTimeout(() => {
@@ -366,24 +451,27 @@ $(document).ready(function() {
         }, calcTime(speakLang, showLang));
     }
 
-    function setText(elem, text, maxSize = 25, minSize = 16) {
+    function setText(elem, text, k = 1, maxSize = 25, minSize = 16) {
         
-        let size = Math.max(Math.min(1 / text.length * 1000, maxSize), minSize);
+        let size = Math.max(Math.min(1 / text.length * 1000, maxSize * k), minSize * k);
         elem.text(text);
         elem.css('font-size', size);
+    }
+
+    function updatePhrases(text, hint) {
+        setText(elements.phraseText, text, 1);
+        setText(elements.phraseHint, hint, 0.7);
     }
 
     // Показать фразу
     function showPhrase(lang) {
         if (lang === 'english') {
-            setText(elements.phraseText, state.currentPhrase.english);
-            setText(elements.phraseHint, state.currentPhrase.russian);
+            updatePhrases(state.currentPhrase.english, state.currentPhrase.russian);
 
             elements.phraseText.addClass('text-info');
             elements.phraseHint.removeClass('text-info').addClass('text-muted');
         } else {
-            setText(elements.phraseText, state.currentPhrase.russian);
-            setText(elements.phraseHint, state.currentPhrase.english);
+            updatePhrases(state.currentPhrase.russian, state.currentPhrase.english);
 
             elements.phraseText.removeClass('text-info');
             elements.phraseHint.addClass('text-info');
@@ -398,66 +486,10 @@ $(document).ready(function() {
         }, 500);
     }
 
-    // Озвучить фразу
-    function speakPhrase(text, isEnglish = true) {
-        if (!hasSpeechSynthesis || speechError) {
-            // Fallback: просто показываем фразу без озвучки
-            console.log('Speech synthesis not available. Text:', text);
-            return;
-        }
-
-        if (!state.isSpeaking) {
-            text = text.replace(/\([^()]*\)|\[[^\][]*\]/g, '').trim();
-            _speakPhrase(text, isEnglish);
-        }
-    }
-
-    function _speakPhrase(text, isEnglish = true) {
-        
-        try {
-            state.isSpeaking = true;
-            
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = isEnglish ? 'en-US' : 'ru-RU';
-            utterance.rate = state.speed;
-            utterance.volume = 1;
-            
-            // Ищем подходящий голос
-            if (state.voicesLoaded && state.voices.length > 0) {
-                const langPrefix = isEnglish ? 'en' : 'ru';
-                const voice = state.voices.find(v => v.lang.startsWith(langPrefix));
-                if (voice) utterance.voice = voice;
-            }
-            
-            // События для отслеживания состояния
-            /*
-            utterance.onstart = function() {
-                console.log('Speech started:', text);
-            };*/
-            
-            utterance.onend = function() {
-                setTimeout(()=>{
-                    state.isSpeaking = false;
-                }, 100);
-            };
-            
-            utterance.onerror = function(event) {
-                console.error('Speech synthesis error:', event);
-                showAlert('Ошибка озвучки. Проверьте настройки браузера.', 'danger');
-            };
-            
-            speechSynthesis.speak(utterance);
-        } catch (error) {
-            console.error('Speech synthesis failed:', error);
-            //speechError = true;
-            showAlert('Озвучка временно недоступна', 'warning');
-        }
-    }
-
     // Озвучить текущую фразу
     function speakCurrentPhrase(lang) {
         if (!state.currentPhrase) return;
-        speakPhrase(state.currentPhrase[lang], lang === 'english');
+        speechSynthesizer.speak(state.currentPhrase[lang], lang === 'english', state.speed);
     }
 
     // Запустить таймер прогресса
@@ -485,8 +517,7 @@ $(document).ready(function() {
     // Обновить отображение
     function updateDisplay() {
         if (state.currentPhraseList.length === 0) {
-            setText(elements.phraseText, 'Список фраз пуст');
-            setText(elements.phraseHint, 'Выберите список фраз в настройках');
+            updatePhrases('Список фраз пуст', 'Выберите список фраз в настройках');
             elements.phraseCounter.text('0 / 0');
             elements.phraseType.text('Не выбран');
             return;
@@ -497,9 +528,8 @@ $(document).ready(function() {
         }
         
         if (state.currentPhrase) {
-            if (!state.isPlaying) {
-                setText(elements.phraseText, state.currentPhrase.russian);
-                setText(elements.phraseHint, state.currentPhrase.english);
+            if (!stateManager.isPlaying) {
+                updatePhrases(state.currentPhrase.russian, state.currentPhrase.english);
                 elements.phraseText.removeClass('text-info');
                 elements.phraseHint.addClass('text-info');
             }
@@ -511,22 +541,26 @@ $(document).ready(function() {
 
     // Обновить кнопки управления
     function updateControls() {
-
-        let isPlay = !state.isPlaying && !state.isPaused;
+        let isPlay = !stateManager.isPlaying && !stateManager.isPaused;
 
         if (isPlay) enableWakeLock();
         else disableWakeLock();
 
-        elements.stopBtn.prop('disabled', isPlay);
-        elements.prevBtn.prop('disabled', !state.isPlaying && state.currentPhraseList.length === 0);
-        elements.nextBtn.prop('disabled', state.currentPhraseList.length === 0);
+        // Обновить контролы плеера
+        if (playerControls) {
+            playerControls.updatePlayButton(stateManager.isPlaying && !stateManager.isPaused);
+            
+            const hasPrev = stateManager.isPlaying && state.currentPhraseList.length > 0;
+            const hasNext = state.currentPhraseList.length > 0;
+            playerControls.updateNavigationButtons(hasPrev, hasNext);
+        }
 
         let playBi = elements.playButton.find('.bi');
         playBi.removeClass('bi-play-circle bi-pause-circle');
         
         // Обновить текст и иконки
-        if (state.isPlaying) {
-            if (state.isPaused) {
+        if (stateManager.isPlaying) {
+            if (stateManager.isPaused) {
                 playBi.addClass('bi-play-circle');
             } else {
                 playBi.addClass('bi-pause-circle');
@@ -536,7 +570,7 @@ $(document).ready(function() {
         }
         
         // Сбросить прогресс-бар
-        if (!state.isPlaying || state.isPaused) {
+        if (!stateManager.isPlaying || stateManager.isPaused) {
             elements.progressBar.css('width', '0%');
         }
     }

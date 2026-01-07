@@ -10,6 +10,8 @@
     box-shadow: 
         0 0 3rem rgba(0, 150, 255, 0.3),
         inset 0 0 30px rgba(0, 0, 0, 0.9);
+    transition: all 0.5s ease;
+    display: none;
 }
 
 /* Эффект водной поверхности */

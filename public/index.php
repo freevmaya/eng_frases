@@ -1,6 +1,6 @@
 <?php
 require_once '../config.php';
-$v = 4;
+$v = 5;
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -30,6 +30,17 @@ $v = 4;
                 </div>
                 <div class="modal-body">
 
+                    <div class="mb-4">
+                        <h6 class="text-info mb-3">
+                            <i class="bi bi-tv me-2"></i>Эффекты отображения
+                        </h6>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="tvScreenToggle" checked>
+                            <label class="form-check-label" for="tvScreenToggle">
+                                Показывать TV-экран
+                            </label>
+                        </div>
+                    </div>
                     <div class="mb-4">
                         <h6 class="text-info mb-3">
                             <i class="bi bi-speedometer2 me-2"></i>Скорость воспроизведения
@@ -141,10 +152,10 @@ $v = 4;
         <!-- Main Content -->
         <div class="row">
             <!-- Left Column - Phrase Card -->
-            <div class="col-lg-8 mb-4">
+            <div class="col-lg-12 mb-4">
                 <div class="card bg-dark-gradient border-primary border-3 animate-card">
 
-                    <!--<div class="tv-screen">
+                    <div class="tv-screen">
                         <div class="water-effect">
                             <div class="water-drops">
                                 <div class="drop"></div>
@@ -163,9 +174,22 @@ $v = 4;
                             </div>
                         </div>
                         <div class="scan-line"></div>
-                    </div>-->
+                    </div>
 
                     <div class="card-body text-center p-4">
+
+                        <div class="play-buttons" id="playButtonsContainer">
+                            <button type="button" class="btn" id="prevBtn" title="Предыдущая фраза">
+                                <i class="bi bi-skip-backward-fill"></i>
+                            </button>
+                            <button type="button" class="btn" id="playButton" title="Воспроизвести/Пауза">
+                                <i class="bi bi-play-fill"></i>
+                            </button>
+                            <button type="button" class="btn" id="nextBtn" title="Следующая фраза">
+                                <i class="bi bi-skip-forward-fill"></i>
+                            </button>
+                        </div>
+
                         <div>
                             <div class="phrase-container">
                                 <div class="phrase-text mb-2 animate-text" id="phraseText">
@@ -189,19 +213,6 @@ $v = 4;
                                 <div class="text-muted small">Прогресс</div>
                                 <div class="h5" id="phraseCounter">0 / 0</div>
                             </div>
-                            <div class="text-center">
-                                <div class="play-buttons">
-                                    <button type="button" class="btn btn-secondary" id="prevBtn" disabled>
-                                        <i class="bi bi-skip-backward"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-success" id="playButton">
-                                        <i class="bi bi-play-circle"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-secondary" id="nextBtn">
-                                        <i class="bi bi-skip-forward"></i>
-                                    </button>
-                                </div>
-                            </div>
                             <div class="text-end">
                                 <button class="btn btn-outline-secondary" id="settingsToggle">
                                     <i class="bi bi-sliders"></i>
@@ -211,60 +222,11 @@ $v = 4;
                     </div>
                 </div>
             </div>
-
-            <!-- Right Column - Controls -->
-            <div class="col-lg-4">
-                <div class="card bg-dark border-secondary h-100 animate-card">
-                    <div class="card-body">
-                        
-                        <div class="d-grid gap-3">
-                            
-                            <button class="btn btn-danger animate-button" id="stopBtn" disabled>
-                                <i class="bi bi-stop-circle me-2"></i>Стоп
-                            </button>
-                            
-                            <div class="text-center">
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-outline-primary" id="speakEnglishBtn">
-                                        <i class="bi bi-volume-up"></i> Англ
-                                    </button>
-                                    <button class="btn btn-outline-primary" id="speakRussianBtn">
-                                        <i class="bi bi-volume-up"></i> Рус
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="quick-stats">
-                            <h6 class="text-info mb-3 mt-2">
-                                <i class="bi bi-graph-up me-2"></i>Быстрые настройки
-                            </h6>
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <div class="d-grid">
-                                        <button class="btn btn-sm btn-outline-secondary speed-btn" data-speed="0.8">
-                                            0.8x
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="d-grid">
-                                        <button class="btn btn-sm btn-outline-secondary speed-btn" data-speed="1.2">
-                                            1.2x
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Footer -->
-        <footer class="mt-5 pt-4 border-top border-secondary text-center text-muted">
+        <footer class="mt-2 pt-4 border-top border-secondary text-center text-muted">
             <p class="small">
-                <i class="bi bi-code-slash"></i> 
                 English Phrases Trainer v<?php echo APP_VERSION; ?> 
                 | Использует Web Speech API для синтеза речи
             </p>
@@ -279,6 +241,13 @@ $v = 4;
     <script type="text/javascript">
         var phrasesData = <?=file_get_contents('data/phrases.json');?>
     </script>
+    <script src="scripts/speech-synthesizer.js?v=<?=$v?>"></script>
+    <script src="scripts/state-manager.js?v=<?=$v?>"></script>
+    <script src="scripts/player-controls.js?v=<?=$v?>"></script>
     <script src="scripts/app.js?v=<?=$v?>"></script>
+    
+    <!-- Eruda is console for mobile browsers-->
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>eruda.init();</script>
 </body>
 </html>
