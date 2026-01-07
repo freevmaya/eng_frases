@@ -67,6 +67,7 @@ $(document).ready(function() {
         initPhraseList();
         loadPhraseList();
         setupEventListeners();
+        setupMediaSession();
         applyTvScreenState();
         updateDisplay();
         
@@ -132,6 +133,51 @@ $(document).ready(function() {
             [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
+    }    
+
+
+    function setupMediaSession() {
+        // Настройка метаданных трека
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: 'English Phrases Trainer',
+            artist: 'Английские фразы',
+            album: 'Обучение языку',
+            artwork: [
+                { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
+                { src: 'icon-512.png', sizes: '512x512', type: 'image/png' }
+            ]
+        });
+        
+        // Обработчики действий
+        navigator.mediaSession.setActionHandler('play', () => {
+            console.log("Down play");
+        });
+        
+        navigator.mediaSession.setActionHandler('pause', () => {
+            console.log("Down pause");
+        });
+        
+        navigator.mediaSession.setActionHandler('previoustrack', () => {
+            console.log("previoustrack");
+        });
+        
+        navigator.mediaSession.setActionHandler('nexttrack', () => {
+            console.log("nexttrack");
+        });
+        
+        // Поддержка seek (перемотка)
+        navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+            console.log("seekbackward");
+        });
+        
+        navigator.mediaSession.setActionHandler('seekforward', (details) => {
+            console.log("seekforward");
+        });
+        
+        // Поддержка остановки
+        navigator.mediaSession.setActionHandler('stop', () => {
+            console.log("stop");
+        });
     }
 
     // Настройка обработчиков событий
@@ -183,6 +229,14 @@ $(document).ready(function() {
         $('[data-order]').click(function() {
             $('[data-order]').removeClass('active');
             $(this).addClass('active');
+        });
+
+        // Обработка события видимости страницы
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                if (stateManager.isPaused || stateManager.isPlaying)
+                    togglePause();
+            }
         });
     }
 
