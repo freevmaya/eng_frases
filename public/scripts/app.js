@@ -1,5 +1,7 @@
 let wakeLock = null;
 let speechSynthesizer = null;
+let playerControls = null;
+let mediaKeysHandler = null;
 
 async function enableWakeLock() {
     if ('wakeLock' in navigator) {
@@ -30,6 +32,27 @@ $(document).ready(function() {
     stateManager.loadState();
 
     playerControls = new PlayerControls();
+    
+    // Инициализируем обработчик медиа-кнопок
+    mediaKeysHandler = new MediaKeysHandler(playerControls);
+
+    window.togglePlay = togglePlay;
+    window.togglePause = togglePause;
+    window.prevPhrase = prevPhrase;
+    window.nextPhrase = nextPhrase;
+    window.stopPlayback = stopPlayback;
+    window.stateManager = stateManager;
+    
+    // Функции для перемотки (если нужны)
+    window.seekBackward = function(seconds) {
+        console.log('Seek backward by', seconds, 'seconds');
+        // Можно добавить логику перемотки
+    };
+    
+    window.seekForward = function(seconds) {
+        console.log('Seek forward by', seconds, 'seconds');
+        // Можно добавить логику перемотки
+    };
 
     const AppConst = {
         charTime: {
@@ -67,7 +90,6 @@ $(document).ready(function() {
         initPhraseList();
         loadPhraseList();
         setupEventListeners();
-        setupMediaSession();
         applyTvScreenState();
         updateDisplay();
         
@@ -133,51 +155,6 @@ $(document).ready(function() {
             [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
-    }    
-
-
-    function setupMediaSession() {
-        // Настройка метаданных трека
-        navigator.mediaSession.metadata = new MediaMetadata({
-            title: 'English Phrases Trainer',
-            artist: 'Английские фразы',
-            album: 'Обучение языку',
-            artwork: [
-                { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
-                { src: 'icon-512.png', sizes: '512x512', type: 'image/png' }
-            ]
-        });
-        
-        // Обработчики действий
-        navigator.mediaSession.setActionHandler('play', () => {
-            console.log("Down play");
-        });
-        
-        navigator.mediaSession.setActionHandler('pause', () => {
-            console.log("Down pause");
-        });
-        
-        navigator.mediaSession.setActionHandler('previoustrack', () => {
-            console.log("previoustrack");
-        });
-        
-        navigator.mediaSession.setActionHandler('nexttrack', () => {
-            console.log("nexttrack");
-        });
-        
-        // Поддержка seek (перемотка)
-        navigator.mediaSession.setActionHandler('seekbackward', (details) => {
-            console.log("seekbackward");
-        });
-        
-        navigator.mediaSession.setActionHandler('seekforward', (details) => {
-            console.log("seekforward");
-        });
-        
-        // Поддержка остановки
-        navigator.mediaSession.setActionHandler('stop', () => {
-            console.log("stop");
-        });
     }
 
     // Настройка обработчиков событий
@@ -229,14 +206,6 @@ $(document).ready(function() {
         $('[data-order]').click(function() {
             $('[data-order]').removeClass('active');
             $(this).addClass('active');
-        });
-
-        // Обработка события видимости страницы
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                if (stateManager.isPaused || stateManager.isPlaying)
-                    togglePause();
-            }
         });
     }
 
@@ -345,6 +314,8 @@ $(document).ready(function() {
         stateManager.isPlaying = true;
         stateManager.isPaused = false;
         state.showingFirstLang = true;
+
+        if (mediaKeysHandler) mediaKeysHandler.setPlaying(true);
         
         // Сохраняем состояние
         stateManager.updatePlaybackState({
@@ -364,8 +335,10 @@ $(document).ready(function() {
         if (stateManager.isPaused) {
             clearTimeout(state.timeoutId);
             clearInterval(state.progressInterval);
+            if (mediaKeysHandler) mediaKeysHandler.setPlaying(false);
         } else {
             playCurrentPhrase();
+            if (mediaKeysHandler) mediaKeysHandler.setPlaying(true);
         }
         
         updateControls();
@@ -378,6 +351,8 @@ $(document).ready(function() {
         clearTimeout(state.timeoutId);
         clearInterval(state.progressInterval);
         speechSynthesizer.stop();
+    
+        if (mediaKeysHandler) mediaKeysHandler.setPlaying(false);
         
         updateControls();
         updateDisplay();
@@ -587,6 +562,14 @@ $(document).ready(function() {
             
             elements.phraseCounter.text(`${state.currentPhraseIndex + 1} / ${state.currentPhraseList.length}`);
             elements.phraseType.text(formatTitle(state.currentPhrase.type));
+
+            if (mediaKeysHandler) {
+                mediaKeysHandler.updateTrackInfo(state.currentPhrase);
+                mediaKeysHandler.updateProgress(
+                    state.currentPhraseIndex + 1, 
+                    state.currentPhraseList.length
+                );
+            }
         }
     }
 

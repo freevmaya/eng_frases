@@ -321,3 +321,25 @@
     border-color: rgba(255, 255, 255, 0.1) !important;
     cursor: not-allowed;
 }
+
+/* Индикатор поддержки медиа-кнопок */
+.media-keys-status {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    z-index: 1000;
+    display: none;
+}
+
+.media-keys-status.supported {
+    background: rgba(76, 175, 80, 0.7);
+}
+
+.media-keys-status.unsupported {
+    background: rgba(244, 67, 54, 0.7);
+}
