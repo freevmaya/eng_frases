@@ -1,6 +1,6 @@
 <?php
 require_once '../config.php';
-$v = 9;
+$v = 10;
 ?>
 <!DOCTYPE html>
 <html lang="ru">
