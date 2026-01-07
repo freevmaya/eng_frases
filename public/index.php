@@ -21,9 +21,6 @@ $v = 11;
     <link rel="stylesheet" href="css/style-waves.css?v=<?=$v?>">
 </head>
 <body class="dark-theme">
-    <audio controls style="opacity: 0; position: absolute;" id="audioElem">
-      <source src="Celtic.mp3" type="audio/mpeg">
-    </audio>
     <!-- Settings Modal -->
     <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -238,6 +235,9 @@ $v = 11;
             </p>
         </footer>
     </div>
+    <audio controls style="opacity: 0.2; position: absolute;" id="audioElem">
+      <source src="empty.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- Bootstrap & jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>

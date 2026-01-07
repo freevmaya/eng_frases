@@ -39,14 +39,14 @@ class HeadphoneControls {
         // Устанавливаем действия
         navigator.mediaSession.setActionHandler('play', () => {
             console.log("Play");
-            audioFocus();
-            //this.playerController.togglePlay();
+            playerControls.show();
+            this.playerController.togglePlay();
         });
         
         navigator.mediaSession.setActionHandler('pause', () => {
             console.log("Pause");
-            audioFocus();
-            //this.playerController.togglePause();
+            playerControls.show();
+            this.playerController.togglePlay();
         });
         
         navigator.mediaSession.setActionHandler('previoustrack', () => {

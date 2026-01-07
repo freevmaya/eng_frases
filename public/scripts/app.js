@@ -89,8 +89,8 @@ $(document).ready(function() {
         // Обработка события видимости страницы
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
-                if (stateManager.isPaused || stateManager.isPlaying)
-                    togglePause();
+                if (!stateManager.isPaused && stateManager.isPlaying)
+                    stopPlayback();
             }
         });
     }
