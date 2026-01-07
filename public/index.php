@@ -1,6 +1,6 @@
 <?php
 require_once '../config.php';
-$v = 7;
+$v = 9;
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -20,6 +20,10 @@ $v = 7;
     <link rel="stylesheet" href="css/style-waves.css?v=<?=$v?>">
 </head>
 <body class="dark-theme">
+    <audio id="bluetoothAudio" loop style="display: none;">
+        <source src="data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV" type="audio/mpeg">
+        Ваш браузер не поддерживает аудио элемент.
+    </audio>
     <!-- Settings Modal -->
     <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -252,5 +256,40 @@ $v = 7;
     <!-- Eruda is console for mobile browsers-->
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <script>eruda.init();</script>
+
+    <!-- Отладочная панель для Bluetooth (только в development) -->
+    <div id="bluetoothDebug" style="position: fixed; bottom: 10px; left: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; border-radius: 5px; font-size: 12px; z-index: 9999; display: none;">
+        <h6>Bluetooth Media Keys Debug</h6>
+        <div>Status: <span id="bluetoothStatus">Checking...</span></div>
+        <div>Playback: <span id="bluetoothPlayback">stopped</span></div>
+        <div>Last Key: <span id="lastKey">none</span></div>
+        <button onclick="testBluetoothPlay()" class="btn btn-sm btn-success">Test Play</button>
+        <button onclick="testBluetoothPause()" class="btn btn-sm btn-warning">Test Pause</button>
+    </div>
+
+    <script>
+        // Функции для тестирования
+        function testBluetoothPlay() {
+            console.log('Manual test: Play');
+            if (window.mediaKeysHandler) {
+                window.mediaKeysHandler.handlePlay();
+            }
+        }
+
+        function testBluetoothPause() {
+            console.log('Manual test: Pause');
+            if (window.mediaKeysHandler) {
+                window.mediaKeysHandler.handlePause();
+            }
+        }
+
+        // Показать отладочную панель
+        function showBluetoothDebug() {
+            document.getElementById('bluetoothDebug').style.display = 'block';
+        }
+
+        // Экспорт хендлера в глобальную область
+        window.mediaKeysHandler = mediaKeysHandler;
+    </script>
 </body>
 </html>

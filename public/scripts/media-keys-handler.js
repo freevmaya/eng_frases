@@ -9,12 +9,22 @@ class MediaKeysHandler {
         this.currentTrack = 0;
         this.totalTracks = 0;
         
+        // Аудио элемент для Bluetooth
+        this.audioElement = null;
+        this.silentAudioUrl = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=='; // 1 секунда тишины
+        
         this.init();
     }
     
     init() {
+        // Сначала создаем аудио элемент
+        this.setupAudioElement();
+        
+        // Затем настраиваем Media Session
         if (!this.isSupported) {
             console.warn('Media Session API не поддерживается в этом браузере');
+            console.log('Используем fallback для Bluetooth кнопок');
+            this.setupFallbackListeners();
             return;
         }
         
@@ -22,48 +32,130 @@ class MediaKeysHandler {
         this.setupEventListeners();
     }
     
+    setupAudioElement() {
+        // Используем существующий элемент или создаем новый
+        this.audioElement = document.getElementById('bluetoothAudio');
+        
+        if (!this.audioElement) {
+            this.audioElement = document.createElement('audio');
+            this.audioElement.id = 'bluetoothAudio';
+            this.audioElement.style.display = 'none';
+            this.audioElement.loop = true;
+            
+            // Добавляем источник с тихим звуком
+            const source = document.createElement('source');
+            source.src = this.silentAudioUrl;
+            source.type = 'audio/wav';
+            this.audioElement.appendChild(source);
+            
+            document.body.appendChild(this.audioElement);
+        }
+        
+        // Настраиваем аудио
+        this.audioElement.volume = 0.01; // Почти беззвучно
+        this.audioElement.preload = 'auto';
+        
+        // События аудио
+        this.audioElement.addEventListener('play', () => {
+            console.log('Bluetooth audio element started');
+        });
+        
+        this.audioElement.addEventListener('pause', () => {
+            console.log('Bluetooth audio element paused');
+        });
+    }
+    
     setupMediaSession() {
-        // Настройка метаданных трека
-        navigator.mediaSession.metadata = new MediaMetadata({
-            title: 'English Phrases Trainer',
-            artist: 'Английские фразы',
-            album: 'Обучение языку',
-            artwork: [
-                { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
-                { src: 'icon-512.png', sizes: '512x512', type: 'image/png' }
-            ]
-        });
+        if (!this.isSupported) return;
         
-        // Обработчики действий
-        navigator.mediaSession.setActionHandler('play', () => {
-            this.handlePlay();
-        });
-        
-        navigator.mediaSession.setActionHandler('pause', () => {
-            this.handlePause();
-        });
-        
-        navigator.mediaSession.setActionHandler('previoustrack', () => {
-            this.handlePreviousTrack();
-        });
-        
-        navigator.mediaSession.setActionHandler('nexttrack', () => {
-            this.handleNextTrack();
-        });
-        
-        // Поддержка seek (перемотка)
-        navigator.mediaSession.setActionHandler('seekbackward', (details) => {
-            this.handleSeekBackward(details);
-        });
-        
-        navigator.mediaSession.setActionHandler('seekforward', (details) => {
-            this.handleSeekForward(details);
-        });
-        
-        // Поддержка остановки
-        navigator.mediaSession.setActionHandler('stop', () => {
-            this.handleStop();
-        });
+        try {
+            // Настройка метаданных трека с полной информацией
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: 'English Phrases Trainer',
+                artist: 'Изучение английского языка',
+                album: 'Фразы и предложения',
+                artwork: [
+                    { src: 'icon-96.png', sizes: '96x96', type: 'image/png' },
+                    { src: 'icon-128.png', sizes: '128x128', type: 'image/png' },
+                    { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
+                    { src: 'icon-256.png', sizes: '256x256', type: 'image/png' },
+                    { src: 'icon-384.png', sizes: '384x384', type: 'image/png' },
+                    { src: 'icon-512.png', sizes: '512x512', type: 'image/png' }
+                ]
+            });
+            
+            // ОЧЕНЬ ВАЖНО: Установка состояния воспроизведения
+            navigator.mediaSession.playbackState = 'none';
+            
+            // Установка всех обработчиков с проверкой поддержки
+            try {
+                navigator.mediaSession.setActionHandler('play', () => {
+                    console.log('Bluetooth Media Key: PLAY pressed');
+                    this.handlePlay();
+                });
+            } catch (e) {
+                console.log('Play action not supported:', e.message);
+            }
+            
+            try {
+                navigator.mediaSession.setActionHandler('pause', () => {
+                    console.log('Bluetooth Media Key: PAUSE pressed');
+                    this.handlePause();
+                });
+            } catch (e) {
+                console.log('Pause action not supported:', e.message);
+            }
+            
+            try {
+                navigator.mediaSession.setActionHandler('previoustrack', () => {
+                    console.log('Bluetooth Media Key: PREVIOUS pressed');
+                    this.handlePreviousTrack();
+                });
+            } catch (e) {
+                console.log('Previous track action not supported:', e.message);
+            }
+            
+            try {
+                navigator.mediaSession.setActionHandler('nexttrack', () => {
+                    console.log('Bluetooth Media Key: NEXT pressed');
+                    this.handleNextTrack();
+                });
+            } catch (e) {
+                console.log('Next track action not supported:', e.message);
+            }
+            
+            try {
+                navigator.mediaSession.setActionHandler('stop', () => {
+                    console.log('Bluetooth Media Key: STOP pressed');
+                    this.handleStop();
+                });
+            } catch (e) {
+                console.log('Stop action not supported:', e.message);
+            }
+            
+            try {
+                navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+                    console.log('Bluetooth Media Key: SEEK BACKWARD', details);
+                    this.handleSeekBackward(details);
+                });
+            } catch (e) {
+                console.log('Seek backward action not supported:', e.message);
+            }
+            
+            try {
+                navigator.mediaSession.setActionHandler('seekforward', (details) => {
+                    console.log('Bluetooth Media Key: SEEK FORWARD', details);
+                    this.handleSeekForward(details);
+                });
+            } catch (e) {
+                console.log('Seek forward action not supported:', e.message);
+            }
+            
+            console.log('Media Session configured for Bluetooth headphones');
+            
+        } catch (error) {
+            console.error('Error setting up Media Session:', error);
+        }
     }
     
     setupEventListeners() {
@@ -86,22 +178,35 @@ class MediaKeysHandler {
     }
     
     handlePlay() {
-        console.log('Media key: Play');
+        console.log('Bluetooth Media Key: Play');
         this.isPlaying = true;
+        
+        // ВАЖНО: Запускаем аудио элемент для активации Bluetooth
+        if (this.audioElement) {
+            this.audioElement.play().catch(e => {
+                console.log('Audio play error (expected):', e.message);
+            });
+        }
+        
+        // Обновление состояния Media Session
+        navigator.mediaSession.playbackState = 'playing';
         
         // Запуск воспроизведения в основном приложении
         if (window.togglePlay && typeof window.togglePlay === 'function') {
             window.togglePlay();
         }
         
-        // Обновление состояния Media Session
-        navigator.mediaSession.playbackState = 'playing';
         this.updatePositionState();
     }
     
     handlePause() {
-        console.log('Media key: Pause');
+        console.log('Bluetooth Media Key: Pause');
         this.isPlaying = false;
+        
+        // Пауза аудио элемента
+        if (this.audioElement) {
+            this.audioElement.pause();
+        }
         
         // Пауза в основном приложении
         if (window.togglePause && typeof window.togglePause === 'function') {
@@ -109,6 +214,33 @@ class MediaKeysHandler {
         }
         
         navigator.mediaSession.playbackState = 'paused';
+    }
+    
+    setupVisibilityHandlers() {
+        // ВАЖНО: Браузеры блокируют аудио при скрытии вкладки
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                console.log('Page hidden, suspending audio');
+                if (this.audioContextManager) {
+                    this.audioContextManager.suspend();
+                }
+            } else {
+                console.log('Page visible, resuming audio');
+                if (this.audioContextManager && this.isPlaying) {
+                    this.audioContextManager.resume();
+                }
+            }
+        });
+        
+        // Обработка фокуса окна
+        window.addEventListener('focus', () => {
+            console.log('Window focused');
+            this.activateAudio();
+        });
+        
+        window.addEventListener('blur', () => {
+            console.log('Window blurred');
+        });
     }
     
     handlePreviousTrack() {
@@ -152,8 +284,14 @@ class MediaKeysHandler {
     }
     
     handleStop() {
-        console.log('Media key: Stop');
+        console.log('Bluetooth Media Key: Stop');
         this.isPlaying = false;
+        
+        // Остановка аудио элемента
+        if (this.audioElement) {
+            this.audioElement.pause();
+            this.audioElement.currentTime = 0;
+        }
         
         // Остановка воспроизведения
         if (window.stopPlayback && typeof window.stopPlayback === 'function') {
@@ -161,6 +299,29 @@ class MediaKeysHandler {
         }
         
         navigator.mediaSession.playbackState = 'none';
+    }
+
+    // Fallback для браузеров без Media Session API
+    setupFallbackListeners() {
+        console.log('Setting up fallback listeners for Bluetooth');
+        
+        // Обработка клавиш медиа-управления
+        document.addEventListener('keydown', (e) => {
+            this.handleKeyDown(e);
+        });
+        
+        // Обработка событий от аудио элемента
+        if (this.audioElement) {
+            this.audioElement.addEventListener('play', () => {
+                console.log('Fallback: Audio play triggered');
+                this.handlePlay();
+            });
+            
+            this.audioElement.addEventListener('pause', () => {
+                console.log('Fallback: Audio pause triggered');
+                this.handlePause();
+            });
+        }
     }
     
     handleKeyDown(e) {
@@ -272,14 +433,55 @@ class MediaKeysHandler {
     
     // Получение состояния поддержки
     getSupportStatus() {
-        return {
-            mediaSession: this.isSupported,
-            actions: {
-                play: navigator.mediaSession && !!navigator.mediaSession.setActionHandler('play'),
-                pause: navigator.mediaSession && !!navigator.mediaSession.setActionHandler('pause'),
-                previous: navigator.mediaSession && !!navigator.mediaSession.setActionHandler('previoustrack'),
-                next: navigator.mediaSession && !!navigator.mediaSession.setActionHandler('nexttrack')
+        // Безопасная проверка без вызова setActionHandler
+        const checkSupport = () => {
+            const support = {
+                basic: {
+                    mediaSession: 'mediaSession' in navigator,
+                    audioContext: 'AudioContext' in window || 'webkitAudioContext' in window,
+                    htmlAudio: 'HTMLAudioElement' in window
+                },
+                mediaSessionDetails: {}
+            };
+            
+            if (support.basic.mediaSession) {
+                const ms = navigator.mediaSession;
+                support.mediaSessionDetails = {
+                    metadata: 'metadata' in ms,
+                    playbackState: 'playbackState' in ms,
+                    setActionHandler: 'setActionHandler' in ms,
+                    setPositionState: 'setPositionState' in ms
+                };
+                
+                // Проверяем, какие действия доступны (без вызова)
+                support.mediaSessionDetails.supportedActions = [];
+                const testActions = ['play', 'pause', 'previoustrack', 'nexttrack', 'stop'];
+                
+                testActions.forEach(action => {
+                    try {
+                        // Безопасная проверка - пробуем установить null и сразу очистить
+                        ms.setActionHandler(action, null);
+                        ms.setActionHandler(action, null); // Очищаем
+                        support.mediaSessionDetails.supportedActions.push(action);
+                    } catch (e) {
+                        // Действие не поддерживается
+                    }
+                });
             }
+            
+            return support;
         };
+        
+        try {
+            return checkSupport();
+        } catch (error) {
+            return {
+                error: error.message,
+                basic: {
+                    mediaSession: 'mediaSession' in navigator,
+                    userAgent: navigator.userAgent.substring(0, 100)
+                }
+            };
+        }
     }
 }

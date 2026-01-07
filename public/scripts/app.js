@@ -639,4 +639,27 @@ $(document).ready(function() {
 
     // Инициализация при загрузке
     init();
+
+    // Экспорт для отладки
+    window.appState = state;
+    window.appElements = elements;
+    window.appFunctions = {
+        togglePlay,
+        togglePause,
+        prevPhrase,
+        nextPhrase,
+        startPlayback,
+        stopPlayback
+    };
+
+    // Показать отладочную панель при двойном клике
+    $(document).on('dblclick', function() {
+        showBluetoothDebug();
+    });
+
+    // Инициализация после загрузки
+    setTimeout(() => {
+        console.log('App initialized. Bluetooth support:', 
+            mediaKeysHandler ? mediaKeysHandler.getSupportStatus() : 'No handler');
+    }, 1000);
 });
