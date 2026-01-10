@@ -235,9 +235,6 @@ $v = 12;
             </p>
         </footer>
     </div>
-    <audio controls style="opacity: 0.2; position: absolute;" id="audioElem">
-      <source src="empty.mp3" type="audio/mpeg">
-    </audio>
 
     <!-- Bootstrap & jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -250,7 +247,7 @@ $v = 12;
     <script src="scripts/speech-synthesizer.js?v=<?=$v?>"></script>
     <script src="scripts/state-manager.js?v=<?=$v?>"></script>
     <script src="scripts/player-controls.js?v=<?=$v?>"></script>
-    <script src="scripts/headphone-controls.js?v=<?=$v?>"></script>
+    <!--<script src="scripts/headphone-controls.js?v=<?=$v?>"></script>-->
     <script src="scripts/app.js?v=<?=$v?>"></script>
     
     <!-- Eruda is console for mobile browsers-->

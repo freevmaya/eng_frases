@@ -1,7 +1,6 @@
 let wakeLock = null;
 let speechSynthesizer = null;
 let stateManager = null;
-let headphoneControls = null;
 
 async function enableWakeLock() {
     if ('wakeLock' in navigator) {
@@ -32,15 +31,6 @@ $(document).ready(function() {
     stateManager.loadState();
 
     playerControls = new PlayerControls();
-
-    // Инициализируем управление через наушники <-- Добавляем эту строку
-    headphoneControls = new HeadphoneControls({
-        togglePlay: togglePlay,
-        togglePause: togglePause,
-        prevPhrase: prevPhrase,
-        nextPhrase: nextPhrase,
-        stopPlayback: stopPlayback
-    });
 
     const AppConst = {
         charTime: {
@@ -569,22 +559,6 @@ $(document).ready(function() {
             const hasPrev = stateManager.isPlaying && state.currentPhraseList.length > 0;
             const hasNext = state.currentPhraseList.length > 0;
             playerControls.updateNavigationButtons(hasPrev, hasNext);
-        }
-
-        // Обновляем медиа-сессию для наушников <-- Добавляем этот блок
-        if (headphoneControls) {
-            headphoneControls.updatePlaybackState(
-                stateManager.isPlaying, 
-                stateManager.isPaused
-            );
-            
-            if (state.currentPhrase && state.currentPhraseList.length > 0) {
-                headphoneControls.updateCurrentPhraseInfo(
-                    state.currentPhrase,
-                    state.currentPhraseIndex,
-                    state.currentPhraseList.length
-                );
-            }
         }
 
         let playBi = elements.playButton.find('.bi');
