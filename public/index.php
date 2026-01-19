@@ -1,6 +1,6 @@
 <?php
 require_once '../config.php';
-$v = 14;
+$v = 15;
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -217,7 +217,7 @@ $v = 14;
                                 <div class="h5" id="phraseCounter">0 / 0</div>
                             </div>
                             <div>
-                                <select class="form-select bg-dark text-light border-secondary" id="phraseListPlayer">
+                                <select class="form-select bg-dark text-light border-secondary" style="display: none;" id="phraseListPlayer">
                                 </select>
                             </div>
                             <div class="text-end">

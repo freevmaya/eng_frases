@@ -238,7 +238,7 @@ $(document).ready(function() {
             $(this).addClass('active');
         });
 
-        /*
+        
         elements.phraseListPlayer.on('change', (e)=>{
 
             state.currentListType = elements.phraseListPlayer.val();
@@ -252,7 +252,7 @@ $(document).ready(function() {
                 phrasesData
             );
             stateManager.setCurrentListData(listKey);
-        });*/
+        });
     }
 
     // Открытие модального окна настроек
