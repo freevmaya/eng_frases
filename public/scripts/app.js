@@ -547,7 +547,7 @@ $(document).ready(function() {
 
     // Обновить кнопки управления
     function updateControls() {
-        let isPlay = !stateManager.isPlaying && !stateManager.isPaused;
+        let isPlay = stateManager.isPlaying && !stateManager.isPaused;
 
         if (isPlay) enableWakeLock();
         else disableWakeLock();
