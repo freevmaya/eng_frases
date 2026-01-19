@@ -12,7 +12,7 @@ class StateManager {
             pauseBetweenLanguages: 2,
             
             // Направление и порядок
-            direction: 'ru-en',
+            direction: 'native-target',
             order: 'sequential',
             currentListType: 'all',
             
@@ -69,6 +69,13 @@ class StateManager {
         };
     }
     
+    // Проверка, изменился ли список фраз
+    hasListChanged(newListType, newOrder, phrasesData) {
+        const oldKey = this.state.currentListKey;
+        const newKey = this.generateListKey(newListType, newOrder, phrasesData);
+        return oldKey !== newKey;
+    }
+    
     // Обновление состояния воспроизведения
     updatePlaybackState(state) {
         const playbackKeys = ['currentPhraseIndex', 'showingFirstLang'];
@@ -97,13 +104,6 @@ class StateManager {
         this.state.currentListKey = listKey;
         this.state.randomSeed = randomSeed;
         this.saveState();
-    }
-    
-    // Проверка, изменился ли список фраз
-    hasListChanged(newListType, newOrder, phrasesData) {
-        const oldKey = this.state.currentListKey;
-        const newKey = this.generateListKey(newListType, newOrder, phrasesData);
-        return oldKey !== newKey;
     }
     
     // Генерация ключа для списка

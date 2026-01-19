@@ -147,7 +147,7 @@ class HeadphoneControls {
     updateCurrentPhraseInfo(phrase, index, total) {
         if (!phrase) return;
         
-        const title = phrase.english || phrase.russian || 'No phrase';
+        const title = phrase.target || phrase.native || 'No phrase';
         const artist = `Phrase ${index + 1} of ${total}`;
         const album = phrase.type || 'English Training';
         

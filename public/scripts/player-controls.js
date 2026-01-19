@@ -47,7 +47,7 @@ class PlayerControls {
         
         // Показ контролов по клику на контейнер
         this.elements.parent.click(function(e) {
-            if (self.state.controlsEnabled && !self.state.visible) {
+            if (!isAnyInputElement(e.target) && self.state.controlsEnabled && !self.state.visible) {
                 e.stopPropagation();
                 self.show();
                 self.resetAutoHide();

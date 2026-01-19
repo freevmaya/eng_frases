@@ -21,6 +21,16 @@ async function disableWakeLock() {
     }
 }
 
+function isAnyInputElement(element) {
+    const $el = $(element);
+    const el = $el[0];
+    
+    if (!el) return false;
+    
+    const tagName = el.tagName.toLowerCase();
+    return ['input', 'textarea', 'select', 'button'].includes(tagName);
+}
+
 $(document).ready(function() {
     
     // Инициализируем синтезатор речи
@@ -34,8 +44,8 @@ $(document).ready(function() {
 
     const AppConst = {
         charTime: {
-            english: 60, 
-            russian: 70
+            target: 60, 
+            native: 70
         }
     }
 
@@ -60,21 +70,14 @@ $(document).ready(function() {
         pauseValue: $('#pauseValue'),
         langPauseValue: $('#langPauseValue'),
         phraseListSelect: $('#phraseListSelect'),
+        phraseListPlayer: $('#phraseListPlayer'),
         tvScreenToggle: $('#tvScreenToggle')
     };
 
     // Инициализация
-    function init() {
-        initPhraseList();
-        loadPhraseList();
+    function init(fileUrl) {
         setupEventListeners();
         applyTvScreenState();
-        updateDisplay();
-        
-        // Восстанавливаем отображение из сохранённого состояния
-        if (state.currentPhrase) {
-            updateDisplay();
-        }
 
         // Обработка события видимости страницы
         document.addEventListener('visibilitychange', () => {
@@ -83,18 +86,59 @@ $(document).ready(function() {
                     stopPlayback();
             }
         });
+
+        openList(fileUrl);
     }
 
-    function initPhraseList() {
-        let select = $('#phraseListSelect');
+    function openList(fileUrl) {
+        // Инициализация при загрузке
+        fetch(fileUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Failed to load ${fileUrl}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data) {
+                        phrasesData = data;
+                        initPhraseList();
+                        loadPhraseList();
+                
+                        // Восстанавливаем отображение из сохранённого состояния
+                        if (state.currentPhrase) {
+                            updateDisplay();
+                        }
+                    }
+                });
+    }
+
+    function loadPhrasesFromJson(fileUrl) {
+        return fetch(fileUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Failed to load ${fileUrl}`);
+                    }
+                    return response.json();
+                });
+    }
+
+    function fullPhraseList(select) {
+
         select.empty();
         select.append($(`<option value="all">Все фразы (смешанные)</option>`));
         Object.keys(phrasesData).forEach(key => {
-            select.append($(`<option value="${key}">${key}</option>`));
+            let count = phrasesData[key].length;
+            select.append($(`<option value="${key}">${key} (${count})</option>`));
             phrasesData[key].forEach((phrase, i) => {
                 phrasesData[key][i].type = key;
             });
         });
+    }
+
+    function initPhraseList() {
+        fullPhraseList(elements.phraseListSelect);
+        fullPhraseList(elements.phraseListPlayer);
     }
 
     // Загрузка списка фраз
@@ -106,7 +150,7 @@ $(document).ready(function() {
                 state.currentPhraseList = state.currentPhraseList.concat(phrasesData[key]);
             });
         } else {
-            state.currentPhraseList = phrasesData[state.currentListType] || [];
+            state.currentPhraseList = [].concat(phrasesData[state.currentListType]) || [];
         }
         
         // Применяем порядок с сохранением seed для воспроизводимости
@@ -193,6 +237,22 @@ $(document).ready(function() {
             $('[data-order]').removeClass('active');
             $(this).addClass('active');
         });
+
+        /*
+        elements.phraseListPlayer.on('change', (e)=>{
+
+            state.currentListType = elements.phraseListPlayer.val();
+
+            loadPhraseList();
+            
+            // Сохраняем ключ текущего списка
+            const listKey = stateManager.generateListKey(
+                state.currentListType, 
+                state.order, 
+                phrasesData
+            );
+            stateManager.setCurrentListData(listKey);
+        });*/
     }
 
     // Открытие модального окна настроек
@@ -242,7 +302,7 @@ $(document).ready(function() {
         Object.assign(state, stateManager.getState());
         
         // Задача 2: Перезагружаем список только если изменился тип списка или порядок
-        if (changes.listChanged) {
+        if (changes.listChanged || listChanged) {
             loadPhraseList();
             
             // Сохраняем ключ текущего списка
@@ -411,14 +471,14 @@ $(document).ready(function() {
 
     // Воспроизведение в обоих направлениях
     function playBothDirections() {
-        const isEnFirst = state.direction === 'en-ru-both';
-        const firstLang = isEnFirst ? 'english' : 'russian';
-        const secondLang = isEnFirst ? 'russian' : 'english';
+        const isEnFirst = state.direction === 'target-native-both';
+        const firstLang = isEnFirst ? 'target' : 'native';
+        const secondLang = isEnFirst ? 'native' : 'target';
         
         if (state.showingFirstLang) {
             // Показываем и озвучиваем первый язык
             showPhrase(firstLang);
-            speechSynthesizer.speak(state.currentPhrase[firstLang], firstLang === 'english', state.speed);
+            speechSynthesizer.speak(state.currentPhrase[firstLang], firstLang === 'target', state.speed);
             startProgressTimer(state.pauseBetweenLanguages);
             
             state.timeoutId = setTimeout(() => {
@@ -431,7 +491,7 @@ $(document).ready(function() {
                 state.currentPhrase[secondLang].length * AppConst.charTime[secondLang] * 1 / state.speed;
 
             showPhrase(secondLang);
-            speechSynthesizer.speak(state.currentPhrase[secondLang], secondLang === 'english', state.speed);
+            speechSynthesizer.speak(state.currentPhrase[secondLang], secondLang === 'target', state.speed);
             startProgressTimer(state.pauseBetweenPhrases);
             
             state.timeoutId = setTimeout(() => {
@@ -444,11 +504,11 @@ $(document).ready(function() {
 
     // Воспроизведение в одном направлении
     function playSingleDirection() {
-        const showLang = state.direction === 'en-ru' ? 'english' : 'russian';
-        const speakLang = state.direction === 'en-ru' ? 'russian' : 'english';
+        const showLang = state.direction === 'target-native' ? 'target' : 'native';
+        const speakLang = state.direction === 'target-native' ? 'native' : 'target';
         
         showPhrase(showLang);
-        speechSynthesizer.speak(state.currentPhrase[speakLang], speakLang === 'english', state.speed);
+        speechSynthesizer.speak(state.currentPhrase[speakLang], speakLang === 'target', state.speed);
         startProgressTimer(state.pauseBetweenPhrases);
         
         state.timeoutId = setTimeout(() => {
@@ -471,13 +531,13 @@ $(document).ready(function() {
 
     // Показать фразу
     function showPhrase(lang) {
-        if (lang === 'english') {
-            updatePhrases(state.currentPhrase.english, state.currentPhrase.russian);
+        if (lang === 'target') {
+            updatePhrases(state.currentPhrase.target, state.currentPhrase.native);
 
             elements.phraseText.addClass('text-info');
             elements.phraseHint.removeClass('text-info').addClass('text-muted');
         } else {
-            updatePhrases(state.currentPhrase.russian, state.currentPhrase.english);
+            updatePhrases(state.currentPhrase.native, state.currentPhrase.target);
 
             elements.phraseText.removeClass('text-info');
             elements.phraseHint.addClass('text-info');
@@ -495,7 +555,7 @@ $(document).ready(function() {
     // Озвучить текущую фразу
     function speakCurrentPhrase(lang) {
         if (!state.currentPhrase) return;
-        speechSynthesizer.speak(state.currentPhrase[lang], lang === 'english', state.speed);
+        speechSynthesizer.speak(state.currentPhrase[lang], lang === 'target', state.speed);
     }
 
     // Запустить таймер прогресса
@@ -535,7 +595,7 @@ $(document).ready(function() {
         
         if (state.currentPhrase) {
             if (!stateManager.isPlaying) {
-                updatePhrases(state.currentPhrase.russian, state.currentPhrase.english);
+                updatePhrases(state.currentPhrase.native, state.currentPhrase.target);
                 elements.phraseText.removeClass('text-info');
                 elements.phraseHint.addClass('text-info');
             }
@@ -608,7 +668,6 @@ $(document).ready(function() {
         $('body').append(alert);
         setTimeout(() => alert.alert('close'), 3000);
     }
-
-    // Инициализация при загрузке
-    init();
+    
+    init('data/en-ru.json');
 });

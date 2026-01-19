@@ -1,6 +1,6 @@
 <?php
 require_once '../config.php';
-$v = 13;
+$v = 14;
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -95,10 +95,10 @@ $v = 13;
                             <i class="bi bi-arrow-left-right me-2"></i>Направление перевода
                         </h6>
                         <div class="btn-group w-100" role="group">
-                            <button type="button" class="btn btn-outline-primary active" data-direction="ru-en">
+                            <button type="button" class="btn btn-outline-primary" data-direction="native-target">
                                 Русский → Английский
                             </button>
-                            <button type="button" class="btn btn-outline-primary" data-direction="en-ru">
+                            <button type="button" class="btn btn-outline-primary" data-direction="target-native">
                                 Английский → Русский
                             </button>
                         </div>
@@ -109,10 +109,10 @@ $v = 13;
                             <i class="bi bi-arrow-repeat me-2"></i>Режим "Оба направления"
                         </h6>
                         <div class="btn-group w-100" role="group">
-                            <button type="button" class="btn btn-outline-success" data-direction="en-ru-both">
+                            <button type="button" class="btn btn-outline-success" data-direction="target-native-both">
                                 Англ → Рус → Пауза
                             </button>
-                            <button type="button" class="btn btn-outline-success" data-direction="ru-en-both">
+                            <button type="button" class="btn btn-outline-success" data-direction="native-target-both">
                                 Рус → Англ → Пауза
                             </button>
                         </div>
@@ -216,6 +216,10 @@ $v = 13;
                                 <div class="text-muted small">Прогресс</div>
                                 <div class="h5" id="phraseCounter">0 / 0</div>
                             </div>
+                            <div>
+                                <select class="form-select bg-dark text-light border-secondary" id="phraseListPlayer">
+                                </select>
+                            </div>
                             <div class="text-end">
                                 <button class="btn btn-outline-secondary" id="settingsToggle">
                                     <i class="bi bi-sliders"></i>
@@ -240,10 +244,6 @@ $v = 13;
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- App Scripts -->
-    <script type="text/javascript">
-        var phrasesData = <?=file_get_contents('data/phrases.json');?>
-    </script>
     <script src="scripts/speech-synthesizer.js?v=<?=$v?>"></script>
     <script src="scripts/state-manager.js?v=<?=$v?>"></script>
     <script src="scripts/player-controls.js?v=<?=$v?>"></script>
