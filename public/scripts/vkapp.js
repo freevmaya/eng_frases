@@ -6,6 +6,7 @@ class VKApp {
             	console.log(response);
 			});
 
+		/*
 	    let container = $('body');
 	    const resizeObserver = new ResizeObserver(debounce(()=>{
 	        if (vkBridge)
@@ -14,5 +15,6 @@ class VKApp {
 	            })
 	    }, 50));
 	    resizeObserver.observe(container[0]);
+	    */
 	}
 }
