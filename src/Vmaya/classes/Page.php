@@ -43,10 +43,12 @@ class Page {
 
 			if ($userDB = $this->userModel->getItem($user['id']))
 				$user = array_merge($user, $userDB);
-			$language = $user['language_code'];
-		} else die("There isn't authorize");
 		
-		include_once(LANGUAGE_PATH.$language.'.php');
+			include_once(LANGUAGE_PATH.$user['language_code'].'.php');
+		} else {
+			die("There isn't authorize");
+			include_once(LANGUAGE_PATH.DEFAULT_LANGUAGE.'.php');
+		}
 
 		$this->model = $this->initModel();
 

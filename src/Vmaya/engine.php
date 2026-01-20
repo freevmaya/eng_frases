@@ -16,6 +16,8 @@
 	define('DEVUSER', 1573356581);
 	define("JSON_FLAGS", JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);
 
+	define('DEFAULT_LANGUAGE', 'ru');
+
 	include(INCLUDE_PATH.DS."_edbu2.php");
 	include(INCLUDE_PATH.DS."console.php");
 	include(INCLUDE_PATH.DS."fdbg.php");
