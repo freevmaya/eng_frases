@@ -17,7 +17,7 @@
 
 .dark-theme {
     background: linear-gradient(135deg, var(--darker) 0%, #1a1d20 100%);
-    min-height: 100vh;
+    min-height: 100%;
     color: var(--light);
 }
 
