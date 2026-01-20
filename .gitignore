@@ -4,11 +4,10 @@
 *.log.*
 logs/*
 config/*
-config.*
+config.php
 sessions/*
 /sessions
 /test
-config*.php
 downloads
 combined.txt
 update
