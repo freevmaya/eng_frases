@@ -16,8 +16,12 @@
 }
 
 .dark-theme {
-    background: linear-gradient(135deg, var(--darker) 0%, #212c37 100%);
-    min-height: 100vw;
+    background: linear-gradient(180deg, 
+        var(--dark), 
+        #0b2135,
+        var(--dark) 
+    );
+    min-height: 100%;
     overflow: hidden;
     color: var(--light);
 }
