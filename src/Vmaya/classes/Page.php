@@ -46,7 +46,6 @@ class Page {
 		
 			include_once(LANGUAGE_PATH.$user['language_code'].'.php');
 		} else {
-			die("There isn't authorize");
 			include_once(LANGUAGE_PATH.DEFAULT_LANGUAGE.'.php');
 		}
 
