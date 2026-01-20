@@ -14,6 +14,6 @@ define('BASEURL', 'https://eng-frases.com/');
 
 
 define('_dbhost', 'localhost');
-define('_dbname_default', 'taxi-bir');
+define('_dbname_default', 'eng_phrases');
 define('_dbuser', 'root');
 define('_dbpassword', '');
