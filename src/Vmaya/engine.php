@@ -1,12 +1,12 @@
 <?
 	include(dirname(__DIR__, 2).'/config.php');
 
-	define('INCLUDE_PATH', BASEPATH.'\src\Vmaya\include\\');
-	define('LOGPATH', BASEPATH.'\logs\\');
-	define('CLASSES_PATH', BASEPATH.'\src\Vmaya\classes\\');
-	define('MODELS_PATH', BASEPATH.'\src\Vmaya\models\\');
-	define('LANGUAGE_PATH', BASEPATH.'\src\Vmaya\language\\');
-	define('TEMPLATES_PATH', BASEPATH.'\src\Vmaya\templates\\');
+	define('INCLUDE_PATH', BASEPATH.'/src/Vmaya/include/');
+	define('LOGPATH', BASEPATH.'/logs//');
+	define('CLASSES_PATH', BASEPATH.'/src/Vmaya/classes/');
+	define('MODELS_PATH', BASEPATH.'/src/Vmaya/models/');
+	define('LANGUAGE_PATH', BASEPATH.'/src/Vmaya/language/');
+	define('TEMPLATES_PATH', BASEPATH.'/src/Vmaya/templates/');
 	define("CHARSET", "utf-8");
 	define("DEFAULTPAGE", "home");
 
