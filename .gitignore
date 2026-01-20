@@ -4,6 +4,7 @@
 *.log.*
 logs/*
 config/*
+config.*
 sessions/*
 /sessions
 /test
