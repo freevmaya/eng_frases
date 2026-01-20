@@ -2,8 +2,8 @@
     $v = 1;
 ?>
 <!-- Settings Modal -->
-<div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade fullscreen-modal" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen">
         <div class="modal-content bg-dark">
             <div class="modal-header border-secondary">
                 <h5 class="modal-title text-primary" id="settingsModalLabel">

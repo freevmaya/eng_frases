@@ -25,7 +25,7 @@
 
     <?if (isset(Page::$request['vk_app_id'])) {?>
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
-	<script src="scripts/vkapp.js"></script>
+	<script src="scripts/vkapp.js?v=<?=$v?>"></script>
 	<script type="text/javascript">
 		$(window).ready(()=>{
 			new VKApp(<?=VK_APP_ID?>);

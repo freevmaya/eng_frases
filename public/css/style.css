@@ -159,6 +159,11 @@
     box-shadow: 0 0 10px rgba(13, 110, 253, 0.5);
 }
 
+.modal-fullscreen {
+    width: 50vw;
+    margin: auto;
+}
+
 /* Modal Customization */
 .modal-content.bg-dark {
     background: linear-gradient(145deg, #2d3338, #1a1d20);
