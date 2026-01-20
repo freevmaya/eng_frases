@@ -1,5 +1,5 @@
 <?php
-    GLOBAL $v;
+    $v = 1;
 ?>
 <!-- Settings Modal -->
 <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">

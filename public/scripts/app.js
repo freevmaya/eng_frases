@@ -31,6 +31,16 @@ function isAnyInputElement(element) {
     return ['input', 'textarea', 'select', 'button'].includes(tagName);
 }
 
+function debounce(func, wait) {
+    var timeout;
+    return function() {
+        var context = this, args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            func.apply(context, args);
+        }, wait);
+    };
+}
 
 function showAlert(message, type = 'info') {
     const alertClass = {
