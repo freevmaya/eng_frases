@@ -123,7 +123,7 @@
 </div>
 
 <!-- Main Container -->
-<div class="container py-4">
+<div class="container py-6">
     <!-- Header -->
     <header class="text-center mb-1">
         <h1 class="display-4 text-gradient mb-3">
