@@ -31,6 +31,26 @@ function isAnyInputElement(element) {
     return ['input', 'textarea', 'select', 'button'].includes(tagName);
 }
 
+
+function showAlert(message, type = 'info') {
+    const alertClass = {
+        'info': 'alert-info',
+        'success': 'alert-success',
+        'warning': 'alert-warning',
+        'danger': 'alert-danger'
+    }[type];
+    
+    const alert = $(`
+        <div class="alert ${alertClass} alert-dismissible fade show position-fixed top-0 end-0 m-3" role="alert">
+            ${message}
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+    `);
+    
+    $('body').append(alert);
+    setTimeout(() => alert.alert('close'), 3000);
+}
+
 $(document).ready(function() {
     
     // Инициализируем синтезатор речи
@@ -648,25 +668,6 @@ $(document).ready(function() {
             [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
-    }
-
-    function showAlert(message, type = 'info') {
-        const alertClass = {
-            'info': 'alert-info',
-            'success': 'alert-success',
-            'warning': 'alert-warning',
-            'danger': 'alert-danger'
-        }[type];
-        
-        const alert = $(`
-            <div class="alert ${alertClass} alert-dismissible fade show position-fixed top-0 end-0 m-3" role="alert">
-                ${message}
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
-            </div>
-        `);
-        
-        $('body').append(alert);
-        setTimeout(() => alert.alert('close'), 3000);
     }
     
     init('data/en-ru.json');

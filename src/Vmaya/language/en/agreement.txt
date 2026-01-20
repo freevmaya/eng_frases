@@ -1,0 +1,26 @@
+1. General Provisions
+1.1. The bot provides image and video generation services using AI models.
+1.2. By using the bot, you accept this agreement.
+
+2. Rights and Obligations
+2.1. You may: generate content for personal use.
+2.2. You may not: create illegal, malicious, or copyright-infringing content.
+
+3. Content and Liability
+3.1. AI may generate unpredictable results.
+3.2. You are responsible for the content you create.
+3.3. We do not store your original photos for longer than 24 hours.
+
+4. Payments and Subscriptions
+4.1. Payment via Telegram Payments.
+4.2. Refunds are possible within 24 hours in case of technical issues.
+4.3. Free generations are limited.
+
+5. Restrictions
+5.1. Maximum file size: 20 MB.
+5.2. Automated use of the API is prohibited.
+5.3. We reserve the right to restrict access in the event of violations.
+
+6. Confidentiality
+6.1. We do not share your data with third parties.
+6.2. Telegram uses standard security measures.

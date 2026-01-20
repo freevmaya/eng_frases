@@ -846,7 +846,8 @@
     {"target": "The issue will be resolved peacefully.", "native": "Вопрос будет решён мирным путём."},
     {"target": "The recipe will be shared with the cooking club.", "native": "Рецепт будет поделиться с кулинарным клубом."},
     {"target": "Your loyalty will be rewarded with special offers.", "native": "Ваша лояльность будет вознаграждена специальными предложениями."}
-  ],"Past continuous": [
+  ],
+    "Past continuous": [
     {"target": "I was working at 6 PM yesterday.", "native": "Я работал вчера в 6 вечера."},
     {"target": "She was studying when I called.", "native": "Она училась, когда я позвонил."},
     {"target": "We were watching TV all evening.", "native": "Мы смотрели телевизор весь вечер."},

@@ -1,0 +1,196 @@
+<?
+/**
+ * LiteMemcache - tiny, simple and pure-PHP alternative to Memcache and Memcached clients
+ * 
+ * Protocol specification @link https://github.com/memcached/memcached/blob/master/doc/protocol.txt
+ * GitHub repository @link https://github.com/ptrofimov/litememcache
+ * Contacts @author Petr Trofimov <petrofimov@yandex.ru>
+ * Modify Vadim Frolov <fwadim@mail.ru>
+ */
+
+define('MEMCACHESERVER', '127.0.0.1:11211'); // Хост мемкеша
+define('MEMCACHEEXPIRE', 60 * 60); // Время жизни 
+
+class LiteMemcache {
+	private $_socket, $_replies, $_lastReply;
+	
+	public function __construct( $server=MEMCACHESERVER)
+	{
+		$this->_socket = stream_socket_client( $server, $errno, $errstr );
+		if ( !$this->_socket )
+		{
+			throw new Exception( "$errstr ($errno)" );
+		}
+		$this->_replies = array( 
+			'STORED' => true, 
+			'NOT_STORED' => false, 
+			'EXISTS' => false, 
+			'OK' => true, 
+			'ERROR' => false, 
+			'DELETED' => true, 
+			'NOT_FOUND' => false, 
+			'ERROR' => null, 
+			'CLIENT_ERROR' => null, 
+			'SERVER_ERROR' => null );
+	}
+	
+	public function add( $key, $value, $exptime = 0, $flags = 0 )
+	{
+		return $this->query( array( "add $key $flags $exptime " . strlen( $value ), $value ) );
+	}
+	
+	public function append( $key, $value )
+	{
+		return $this->query( array( "append $key 0 0 " . strlen( $value ), $value ) );
+	}
+	
+	public function cas( $key, $value, $cas, $exptime = 0, $flags = 0 )
+	{
+		return $this->query( array( "cas $key $flags $exptime " . strlen( $value ) . " $cas", $value ) );
+	}
+	
+	public function decr( $key, $value = 1 )
+	{
+		return $this->query( "decr $key $value" );
+	}
+	
+	public function del( $key )
+	{
+		return $this->query( "delete $key" );
+	}
+	
+	public function flushAll( $exptime = 0 )
+	{
+		return $this->query( "flush_all $exptime" );
+	}
+	
+	public function get( $key, $ext = false )
+	{
+		$keys = array_fill_keys( ( array ) $key, 
+			$ext ? array( 'value' => null, 'flags' => null, 'cas' => null ) : null );
+		$words = $this->query( ( $ext ? 'gets' : 'get' ) . ' ' . implode( ' ', array_keys( $keys ) ) );
+		while ( $words[ 0 ] == 'VALUE' )
+		{
+			$value = fread( $this->_socket, $words[ 3 ] + 2 );
+			$keys[ $words[ 1 ] ] = $ext ? array( 
+				'value' => substr( $value, 0, strlen( $value ) - 2 ), 
+				'flags' => $words[ 2 ], 
+				'cas' => $words[ 4 ] ) : substr( $value, 0, strlen( $value ) - 2 );
+			$words = $this->_readLine();
+		}
+
+		if ($result = is_array( $key ) ? $keys : reset( $keys )) {
+			if ($obj = @json_decode($result, true)) $result = $obj;
+		}
+		return $result?$result:false;
+	}
+	
+	public function getLastReply()
+	{
+		return $this->_lastReply;
+	}
+	
+	public function incr( $key, $value = 1 )
+	{
+		return $this->query( "incr $key $value" );
+	}
+	
+	public function prepend( $key, $value )
+	{
+		return $this->query( array( "prepend $key 0 0 " . strlen( $value ), $value ) );
+	}
+	
+	public function query( $query )
+	{
+		$query = is_array( $query ) ? implode( "\r\n", $query ) : $query;
+		fwrite( $this->_socket, $query . "\r\n" );
+		return $this->_readLine();
+	}
+	
+	public function replace( $key, $value, $exptime = 0, $flags = 0 )
+	{
+		return $this->query( array( "replace $key $flags $exptime " . strlen( $value ), $value ) );
+	}
+	
+	public function set( $key, $value, $exptime = 0, $flags = 0 ) {	
+		if (!is_string($value)) $value = json_encode($value);
+		return $this->query( array( "set $key $flags $exptime " . strlen($value), $value ) );
+	}
+	
+	private function _readLine()
+	{
+		$line = fgets( $this->_socket );
+		$this->_lastReply = substr( $line, 0, strlen( $line ) - 2 );
+		$words = explode( ' ', $this->_lastReply );
+		$result = isset( $this->_replies[ $words[ 0 ] ] ) ? $this->_replies[ $words[ 0 ] ] : $words;
+		if ( is_null( $result ) )
+		{
+			throw new Exception( $this->_lastReply );
+		}
+		return ( is_array( $result ) && count( $result ) == 1 ) ? reset( $result ) : $result;
+	}
+}
+
+
+class MCache {
+    protected static $memcache;
+    
+    protected static function connect() {
+        if (class_exists('LiteMemcache')) {
+            return MCache::$memcache = new LiteMemcache();
+        } else return false;
+    }
+    
+    public static function active() {
+        return MCache::$memcache != null;
+    } 
+    
+    public static function get($key) {
+        if (!MCache::active()) MCache::connect();
+        if (MCache::active()) return MCache::$memcache->get($key);
+        else return false;
+    }
+    
+    public static function set($key, $value, $expire=MEMCACHEEXPIRE, $method='') {
+        if (!MCache::active()) MCache::connect();
+        $mobj = $method?$value->$method():$value;
+        if (MCache::active()) {
+            MCache::$memcache->set($key, $mobj, time() + $expire);
+            //trace("SET CACHE {$key}", 'file', 3);
+        }
+        return $mobj; //.= '<br>mc';
+    } 
+    
+    // getValue - универсальная функция. Параметры: 
+    //      $key - ключ или тег кеша значения, 
+    //      $value - функция возвращающая строку или объект для сохранения в кеш, 
+    //      $expire - Время жизни кеша
+    //      $method - если $value это объект, тогда название метода возвращающего строку значения для сохранения в кеш
+    public static function getValue($key, $value, $expire=MEMCACHEEXPIRE, $method='') {
+        if (!$mobj = MCache::get($key)) 
+            $mobj = MCache::set($key, $value, $expire, $method);
+        return $mobj;
+    }
+    
+    public static function delete($key) {
+        if (!MCache::active()) MCache::connect();
+        return MCache::active()?MCache::$memcache->delete($key):false;
+    } 
+}
+
+class ArrCache {
+    private $cache;
+    function __construct() {
+        $this->cache = [];
+    }
+
+    function get($key) {
+        return @$this->cache[$key];
+    }
+
+    function set($key, $value, $expire=MEMCACHEEXPIRE, $method='') {
+        return $this->cache[$key] = $value;
+    }
+}
+
+?>

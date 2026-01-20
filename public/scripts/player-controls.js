@@ -38,7 +38,7 @@ class PlayerControls {
         this.elements.container.css('pointer-events', 'none');
         
         this.setupEventListeners();
-        this.hide(); // Начальное состояние - скрыто
+        this.show(true); // Начальное состояние - скрыто
     }
     
     // Настройка обработчиков событий
@@ -97,15 +97,16 @@ class PlayerControls {
     }
     
     // Показать контролы
-    show() {
+    show(noAutoHide=false) {
         if (this.state.visible || !this.state.controlsEnabled) return;
         
         clearTimeout(this.state.autoHideTimeout);
         this.state.visible = true;
         this.elements.container
             .addClass('show controls-active')
-            .css('pointer-events', 'auto')
-        this.resetAutoHide();
+            .css('pointer-events', 'auto');
+        if (!noAutoHide)
+            this.resetAutoHide();
     }
     
     // Скрыть контролы
