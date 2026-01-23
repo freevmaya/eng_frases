@@ -1,5 +1,7 @@
 
 class VKApp {
+
+	_haveAd = false;
 	constructor(app_id) {
 		vkBridge.send("VKWebAppInit", {})
 			.then((response)=>{
@@ -19,26 +21,32 @@ class VKApp {
 		$('body').addClass('vk_layout');
 
 		$(window).on('apply_settings', this.onApplySettings.bind(this));
+
+		vkBridge.send('VKWebAppCheckNativeAds', {
+			ad_format: 'reward' /* Тип рекламы */ 
+		})
+		.then((data) => { 
+			if (data.result) { 
+				this._haveAd = true;
+			}   
+	  	})
+	  	.catch((error) => { console.log(error); });
+	}
+
+	showAd() {
+		vkBridge.send('VKWebAppShowNativeAds', {
+			ad_format: 'interstitial' /* Тип рекламы */
+		})
+		.then( (data) => { 
+			if (data.result) {
+			// Реклама была показана
+			}
+		})
+		.catch((error) => { console.log(error); });
 	}
 
 	onApplySettings(e) {
-		console.log(e);
-		vkBridge.send('VKWebAppCheckNativeAds', {
-				ad_format: 'reward' /* Тип рекламы */ 
-			})
-			.then((data) => { 
-				if (data.result) { 
-					vkBridge.send('VKWebAppShowNativeAds', {
-							ad_format: 'interstitial' /* Тип рекламы */
-						})
-						.then( (data) => { 
-							if (data.result) {
-							// Реклама была показана
-							}
-						})
-						.catch((error) => { console.log(error); });
-				}   
-		  	})
-		  	.catch((error) => { console.log(error); });
+		if (this._haveAd)
+			this.showAd();
 	}
 }

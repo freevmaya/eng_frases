@@ -119,6 +119,12 @@
 .container {
     margin-top: 10vw;
     max-width: 900px;
+
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 3.8rem - 10vw);
+    min-height: calc(100vh - 3.8rem - 10vw);
+    gap: 1rem;
 }
 
 /* Phrase Container */
@@ -361,4 +367,32 @@
 
 .vk_layout .modal-dialog .btn-close {
     display: none;
+}
+
+footer {
+    position: fixed;
+    bottom: 0px;
+    width: calc(100% - 22px);
+}
+
+#other-content {
+    flex: 1 1 auto;
+    /*background-color: rgba(0.5, 0.5, 0, 0.5);*/
+    overflow-y: scroll;
+}
+
+#other-content .item {
+    padding: 0.2em;
+}
+
+
+#other-content .item a {
+    color: var(--info);
+    text-decoration: none;
+    font-size: 1.2em;
+}
+
+#other-content .item a:hover {
+    text-decoration: underline;
+    color: var(--light);
 }

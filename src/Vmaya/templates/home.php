@@ -135,7 +135,7 @@
     <!-- Main Content -->
     <div class="row">
         <!-- Left Column - Phrase Card -->
-        <div class="col-lg-12 mb-4">
+        <div class="col-lg-12">
             <div class="card bg-dark-gradient border-primary border-3 animate-card">
 
                 <div class="tv-screen">
@@ -210,9 +210,12 @@
             </div>
         </div>
     </div>
+    <div id="other-content">
+        
+    </div>
 
     <!-- Footer -->
-    <footer class="mt-2 pt-4 border-top border-secondary text-center text-muted">
+    <footer class="mt-2 pt-2 border-top border-secondary text-center text-muted">
         <p class="small">
             English Phrases Trainer v<?php echo APP_VERSION; ?>
         </p>

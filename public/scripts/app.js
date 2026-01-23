@@ -143,24 +143,24 @@ $(document).ready(function() {
     function openList(fileUrl) {
         // Инициализация при загрузке
         fetch(fileUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Failed to load ${fileUrl}`);
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to load ${fileUrl}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    phrasesData = data;
+                    initPhraseList();
+                    loadPhraseList();
+            
+                    // Восстанавливаем отображение из сохранённого состояния
+                    if (state.currentPhrase) {
+                        updateDisplay();
                     }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data) {
-                        phrasesData = data;
-                        initPhraseList();
-                        loadPhraseList();
-                
-                        // Восстанавливаем отображение из сохранённого состояния
-                        if (state.currentPhrase) {
-                            updateDisplay();
-                        }
-                    }
-                });
+                }
+            });
     }
 
     function loadPhrasesFromJson(fileUrl) {
@@ -186,13 +186,39 @@ $(document).ready(function() {
         });
     }
 
+    function typeClick(e) {
+        let item = $(e.target)
+        console.log(item.data('key'));
+        setCurrentType(item.data('key'));
+    }
+
+    function blockItem(key, text) {
+        let item = $(`<div class="item"><a href="#" data-key="${key}">${text}</a></div>`);
+        item.click(typeClick);
+        return item;
+    }
+
+    function fullBlockPhraseList(elem) {
+        elem.empty();
+        elem.append(blockItem("all", "Все фразы (смешанные)"));
+
+        Object.keys(phrasesData).forEach(key => {
+            let count = phrasesData[key].length;
+            elem.append(blockItem(key, key + ` (${count})`));
+            phrasesData[key].forEach((phrase, i) => {
+                phrasesData[key][i].type = key;
+            });
+        });
+    }
+
     function initPhraseList() {
         fullPhraseList(elements.phraseListSelect);
         fullPhraseList(elements.phraseListPlayer);
+        fullBlockPhraseList($('#other-content'));
     }
 
     // Загрузка списка фраз
-    function loadPhraseList() {
+    function loadPhraseList(resetIndex = false) {
         if (state.currentListType === 'all') {
             // Смешиваем все фразы
             state.currentPhraseList = [];
@@ -215,7 +241,7 @@ $(document).ready(function() {
         }
         
         // Восстанавливаем индекс из сохранённого состояния
-        if (state.currentPhraseIndex >= state.currentPhraseList.length) {
+        if (resetIndex || (state.currentPhraseIndex >= state.currentPhraseList.length)) {
             state.currentPhraseIndex = 0;
         }
         
@@ -381,6 +407,24 @@ $(document).ready(function() {
         }
 
         $(window).trigger('apply_settings');
+    }
+
+    function setCurrentType(type) {
+        state.currentListType = type;
+            
+        // Сохраняем ключ текущего списка
+        const listKey = stateManager.generateListKey(
+            state.currentListType, 
+            state.order, 
+            phrasesData
+        );
+
+        state.showingFirstLang = true;
+        stateManager.setCurrentListData(listKey);
+        stateManager.saveState();
+
+        loadPhraseList(true);
+        updateDisplay();
     }
 
     // Применить состояние TV-экрана
