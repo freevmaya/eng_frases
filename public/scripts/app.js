@@ -82,7 +82,7 @@ $(document).ready(function() {
     
     // Инициализируем синтезатор речи
     speechSynthesizer = new SpeechSynthesizer({
-        audioBaseUrl: 'data/audio_files',
+        audioBaseUrl: 'data/audio_files_gtts',
         useCachedAudio: true
     });
 
@@ -366,17 +366,21 @@ $(document).ready(function() {
         
         // Сохраняем состояние
         stateManager.saveState();
-        
+        /*
         // Если воспроизведение активно, перезапускаем
         if (stateManager.isPlaying && !stateManager.isPaused) {
             stopPlayback();
             startPlayback();
         } else {
             updateDisplay();
-        }
+        }*/
+        updateDisplay();
+
         if (changes.settingsChanged || changes.listChanged) {
             applyTvScreenState();
         }
+
+        $(window).trigger('apply_settings');
     }
 
     // Применить состояние TV-экрана
