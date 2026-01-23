@@ -1,9 +1,18 @@
 let wakeLock = null;
 let speechSynthesizer = null;
 let stateManager = null;
+let _vkWakeLockTimer = null;
 
 async function enableWakeLock() {
-    if ('wakeLock' in navigator) {
+
+    if (typeof vkBridge !== 'undefined') {
+        if (_vkWakeLockTimer != null) clearInterval(_vkWakeLockTimer);
+        _vkWakeLockTimer = setInterval(() => {
+            vkBridge.send('VKWebAppTapticImpactOccurred', {
+                style: 'light'
+            }).catch(() => {});
+        }, 60000);
+    } else if ('wakeLock' in navigator) {
         try {
             wakeLock = await navigator.wakeLock.request('screen');
             console.log('Wake Lock активирован');
@@ -18,6 +27,11 @@ async function disableWakeLock() {
         await wakeLock.release();
         wakeLock = null;
         console.log('Wake Lock деактивирован');
+    }
+
+    if (_vkWakeLockTimer != null) {
+        clearInterval(_vkWakeLockTimer);
+        _vkWakeLockTimer = null;
     }
 }
 

@@ -118,6 +118,7 @@
 
 .container {
     margin-top: 10vw;
+    max-width: 900px;
 }
 
 /* Phrase Container */
@@ -169,7 +170,7 @@
 }
 
 .modal-fullscreen {
-    width: max(50vw, 400px);
+    width: max(50vw, min(100%, 400px));
     margin: auto;
 }
 
@@ -356,4 +357,8 @@
 
 .media-keys-status.unsupported {
     background: rgba(244, 67, 54, 0.7);
+}
+
+.vk_layout .modal-dialog .btn-close {
+    display: none;
 }
