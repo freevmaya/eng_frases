@@ -15,11 +15,13 @@ async function enableWakeLock() {
     } else if ('wakeLock' in navigator) {
         try {
             wakeLock = await navigator.wakeLock.request('screen');
-            console.log('Wake Lock активирован');
         } catch (err) {
             console.error('Wake Lock ошибка:', err);
         }
     }
+
+    if (wakeLock || _vkWakeLockTimer)
+        console.log('Wake Lock активирован');
 }
 
 async function disableWakeLock() {
@@ -32,6 +34,7 @@ async function disableWakeLock() {
     if (_vkWakeLockTimer != null) {
         clearInterval(_vkWakeLockTimer);
         _vkWakeLockTimer = null;
+        console.log('Wake Lock деактивирован');
     }
 }
 
