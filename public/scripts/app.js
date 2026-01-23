@@ -81,7 +81,10 @@ function showAlert(message, type = 'info') {
 $(document).ready(function() {
     
     // Инициализируем синтезатор речи
-    speechSynthesizer = new SpeechSynthesizer();
+    speechSynthesizer = new SpeechSynthesizer({
+        audioBaseUrl: 'data/audio_files',
+        useCachedAudio: true
+    });
 
     // Инициализируем менеджер состояния
     stateManager = new StateManager();
@@ -525,7 +528,9 @@ $(document).ready(function() {
         if (state.showingFirstLang) {
             // Показываем и озвучиваем первый язык
             showPhrase(firstLang);
-            speechSynthesizer.speak(state.currentPhrase[firstLang], firstLang === 'target', state.speed);
+
+            speechSynthesizer.speak(state.currentPhrase[firstLang], firstLang, 
+                    state.currentPhrase.type, state.speed);
             startProgressTimer(state.pauseBetweenLanguages);
             
             state.timeoutId = setTimeout(() => {
@@ -538,7 +543,8 @@ $(document).ready(function() {
                 state.currentPhrase[secondLang].length * AppConst.charTime[secondLang] * 1 / state.speed;
 
             showPhrase(secondLang);
-            speechSynthesizer.speak(state.currentPhrase[secondLang], secondLang === 'target', state.speed);
+            speechSynthesizer.speak(state.currentPhrase[secondLang], secondLang, 
+                    state.currentPhrase.type, state.speed);
             startProgressTimer(state.pauseBetweenPhrases);
             
             state.timeoutId = setTimeout(() => {
@@ -555,7 +561,8 @@ $(document).ready(function() {
         const speakLang = state.direction === 'target-native' ? 'native' : 'target';
         
         showPhrase(showLang);
-        speechSynthesizer.speak(state.currentPhrase[speakLang], speakLang === 'target', state.speed);
+        speechSynthesizer.speak(state.currentPhrase[speakLang], speakLang, 
+                    state.currentPhrase.type, state.speed);
         startProgressTimer(state.pauseBetweenPhrases);
         
         state.timeoutId = setTimeout(() => {
@@ -602,7 +609,8 @@ $(document).ready(function() {
     // Озвучить текущую фразу
     function speakCurrentPhrase(lang) {
         if (!state.currentPhrase) return;
-        speechSynthesizer.speak(state.currentPhrase[lang], lang === 'target', state.speed);
+        speechSynthesizer.speak(state.currentPhrase[lang], lang, 
+                    state.currentPhrase.type, state.speed);
     }
 
     // Запустить таймер прогресса

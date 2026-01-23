@@ -6,8 +6,10 @@ logs/*
 config/*
 config.php
 sessions/*
-/sessions
-/test
+audio_files*
+sessions
+test
+myenv
 downloads
 combined.txt
 update

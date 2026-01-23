@@ -1,0 +1,34 @@
+{
+  "Past simple": [
+    {
+      "target": "I worked yesterday.",
+      "native": "Я работал вчера."
+    },
+    {
+      "target": "She studied all night.",
+      "native": "Она училась всю ночь."
+    },
+    {
+      "target": "We watched a movie.",
+      "native": "Мы смотрели фильм."
+    },
+    {
+      "target": "He called you an hour ago.",
+      "native": "Он звонил тебе час назад."
+    }
+  ],
+  "Present continuous": [
+    {
+      "target": "I am working now.",
+      "native": "Я работаю сейчас."
+    },
+    {
+      "target": "She is studying.",
+      "native": "Она учится."
+    },
+    {
+      "target": "We are watching TV.",
+      "native": "Мы смотрим телевизор."
+    }
+  ]
+}
