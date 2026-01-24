@@ -1,5 +1,5 @@
 <?php
-	$v = 64;
+	$v = 65;
 ?>
 <!DOCTYPE html>
 <html lang="ru">
