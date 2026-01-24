@@ -96,6 +96,7 @@ $(document).ready(function() {
         }
     }
 
+    let _pageScrollTimerId;
     const state = stateManager.getState();
 
     // DOM элементы
@@ -207,6 +208,7 @@ $(document).ready(function() {
                 phrasesData[key][i].type = key;
             });
         });
+        updateBottomList();
     }
 
     function initPhraseList() {
@@ -408,22 +410,40 @@ $(document).ready(function() {
     }
 
     function setCurrentType(type) {
-        state.currentListType = type;
-            
-        // Сохраняем ключ текущего списка
-        const listKey = stateManager.generateListKey(
-            state.currentListType, 
-            state.order, 
-            phrasesData
-        );
 
-        state.showingFirstLang = true;
-        stateManager.updateSettings(state);
-        stateManager.setCurrentListData(listKey);
-        stateManager.saveState();
+        if (state.currentListType != type) {
+            state.currentListType = type;
+                
+            // Сохраняем ключ текущего списка
+            const listKey = stateManager.generateListKey(
+                state.currentListType, 
+                state.order, 
+                phrasesData
+            );
 
-        loadPhraseList(true);
-        updateDisplay();
+            state.showingFirstLang = true;
+            stateManager.updateSettings(state);
+            stateManager.setCurrentListData(listKey);
+            stateManager.updatePlaybackState({
+                currentPhraseIndex: state.currentPhraseIndex,
+                showingFirstLang: state.showingFirstLang,
+                currentListType: state.currentListType,
+                order: state.order
+            });
+
+            updateBottomList();
+            loadPhraseList(true);
+            updateDisplay();
+        }
+    }
+
+    function updateBottomList() {
+        $('#other-content .item').each((i, item)=>{
+            item = $(item);
+            item.removeClass('current');
+            if (state.currentListType == item.find('a').data('key'))
+                item.addClass('current');
+        });
     }
 
     // Применить состояние TV-экрана
@@ -495,45 +515,44 @@ $(document).ready(function() {
         updateDisplay();
     }
 
+    function setCurrentPhrase(index) {
+        if (state.currentPhraseIndex != index) {
+
+            clearTimeout(state.timeoutId);
+            clearInterval(state.progressInterval);
+
+            state.currentPhraseIndex = Math.max(0, Math.min(state.currentPhraseList.length - 1, index));
+            state.currentPhrase = state.currentPhraseList[state.currentPhraseIndex];
+
+            updateDisplay();
+            if (_pageScrollTimerId) 
+                clearTimeout(_pageScrollTimerId);
+
+            _pageScrollTimerId = setTimeout(()=>{
+                _pageScrollTimerId = null;
+                state.showingFirstLang = true;
+            
+                // Сохраняем состояние
+                stateManager.updatePlaybackState({
+                    currentPhraseIndex: state.currentPhraseIndex
+                });
+                
+                if (stateManager.isPlaying)
+                    playCurrentPhrase();
+            }, 500);
+        }
+    }
+
     // Следующая фраза
     function nextPhrase() {
-        clearTimeout(state.timeoutId);
-        clearInterval(state.progressInterval);
-
-        state.currentPhraseIndex = (state.currentPhraseIndex + 1) % state.currentPhraseList.length;
-        if (isBothDirectionsMode() && !state.showingFirstLang)
-            state.showingFirstLang = true;
-        
-        // Сохраняем состояние
-        stateManager.updatePlaybackState({
-            currentPhraseIndex: state.currentPhraseIndex,
-            showingFirstLang: state.showingFirstLang
-        });
-        
-        if (stateManager.isPlaying)
-            playCurrentPhrase();
-        updateDisplay();
+        setCurrentPhrase((state.currentPhraseIndex + 1) % state.currentPhraseList.length);
     }
 
     // Предыдущая фраза
     function prevPhrase() {
-        clearTimeout(state.timeoutId);
-        clearInterval(state.progressInterval);
-        
-        state.currentPhraseIndex = state.currentPhraseIndex > 0 ? 
-            state.currentPhraseIndex - 1 : 
-            state.currentPhraseList.length - 1;
-        
-        // Сохраняем состояние
-        stateManager.updatePlaybackState({
-            currentPhraseIndex: state.currentPhraseIndex
-        });
-        
-        if (stateManager.isPlaying && !stateManager.isPaused) {
-            playCurrentPhrase();
-        } else {
-            updateDisplay();
-        }
+        setCurrentPhrase(state.currentPhraseIndex > 0 ? 
+                state.currentPhraseIndex - 1 : 
+                state.currentPhraseList.length - 1);
     }
 
     // Воспроизвести текущую фразу
@@ -705,11 +724,10 @@ $(document).ready(function() {
         }
         
         if (state.currentPhrase) {
-            if (!stateManager.isPlaying) {
-                updatePhrases(state.currentPhrase.native, state.currentPhrase.target);
-                elements.phraseText.removeClass('text-info');
-                elements.phraseHint.addClass('text-info');
-            }
+
+            updatePhrases(state.currentPhrase.native, state.currentPhrase.target);
+            elements.phraseText.removeClass('text-info');
+            elements.phraseHint.addClass('text-info');
             
             elements.phraseCounter.text(`${state.currentPhraseIndex + 1} / ${state.currentPhraseList.length}`);
             elements.phraseType.text(formatTitle(state.currentPhrase.type));

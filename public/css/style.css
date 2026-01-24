@@ -382,9 +382,9 @@ footer {
 }
 
 #other-content .item {
-    padding: 0.2em;
+    padding: 0.2em 0.8em;
+    margin: 0.2em 0.5em;
 }
-
 
 #other-content .item a {
     color: var(--info);
@@ -393,6 +393,18 @@ footer {
 }
 
 #other-content .item a:hover {
-    text-decoration: underline;
     color: var(--light);
+}
+
+#other-content .current {
+    background: #00568975;
+    color: black;
+    border-radius: 1em;
+    box-shadow: 0 0 1em #005689c4;
+}
+
+#other-content .current a,
+#other-content .current a:hover {
+    color: #ffffff;
+    text-decoration: none;
 }
