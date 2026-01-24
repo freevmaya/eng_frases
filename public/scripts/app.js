@@ -271,11 +271,6 @@ $(document).ready(function() {
         
         // Открытие настроек
         elements.settingsToggle.click(() => {
-
-            // Задача 1: Останавливаем воспроизведение при открытии настроек
-            if (stateManager.isPlaying) {
-                togglePause();
-            }
             openSettingsModal();
         });
         
@@ -326,6 +321,11 @@ $(document).ready(function() {
 
     // Открытие модального окна настроек
     function openSettingsModal() {
+
+        // Задача 1: Останавливаем воспроизведение при открытии настроек
+        if (stateManager.isPlaying)
+            stopPlayback();
+        
         // Устанавливаем текущие значения в элементы управления
 
         elements.speedValue.text(state.speed.toFixed(1) + 'x');
