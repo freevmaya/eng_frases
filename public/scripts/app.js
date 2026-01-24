@@ -83,8 +83,9 @@ $(document).ready(function() {
     // Инициализируем синтезатор речи
     speechSynthesizer = new SpeechSynthesizer({
         audioBaseUrl: 'data/audio_files_gtts',
+        apiBaseUrl: 'https://api.vmaya.ru/api/',
         useCachedAudio: true,
-        noServer: true
+        noServer: false
     });
 
     // Инициализируем менеджер состояния

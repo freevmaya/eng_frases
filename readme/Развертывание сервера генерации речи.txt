@@ -100,3 +100,33 @@ systemctl status audio-generator
 
 # Просмотр логов
 journalctl -u audio-generator -f
+----------------------------------------------------------------------------------------------
+Nginx конфигурация api.vmaya.ru.conf
+
+upstream audio_generator {
+    server unix:/run/audio-generator/audio-generator.sock;
+}
+
+server {
+    listen 80;
+    server_name api.vmaya.ru;
+    
+    location / {
+        proxy_pass http://audio_generator;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # CORS headers
+        add_header 'Access-Control-Allow-Origin' '*' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
+        add_header 'Access-Control-Allow-Headers' 'Content-Type,Authorization' always;
+    }
+}
+----------------------------------------------------------------------------------------------
+
+SSL 
+
+Certificate is saved at: /etc/letsencrypt/live/api.vmaya.ru/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/api.vmaya.ru/privkey.pem

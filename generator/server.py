@@ -14,6 +14,7 @@ Path(BASE_OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
 # Инициализация генератора речи
 speech_generator = SpeechGenerator(BASE_OUTPUT_DIR)
 
+'''
 # CORS Middleware - ТОЛЬКО ЭТОТ КОД
 @app.after_request
 def add_cors_headers(response):
@@ -22,6 +23,7 @@ def add_cors_headers(response):
     response.headers['Access-Control-Allow-Methods'] = 'GET,POST,PUT,DELETE,OPTIONS'
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     return response
+'''
 
 @app.before_request
 def handle_options():
