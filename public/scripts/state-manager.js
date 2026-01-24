@@ -23,7 +23,11 @@ class StateManager {
             // Данные текущего списка
             currentListKey: null, // Ключ для отслеживания изменений списка
             randomSeed: null, // Для воссоздания случайного порядка
-            showTvScreen: true
+            showTvScreen: true,
+
+            repeatLength: 5,
+            repeatCount: 0,
+            currentRepeat: 0
         };
         
         this.state = { ...this.DEFAULT_STATE };

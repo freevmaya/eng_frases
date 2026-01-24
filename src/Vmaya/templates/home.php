@@ -98,6 +98,27 @@
                         </button>
                     </div>
                 </div>
+
+                <div class="mb-4">
+                    <h6 class="text-info mb-3">
+                        <i class="bi bi-repeat me-2"></i>Повтор блока
+                    </h6>
+                    <div class="btn-group repeat-block" role="group">
+                        <select class="form-select bg-dark text-light border-secondary" id="repeatLength">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                        </select>
+                        <span>фраз по</span>
+                        <select class="form-select bg-dark text-light border-secondary" id="repeatCount">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                        <span>раз</span>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer border-secondary">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>

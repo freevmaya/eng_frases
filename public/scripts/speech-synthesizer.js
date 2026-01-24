@@ -227,10 +227,10 @@ class SpeechSynthesizer {
 
             const localUrlInfo = await this.getAudioUrl(cleanText, phraseType, category);
             return await this.playAudioFromUrl(localUrlInfo, cleanText);
-            return;
         }
         
         try {
+
             // 1. Сначала проверяем локально
             if (this.config.useCachedAudio) {
                 const localUrlInfo = await this.getAudioUrl(cleanText, phraseType, category);

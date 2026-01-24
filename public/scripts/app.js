@@ -118,7 +118,9 @@ $(document).ready(function() {
         langPauseValue: $('#langPauseValue'),
         phraseListSelect: $('#phraseListSelect'),
         phraseListPlayer: $('#phraseListPlayer'),
-        tvScreenToggle: $('#tvScreenToggle')
+        tvScreenToggle: $('#tvScreenToggle'),
+        repeatLength: $('#repeatLength'),
+        repeatCount: $('#repeatCount')
     };
 
     // Инициализация
@@ -241,7 +243,7 @@ $(document).ready(function() {
         
         // Восстанавливаем индекс из сохранённого состояния
         if (resetIndex || (state.currentPhraseIndex >= state.currentPhraseList.length)) {
-            state.currentPhraseIndex = 0;
+            setCurrentPhrase(0);
         }
         
         state.currentPhrase = state.currentPhraseList[state.currentPhraseIndex];
@@ -325,7 +327,7 @@ $(document).ready(function() {
         // Задача 1: Останавливаем воспроизведение при открытии настроек
         if (stateManager.isPlaying)
             stopPlayback();
-        
+
         // Устанавливаем текущие значения в элементы управления
 
         elements.speedValue.text(state.speed.toFixed(1) + 'x');
@@ -338,6 +340,9 @@ $(document).ready(function() {
         
         elements.phraseListSelect.val(state.currentListType);
         elements.tvScreenToggle.prop('checked', state.showTvScreen);
+
+        elements.repeatLength.val(state.repeatLength);
+        elements.repeatCount.val(state.repeatCount);
         
         // Устанавливаем активные кнопки направления и порядка
         $(`[data-direction="${state.direction}"]`).addClass('active').siblings().removeClass('active');
@@ -356,7 +361,9 @@ $(document).ready(function() {
             currentListType: elements.phraseListSelect.val(),
             direction: $('[data-direction].active').data('direction'),
             order: $('[data-order].active').data('order'),
-            showTvScreen: elements.tvScreenToggle.prop('checked')
+            showTvScreen: elements.tvScreenToggle.prop('checked'),
+            repeatLength: elements.repeatLength.val(),
+            repeatCount: elements.repeatCount.val()
         };
         
         // Проверяем, изменился ли список фраз
@@ -451,7 +458,7 @@ $(document).ready(function() {
     }
 
     function stopPlay() {
-        state.currentPhraseIndex = 0;
+        setCurrentPhrase(0);
         stopPlayback();
     }
 
@@ -525,10 +532,10 @@ $(document).ready(function() {
         }, 500);
     }
 
-    function setCurrentPhrase(index) {
+    function setCurrentPhraseNextOrPrev(index) {
         if (state.currentPhraseIndex != index) {
 
-            state.currentPhraseIndex = Math.max(0, Math.min(state.currentPhraseList.length - 1, index));
+            setCurrentPhrase(Math.max(0, Math.min(state.currentPhraseList.length - 1, index)));
             state.currentPhrase = state.currentPhraseList[state.currentPhraseIndex];
 
             updateDisplay();
@@ -548,12 +555,12 @@ $(document).ready(function() {
 
     // Следующая фраза
     function nextPhrase() {
-        setCurrentPhrase((state.currentPhraseIndex + 1) % state.currentPhraseList.length);
+        setCurrentPhraseNextOrPrev((state.currentPhraseIndex + 1) % state.currentPhraseList.length);
     }
 
     // Предыдущая фраза
     function prevPhrase() {
-        setCurrentPhrase(state.currentPhraseIndex > 0 ? 
+        setCurrentPhraseNextOrPrev(state.currentPhraseIndex > 0 ? 
                 state.currentPhraseIndex - 1 : 
                 state.currentPhraseList.length - 1);
     }
@@ -563,7 +570,7 @@ $(document).ready(function() {
         if (!stateManager.isPlaying || stateManager.isPaused) return;
         
         if (state.currentPhraseIndex >= state.currentPhraseList.length) {
-            state.currentPhraseIndex = 0;
+            setCurrentPhrase(0);
         }
         
         state.currentPhrase = state.currentPhraseList[state.currentPhraseIndex];
@@ -586,6 +593,22 @@ $(document).ready(function() {
         return state.pauseBetweenPhrases * 1000 + 
                 state.currentPhrase[firstLang].length * AppConst.charTime[firstLang] * 1 / state.speed + 
                 state.currentPhrase[secondLang].length * AppConst.charTime[secondLang] * 1 / state.speed;
+    }
+
+    function setCurrentPhrase(index) {
+        let newIndex = index < 0 ? state.currentPhraseList.length - index : index % state.currentPhraseList.length;
+
+        if ((state.repeatCount > 0) && (newIndex % state.repeatLength == 0)) {
+            state.currentRepeat++;
+            if (state.currentRepeat > state.repeatCount)
+                state.currentRepeat = 0;
+            else newIndex = Math.max(0, newIndex - state.repeatLength);
+
+            console.log(`currentRepeat: ${state.currentRepeat}, newIndex: ${newIndex}`);
+        }
+
+        state.currentPhraseIndex = newIndex;
+        state.showingFirstLang = true;
     }
 
     // Воспроизведение в обоих направлениях
@@ -622,8 +645,7 @@ $(document).ready(function() {
                     startProgressTimer(state.pauseBetweenPhrases);
                     
                     state.timeoutId = setTimeout(() => {
-                        state.currentPhraseIndex = (state.currentPhraseIndex + 1) % state.currentPhraseList.length;
-                        state.showingFirstLang = true;
+                        setCurrentPhrase(state.currentPhraseIndex + 1);
                         playCurrentPhrase();
                     }, calcTime(secondLang, firstLang));
                 });
@@ -643,7 +665,7 @@ $(document).ready(function() {
                 startProgressTimer(state.pauseBetweenPhrases);
                 
                 state.timeoutId = setTimeout(() => {
-                    state.currentPhraseIndex = (state.currentPhraseIndex + 1) % state.currentPhraseList.length;
+                    setCurrentPhrase(state.currentPhraseIndex + 1);
                     playCurrentPhrase();
                 }, calcTime(speakLang, showLang));
             });
