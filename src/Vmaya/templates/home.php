@@ -1,5 +1,5 @@
 <?php
-    $v = 60;
+    $v = 61;
 ?>
 <!-- Settings Modal -->
 <div class="modal fade fullscreen-modal" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
@@ -222,6 +222,9 @@
     </footer>
 </div>
 
+<script type="text/javascript">
+    var SPEECH_CONFIG = <?=SPEECH_CONFIG?>;
+</script>
 <script src="scripts/speech-synthesizer.js?v=<?=$v?>"></script>
 <script src="scripts/state-manager.js?v=<?=$v?>"></script>
 <script src="scripts/player-controls.js?v=<?=$v?>"></script>

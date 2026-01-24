@@ -81,12 +81,7 @@ function showAlert(message, type = 'info') {
 $(document).ready(function() {
     
     // Инициализируем синтезатор речи
-    speechSynthesizer = new SpeechSynthesizer({
-        audioBaseUrl: '/data/audio_files_gtts',
-        apiBaseUrl: 'https://api.vmaya.ru/api/',
-        useCachedAudio: true,
-        noServer: false
-    });
+    speechSynthesizer = new SpeechSynthesizer(SPEECH_CONFIG);
 
     // Инициализируем менеджер состояния
     stateManager = new StateManager();
