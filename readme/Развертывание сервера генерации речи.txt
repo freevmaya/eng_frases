@@ -1,0 +1,82 @@
+# Создайте директории для логов и сокетов
+mkdir -p /var/log/audio-generator
+mkdir -p /run/audio-generator
+
+# Настройте права
+chown -R nginx:nginx /var/log/audio-generator
+chown -R nginx:nginx /run/audio-generator
+chmod 755 /var/log/audio-generator
+chmod 755 /run/audio-generator
+---------------------------------------------------------------------------------------------------------
+
+audio-generator.service:
+
+[Unit]
+Description=Audio Generator API Service
+After=network.target nginx.target
+Requires=nginx.target
+
+[Service]
+Type=simple
+User=nginx
+Group=nginx
+WorkingDirectory=/home/vmaya/www/eng_frases/generator
+
+# Environment variables
+Environment="PATH=/home/vmaya/www/eng_frases/generator/venv/bin"
+Environment="PYTHONPATH=/home/vmaya/www/eng_frases/generator"
+Environment="BASE_OUTPUT_DIR=/home/vmaya/www/eng_frases/public/data/audio_files_gtts"
+Environment="JSON_FILE_PATH=/home/vmaya/www/eng_frases/public/data/en-ru.json"
+
+# Команда запуска
+ExecStart=/home/vmaya/www/eng_frases/generator/venv/bin/gunicorn \
+          --workers 3 \
+          --threads 2 \
+          --bind unix:/run/audio-generator/audio-generator.sock \
+          --timeout 120 \
+          --access-logfile /var/log/audio-generator/access.log \
+          --error-logfile /var/log/audio-generator/error.log \
+          --log-level info \
+          --chdir /home/vmaya/www/eng_frases/generator \
+          wsgi:application
+
+# Перезапуск при сбое
+Restart=always
+RestartSec=5
+
+# Безопасность
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/home/vmaya/www/eng_frases/public/data/audio_files_gtts
+ReadWritePaths=/var/log/audio-generator
+
+# Лимиты
+LimitNOFILE=65536
+LimitNPROC=65536
+
+[Install]
+WantedBy=multi-user.target
+------------------------------------------------------------------------------------------------
+
+chown -R nginx:nginx /home/vmaya/www/eng_frases/public/data/audio_files_gtts
+chmod -R 755 /home/vmaya/www/eng_frases/public/data/audio_files_gtts
+
+chown -R nginx:nginx /home/vmaya/www/eng_frases/generator
+chmod -R 755 /home/vmaya/www/eng_frases/generator
+
+-----------------------------------------------------------------------------------------------
+# Перезагрузите systemd
+systemctl daemon-reload
+
+# Запустите службу
+systemctl start audio-generator
+
+# Включите автозапуск
+systemctl enable audio-generator
+
+# Проверьте статус
+systemctl status audio-generator
+
+# Просмотр логов
+journalctl -u audio-generator -f
