@@ -479,35 +479,6 @@ class AudioBatchProcessor:
     """Класс для пакетной обработки аудиофайлов"""
     
     @staticmethod
-    def create_sample_json(output_path: str = 'phrases.json'):
-        """Создание примерного JSON файла"""
-        sample_data = {
-            "Past simple": [
-                {"target": "I worked yesterday.", "native": "Я работал вчера."},
-                {"target": "She studied all night.", "native": "Она училась всю ночь."},
-                {"target": "We watched a movie.", "native": "Мы смотрели фильм."},
-                {"target": "He called you an hour ago.", "native": "Он звонил тебе час назад."}
-            ],
-            "Present continuous": [
-                {"target": "I am working now.", "native": "Я работаю сейчас."},
-                {"target": "She is studying.", "native": "Она учится."},
-                {"target": "We are watching TV.", "native": "Мы смотрим телевизор."},
-                {"target": "They are playing football.", "native": "Они играют в футбол."}
-            ],
-            "Future tense": [
-                {"target": "I will go to the cinema tomorrow.", "native": "Я пойду в кино завтра."},
-                {"target": "She is going to visit her parents.", "native": "Она собирается навестить своих родителей."},
-                {"target": "We will have a meeting at 5 PM.", "native": "У нас будет встреча в 5 вечера."}
-            ]
-        }
-        
-        with open(output_path, 'w', encoding='utf-8') as f:
-            json.dump(sample_data, f, ensure_ascii=False, indent=2)
-        
-        print(f"✓ Создан пример JSON файла: {output_path}")
-        return output_path
-    
-    @staticmethod
     def verify_audio_files(json_file_path: str, audio_dir: str = 'audio_files_gtts'):
         """Проверка соответствия JSON и сгенерированных файлов"""
         with open(json_file_path, 'r', encoding='utf-8') as f:

@@ -83,7 +83,8 @@ $(document).ready(function() {
     // Инициализируем синтезатор речи
     speechSynthesizer = new SpeechSynthesizer({
         audioBaseUrl: 'data/audio_files_gtts',
-        useCachedAudio: true
+        useCachedAudio: true,
+        noServer: true
     });
 
     // Инициализируем менеджер состояния
@@ -147,6 +148,7 @@ $(document).ready(function() {
                 if (!response.ok) {
                     throw new Error(`Failed to load ${fileUrl}`);
                 }
+
                 return response.json();
             })
             .then(data => {
@@ -420,6 +422,7 @@ $(document).ready(function() {
         );
 
         state.showingFirstLang = true;
+        stateManager.updateSettings(state);
         stateManager.setCurrentListData(listKey);
         stateManager.saveState();
 
@@ -578,13 +581,17 @@ $(document).ready(function() {
             showPhrase(firstLang);
 
             speechSynthesizer.speak(state.currentPhrase[firstLang], firstLang, 
-                    state.currentPhrase.type, state.speed);
-            startProgressTimer(state.pauseBetweenLanguages);
-            
-            state.timeoutId = setTimeout(() => {
-                state.showingFirstLang = false;
-                playCurrentPhrase();
-            }, calcTime(firstLang, secondLang));
+                    state.currentPhrase.type, state.speed)
+                .then(()=>{
+
+                    startProgressTimer(state.pauseBetweenLanguages);
+                    
+                    state.timeoutId = setTimeout(() => {
+                        state.showingFirstLang = false;
+                        playCurrentPhrase();
+                    }, calcTime(firstLang, secondLang));
+
+                });
         } else {
             // Показываем и озвучиваем второй язык
             let totalTime = state.pauseBetweenPhrases * 1000 + 
@@ -592,14 +599,16 @@ $(document).ready(function() {
 
             showPhrase(secondLang);
             speechSynthesizer.speak(state.currentPhrase[secondLang], secondLang, 
-                    state.currentPhrase.type, state.speed);
-            startProgressTimer(state.pauseBetweenPhrases);
-            
-            state.timeoutId = setTimeout(() => {
-                state.currentPhraseIndex = (state.currentPhraseIndex + 1) % state.currentPhraseList.length;
-                state.showingFirstLang = true;
-                playCurrentPhrase();
-            }, calcTime(secondLang, firstLang));
+                    state.currentPhrase.type, state.speed)
+                .then(()=>{
+                    startProgressTimer(state.pauseBetweenPhrases);
+                    
+                    state.timeoutId = setTimeout(() => {
+                        state.currentPhraseIndex = (state.currentPhraseIndex + 1) % state.currentPhraseList.length;
+                        state.showingFirstLang = true;
+                        playCurrentPhrase();
+                    }, calcTime(secondLang, firstLang));
+                });
         }
     }
 
@@ -610,13 +619,16 @@ $(document).ready(function() {
         
         showPhrase(showLang);
         speechSynthesizer.speak(state.currentPhrase[speakLang], speakLang, 
-                    state.currentPhrase.type, state.speed);
-        startProgressTimer(state.pauseBetweenPhrases);
-        
-        state.timeoutId = setTimeout(() => {
-            state.currentPhraseIndex = (state.currentPhraseIndex + 1) % state.currentPhraseList.length;
-            playCurrentPhrase();
-        }, calcTime(speakLang, showLang));
+                    state.currentPhrase.type, state.speed)
+            .then(()=>{
+
+                startProgressTimer(state.pauseBetweenPhrases);
+                
+                state.timeoutId = setTimeout(() => {
+                    state.currentPhraseIndex = (state.currentPhraseIndex + 1) % state.currentPhraseList.length;
+                    playCurrentPhrase();
+                }, calcTime(speakLang, showLang));
+            });
     }
 
     function setText(elem, text, k = 1, maxSize = 25, minSize = 16) {
@@ -657,7 +669,7 @@ $(document).ready(function() {
     // Озвучить текущую фразу
     function speakCurrentPhrase(lang) {
         if (!state.currentPhrase) return;
-        speechSynthesizer.speak(state.currentPhrase[lang], lang, 
+        return speechSynthesizer.speak(state.currentPhrase[lang], lang, 
                     state.currentPhrase.type, state.speed);
     }
 

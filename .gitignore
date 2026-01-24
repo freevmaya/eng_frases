@@ -10,6 +10,7 @@ audio_files*
 sessions
 test
 myenv
+venv
 downloads
 combined.txt
 update
