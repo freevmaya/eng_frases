@@ -111,7 +111,6 @@ $(document).ready(function() {
         prevBtn: $('#prevBtn'),
         settingsToggle: $('#settingsToggle'),
         applySettings: $('#applySettings'),
-        speedSlider: $('#speedSlider'),
         pauseSlider: $('#pauseSlider'),
         langPauseSlider: $('#langPauseSlider'),
         speedValue: $('#speedValue'),
@@ -286,12 +285,6 @@ $(document).ready(function() {
             $('#settingsModal').modal('hide');
         });
         
-        // Слайдеры
-        elements.speedSlider.on('input', function() {
-            const value = parseFloat($(this).val());
-            elements.speedValue.text(value.toFixed(1) + 'x');
-        });
-        
         elements.pauseSlider.on('input', function() {
             const value = parseFloat($(this).val());
             elements.pauseValue.text(value + ' сек');
@@ -334,7 +327,7 @@ $(document).ready(function() {
     // Открытие модального окна настроек
     function openSettingsModal() {
         // Устанавливаем текущие значения в элементы управления
-        elements.speedSlider.val(state.speed);
+
         elements.speedValue.text(state.speed.toFixed(1) + 'x');
         
         elements.pauseSlider.val(state.pauseBetweenPhrases);
@@ -357,7 +350,7 @@ $(document).ready(function() {
     function applySettingsFromModal() {
         // Собираем новые настройки
         const newSettings = {
-            speed: parseFloat(elements.speedSlider.val()),
+
             pauseBetweenPhrases: parseFloat(elements.pauseSlider.val()),
             pauseBetweenLanguages: parseFloat(elements.langPauseSlider.val()),
             currentListType: elements.phraseListSelect.val(),
@@ -412,28 +405,31 @@ $(document).ready(function() {
     function setCurrentType(type) {
 
         if (state.currentListType != type) {
-            state.currentListType = type;
-                
-            // Сохраняем ключ текущего списка
-            const listKey = stateManager.generateListKey(
-                state.currentListType, 
-                state.order, 
-                phrasesData
-            );
 
-            state.showingFirstLang = true;
-            stateManager.updateSettings(state);
-            stateManager.setCurrentListData(listKey);
-            stateManager.updatePlaybackState({
-                currentPhraseIndex: state.currentPhraseIndex,
-                showingFirstLang: state.showingFirstLang,
-                currentListType: state.currentListType,
-                order: state.order
-            });
+            debounce(()=>{
+                state.currentListType = type;
 
-            updateBottomList();
-            loadPhraseList(true);
-            updateDisplay();
+                // Сохраняем ключ текущего списка
+                const listKey = stateManager.generateListKey(
+                    state.currentListType, 
+                    state.order, 
+                    phrasesData
+                );
+
+                state.showingFirstLang = true;
+                stateManager.updateSettings(state);
+                stateManager.setCurrentListData(listKey);
+                stateManager.updatePlaybackState({
+                    currentPhraseIndex: state.currentPhraseIndex,
+                    showingFirstLang: state.showingFirstLang,
+                    currentListType: state.currentListType,
+                    order: state.order
+                });  
+                loadPhraseList(true);
+
+                updateBottomList();
+                updateDisplay();
+            }, 300)();
         }
     }
 
@@ -515,21 +511,28 @@ $(document).ready(function() {
         updateDisplay();
     }
 
+    function debouncePage(callback) {
+
+        clearTimeout(state.timeoutId);
+        clearInterval(state.progressInterval);
+
+        if (_pageScrollTimerId) 
+            clearTimeout(_pageScrollTimerId);
+
+        _pageScrollTimerId = setTimeout(()=>{
+            _pageScrollTimerId = null;
+            callback();
+        }, 500);
+    }
+
     function setCurrentPhrase(index) {
         if (state.currentPhraseIndex != index) {
-
-            clearTimeout(state.timeoutId);
-            clearInterval(state.progressInterval);
 
             state.currentPhraseIndex = Math.max(0, Math.min(state.currentPhraseList.length - 1, index));
             state.currentPhrase = state.currentPhraseList[state.currentPhraseIndex];
 
             updateDisplay();
-            if (_pageScrollTimerId) 
-                clearTimeout(_pageScrollTimerId);
-
-            _pageScrollTimerId = setTimeout(()=>{
-                _pageScrollTimerId = null;
+            debouncePage(()=>{                
                 state.showingFirstLang = true;
             
                 // Сохраняем состояние
@@ -539,7 +542,7 @@ $(document).ready(function() {
                 
                 if (stateManager.isPlaying)
                     playCurrentPhrase();
-            }, 500);
+            });
         }
     }
 

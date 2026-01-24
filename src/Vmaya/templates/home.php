@@ -24,19 +24,6 @@
                         </label>
                     </div>
                 </div>
-                <div class="mb-4">
-                    <h6 class="text-info mb-3">
-                        <i class="bi bi-speedometer2 me-2"></i>Скорость воспроизведения
-                    </h6>
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-turtle text-muted me-2"></i>
-                        <input type="range" class="form-range" id="speedSlider" min="0.5" max="2" step="0.1" value="1.0">
-                        <i class="bi bi-rabbit text-muted ms-2"></i>
-                    </div>
-                    <div class="text-center mt-2">
-                        <span class="badge bg-primary" id="speedValue">1.0x</span>
-                    </div>
-                </div>
 
                 <div class="mb-4">
                     <h6 class="text-info mb-3">
