@@ -216,10 +216,10 @@ class SpeechSynthesizer {
         const cleanText = text.replace(/\([^()]*\)|\[[^\][]*\]/g, '').trim();
         const phraseType = language === 'en' ? 'target' : 'native';
         
-        if (this.state.isSpeaking || this.state.isPlayingAudio) {
+        if (this.state.isSpeaking || this.state.isPlayingAudio || this.state.isGeneratingAudio) {
             return {
                 success: false,
-                error: 'Already speaking or playing'
+                error: 'Already speaking or playing or generating'
             };
         }
 
@@ -243,11 +243,11 @@ class SpeechSynthesizer {
             }
             
             // 2. Проверяем на сервере
-            console.log('Checking audio on server...');
+            console.log(`Checking audio "${text}" on server...`);
             const checkResult = await this.checkAudioOnServer(cleanText, language, category);
             
             if (checkResult.status === 'found') {
-                console.log('Audio found on server:', checkResult.data.filename);
+                console.log(`Audio "${text}" found on server: ${checkResult.data.filename}`);
                 
                 // Пробуем проиграть файл с сервера
                 const serverUrlInfo = {
@@ -361,6 +361,8 @@ class SpeechSynthesizer {
 
         try {
             this.state.isPlayingAudio = true;
+
+            console.log(`Play: ${phrase}`);
             
             let audio;
             if (this.preloadedAudios.has(urlInfo.url)) {
@@ -452,6 +454,10 @@ class SpeechSynthesizer {
     // Основной метод воспроизведения (обратная совместимость)
     async speak(phrase, phraseType = 'target', category = null, speed = 1.0) {
         const language = phraseType === 'target' ? 'en' : 'ru';
+
+        if (phrase[phrase.length - 1] == '?')
+            $(window).trigger('question_phrase');
+
         return this.smartSpeak(phrase, language, category, speed);
     }
 

@@ -159,6 +159,8 @@ $(document).ready(function() {
                     if (state.currentPhrase) {
                         updateDisplay();
                     }
+
+                    $(window).trigger('phrases_loaded');
                 }
             });
     }

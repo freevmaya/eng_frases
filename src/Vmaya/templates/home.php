@@ -238,3 +238,4 @@
 <script src="scripts/player-controls.js?v=<?=$v?>"></script>
 <!--<script src="scripts/headphone-controls.js?v=<?=$v?>"></script>-->
 <script src="scripts/app.js?v=<?=$v?>"></script>
+<script src="scripts/sound.js?v=<?=$v?>"></script>
