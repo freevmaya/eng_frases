@@ -9,6 +9,26 @@ chmod 755 /var/log/audio-generator
 chmod 755 /run/audio-generator
 ---------------------------------------------------------------------------------------------------------
 
+cd /home/vmaya/www/eng_frases/generator
+python3.11 -m venv venv
+source venv/bin/activate
+---------------------------------------------------------------------------------------------------------
+
+pip install --upgrade pip
+
+# Создайте requirements.txt если его нет
+cat > requirements.txt << 'EOF'
+Flask==2.3.3
+gtts==2.3.1
+requests==2.31.0
+gunicorn==21.2.0
+EOF
+
+# Установите зависимости
+pip install -r requirements.txt
+---------------------------------------------------------------------------------------------------------
+
+
 audio-generator.service:
 
 [Unit]

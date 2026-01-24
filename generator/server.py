@@ -242,23 +242,3 @@ def get_audio(filename):
             "status": "error",
             "message": f"Error: {str(e)}"
         }), 500
-
-if __name__ == '__main__':
-    # Создание необходимых директорий
-    Path(BASE_OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
-    
-    print("="*60)
-    print("Сервер генерации аудиофайлов запущен")
-    print("="*60)
-    print(f"Базовая директория: {os.path.abspath(BASE_OUTPUT_DIR)}")
-    print(f"JSON файл: {os.path.abspath(JSON_FILE_PATH)}")
-    print(f"CORS настроен для всех доменов")
-    print(f"\nДоступные эндпоинты:")
-    print(f"  POST /api/generate-audio - генерация одного аудиофайла")
-    print(f"  POST /api/check-audio    - проверка существования файла")
-    print(f"  GET  /api/health         - проверка работоспособности")
-    print(f"  GET  /api/get-audio/<filename> - получение аудиофайла")
-    print("="*60)
-    
-    # Запуск сервера
-    app.run(host='0.0.0.0', port=5000, debug=True)
