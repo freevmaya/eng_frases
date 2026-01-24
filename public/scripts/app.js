@@ -414,31 +414,36 @@ $(document).ready(function() {
     function setCurrentType(type) {
 
         if (state.currentListType != type) {
+            state.currentListType = type;
+            updateBottomList();
 
-            debounce(()=>{
-                state.currentListType = type;
+            debouncePage(()=>{
+                speechSynthesizer.waitForCompletion()
+                    .then(()=>{ 
 
-                // Сохраняем ключ текущего списка
-                const listKey = stateManager.generateListKey(
-                    state.currentListType, 
-                    state.order, 
-                    phrasesData
-                );
+                        // Сохраняем ключ текущего списка
+                        const listKey = stateManager.generateListKey(
+                            state.currentListType, 
+                            state.order, 
+                            phrasesData
+                        );
 
-                state.showingFirstLang = true;
-                stateManager.updateSettings(state);
-                stateManager.setCurrentListData(listKey);
-                stateManager.updatePlaybackState({
-                    currentPhraseIndex: state.currentPhraseIndex,
-                    showingFirstLang: state.showingFirstLang,
-                    currentListType: state.currentListType,
-                    order: state.order
-                });  
-                loadPhraseList(true);
+                        stateManager.updateSettings(state);
+                        stateManager.setCurrentListData(listKey);
+                        stateManager.updatePlaybackState({
+                            currentPhraseIndex: state.currentPhraseIndex,
+                            showingFirstLang: state.showingFirstLang,
+                            currentListType: state.currentListType,
+                            order: state.order
+                        });  
+                        loadPhraseList(true);
+                        updateDisplay();
+                
+                        if (stateManager.isPlaying)
+                            playCurrentPhrase();
+                    });
+            });
 
-                updateBottomList();
-                updateDisplay();
-            }, 300)();
         }
     }
 
@@ -628,7 +633,8 @@ $(document).ready(function() {
                 .then(()=>{
 
                     startProgressTimer(state.pauseBetweenLanguages);
-                    
+
+                    clearTimeout(state.timeoutId);
                     state.timeoutId = setTimeout(() => {
                         state.showingFirstLang = false;
                         playCurrentPhrase();
@@ -645,7 +651,8 @@ $(document).ready(function() {
                     state.currentPhrase.type, state.speed)
                 .then(()=>{
                     startProgressTimer(state.pauseBetweenPhrases);
-                    
+
+                    clearTimeout(state.timeoutId);
                     state.timeoutId = setTimeout(() => {
                         setCurrentPhrase(state.currentPhraseIndex + 1);
                         playCurrentPhrase();

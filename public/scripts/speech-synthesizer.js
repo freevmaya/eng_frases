@@ -4,9 +4,8 @@ class SpeechSynthesizer {
         this.state = {
             hasSpeechSynthesis: 'speechSynthesis' in window,
             speechError: false,
-            isSpeaking: false,
-            isPlayingAudio: false,
-            isGeneratingAudio: false,
+            isBusy: false, // Объединенная переменная состояния
+            busyType: null, // Тип текущей операции: 'speaking', 'playing', 'generating'
             voices: [],
             voicesLoaded: false,
             useFallbackSound: false
@@ -19,9 +18,9 @@ class SpeechSynthesizer {
             useCachedAudio: config.useCachedAudio !== false,
             fallbackToSpeech: config.fallbackToSpeech !== false,
             checkAudioBeforePlay: config.checkAudioBeforePlay !== false,
-            autoGenerateAudio: config.autoGenerateAudio !== false, // Автоматическая генерация на сервере
+            autoGenerateAudio: config.autoGenerateAudio !== false,
             audioTimeout: config.audioTimeout || 10000,
-            generationTimeout: config.generationTimeout || 30000, // Таймаут генерации
+            generationTimeout: config.generationTimeout || 30000,
             ...config
         };
         
@@ -31,6 +30,23 @@ class SpeechSynthesizer {
         this.audioCache = new Map();
         
         this.init();
+    }
+
+    // Добавляем вспомогательные методы для управления состоянием
+    _setBusy(type) {
+        this.state.isBusy = true;
+        this.state.busyType = type;
+    }
+
+    _clearBusy() {
+        this.state.isBusy = false;
+        this.state.busyType = null;
+    }
+
+    _isBusyWith(type = null) {
+        if (!this.state.isBusy) return false;
+        if (type) return this.state.busyType === type;
+        return true;
     }
 
     // Инициализация синтезатора речи
@@ -152,14 +168,14 @@ class SpeechSynthesizer {
 
     // Генерация аудиофайла на сервере
     async generateAudioOnServer(text, language = 'en', category = null) {
-        if (this.state.isGeneratingAudio) {
+        if (this._isBusyWith('generating')) {
             return {
                 status: 'error',
                 message: 'Already generating audio'
             };
         }
         
-        this.state.isGeneratingAudio = true;
+        this._setBusy('generating');
 
         showAlert('Звуковой файл фразы генерируется!');
         
@@ -207,7 +223,7 @@ class SpeechSynthesizer {
                 message: error.message
             };
         } finally {
-            this.state.isGeneratingAudio = false;
+            this._clearBusy();
         }
     }
 
@@ -216,21 +232,24 @@ class SpeechSynthesizer {
         const cleanText = text.replace(/\([^()]*\)|\[[^\][]*\]/g, '').trim();
         const phraseType = language === 'en' ? 'target' : 'native';
         
-        if (this.state.isSpeaking || this.state.isPlayingAudio || this.state.isGeneratingAudio) {
+        // Проверяем, занят ли плеер
+        if (this.state.isBusy) {
             return {
                 success: false,
-                error: 'Already speaking or playing or generating'
+                error: `Player is busy with ${this.state.busyType}`,
+                busyType: this.state.busyType
             };
         }
 
-        if (this.config.noServer) {
+        // Устанавливаем состояние занятости в начале операции
+        this._setBusy('processing');
 
-            const localUrlInfo = await this.getAudioUrl(cleanText, phraseType, category);
-            return await this.playAudioFromUrl(localUrlInfo, cleanText);
-        }
-        
         try {
-
+            if (this.config.noServer) {
+                const localUrlInfo = await this.getAudioUrl(cleanText, phraseType, category);
+                return await this.playAudioFromUrl(localUrlInfo, cleanText);
+            }
+            
             // 1. Сначала проверяем локально
             if (this.config.useCachedAudio) {
                 const localUrlInfo = await this.getAudioUrl(cleanText, phraseType, category);
@@ -316,6 +335,8 @@ class SpeechSynthesizer {
                 }
             }
             
+            // Если ничего не сработало, очищаем состояние
+            this._clearBusy();
             return {
                 success: false,
                 type: 'none',
@@ -341,6 +362,8 @@ class SpeechSynthesizer {
                 }
             }
             
+            // Очищаем состояние при ошибке
+            this._clearBusy();
             return {
                 success: false,
                 type: 'none',
@@ -352,16 +375,19 @@ class SpeechSynthesizer {
 
     // Воспроизведение MP3 файла по URL
     async playAudioFromUrl(urlInfo, phrase) {
-        if (this.state.isPlayingAudio || this.state.isSpeaking) {
+        // Проверяем, занят ли плеер
+        if (this.state.isBusy && this.state.busyType !== 'processing') {
             return {
                 success: false,
-                error: 'Already playing audio or speaking'
+                error: `Player is busy with ${this.state.busyType}`,
+                busyType: this.state.busyType
             };
         }
 
-        try {
-            this.state.isPlayingAudio = true;
+        // Обновляем тип занятости с 'processing' на 'playing'
+        this._setBusy('playing');
 
+        try {
             console.log(`Play: ${phrase}`);
             
             let audio;
@@ -431,7 +457,7 @@ class SpeechSynthesizer {
             
         } catch (error) {
             console.error('Error playing audio:', error);
-            this.state.isPlayingAudio = false;
+            this._clearBusy();
             this.currentAudio = null;
             throw error;
         }
@@ -439,14 +465,14 @@ class SpeechSynthesizer {
 
     _afterFinishPlay() {
         setTimeout(() => {
-            this.state.isPlayingAudio = false;
+            this._clearBusy();
             this.currentAudio = null;
         }, 100);
     }
 
     _afterFinishSpeak() {
         setTimeout(() => {
-            this.state.isSpeaking = false;
+            this._clearBusy();
             this.currentUtterance = null;
         }, 100);
     }
@@ -455,8 +481,13 @@ class SpeechSynthesizer {
     async speak(phrase, phraseType = 'target', category = null, speed = 1.0) {
         const language = phraseType === 'target' ? 'en' : 'ru';
 
+        if (this.state.isBusy)
+            await this.waitForCompletion();
+
         if (phrase[phrase.length - 1] == '?')
             $(window).trigger('question_phrase');
+
+        console.log(`Attemp play ${phrase}`);
 
         return this.smartSpeak(phrase, language, category, speed);
     }
@@ -466,7 +497,7 @@ class SpeechSynthesizer {
         if (!this.state.hasSpeechSynthesis) return false;
         
         try {
-            this.state.isSpeaking = true;
+            this._setBusy('speaking');
             
             const utterance = new SpeechSynthesisUtterance(text);
             this.currentUtterance = utterance;
@@ -495,7 +526,7 @@ class SpeechSynthesizer {
             
         } catch (error) {
             console.error('Speech synthesis failed:', error);
-            this.state.isSpeaking = false;
+            this._clearBusy();
             this.currentUtterance = null;
             return false;
         }
@@ -593,7 +624,7 @@ class SpeechSynthesizer {
             const startTime = Date.now();
             
             const checkInterval = setInterval(() => {
-                if (!this.state.isSpeaking && !this.state.isPlayingAudio && !this.state.isGeneratingAudio) {
+                if (!this.state.isBusy) {
                     clearInterval(checkInterval);
                     resolve(true);
                 } else if (Date.now() - startTime > timeout) {
@@ -642,24 +673,23 @@ class SpeechSynthesizer {
         if (this.currentAudio) {
             this.currentAudio.pause();
             this.currentAudio.currentTime = 0;
-            this.state.isPlayingAudio = false;
             this.currentAudio = null;
         }
         
         if (this.state.hasSpeechSynthesis) {
             speechSynthesis.cancel();
-            this.state.isSpeaking = false;
             this.currentUtterance = null;
         }
+        
+        this._clearBusy();
     }
 
     // Получение статуса синтезатора
     getStatus() {
         return {
             available: this.isAvailable(),
-            speaking: this.state.isSpeaking,
-            playingAudio: this.state.isPlayingAudio,
-            generatingAudio: this.state.isGeneratingAudio,
+            isBusy: this.state.isBusy,
+            busyType: this.state.busyType,
             voicesLoaded: this.state.voicesLoaded,
             voicesCount: this.state.voices.length,
             preloadedAudiosCount: this.preloadedAudios.size,

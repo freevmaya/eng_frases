@@ -27,7 +27,7 @@ class AppSound {
 new AppSound({
 	events: {
 		question_phrase: {
-			file: 'data/sounds/samsung-4_4.mp3',
+			file: 'data/sounds/question.mp3',
 			volume: 0.5
 		}
 	}
