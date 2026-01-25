@@ -69,12 +69,13 @@ class Page {
 		foreach (Page::$request as $key=>$value) {
 			if ($key == 'page') {
 				$page = $value;
-				$classFileName = dirname(__FILE__).'/'.lcfirst($page).'.php';
+				$className = ucfirst($page);
+				
+				$classFileName = dirname(__FILE__).'/'.$className.'.php';
 
 				echo $classFileName."            ";
 
 				if (file_exists($classFileName)) {
-					$className = lcfirst($page);
 					include($classFileName);
 				}
 			}
