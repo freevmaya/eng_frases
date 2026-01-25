@@ -91,8 +91,8 @@ $(document).ready(function() {
 
     const AppConst = {
         charTime: {
-            target: 60, 
-            native: 70
+            target: 30, 
+            native: 40
         }
     }
 

@@ -458,7 +458,7 @@ class SpeechSynthesizer {
                     audio.removeEventListener('error', onError);
                 };
                 
-                timeoutId = setTimeout(onTimeout, this.config.audioTimeout);
+                //timeoutId = setTimeout(onTimeout, this.config.audioTimeout);
                 
                 audio.addEventListener('ended', onEnded);
                 audio.addEventListener('error', onError);

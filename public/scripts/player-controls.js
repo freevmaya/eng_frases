@@ -47,7 +47,7 @@ class PlayerControls {
 
         $('body').click(((e) => {
             if (this.state.visible && !$(e.target).is(this.elements.container))
-                self.hide();
+                this.hide();
         }).bind(this));
 
         this.state.isClickHideSet = true;

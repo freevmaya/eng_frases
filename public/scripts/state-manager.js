@@ -8,13 +8,13 @@ class StateManager {
         this.DEFAULT_STATE = {
             // Настройки воспроизведения
             speed: 1.0,
-            pauseBetweenPhrases: 3,
+            pauseBetweenPhrases: 2,
             pauseBetweenLanguages: 2,
             
             // Направление и порядок
-            direction: 'native-target',
+            direction: 'native-target-both',
             order: 'sequential',
-            currentListType: 'all',
+            currentListType: 'Present simple',
             
             // Состояние воспроизведения
             currentPhraseIndex: 0,
