@@ -9,6 +9,7 @@
 	define('TEMPLATES_PATH', BASEPATH.'/src/Vmaya/templates/');
 	define("CHARSET", "utf-8");
 	define("DEFAULTPAGE", "home");
+	define('APP_VERSION', '1.0.2');
 
 	define('DOWNLOADS_PATH', BASEPATH.'downloads'.DS);
 	define('DOWNLOADS_URL', BASEURL.'downloads'.DS);
