@@ -1,5 +1,5 @@
 <?php
-    $v = 70;
+    $v = 71;
 ?>
 <!-- Settings Modal -->
 <div class="modal fade fullscreen-modal" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
