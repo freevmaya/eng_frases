@@ -1,5 +1,6 @@
 // Класс для управления элементами управления плеером
 class PlayerControls {
+
     constructor(options = {}) {
         this.options = {
             autoHideDelay: 5000, // 5 секунд
@@ -20,7 +21,8 @@ class PlayerControls {
             visible: false,
             autoHideTimeout: null,
             isPlaying: false,
-            controlsEnabled: true
+            controlsEnabled: true,
+            isClickHideSet: false
         };
         
         this.init();
@@ -38,7 +40,17 @@ class PlayerControls {
         this.elements.container.css('pointer-events', 'none');
         
         this.setupEventListeners();
-        this.show(true); // Начальное состояние - скрыто
+        this.show(true);
+    }
+
+    setupClickHide() {
+
+        $('body').click(((e) => {
+            if (this.state.visible && !$(e.target).is(this.elements.container))
+                self.hide();
+        }).bind(this));
+
+        this.state.isClickHideSet = true;
     }
     
     // Настройка обработчиков событий
@@ -53,11 +65,6 @@ class PlayerControls {
                 self.resetAutoHide();
             }
         });
-
-        $('body').click((e) => {
-            if (this.state.visible && !$(e.target).is(self.elements.container))
-                self.hide();
-        });
         
         // Обработчики для кнопок
         this.elements.playButton.click(function(e) {
@@ -65,6 +72,9 @@ class PlayerControls {
             if (self.state.controlsEnabled) {
                 self.resetAutoHide();
             }
+
+            if (!self.state.isClickHideSet) 
+                self.setupClickHide();
         });
         
         this.elements.prevBtn.click(function(e) {

@@ -20,8 +20,6 @@ class VKApp {
 							source_user: user
 						}
 					});
-
-					$('#instruction').modal('show');
 				}
 			});
 
