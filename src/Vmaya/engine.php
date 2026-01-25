@@ -9,7 +9,13 @@
 	define('TEMPLATES_PATH', BASEPATH.'/src/Vmaya/templates/');
 	define("CHARSET", "utf-8");
 	define("DEFAULTPAGE", "home");
+	
+	// Конфигурация приложения
 	define('APP_VERSION', '1.0.2');
+	define('APP_NAME', 'Тренажер английского языка');
+	define('DEFAULT_SPEED', 1.0);
+	define('DEFAULT_PAUSE', 3);
+	define('DEFAULT_LANG_PAUSE', 2);
 
 	define('DOWNLOADS_PATH', BASEPATH.'downloads'.DS);
 	define('DOWNLOADS_URL', BASEURL.'downloads'.DS);
