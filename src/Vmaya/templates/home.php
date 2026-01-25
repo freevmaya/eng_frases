@@ -1,5 +1,5 @@
 <?php
-    $v = 71;
+    $v = 72;
 ?>
 <!-- Settings Modal -->
 <div class="modal fade fullscreen-modal" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
@@ -9,7 +9,6 @@
                 <h5 class="modal-title text-primary" id="settingsModalLabel">
                     <i class="bi bi-gear me-2"></i>Настройки
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
 
@@ -239,12 +238,11 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="centeredModalLabel">Инструкция</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                 </div>
                 <div class="modal-body">
                     <h5><?=APP_NAME?></h5>
                     <p>Это интерактивное приложение для изучения английских фраз и предложений.</p>
-                    <p><span class="bi bi-exclamation-triangle me-2"><span> Для эффективного запоминания и доведения до автоматизма речевого механизма, рекомендуем чередовать последовательность воспроизведения русского и английского звучания фраз.</p>
+                    <p><span class="bi bi-exclamation-triangle me-2"><span> Для эффективного запоминания и доведения до автоматизма речевого механизма, рекомендуем чередовать последовательность воспроизведения русского и английского звучания фраз. Таким образом вы будете тренировать не только автоматизм произношения фраз, но их скоростное понимания на слух.</p>
                     <p><span class="bi bi-tools me-2"><span> В настройках вы найдете все требуемые для этого параметры: пауза между фразами, последовательность перевода, различные варианты речевого озвучивания, повторы и т.п.</p>
                     <p><span class="bi bi-award me-2"><span> Успешного обучения!</p>
                 </div>

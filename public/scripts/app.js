@@ -153,8 +153,6 @@ $(document).ready(function() {
             updateDisplay();
         }
 
-                    $('#instruction').modal('show');
-
         $(window).trigger('phrases_loaded');
         
     }
