@@ -11,7 +11,7 @@ class Ajax extends Page {
 		if (isset(Page::$request['action'])) {
 			$action = Page::$request['action'];
 			$requestId = @Page::$request['ajax-request-id'];
-			if (method_exists($this, $action) && Page::requiestIdModel($requestId)) {
+			if (method_exists($this, $action)) {
 				$data = isset(Page::$request['data']) ? json_decode(Page::$request['data'], true) : null;
 
 				return $this->$action($data);
@@ -24,12 +24,6 @@ class Ajax extends Page {
 	protected function trace($data) {
 		trace($data);
 		return true;
-	}
-
-	protected function updatePosition($data) {
-		GLOBAL $user;
-
-		return (new UserModel())->UpdatePosition($user['id'], $data, isset($data['angle']) ? $data['angle'] : 0);
 	}
 
 	protected function setValue($data) {
@@ -57,6 +51,10 @@ class Ajax extends Page {
 			}
 		}
 		return $data;
+	}
+
+	protected function getList() {
+		return PhrasesModel::getPhrasesAsJsonWithDifficulty();
 	}
 }
 ?>

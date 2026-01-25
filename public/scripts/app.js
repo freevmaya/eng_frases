@@ -125,7 +125,7 @@ $(document).ready(function() {
     };
 
     // Инициализация
-    function init(fileUrl) {
+    function init() {
         setupEventListeners();
         applyTvScreenState();
 
@@ -137,33 +137,24 @@ $(document).ready(function() {
             }
         });
 
-        openList(fileUrl);
+        openList();
     }
 
-    function openList(fileUrl) {
-        // Инициализация при загрузке
-        fetch(fileUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Failed to load ${fileUrl}`);
-                }
+    function openList() {
+        Ajax({
+            action: 'getList'
+        }).then((data)=>{
+            phrasesData = data;
+            initPhraseList();
+            loadPhraseList();
+    
+            // Восстанавливаем отображение из сохранённого состояния
+            if (state.currentPhrase) {
+                updateDisplay();
+            }
 
-                return response.json();
-            })
-            .then(data => {
-                if (data) {
-                    phrasesData = data;
-                    initPhraseList();
-                    loadPhraseList();
-            
-                    // Восстанавливаем отображение из сохранённого состояния
-                    if (state.currentPhrase) {
-                        updateDisplay();
-                    }
-
-                    $(window).trigger('phrases_loaded');
-                }
-            });
+            $(window).trigger('phrases_loaded');
+        });
     }
 
     function loadPhrasesFromJson(fileUrl) {
@@ -810,5 +801,5 @@ $(document).ready(function() {
         return array;
     }
     
-    init('data/en-ru.json');
+    init();
 });
