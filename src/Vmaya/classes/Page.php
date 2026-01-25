@@ -71,6 +71,8 @@ class Page {
 				$page = $value;
 				$classFileName = dirname(__FILE__).'/'.$page.'.php';
 
+				echo $classFileName."/n";
+
 				if (file_exists($classFileName)) {
 					$className = lcfirst($page);
 					include($classFileName);
