@@ -70,10 +70,8 @@ class Page {
 			if ($key == 'page') {
 				$page = $value;
 				$className = ucfirst($page);
-				
-				$classFileName = dirname(__FILE__).'/'.$className.'.php';
 
-				echo $classFileName."            ";
+				$classFileName = dirname(__FILE__).'/'.$className.'.php';
 
 				if (file_exists($classFileName)) {
 					include($classFileName);
