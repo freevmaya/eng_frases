@@ -81,6 +81,21 @@ class SpeechSynthesizer {
         };
     }
 
+    hash(phrase) {
+        if (!phrase) return '';
+        
+        const normalizedPhrase = phrase.trim()
+                                       .split(/\s+/)
+                                       .join(' ')
+                                       .toLowerCase();
+        
+        const languageMap = {
+            'target': 'en',
+            'native': 'ru'
+        };
+        return CryptoJS.MD5(normalizedPhrase).toString();
+    }
+
     // Вычисление MD5 хэша строки
     md5(text) {
         if (!text) return '';
@@ -100,12 +115,13 @@ class SpeechSynthesizer {
     // Формирование URL к аудиофайлу
     async getAudioUrl(phrase, phraseType = 'target', category = null) {
         const langPrefix = phraseType === 'target' ? 'en' : 'ru';
-        const hash = await this.md5(phrase.trim());
+        const hash = await this.hash(phrase.trim());
         const fileName = `${langPrefix}_${hash}.mp3`;
         
         let fullUrl;
         if (category) {
-            fullUrl = `${this.config.audioBaseUrl.replace(/\/$/, '')}/${category}/${fileName}`;
+            // Изменено: теперь langPrefix вместо category
+            fullUrl = `${this.config.audioBaseUrl.replace(/\/$/, '')}/${langPrefix}/${fileName}`;
         } else {
             fullUrl = `${this.config.audioBaseUrl.replace(/\/$/, '')}/${fileName}`;
         }
@@ -271,7 +287,8 @@ class SpeechSynthesizer {
                 // Пробуем проиграть файл с сервера
                 const serverUrlInfo = {
                     fileName: checkResult.data.filename,
-                    url: `${this.config.audioBaseUrl.replace(/\/$/, '')}/${checkResult.data.category || ''}/${checkResult.data.filename}`.replace('//', '/'),
+                    // Изменено: теперь langPrefix вместо category
+                    url: `${this.config.audioBaseUrl.replace(/\/$/, '')}/${language}/${checkResult.data.filename}`.replace('//', '/'),
                     langPrefix: language,
                     hash: checkResult.data.filename.replace(`${language}_`, '').replace('.mp3', ''),
                     phrase: cleanText,
@@ -301,7 +318,8 @@ class SpeechSynthesizer {
                     const generatedUrlInfo = {
                         fileName: generationResult.data.filename,
                         url: generationResult.data.filepath || 
-                             `${this.config.audioBaseUrl.replace(/\/$/, '')}/${generationResult.data.category || ''}/${generationResult.data.filename}`.replace('//', '/'),
+                             // Изменено: теперь language вместо category
+                             `${this.config.audioBaseUrl.replace(/\/$/, '')}/${language}/${generationResult.data.filename}`.replace('//', '/'),
                         langPrefix: language,
                         hash: generationResult.data.filename.replace(`${language}_`, '').replace('.mp3', ''),
                         phrase: cleanText,
@@ -484,7 +502,7 @@ class SpeechSynthesizer {
         if (this.state.isBusy)
             await this.waitForCompletion();
 
-        if (phrase[phrase.length - 1] == '?')
+        if ((phrase[phrase.length - 1] == '?') && (language == 'ru'))
             $(window).trigger('question_phrase');
 
         console.log(`Attemp play ${phrase}`);
