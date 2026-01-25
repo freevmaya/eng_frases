@@ -234,6 +234,27 @@
         
     </div>
 
+    <div class="modal fade" tabindex="-1" aria-labelledby="centeredModalLabel" aria-hidden="true" id="instruction">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="centeredModalLabel">Инструкция</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <h5><?=APP_NAME?></h5>
+                    <p>Это интерактивное приложение для изучения английских фраз и предложений.</p>
+                    <p><span class="bi bi-exclamation-triangle me-2"><span> Для эффективного запоминания и доведения до автоматизма речевого механизма, рекомендуем чередовать последовательность воспроизведения русского и английского звучания фраз. Таким образом вы будете тренировать не только автоматизм произношения фраз, но их скоростное понимания на слух.</p>
+                    <p><span class="bi bi-tools me-2"><span> В настройках вы найдете все требуемые для этого параметры: пауза между фразами, последовательность перевода, различные варианты речевого озвучивания, повторы и т.п.</p>
+                    <p><span class="bi bi-award me-2"><span> Успешного обучения!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Понятно</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="mt-2 pt-2 border-top border-secondary text-center text-muted">
         <p class="small">

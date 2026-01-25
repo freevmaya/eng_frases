@@ -40,17 +40,19 @@ class Ajax extends Page {
 		return $result;
 	}
 
-	protected function initData($data) {
+	protected function initUser($data) {
 
-		if (isset($data['user'])) {
-			$dataUser = is_string($data['user']) ? json_decode($data['user'], true) : $data['user'];
+		$userModel = new UserModel();
 
-			if ($this->getUser()['id'] != $dataUser['id']) {
-				$this->setUser($dataUser);
-				return true;
-			}
-		}
-		return $data;
+		$source_user = $data['source_user'];
+
+		return $userModel->Update([
+			'id'=>$data['id'],
+			'first_name'=>$source_user['first_name'],
+			'last_name'=>$source_user['last_name'],
+			'last_time'=>date('Y-m-d H:i:s'),
+			'data'=>json_encode($source_user, JSON_FLAGS)
+		]);
 	}
 
 	protected function getList() {

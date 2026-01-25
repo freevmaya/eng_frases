@@ -2,23 +2,28 @@
 class VKApp {
 
 	_haveAd = false;
-	constructor(app_id) {
+	constructor(app_id, user_id) {
 		vkBridge.send("VKWebAppInit", {})
 			.then((response)=>{
+				console.log(response);
 			});
 
-		/*
-	    let container = $('body');
-	    const resizeObserver = new ResizeObserver(debounce(()=>{
-	        if (vkBridge)
-	            vkBridge.send('VKWebAppResizeWindow', {
-	                height: container.outerHeight()
-	            })
-	    }, 50));
-	    resizeObserver.observe(container[0]);
-	    */
-
 		$('body').addClass('vk_layout');
+
+		vkBridge.send('VKWebAppGetUserInfo', {})
+			.then((user) => { 
+				if (user.id) {
+					Ajax({
+						action: 'initUser',
+						data: {
+							id: user_id,
+							source_user: user
+						}
+					});
+
+					$('#instruction').modal('show');
+				}
+			});
 
 		$(window).on('apply_settings', this.onApplySettings.bind(this));
 

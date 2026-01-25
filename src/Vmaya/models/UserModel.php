@@ -16,25 +16,9 @@ class UserModel extends BaseModel {
 							[$data['lat'], $data['lng'], $angle, $user_id]);
 	}
 
-	public function Update($values, $idField = 'id') {
-		GLOBAL $dbp;
-
-		if ($dbp->one("SELECT {$idField} FROM {$this->getTable()} WHERE `{$idField}` = {$values['id']}")) {
-			return $dbp->bquery("UPDATE {$this->getTable()} SET `first_name` = ?, `last_name` = ?, `username` = ?, `phone` = ? WHERE `{$idField}` = ?", 'ssssi', 
-				[$values['first_name'], $values['last_name'], $values['username'], $values['phone'], $values['id']]);
-		}
-		return false;
-	}
-
 	public function checkUnique($value) { 
 		GLOBAL $dbp;
 		return $dbp->one("SELECT id FROM {$this->getTable()} WHERE `username` = '{$value}'") === false; 
-	}
-
-	public function GetAnyRealOnLine() {
-		GLOBAL $dbp;
-		$query = "SELECT * FROM {$this->getTable()} WHERE isReal = 1 AND `last_time` >= NOW() - ".OFFLINEINTERVAL;
-		return $dbp->line($query);
 	}
 
 	public function getFields() {
@@ -42,6 +26,14 @@ class UserModel extends BaseModel {
 			'id' => [
 				'type' => 'hidden',
 				'dbtype' => 'i'
+			],
+			'source_id' => [
+				'type' => 'hidden',
+				'dbtype' => 'i'
+			],
+			'source' => [
+				'type' => 'source',
+				'dbtype' => 's'
 			],
 			'first_name' => [
 				'label'=> 'First name',
@@ -57,9 +49,20 @@ class UserModel extends BaseModel {
 				'validator'=> 'unique',
 				'dbtype' => 's'
 			],
-			'phone' => [
-				'label' => 'Phone',
-				'type' => 'phone',
+			'language_code' => [
+				'label' => 'language_code',
+				'dbtype' => 's'
+			],
+			'create_date' => [
+				'label' => 'create_date',
+				'dbtype' => 's'
+			],
+			'last_time' => [
+				'label' => 'last_time',
+				'dbtype' => 's'
+			],
+			'data' => [
+				'label' => 'data',
 				'dbtype' => 's'
 			]
 		];
