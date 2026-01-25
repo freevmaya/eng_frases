@@ -137,24 +137,30 @@ $(document).ready(function() {
             }
         });
 
-        openList();
+        if (phrasesData)
+            afterLoadList(phrasesData);
+        else loadList();
     }
 
-    function openList() {
+    function afterLoadList(data) {
+
+        phrasesData = data;
+        initPhraseList();
+        loadPhraseList();
+
+        // Восстанавливаем отображение из сохранённого состояния
+        if (state.currentPhrase) {
+            updateDisplay();
+        }
+
+        $(window).trigger('phrases_loaded');
+        
+    }
+
+    function loadList() {
         Ajax({
             action: 'getList'
-        }).then((data)=>{
-            phrasesData = data;
-            initPhraseList();
-            loadPhraseList();
-    
-            // Восстанавливаем отображение из сохранённого состояния
-            if (state.currentPhrase) {
-                updateDisplay();
-            }
-
-            $(window).trigger('phrases_loaded');
-        });
+        }).then(afterLoadList);
     }
 
     function loadPhrasesFromJson(fileUrl) {
