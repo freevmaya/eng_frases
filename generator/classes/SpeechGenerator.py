@@ -85,19 +85,13 @@ class SpeechGenerator:
             raise ValueError(f"Ошибка чтения JSON файла: {e}")
     
     def _generate_filename(self, phrase: str, language: str = 'en') -> str:
-        """
-        Генерация имени файла на основе фразы
+         # Нормализуем фразу (удаляем лишние пробелы, приводим к нижнему регистру)
+        normalized_phrase = ' '.join(phrase.strip().split()).lower()
         
-        Args:
-            phrase: Текст фразы
-            language: Язык ('en' или 'ru')
+        # Создаем MD5 хэш нормализованной фразы
+        phrase_hash = hashlib.md5(normalized_phrase.encode('utf-8')).hexdigest()
         
-        Returns:
-            str: Имя файла в формате {language}_{md5(phrase)}.mp3
-        """
-        # Создаем MD5 хэш фразы
-        phrase_hash = hashlib.md5(phrase.encode('utf-8')).hexdigest()
-        
+        # Формат: language_hash.mp3
         return f"{language}_{phrase_hash}.mp3"
     
     def generate_audio(self, text: str, language: str = 'en', 
@@ -117,13 +111,14 @@ class SpeechGenerator:
             print("✗ Пустая фраза")
             return None
         
-        # Генерация имени файла
-        filename = self._generate_filename(text, language)
+        # Нормализуем текст
+        clean_text = ' '.join(text.strip().split())
         
-        # Определение директории для сохранения
-        save_dir = Path(self.BASE_OUTPUT_DIR)
-        if category:
-            save_dir = save_dir / category
+        # Генерация имени файла
+        filename = self._generate_filename(clean_text, language)
+        
+        # Создаем подпапку для языка
+        save_dir = Path(self.BASE_OUTPUT_DIR) / language
         
         save_dir.mkdir(parents=True, exist_ok=True)
         
@@ -196,20 +191,20 @@ class SpeechGenerator:
         Returns:
             dict: Информация о существовании файла
         """
-        # Генерация имени файла
-        filename = self._generate_filename(text, language)
+        # Нормализуем текст
+        clean_text = ' '.join(text.strip().split())
         
-        # Определение пути к файлу
-        if category:
-            filepath = Path(self.BASE_OUTPUT_DIR) / category / filename
-        else:
-            filepath = Path(self.BASE_OUTPUT_DIR) / filename
+        # Генерация имени файла
+        filename = self._generate_filename(clean_text, language)
+        
+        # Путь к файлу в подпапке языка
+        filepath = Path(self.BASE_OUTPUT_DIR) / language / filename
         
         exists = filepath.exists() and filepath.stat().st_size > 0
         
         return {
             'exists': exists,
-            'text': text,
+            'text': clean_text,
             'language': language,
             'filename': filename,
             'filepath': str(filepath) if exists else None,
@@ -229,30 +224,43 @@ class SpeechGenerator:
         Returns:
             dict: Информация о найденном файле или None
         """
-        filename = self._generate_filename(text, language)
+        # Нормализуем текст
+        clean_text = ' '.join(text.strip().split())
         
-        # Если категории не указаны, проверяем все
-        if not categories:
-            categories = self._get_all_categories()
+        filename = self._generate_filename(clean_text, language)
         
-        for category in categories:
-            filepath = Path(self.BASE_OUTPUT_DIR) / category / filename
-            if filepath.exists() and filepath.stat().st_size > 0:
-                return {
-                    'exists': True,
-                    'text': text,
-                    'language': language,
-                    'filename': filename,
-                    'filepath': str(filepath),
-                    'category': category
-                }
+        # Проверяем в подпапке языка
+        lang_filepath = Path(self.BASE_OUTPUT_DIR) / language / filename
+        if lang_filepath.exists() and lang_filepath.stat().st_size > 0:
+            return {
+                'exists': True,
+                'text': clean_text,
+                'language': language,
+                'filename': filename,
+                'filepath': str(lang_filepath),
+                'category': None
+            }
         
-        # Также проверяем в корневой директории
+        # Для обратной совместимости проверяем в старых категориях
+        if categories:
+            for category in categories:
+                filepath = Path(self.BASE_OUTPUT_DIR) / category / filename
+                if filepath.exists() and filepath.stat().st_size > 0:
+                    return {
+                        'exists': True,
+                        'text': clean_text,
+                        'language': language,
+                        'filename': filename,
+                        'filepath': str(filepath),
+                        'category': category
+                    }
+        
+        # Также проверяем в корневой директории для обратной совместимости
         root_filepath = Path(self.BASE_OUTPUT_DIR) / filename
         if root_filepath.exists() and root_filepath.stat().st_size > 0:
             return {
                 'exists': True,
-                'text': text,
+                'text': clean_text,
                 'language': language,
                 'filename': filename,
                 'filepath': str(root_filepath),

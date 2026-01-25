@@ -28,7 +28,7 @@ new AppSound({
 	events: {
 		question_phrase: {
 			file: 'data/sounds/question.mp3',
-			volume: 0.5
+			volume: 0.25
 		}
 	}
 });

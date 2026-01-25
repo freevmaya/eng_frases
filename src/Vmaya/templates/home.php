@@ -119,6 +119,18 @@
                         <span>раз</span>
                     </div>
                 </div>
+
+                <div class="mb-4">
+                    <h6 class="text-info mb-3">
+                        <i class="bi bi-gender-ambiguous me-2"></i>Гендер голоса
+                    </h6>
+                    <div class="btn-group repeat-block" role="group">
+                        <select class="form-select bg-dark text-light border-secondary" id="genderVoice">
+                            <option value="male">Мужской</option>
+                            <option value="female">Женский</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer border-secondary">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>

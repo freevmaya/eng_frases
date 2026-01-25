@@ -6,7 +6,7 @@ from pathlib import Path
 app = Flask(__name__)
 
 # Конфигурация
-BASE_OUTPUT_DIR = "../public/data/audio_files_gtts"
+BASE_OUTPUT_DIR = "../public/data/audio_files_male"
 JSON_FILE_PATH = "../public/data/en-ru.json"
 
 # Инициализация генератора речи

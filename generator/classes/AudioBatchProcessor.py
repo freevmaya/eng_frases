@@ -27,7 +27,10 @@ class AudioBatchProcessor:
         Returns:
             str: Имя файла
         """
-        phrase_hash = hashlib.md5(phrase.encode('utf-8')).hexdigest()
+        # Нормализуем фразу
+        normalized_phrase = ' '.join(phrase.strip().split()).lower()
+        
+        phrase_hash = hashlib.md5(normalized_phrase.encode('utf-8')).hexdigest()
         return f"{language}_{phrase_hash}.mp3"
     
     def verify_audio_files(self, json_file_path: str) -> Dict:
@@ -52,7 +55,8 @@ class AudioBatchProcessor:
             'expected_files': 0,
             'found_files': 0,
             'missing_files': [],
-            'categories': {}
+            'categories': {},
+            'languages': {'en': {'found': 0, 'missing': 0}, 'ru': {'found': 0, 'missing': 0}}
         }
         
         for category, phrases_list in data.items():
@@ -62,7 +66,9 @@ class AudioBatchProcessor:
                 'missing': []
             }
             
-            category_dir = Path(self.BASE_AUDIO_DIR) / category
+            # Папки с языками теперь находятся в корне, а не в подпапках категорий
+            en_dir = Path(self.BASE_AUDIO_DIR) / 'en'
+            ru_dir = Path(self.BASE_AUDIO_DIR) / 'ru'
             
             for phrase_pair in phrases_list:
                 stats['total_phrases'] += 1
@@ -73,20 +79,25 @@ class AudioBatchProcessor:
                     category_stats['expected'] += 1
                     
                     phrase = phrase_pair['target'].strip()
-                    filename = self._generate_filename(phrase, 'en')
-                    filepath = category_dir / filename
+                    normalized_phrase = ' '.join(phrase.split()).lower()
+                    filename = self._generate_filename(normalized_phrase, 'en')
+                    filepath = en_dir / filename
                     
                     if filepath.exists():
                         stats['found_files'] += 1
                         category_stats['found'] += 1
+                        stats['languages']['en']['found'] += 1
                     else:
                         category_stats['missing'].append(f"EN: {phrase}")
                         stats['missing_files'].append({
                             'category': category,
                             'type': 'target',
                             'phrase': phrase,
-                            'filename': filename
+                            'normalized_phrase': normalized_phrase,
+                            'filename': filename,
+                            'expected_path': str(filepath)
                         })
+                        stats['languages']['en']['missing'] += 1
                 
                 # Проверка русской фразы
                 if 'native' in phrase_pair and phrase_pair['native'].strip():
@@ -94,20 +105,25 @@ class AudioBatchProcessor:
                     category_stats['expected'] += 1
                     
                     phrase = phrase_pair['native'].strip()
-                    filename = self._generate_filename(phrase, 'ru')
-                    filepath = category_dir / filename
+                    normalized_phrase = ' '.join(phrase.split()).lower()
+                    filename = self._generate_filename(normalized_phrase, 'ru')
+                    filepath = ru_dir / filename
                     
                     if filepath.exists():
                         stats['found_files'] += 1
                         category_stats['found'] += 1
+                        stats['languages']['ru']['found'] += 1
                     else:
                         category_stats['missing'].append(f"RU: {phrase}")
                         stats['missing_files'].append({
                             'category': category,
                             'type': 'native',
                             'phrase': phrase,
-                            'filename': filename
+                            'normalized_phrase': normalized_phrase,
+                            'filename': filename,
+                            'expected_path': str(filepath)
                         })
+                        stats['languages']['ru']['missing'] += 1
             
             stats['categories'][category] = category_stats
         
@@ -118,10 +134,21 @@ class AudioBatchProcessor:
         print(f"  Найдено файлов: {stats['found_files']}")
         print(f"  Отсутствует файлов: {len(stats['missing_files'])}")
         
+        print(f"\nСтатистика по языкам:")
+        for lang in ['en', 'ru']:
+            found = stats['languages'][lang]['found']
+            missing = stats['languages'][lang]['missing']
+            total = found + missing
+            if total > 0:
+                percentage = (found / total) * 100
+                print(f"  {lang.upper()}: {found}/{total} ({percentage:.1f}%)")
+        
         if stats['missing_files']:
             print(f"\nОтсутствующие файлы:")
             for missing in stats['missing_files'][:10]:
-                print(f"  • [{missing['category']}] {missing['type']}: {missing['phrase'][:50]}...")
+                phrase_type = "EN" if missing['type'] == 'target' else "RU"
+                print(f"  • [{missing['category']}] {phrase_type}: {missing['phrase'][:50]}...")
+                print(f"     Ожидаемый путь: {missing['expected_path']}")
             if len(stats['missing_files']) > 10:
                 print(f"  ... и еще {len(stats['missing_files']) - 10} файлов")
         

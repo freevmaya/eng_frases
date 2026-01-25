@@ -112,19 +112,20 @@ class SpeechSynthesizer {
         return hash;
     }
 
+    getBaseUrl(genderVoice = 'male') {
+        return this.config.audioBaseUrl.replace(/<genderVoice>/, genderVoice);
+    }
+
     // Формирование URL к аудиофайлу
-    async getAudioUrl(phrase, phraseType = 'target', category = null) {
+    async getAudioUrl(phrase, phraseType = 'target', category = null, genderVoice = 'male') {
         const langPrefix = phraseType === 'target' ? 'en' : 'ru';
         const hash = await this.hash(phrase.trim());
         const fileName = `${langPrefix}_${hash}.mp3`;
         
         let fullUrl;
-        if (category) {
-            // Изменено: теперь langPrefix вместо category
-            fullUrl = `${this.config.audioBaseUrl.replace(/\/$/, '')}/${langPrefix}/${fileName}`;
-        } else {
-            fullUrl = `${this.config.audioBaseUrl.replace(/\/$/, '')}/${fileName}`;
-        }
+
+        // Изменено: теперь langPrefix вместо category
+        fullUrl = `${this.getBaseUrl(genderVoice).replace(/\/$/, '')}/${langPrefix}/${fileName}`;
         
         return {
             fileName,
@@ -183,7 +184,7 @@ class SpeechSynthesizer {
     }
 
     // Генерация аудиофайла на сервере
-    async generateAudioOnServer(text, language = 'en', category = null) {
+    async generateAudioOnServer(text, language = 'en', category = null, genderVoice = 'male') {
         if (this._isBusyWith('generating')) {
             return {
                 status: 'error',
@@ -226,7 +227,7 @@ class SpeechSynthesizer {
             console.log('Generation result:', result);
             
             // Очищаем кэш для этого файла
-            const urlInfo = await this.getAudioUrl(text, language === 'en' ? 'target' : 'native', category);
+            const urlInfo = await this.getAudioUrl(text, language === 'en' ? 'target' : 'native', category, genderVoice);
             this.audioCache.delete(`check_${urlInfo.url}`);
             this.audioCache.delete(urlInfo.url);
             
@@ -244,7 +245,7 @@ class SpeechSynthesizer {
     }
 
     // Умное воспроизведение с проверкой и генерацией
-    async smartSpeak(text, language = 'en', category = null, speed = 1.0) {
+    async smartSpeak(text, language = 'en', category = null, speed = 1.0, genderVoice = 'male') {
         const cleanText = text.replace(/\([^()]*\)|\[[^\][]*\]/g, '').trim();
         const phraseType = language === 'en' ? 'target' : 'native';
         
@@ -262,13 +263,13 @@ class SpeechSynthesizer {
 
         try {
             if (this.config.noServer) {
-                const localUrlInfo = await this.getAudioUrl(cleanText, phraseType, category);
+                const localUrlInfo = await this.getAudioUrl(cleanText, phraseType, category, genderVoice);
                 return await this.playAudioFromUrl(localUrlInfo, cleanText);
             }
             
             // 1. Сначала проверяем локально
             if (this.config.useCachedAudio) {
-                const localUrlInfo = await this.getAudioUrl(cleanText, phraseType, category);
+                const localUrlInfo = await this.getAudioUrl(cleanText, phraseType, category, genderVoice);
                 const localExists = await this.checkAudioUrlExists(localUrlInfo.url);
                 
                 if (localExists) {
@@ -288,7 +289,7 @@ class SpeechSynthesizer {
                 const serverUrlInfo = {
                     fileName: checkResult.data.filename,
                     // Изменено: теперь langPrefix вместо category
-                    url: `${this.config.audioBaseUrl.replace(/\/$/, '')}/${language}/${checkResult.data.filename}`.replace('//', '/'),
+                    url: `${this.getBaseUrl(genderVoice).replace(/\/$/, '')}/${language}/${checkResult.data.filename}`.replace('//', '/'),
                     langPrefix: language,
                     hash: checkResult.data.filename.replace(`${language}_`, '').replace('.mp3', ''),
                     phrase: cleanText,
@@ -319,7 +320,7 @@ class SpeechSynthesizer {
                         fileName: generationResult.data.filename,
                         url: generationResult.data.filepath || 
                              // Изменено: теперь language вместо category
-                             `${this.config.audioBaseUrl.replace(/\/$/, '')}/${language}/${generationResult.data.filename}`.replace('//', '/'),
+                             `${this.getBaseUrl(genderVoice).replace(/\/$/, '')}/${language}/${generationResult.data.filename}`.replace('//', '/'),
                         langPrefix: language,
                         hash: generationResult.data.filename.replace(`${language}_`, '').replace('.mp3', ''),
                         phrase: cleanText,
@@ -496,7 +497,7 @@ class SpeechSynthesizer {
     }
 
     // Основной метод воспроизведения (обратная совместимость)
-    async speak(phrase, phraseType = 'target', category = null, speed = 1.0) {
+    async speak(phrase, phraseType = 'target', category = null, speed = 1.0, genderVoice = 'male') {
         const language = phraseType === 'target' ? 'en' : 'ru';
 
         if (this.state.isBusy)
@@ -507,7 +508,7 @@ class SpeechSynthesizer {
 
         console.log(`Attemp play ${phrase}`);
 
-        return this.smartSpeak(phrase, language, category, speed);
+        return this.smartSpeak(phrase, language, category, speed, genderVoice);
     }
 
     // Внутренний метод для синтеза речи
@@ -725,7 +726,7 @@ class SpeechSynthesizer {
 // Пример использования
 async function exampleUsage() {
     const synthesizer = new SpeechSynthesizer({
-        audioBaseUrl: 'http://localhost:5000/audio/',
+        audioBaseUrl: 'data/audio_files',
         apiBaseUrl: 'http://localhost:5000/api/',
         useCachedAudio: true,
         fallbackToSpeech: true,

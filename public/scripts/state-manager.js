@@ -27,7 +27,9 @@ class StateManager {
 
             repeatLength: 5,
             repeatCount: 0,
-            currentRepeat: 0
+            currentRepeat: 0,
+
+            genderVoice: 'male'
         };
         
         this.state = { ...this.DEFAULT_STATE };

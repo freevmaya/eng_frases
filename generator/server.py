@@ -6,7 +6,7 @@ from pathlib import Path
 app = Flask(__name__)
 
 # Конфигурация
-BASE_OUTPUT_DIR = os.path.abspath("/home/vmaya/www/eng_frases/public/data/audio_files_gtts")
+BASE_OUTPUT_DIR = os.path.abspath("/home/vmaya/www/eng_frases/public/data/audio_files_male")
 JSON_FILE_PATH = os.path.abspath("/home/vmaya/www/eng_frases/public/data/en-ru.json")
 
 Path(BASE_OUTPUT_DIR).mkdir(parents=True, exist_ok=True)

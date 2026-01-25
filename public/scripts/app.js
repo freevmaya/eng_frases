@@ -120,7 +120,8 @@ $(document).ready(function() {
         phraseListPlayer: $('#phraseListPlayer'),
         tvScreenToggle: $('#tvScreenToggle'),
         repeatLength: $('#repeatLength'),
-        repeatCount: $('#repeatCount')
+        repeatCount: $('#repeatCount'),
+        genderVoice: $('#genderVoice')
     };
 
     // Инициализация
@@ -345,6 +346,7 @@ $(document).ready(function() {
 
         elements.repeatLength.val(state.repeatLength);
         elements.repeatCount.val(state.repeatCount);
+        elements.genderVoice.val(state.genderVoice);
         
         // Устанавливаем активные кнопки направления и порядка
         $(`[data-direction="${state.direction}"]`).addClass('active').siblings().removeClass('active');
@@ -365,7 +367,8 @@ $(document).ready(function() {
             order: $('[data-order].active').data('order'),
             showTvScreen: elements.tvScreenToggle.prop('checked'),
             repeatLength: elements.repeatLength.val(),
-            repeatCount: elements.repeatCount.val()
+            repeatCount: elements.repeatCount.val(),
+            genderVoice: elements.genderVoice.val()
         };
         
         // Проверяем, изменился ли список фраз
@@ -378,6 +381,8 @@ $(document).ready(function() {
         // Обновляем состояние через менеджер
         const changes = stateManager.updateSettings(newSettings);
         Object.assign(state, stateManager.getState());
+
+        updateBottomList();
         
         // Задача 2: Перезагружаем список только если изменился тип списка или порядок
         if (changes.listChanged || listChanged) {
@@ -394,14 +399,6 @@ $(document).ready(function() {
         
         // Сохраняем состояние
         stateManager.saveState();
-        /*
-        // Если воспроизведение активно, перезапускаем
-        if (stateManager.isPlaying && !stateManager.isPaused) {
-            stopPlayback();
-            startPlayback();
-        } else {
-            updateDisplay();
-        }*/
         updateDisplay();
 
         if (changes.settingsChanged || changes.listChanged) {
@@ -427,6 +424,7 @@ $(document).ready(function() {
                             state.order, 
                             phrasesData
                         );
+                        loadPhraseList(true);
 
                         stateManager.updateSettings(state);
                         stateManager.setCurrentListData(listKey);
@@ -436,7 +434,6 @@ $(document).ready(function() {
                             currentListType: state.currentListType,
                             order: state.order
                         });  
-                        loadPhraseList(true);
                         updateDisplay();
                 
                         if (stateManager.isPlaying)
@@ -542,7 +539,7 @@ $(document).ready(function() {
     function setCurrentPhraseNextOrPrev(index) {
         if (state.currentPhraseIndex != index) {
 
-            setCurrentPhrase(Math.max(0, Math.min(state.currentPhraseList.length - 1, index)));
+            setCurrentPhrase(Math.max(0, Math.min(state.currentPhraseList.length - 1, index)), false);
             state.currentPhrase = state.currentPhraseList[state.currentPhraseIndex];
 
             updateDisplay();
@@ -602,10 +599,10 @@ $(document).ready(function() {
                 state.currentPhrase[secondLang].length * AppConst.charTime[secondLang] * 1 / state.speed;
     }
 
-    function setCurrentPhrase(index) {
+    function setCurrentPhrase(index, useRepeat = true) {
         let newIndex = index < 0 ? state.currentPhraseList.length - index : index % state.currentPhraseList.length;
 
-        if ((state.repeatCount > 0) && (newIndex % state.repeatLength == 0)) {
+        if (useRepeat && (state.repeatCount > 0) && (newIndex % state.repeatLength == 0)) {
             state.currentRepeat++;
             if (state.currentRepeat > state.repeatCount)
                 state.currentRepeat = 0;
@@ -629,7 +626,7 @@ $(document).ready(function() {
             showPhrase(firstLang);
 
             speechSynthesizer.speak(state.currentPhrase[firstLang], firstLang, 
-                    state.currentPhrase.type, state.speed)
+                    state.currentPhrase.type, state.speed, state.genderVoice)
                 .then(()=>{
 
                     startProgressTimer(state.pauseBetweenLanguages);
@@ -648,7 +645,7 @@ $(document).ready(function() {
 
             showPhrase(secondLang);
             speechSynthesizer.speak(state.currentPhrase[secondLang], secondLang, 
-                    state.currentPhrase.type, state.speed)
+                    state.currentPhrase.type, state.speed, state.genderVoice)
                 .then(()=>{
                     startProgressTimer(state.pauseBetweenPhrases);
 
@@ -668,7 +665,7 @@ $(document).ready(function() {
         
         showPhrase(showLang);
         speechSynthesizer.speak(state.currentPhrase[speakLang], speakLang, 
-                    state.currentPhrase.type, state.speed)
+                    state.currentPhrase.type, state.speed, state.genderVoice)
             .then(()=>{
 
                 startProgressTimer(state.pauseBetweenPhrases);
@@ -719,7 +716,7 @@ $(document).ready(function() {
     function speakCurrentPhrase(lang) {
         if (!state.currentPhrase) return;
         return speechSynthesizer.speak(state.currentPhrase[lang], lang, 
-                    state.currentPhrase.type, state.speed);
+                    state.currentPhrase.type, state.speed, state.genderVoice);
     }
 
     // Запустить таймер прогресса
