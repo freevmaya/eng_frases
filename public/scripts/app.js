@@ -763,12 +763,16 @@ $(document).ready(function() {
             }
 
             setListeners();
+            
+            recognition.stop();
             recognition.start();
 
             setTimeout(()=>{
                 recognition.stop();
                 setTimeout(()=>{
                     clearListeners();
+                    if (isEmpty(output))
+                        playerMessage('');
                 }, 100);
             }, waitTime);
         }
