@@ -31,11 +31,7 @@ new AppSound({
 			volume: 0.25
 		},
 		success: {
-			file: 'data/sounds/success.mp3',
-			volume: 0.25
-		},
-		fail: {
-			file: 'data/sounds/fail.mp3',
+			file: 'data/sounds/win.mp3',
 			volume: 0.25
 		}
 	}

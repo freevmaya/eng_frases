@@ -274,13 +274,13 @@ $(document).ready(function() {
         return array;
     }
 
-    function playerMessage(text, showTime = 0) {
+    function playerMessage(text, showTimeSec = 0) {
         let elem = $('#payerMessage');
         elem.html(text);
-        if (showTime)
+        if (showTimeSec)
             setTimeout(()=>{
                 elem.text('');
-            }, showTime);
+            }, showTimeSec * 1000);
     }
 
     // Настройка обработчиков событий
@@ -378,8 +378,9 @@ $(document).ready(function() {
                     default:
                         errorMessage += event.error;
                 }
+                playerMessage('');
                 
-                alert(errorMessage);
+                showAlert(errorMessage);
                 recognition.stop();
             };
         }
@@ -729,17 +730,16 @@ $(document).ready(function() {
 
                 if (compareStringsIgnoreCaseAndPunctuation(output, phrase)) {
                     $(window).trigger('success');
-                    playerMessage('<span class="success">Отлично!</span>');
+                    playerMessage('<span class="success">Отлично!</span>', 5);
                 }
                 else {
                     $(window).trigger('fail');
-                    playerMessage(`<span class="wrong">${output}</span>`);
+                    playerMessage(`<span class="wrong">${output}</span>`, 5);
                 }
             }
 
             function onEnd() {
                 console.log('Запись остановлена');
-                playerMessage('');
             }
 
             function clearListeners() {
@@ -837,9 +837,9 @@ $(document).ready(function() {
             });
     }
 
-    function setText(elem, text, k = 1, maxSize = 25, minSize = 16) {
+    function setText(elem, text, k = 1, maxSize = 25, minSize = 12) {
         
-        let size = Math.max(Math.min(1 / text.length * 1000, maxSize * k), minSize * k);
+        let size = Math.max(Math.min(1 / text.length * 650, maxSize * k), minSize * k);
         elem.text(text);
         elem.css('font-size', size);
     }

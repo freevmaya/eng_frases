@@ -435,3 +435,11 @@ footer {
     line-height: 2.5em;
     padding: 0 0.5em;
 }
+
+#payerMessage .success {
+    color: #1bff00;
+}
+
+#payerMessage .fail {
+    color: gray;
+}
