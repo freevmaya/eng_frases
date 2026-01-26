@@ -1,5 +1,5 @@
 <?php
-	$v = 75;
+	$v = 76;
 ?>
 <!DOCTYPE html>
 <html lang="ru" data-bs-theme="dark">
