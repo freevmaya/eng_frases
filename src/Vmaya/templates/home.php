@@ -245,13 +245,14 @@
                     <h5 class="modal-title" id="centeredModalLabel">Инструкция</h5>
                 </div>
                 <div class="modal-body">
-                    <div class="content">
+                    <div class="content" style="height: 320px">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Понятно</button>
                     <button type="button" class="btn btn-secondary prev"><</button>
+                    <span class="page-number"></span>
                     <button type="button" class="btn btn-secondary next">></button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Понятно</button>
                 </div>
             </div>
         </div>
@@ -284,6 +285,7 @@
             </ul>
             </p>`,
 
+
             `<p>Если не успеваете, увеличьте паузу между фразами в настройках приложения.</p>
             <p>Можно также сменить направление на «Английский → Русский».</p><p>В этом случае:
             <ul>
@@ -292,13 +294,16 @@
             </ul>
             </p><p>Так вы будете развивать навык понимания английской речи на слух.</p>`,
 
-            `<p>Делитесь своим опытом, пишите пожелания и предложения по работе тренажёра в нашей группе.</p>
+            `<p>Включите в настройках режим распознавание речи.</p>
+            <p>Так вы сможете контролировать свое произношение, а также отслеживать свой прогресс обучения.
+            </p>
+            <p>Делитесь своим опытом, пишите пожелания и предложения по работе тренажёра в нашей группе.</p>
             <hr>
             <p><span class="bi bi-award me-2"><span> Успешного обучения!</p>`
         ]);
     }
 <?if (DEV) {?>
-    //$(window).ready(showAdvices);
+    $(window).ready(showAdvices);
 <?}?>
 </script>
 <script src="scripts/speech-synthesizer.js?v=<?=$v?>"></script>

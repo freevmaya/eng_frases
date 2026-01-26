@@ -28,5 +28,6 @@ class AdviceModal {
 
     refreshAdvice() {
     	this.modal.find('.content').html(this.list[this.current]);
+        this.modal.find('.page-number').text((this.current + 1) + '/' + this.list.length);
     }
 }
