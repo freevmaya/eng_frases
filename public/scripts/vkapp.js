@@ -21,7 +21,7 @@ class VKApp {
 						}
 					});
 
-					$('#instruction').modal('show');
+					showAdvices();
 				}
 			});
 

@@ -263,9 +263,8 @@
 <script type="text/javascript">
     var SPEECH_CONFIG = <?=SPEECH_CONFIG?>;
     var phrasesData = <?=json_encode(PhrasesModel::getPhrasesAsJsonWithDifficulty(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);?>;
-<?if (DEV) {?>
-    $(window).ready(()=>{
 
+    function showAdvices() {
         new AdviceModal($('#instruction'), [
             `<p><span class="bi bi-exclamation-triangle me-2"><span> Для эффективного запоминания и доведения до автоматизма речевого механизма, рекомендуем чередовать последовательность воспроизведения русского и английского звучания фраз.</p><p>Таким образом вы будете тренировать не только автоматизм произношения фраз, но их скоростное понимания на слух.</p>`,
 
@@ -281,7 +280,9 @@
             <hr>
             <p><span class="bi bi-award me-2"><span> Успешного обучения!</p>`
         ]);
-    });
+    }
+<?if (DEV) {?>
+    $(window).ready(showAdvices);
 <?}?>
 </script>
 <script src="scripts/speech-synthesizer.js?v=<?=$v?>"></script>
