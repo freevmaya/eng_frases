@@ -98,9 +98,13 @@
     }
 }
 
+.progress-bar {
+    pointer-events: none;
+}
+
 /* Progress Bar Animation */
 .progress-bar-animated {
-    animation: progressAnimation 1s linear infinite;
+    animation: progressAnimation 2s linear infinite;
 }
 
 @keyframes progressAnimation {
@@ -108,7 +112,7 @@
         background-position: 0 0;
     }
     100% {
-        background-position: 40px 0;
+        background-position: 48px 0;
     }
 }
 

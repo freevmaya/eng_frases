@@ -19,7 +19,7 @@ class SpeechSynthesizer {
             fallbackToSpeech: config.fallbackToSpeech !== false,
             checkAudioBeforePlay: config.checkAudioBeforePlay !== false,
             autoGenerateAudio: config.autoGenerateAudio !== false,
-            audioTimeout: config.audioTimeout || 10000,
+            audioTimeout: config.audioTimeout || 2000,
             generationTimeout: config.generationTimeout || 30000,
             ...config
         };
@@ -392,16 +392,15 @@ class SpeechSynthesizer {
         }
     }
 
+    isPlayingAudio() {
+        return this.currentAudio && 
+                (!this.currentAudio.paused && 
+                 !this.currentAudio.ended && 
+                 this.currentAudio.readyState >= 4);
+    }
+
     // Воспроизведение MP3 файла по URL
     async playAudioFromUrl(urlInfo, phrase) {
-        // Проверяем, занят ли плеер
-        if (this.state.isBusy && this.state.busyType !== 'processing') {
-            return {
-                success: false,
-                error: `Player is busy with ${this.state.busyType}`,
-                busyType: this.state.busyType
-            };
-        }
 
         // Обновляем тип занятости с 'processing' на 'playing'
         this._setBusy('playing');
@@ -441,15 +440,11 @@ class SpeechSynthesizer {
                 
                 const onError = (error) => {
                     cleanup();
-                    this._afterFinishPlay();
-                    console.error('Audio playback error:', error, urlInfo.url);
-                    reject(new Error(`Audio playback failed: ${urlInfo.fileName}`));
-                };
-                
-                const onTimeout = () => {
-                    cleanup();
-                    this._afterFinishPlay();
-                    reject(new Error(`Audio playback timeout: ${urlInfo.fileName}`));
+                    if (this._isBusyWith('playing')) {
+                        this._afterFinishPlay();
+                        console.error('Audio playback error:', error, urlInfo.url);
+                        reject(new Error(`Audio playback failed: ${urlInfo.fileName}`));
+                    }
                 };
                 
                 const cleanup = () => {
@@ -458,7 +453,14 @@ class SpeechSynthesizer {
                     audio.removeEventListener('error', onError);
                 };
                 
-                //timeoutId = setTimeout(onTimeout, this.config.audioTimeout);
+                timeoutId = setTimeout(() => {
+                    if (this.currentAudio && !this.isPlayingAudio() &&
+                        (this.currentAudio.src == urlInfo.url)) {
+                        cleanup();
+                        this._afterFinishPlay();
+                        reject(new Error(`Audio playback timeout: ${urlInfo.fileName}`));
+                    }
+                }, this.config.audioTimeout);
                 
                 audio.addEventListener('ended', onEnded);
                 audio.addEventListener('error', onError);
@@ -476,32 +478,29 @@ class SpeechSynthesizer {
             
         } catch (error) {
             console.error('Error playing audio:', error);
-            this._clearBusy();
-            this.currentAudio = null;
+            this._afterFinishPlay();
             throw error;
         }
     }
 
     _afterFinishPlay() {
-        setTimeout(() => {
-            this._clearBusy();
-            this.currentAudio = null;
-        }, 100);
+        this._clearBusy();
+        this.currentAudio = null;
     }
 
     _afterFinishSpeak() {
-        setTimeout(() => {
-            this._clearBusy();
-            this.currentUtterance = null;
-        }, 100);
+        this._clearBusy();
+        this.currentUtterance = null;
     }
 
     // Основной метод воспроизведения (обратная совместимость)
     async speak(phrase, phraseType = 'target', category = null, speed = 1.0, genderVoice = 'male') {
         const language = phraseType === 'target' ? 'en' : 'ru';
 
-        if (this.state.isBusy)
+        if (this.state.isBusy) {
+            return;
             await this.waitForCompletion();
+        }
 
         if ((phrase[phrase.length - 1] == '?') && (language == 'ru'))
             $(window).trigger('question_phrase');

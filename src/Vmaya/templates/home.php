@@ -205,7 +205,7 @@
                         <span id="phraseType">Past Simple (активный)</span>
                     </div>
 
-                    <div class="progress mb-2" style="height: 6px;">
+                    <div class="progress mb-2 mt-2 control" style="height: 6px;" id="progressControl">
                         <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated" 
                              id="progressBar" style="width: 0%"></div>
                     </div>
