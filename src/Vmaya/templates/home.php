@@ -240,14 +240,13 @@
                     <h5 class="modal-title" id="centeredModalLabel">Инструкция</h5>
                 </div>
                 <div class="modal-body">
-                    <h5><?=APP_NAME?></h5>
-                    <p>Это интерактивное приложение для изучения английских фраз и предложений.</p>
-                    <p><span class="bi bi-exclamation-triangle me-2"><span> Для эффективного запоминания и доведения до автоматизма речевого механизма, рекомендуем чередовать последовательность воспроизведения русского и английского звучания фраз. Таким образом вы будете тренировать не только автоматизм произношения фраз, но их скоростное понимания на слух.</p>
-                    <p><span class="bi bi-tools me-2"><span> В настройках вы найдете все требуемые для этого параметры: пауза между фразами, последовательность перевода, различные варианты речевого озвучивания, повторы и т.п.</p>
-                    <p><span class="bi bi-award me-2"><span> Успешного обучения!</p>
+                    <div class="content">
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Понятно</button>
+                    <button type="button" class="btn btn-secondary prev"><</button>
+                    <button type="button" class="btn btn-secondary next">></button>
                 </div>
             </div>
         </div>
@@ -263,7 +262,27 @@
 
 <script type="text/javascript">
     var SPEECH_CONFIG = <?=SPEECH_CONFIG?>;
-    var phrasesData = <?=json_encode(PhrasesModel::getPhrasesAsJsonWithDifficulty(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);?>
+    var phrasesData = <?=json_encode(PhrasesModel::getPhrasesAsJsonWithDifficulty(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);?>;
+<?if (DEV) {?>
+    $(window).ready(()=>{
+
+        new AdviceModal($('#instruction'), [
+            `<p><span class="bi bi-exclamation-triangle me-2"><span> Для эффективного запоминания и доведения до автоматизма речевого механизма, рекомендуем чередовать последовательность воспроизведения русского и английского звучания фраз.</p><p>Таким образом вы будете тренировать не только автоматизм произношения фраз, но их скоростное понимания на слух.</p>`,
+
+            `<p><span class="bi bi-tools me-2"><span> В настройках вы найдете все требуемые для этого параметры: пауза между фразами, последовательность перевода, различные варианты речевого озвучивания, повторы и т.п.</p>
+            <p>Рекомендуем повторять английские фразы за диктором вслух. Это важно! Так вы формируете моторику речи.</p>`,
+
+            `<p>Выбирайте в настройках режим “Оба направления”.</p><p>В этом режиме сначала прослушиваете звучание фразы на русском, пытайтесь произносите вслух перевод на английском до того как зазвучит голос диктора.</p><p>Далее, прослушайте правильный перевод и снова повторите фразу за диктором.</p>`,
+
+            `<p>Если не успеваете, сделайте паузу между фразами дольше, в настройках приложения.</p>
+            <p>Меняйте направление на анг-рус. Прослушивайте звучание фразы на английском, пытайтесь перевести на русский вслух до того как зазвучит голос диктора, после слушайте правильный перевод.</p><p>Так вы обучитесь слушанию английской речи.</p>`,
+
+            `<p>Делитесь своим опытом, пишите свои пожелания и предложения по работе тренажера в нашей группе.</p>
+            <hr>
+            <p><span class="bi bi-award me-2"><span> Успешного обучения!</p>`
+        ]);
+    });
+<?}?>
 </script>
 <script src="scripts/speech-synthesizer.js?v=<?=$v?>"></script>
 <script src="scripts/state-manager.js?v=<?=$v?>"></script>
@@ -271,3 +290,4 @@
 <!--<script src="scripts/headphone-controls.js?v=<?=$v?>"></script>-->
 <script src="scripts/app.js?v=<?=$v?>"></script>
 <script src="scripts/sound.js?v=<?=$v?>"></script>
+<script src="scripts/advice-modal.js?v=<?=$v?>"></script>
