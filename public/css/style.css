@@ -120,8 +120,15 @@
     z-index: 41;
 }
 
+.vk_layout {
+    padding-top: 45px;
+}
+
+.vk_layout .modal {
+    padding-top: 45px;
+}
+
 .container {
-    margin-top: 10vw;
     max-width: 900px;
 
     display: flex;
