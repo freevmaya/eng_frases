@@ -3,6 +3,8 @@ class VKApp {
 
 	_haveAd = false;
 	constructor(app_id, user_id) {
+
+		showAdvices();
 		vkBridge.send("VKWebAppInit", {})
 			.then((response)=>{
 				console.log(response);
@@ -20,8 +22,6 @@ class VKApp {
 							source_user: user
 						}
 					});
-
-					showAdvices();
 				}
 			});
 
