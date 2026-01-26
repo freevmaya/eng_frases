@@ -29,6 +29,14 @@ new AppSound({
 		question_phrase: {
 			file: 'data/sounds/question.mp3',
 			volume: 0.25
+		},
+		success: {
+			file: 'data/sounds/success.mp3',
+			volume: 0.25
+		},
+		fail: {
+			file: 'data/sounds/fail.mp3',
+			volume: 0.25
 		}
 	}
 });

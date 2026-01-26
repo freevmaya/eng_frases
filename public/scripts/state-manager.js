@@ -24,6 +24,7 @@ class StateManager {
             currentListKey: null, // Ключ для отслеживания изменений списка
             randomSeed: null, // Для воссоздания случайного порядка
             showTvScreen: true,
+            recognize: false,
 
             repeatLength: 5,
             repeatCount: 0,

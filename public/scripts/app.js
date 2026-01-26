@@ -124,8 +124,16 @@ $(document).ready(function() {
         tvScreenToggle: $('#tvScreenToggle'),
         repeatLength: $('#repeatLength'),
         repeatCount: $('#repeatCount'),
-        genderVoice: $('#genderVoice')
+        genderVoice: $('#genderVoice'),
+        recognizeToggle: $('#recognizeToggle')
     };
+            
+    // Создаем объект распознавания
+    var recognition = null;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition)
+        recognition = new SpeechRecognition();
+    else $('#recognizeToggleForm').style('display', 'none');
 
     // Инициализация
     function init() {
@@ -157,7 +165,6 @@ $(document).ready(function() {
         }
 
         $(window).trigger('phrases_loaded');
-        
     }
 
     function loadList() {
@@ -267,12 +274,29 @@ $(document).ready(function() {
         return array;
     }
 
+    function playerMessage(text, showTime = 0) {
+        let elem = $('#payerMessage');
+        elem.html(text);
+        if (showTime)
+            setTimeout(()=>{
+                elem.text('');
+            }, showTime);
+    }
+
     // Настройка обработчиков событий
     function setupEventListeners() {
         // Кнопки управления
-        elements.playButton.click(togglePlay);
         elements.nextBtn.click(nextPhrase);
         elements.prevBtn.click(prevPhrase);
+
+        elements.playButton[0].addEventListener('click', () => {
+            /*
+            if (recognition && stateManager.state.recognize) {
+                recognition.lang = 'en-US';
+                recognition.start();
+            }*/
+            togglePlay();
+        });
         
         // Открытие настроек
         elements.settingsToggle.click(() => {
@@ -332,6 +356,33 @@ $(document).ready(function() {
                     playCurrentPhrase();
             }
         });
+
+        if (recognition) {
+            
+            recognition.onerror = (event) => {
+                let errorMessage = 'Ошибка распознавания: ';
+                
+                switch(event.error) {
+                    case 'not-allowed':
+                        errorMessage += 'Доступ к микрофону запрещен. Разрешите доступ в настройках браузера.';
+                        break;
+                    case 'no-speech':
+                        errorMessage += 'Речь не обнаружена. Проверьте микрофон.';
+                        break;
+                    case 'audio-capture':
+                        errorMessage += 'Не удалось получить доступ к микрофону.';
+                        break;
+                    case 'network':
+                        errorMessage += 'Проблемы с сетью.';
+                        break;
+                    default:
+                        errorMessage += event.error;
+                }
+                
+                alert(errorMessage);
+                recognition.stop();
+            };
+        }
     }
 
     // Открытие модального окна настроек
@@ -353,6 +404,7 @@ $(document).ready(function() {
         
         elements.phraseListSelect.val(state.currentListType);
         elements.tvScreenToggle.prop('checked', state.showTvScreen);
+        elements.recognizeToggle.prop('checked', state.recognize);
 
         elements.repeatLength.val(state.repeatLength);
         elements.repeatCount.val(state.repeatCount);
@@ -376,6 +428,7 @@ $(document).ready(function() {
             direction: $('[data-direction].active').data('direction'),
             order: $('[data-order].active').data('order'),
             showTvScreen: elements.tvScreenToggle.prop('checked'),
+            recognize: elements.recognizeToggle.prop('checked'),
             repeatLength: elements.repeatLength.val(),
             repeatCount: elements.repeatCount.val(),
             genderVoice: elements.genderVoice.val()
@@ -478,7 +531,7 @@ $(document).ready(function() {
         stopPlayback();
     }
 
-    function togglePlay() {
+    function togglePlay(e) {
         if (stateManager.isPaused || stateManager.isPlaying) {
             togglePause();
         } else {
@@ -606,10 +659,9 @@ $(document).ready(function() {
         return state.direction.includes('both');
     }
 
-    function calcTime(firstLang, secondLang) {
+    function calcTime(lang) {
         return state.pauseBetweenPhrases * 1000 + 
-                state.currentPhrase[firstLang].length * AppConst.charTime[firstLang] * 1 / state.speed + 
-                state.currentPhrase[secondLang].length * AppConst.charTime[secondLang] * 1 / state.speed;
+                state.currentPhrase[lang].length * AppConst.charTime[lang];
     }
 
     function setCurrentPhraseIndex(index, useRepeat = true) {
@@ -632,6 +684,91 @@ $(document).ready(function() {
         speechSynthesizer.stop();
     }
 
+    function compareStringsIgnoreCaseAndPunctuation(str1, str2) {
+        // Очищаем строки от знаков препинания и лишних пробелов
+        const cleanStr1 = normalizeString(str1);
+        const cleanStr2 = normalizeString(str2);
+        
+        // Сравниваем без учета регистра
+        return cleanStr1 === cleanStr2;
+    }
+
+    function normalizeString(str) {
+        if (typeof str !== 'string') return '';
+        
+        return str
+            .toLowerCase()                    // К нижнему регистру
+            .normalize('NFD')                 // Разделяем символы и диакритические знаки
+            .replace(/[\u0300-\u036f]/g, '')  // Удаляем диакритические знаки (акценты)
+            .replace(/[^\w\s]/g, '')          // Удаляем все знаки препинания
+            .replace(/\s+/g, ' ')             // Заменяем множественные пробелы одним
+            .trim();                          // Убираем пробелы по краям
+    }
+
+    function startRecognition(waitTime, phrase, lang = 'en-US') {
+
+        if (recognition) {
+
+            recognition.continuous = true; // Продолжать слушать после паузы
+            recognition.interimResults = false; // Показывать промежуточные результаты
+            recognition.lang = lang;
+
+            function onStart() {
+                playerMessage('Слушаю...');
+            }
+
+            function onResult(event) {
+                let output = '';
+                
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    output += transcript + ' ';
+                }
+
+                console.log(output);
+
+                if (compareStringsIgnoreCaseAndPunctuation(output, phrase)) {
+                    $(window).trigger('success');
+                    playerMessage('<span class="success">Отлично!</span>');
+                }
+                else {
+                    $(window).trigger('fail');
+                    playerMessage(`<span class="wrong">${output}</span>`);
+                }
+            }
+
+            function onEnd() {
+                console.log('Запись остановлена');
+                playerMessage('');
+            }
+
+            function clearListeners() {
+                recognition.onstart = null;
+                recognition.onresult = null;
+                recognition.onend = null;
+            }
+
+            function setListeners() {
+
+                // События распознавания
+                recognition.onstart = onStart;
+                recognition.onresult = onResult;
+                recognition.onend = onEnd;
+            }
+
+            setListeners();
+            recognition.start();
+            if (waitTime) {
+                setTimeout(()=>{
+                    recognition.stop();
+                    setTimeout(()=>{
+                        clearListeners();
+                    }, 100);
+                }, waitTime);
+            }
+        }
+    }
+
     // Воспроизведение в обоих направлениях
     function playBothDirections() {
         const isEnFirst = state.direction === 'target-native-both';
@@ -646,13 +783,15 @@ $(document).ready(function() {
                     state.currentPhrase.type, state.speed, state.genderVoice)
                 .then(()=>{
 
-                    //startProgressTimer(state.pauseBetweenLanguages);
+                    let time = calcTime(firstLang);
+                    if (firstLang == 'native') 
+                        startRecognition(time, state.currentPhrase[secondLang]);
 
                     clearTimeout(state.timeoutId);
                     state.timeoutId = setTimeout(() => {
                         state.showingFirstLang = false;
                         playCurrentPhrase();
-                    }, calcTime(firstLang, secondLang));
+                    }, time);
 
                 });
         } else {
@@ -664,13 +803,16 @@ $(document).ready(function() {
             speechSynthesizer.speak(state.currentPhrase[secondLang], secondLang, 
                     state.currentPhrase.type, state.speed, state.genderVoice)
                 .then(()=>{
-                    //startProgressTimer(state.pauseBetweenPhrases);
+
+                    let time = calcTime(secondLang);
+                    if (secondLang == 'native') 
+                        startRecognition(time, firstLang);
 
                     clearTimeout(state.timeoutId);
                     state.timeoutId = setTimeout(() => {
                         setCurrentPhraseIndex(state.currentPhraseIndex + 1);
                         playCurrentPhrase();
-                    }, calcTime(secondLang, firstLang));
+                    }, time);
                 });
         }
     }
@@ -685,12 +827,13 @@ $(document).ready(function() {
                     state.currentPhrase.type, state.speed, state.genderVoice)
             .then(()=>{
 
-                //startProgressTimer(state.pauseBetweenPhrases);
+                let time = calcTime(speakLang);
+                if (speakLang == 'target') startRecognition(time, speakLang);
                 
                 state.timeoutId = setTimeout(() => {
                     setCurrentPhraseIndex(state.currentPhraseIndex + 1);
                     playCurrentPhrase();
-                }, calcTime(speakLang, showLang));
+                }, time);
             });
     }
 

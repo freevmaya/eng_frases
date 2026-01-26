@@ -14,12 +14,18 @@
 
                 <div class="mb-4">
                     <h6 class="text-info mb-3">
-                        <i class="bi bi-tv me-2"></i>Эффекты отображения
+                        <i class="bi bi-tv me-2"></i>Дополнения
                     </h6>
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" id="tvScreenToggle" checked>
                         <label class="form-check-label" for="tvScreenToggle">
                             Показывать TV-экран
+                        </label>
+                    </div>
+                    <div class="form-check form-switch" id="recognizeToggleForm">
+                        <input class="form-check-input" type="checkbox" id="recognizeToggle" checked>
+                        <label class="form-check-label" for="recognizeToggle">
+                            Распозновать речь
                         </label>
                     </div>
                 </div>
@@ -216,8 +222,7 @@
                             <div class="h5" id="phraseCounter">0 / 0</div>
                         </div>
                         <div>
-                            <select class="form-select bg-dark text-light border-secondary" style="display: none;" id="phraseListPlayer">
-                            </select>
+                            <span id="payerMessage"></span>
                         </div>
                         <div class="text-end">
                             <button class="btn btn-outline-secondary" id="settingsToggle">
@@ -293,7 +298,7 @@
         ]);
     }
 <?if (DEV) {?>
-    $(window).ready(showAdvices);
+    //$(window).ready(showAdvices);
 <?}?>
 </script>
 <script src="scripts/speech-synthesizer.js?v=<?=$v?>"></script>
@@ -303,3 +308,4 @@
 <script src="scripts/app.js?v=<?=$v?>"></script>
 <script src="scripts/sound.js?v=<?=$v?>"></script>
 <script src="scripts/advice-modal.js?v=<?=$v?>"></script>
+<script src="scripts/microphone-utils.js?v=<?=$v?>"></script>
