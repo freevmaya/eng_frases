@@ -708,7 +708,7 @@ $(document).ready(function() {
 
     function startRecognition(waitTime, phrase, lang = 'en-US') {
 
-        if (recognition) {
+        if (recognition && stateManager.state.recognize) {
             var output = '';
 
             recognition.continuous = true; // Продолжать слушать после паузы
