@@ -709,17 +709,31 @@ $(document).ready(function() {
     function startRecognition(waitTime, phrase, lang = 'en-US') {
 
         if (recognition) {
+            var output = '';
 
             recognition.continuous = true; // Продолжать слушать после паузы
             recognition.interimResults = false; // Показывать промежуточные результаты
             recognition.lang = lang;
 
             function onStart() {
-                playerMessage('Слушаю...');
+                playerMessage('Слушаю...', waitTime);
+            }
+
+            function showResult() {
+
+                if (output) {
+                    if (compareStringsIgnoreCaseAndPunctuation(output, phrase)) {
+                        $(window).trigger('success');
+                        playerMessage('<span class="success">Отлично!</span>', 5);
+                    }
+                    else {
+                        $(window).trigger('fail');
+                        playerMessage(`<span class="wrong">${output}</span>`, 5);
+                    }
+                } else playerMessage('');
             }
 
             function onResult(event) {
-                let output = '';
                 
                 for (let i = event.resultIndex; i < event.results.length; i++) {
                     const transcript = event.results[i][0].transcript;
@@ -727,15 +741,7 @@ $(document).ready(function() {
                 }
 
                 console.log(output);
-
-                if (compareStringsIgnoreCaseAndPunctuation(output, phrase)) {
-                    $(window).trigger('success');
-                    playerMessage('<span class="success">Отлично!</span>', 5);
-                }
-                else {
-                    $(window).trigger('fail');
-                    playerMessage(`<span class="wrong">${output}</span>`, 5);
-                }
+                showResult();
             }
 
             function onEnd() {
@@ -758,14 +764,13 @@ $(document).ready(function() {
 
             setListeners();
             recognition.start();
-            if (waitTime) {
+
+            setTimeout(()=>{
+                recognition.stop();
                 setTimeout(()=>{
-                    recognition.stop();
-                    setTimeout(()=>{
-                        clearListeners();
-                    }, 100);
-                }, waitTime);
-            }
+                    clearListeners();
+                }, 100);
+            }, waitTime);
         }
     }
 
