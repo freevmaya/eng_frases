@@ -168,10 +168,8 @@ $(document).ready(function() {
         settingsToggle: $('#settingsToggle'),
         applySettings: $('#applySettings'),
         pauseSlider: $('#pauseSlider'),
-        langPauseSlider: $('#langPauseSlider'),
         speedValue: $('#speedValue'),
         pauseValue: $('#pauseValue'),
-        langPauseValue: $('#langPauseValue'),
         phraseListSelect: $('#phraseListSelect'),
         phraseListPlayer: $('#phraseListPlayer'),
         tvScreenToggle: $('#tvScreenToggle'),
@@ -358,11 +356,6 @@ $(document).ready(function() {
             elements.pauseValue.text(value + ' сек');
         });
         
-        elements.langPauseSlider.on('input', function() {
-            const value = parseFloat($(this).val());
-            elements.langPauseValue.text(value + ' сек');
-        });
-        
         // Выбор направления
         $('[data-direction]').click(function() {
             $('[data-direction]').removeClass('active');
@@ -416,9 +409,6 @@ $(document).ready(function() {
         elements.pauseSlider.val(state.pauseBetweenPhrases);
         elements.pauseValue.text(state.pauseBetweenPhrases + ' сек');
         
-        elements.langPauseSlider.val(state.pauseBetweenLanguages);
-        elements.langPauseValue.text(state.pauseBetweenLanguages + ' сек');
-        
         elements.phraseListSelect.val(state.currentListType);
         elements.tvScreenToggle.prop('checked', state.showTvScreen);
         elements.recognizeToggle.prop('checked', state.recognize);
@@ -440,7 +430,6 @@ $(document).ready(function() {
         const newSettings = {
 
             pauseBetweenPhrases: parseFloat(elements.pauseSlider.val()),
-            pauseBetweenLanguages: parseFloat(elements.langPauseSlider.val()),
             currentListType: elements.phraseListSelect.val(),
             direction: $('[data-direction].active').data('direction'),
             order: $('[data-order].active').data('order'),

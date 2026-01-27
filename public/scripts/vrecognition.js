@@ -131,7 +131,7 @@ class VRecognition {
         this.text 						= phraseObj[phraseType];
         this.output 					= '';
         this.success					= false;
-        this.waitTime 					= waitTime;
+        this.waitTime 					= waitTime * 1.2;
         this.recognition.continuous 	= true; 	// Продолжать слушать после паузы
         this.recognition.interimResults = true; 	// Показывать промежуточные результаты
         this.recognition.lang 			= LanguageMap[phraseObj.Language(phraseType)];

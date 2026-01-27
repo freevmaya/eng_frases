@@ -42,16 +42,6 @@
 
                 <div class="mb-4">
                     <h6 class="text-info mb-3">
-                        <i class="bi bi-translate me-2"></i>Пауза между языками
-                    </h6>
-                    <input type="range" class="form-range" id="langPauseSlider" min="0.5" max="5" step="0.5" value="2">
-                    <div class="text-center mt-2">
-                        <span class="badge bg-primary" id="langPauseValue">2 сек</span>
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <h6 class="text-info mb-3">
                         <i class="bi bi-card-checklist me-2"></i>Выбор списка фраз
                     </h6>
                     <select class="form-select bg-dark text-light border-secondary" id="phraseListSelect">
