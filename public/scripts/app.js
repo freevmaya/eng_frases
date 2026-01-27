@@ -703,18 +703,16 @@ $(document).ready(function() {
             speechSynthesizer.speak(appData.currentPhrase, firstLang, 
                     appData.currentPhrase.type, state.speed, state.genderVoice)
                 .then((result)=>{
-                    if (result.success) {
 
-                        let time = calcTime(firstLang);
-                        if ((firstLang == 'native') && recognition && stateManager.state.recognize)
-                            recognition.startRecognition(time, appData.currentPhrase, secondLang);
+                    let time = calcTime(firstLang);
+                    if ((firstLang == 'native') && recognition && stateManager.state.recognize)
+                        recognition.startRecognition(time, appData.currentPhrase, secondLang);
 
-                        clearTimeout(state.timeoutId);
-                        state.timeoutId = setTimeout(() => {
-                            state.showingFirstLang = false;
-                            playCurrentPhrase();
-                        }, time);
-                    }
+                    clearTimeout(state.timeoutId);
+                    state.timeoutId = setTimeout(() => {
+                        state.showingFirstLang = false;
+                        playCurrentPhrase();
+                    }, time);
 
                 });
         } else {
@@ -726,18 +724,16 @@ $(document).ready(function() {
             speechSynthesizer.speak(appData.currentPhrase, secondLang, 
                     appData.currentPhrase.type, state.speed, state.genderVoice)
                 .then((result)=>{
-                    if (result.success) {
 
-                        let time = calcTime(secondLang);
-                        if ((secondLang == 'native') && recognition && stateManager.state.recognize)
-                            recognition.startRecognition(time, appData.currentPhrase, firstLang);
+                    let time = calcTime(secondLang);
+                    if ((secondLang == 'native') && recognition && stateManager.state.recognize)
+                        recognition.startRecognition(time, appData.currentPhrase, firstLang);
 
-                        clearTimeout(state.timeoutId);
-                        state.timeoutId = setTimeout(() => {
-                            setCurrentPhraseIndex(state.currentPhraseIndex + 1);
-                            playCurrentPhrase();
-                        }, time);
-                    }
+                    clearTimeout(state.timeoutId);
+                    state.timeoutId = setTimeout(() => {
+                        setCurrentPhraseIndex(state.currentPhraseIndex + 1);
+                        playCurrentPhrase();
+                    }, time);
                 });
         }
     }
@@ -751,17 +747,15 @@ $(document).ready(function() {
         speechSynthesizer.speak(appData.currentPhrase, speakLang, 
                     appData.currentPhrase.type, state.speed, state.genderVoice)
             .then((result)=>{
-                if (result.success) {
 
-                    let time = calcTime(speakLang);
-                    if (recognition && stateManager.state.recognize) 
-                        recognition.startRecognition(time, appData.currentPhrase, 'target');
-                    
-                    state.timeoutId = setTimeout(() => {
-                        setCurrentPhraseIndex(state.currentPhraseIndex + 1);
-                        playCurrentPhrase();
-                    }, time);
-                }
+                let time = calcTime(speakLang);
+                if (recognition && stateManager.state.recognize) 
+                    recognition.startRecognition(time, appData.currentPhrase, 'target');
+                
+                state.timeoutId = setTimeout(() => {
+                    setCurrentPhraseIndex(state.currentPhraseIndex + 1);
+                    playCurrentPhrase();
+                }, time);
             });
     }
 

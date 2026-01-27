@@ -78,7 +78,7 @@ class VRecognition {
             this.output += transcript + ' ';
         }
 
-        console.log(this.output);
+        //console.log(this.output);
         this.showResult();
     }
 

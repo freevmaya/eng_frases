@@ -110,6 +110,8 @@
                             <option value="0">0</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
+                            <option value="2">3</option>
+                            <option value="2">4</option>
                         </select>
                         <span>раз</span>
                     </div>
