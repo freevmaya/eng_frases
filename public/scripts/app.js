@@ -762,10 +762,6 @@ $(document).ready(function() {
     function setText(elem, text, k = 1, maxSize = 28, minSize = 16) {
         let width = $(window).width();
 
-        console.log(width);
-
-
-
         let size = Math.max(Math.min(1 / text.length * width * 2, maxSize * k), minSize * k);
         elem.text(text);
         elem.css('font-size', size);
