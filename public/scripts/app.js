@@ -20,21 +20,23 @@ async function enableWakeLock() {
         }
     }
 
+    /*
     if (wakeLock || _vkWakeLockTimer)
         console.log('Wake Lock активирован');
+        */
 }
 
 async function disableWakeLock() {
     if (wakeLock !== null) {
         await wakeLock.release();
         wakeLock = null;
-        console.log('Wake Lock деактивирован');
+        //console.log('Wake Lock деактивирован');
     }
 
     if (_vkWakeLockTimer != null) {
         clearInterval(_vkWakeLockTimer);
         _vkWakeLockTimer = null;
-        console.log('Wake Lock деактивирован');
+        //console.log('Wake Lock деактивирован');
     }
 }
 
@@ -80,6 +82,52 @@ function showAlert(message, type = 'info') {
     setTimeout(() => alert.alert('close'), 3000);
 }
 
+function playerMessage(text, showTimeSec = 0) {
+    let elem = $('#payerMessage');
+    elem.html(text);
+    if (showTimeSec)
+        setTimeout(()=>{
+            elem.text('');
+        }, showTimeSec * 1000);
+}
+
+class Phrase {
+    constructor(data) {
+        this.native     = data['native'];
+        this.target     = data['target'];
+        this.direction  = data['direction'];
+        this.context    = data['context'];
+        this.difficulty_level = data['difficulty_level'];
+        this.type       = data['type'];
+    }
+
+    Language(phraseType) {
+        const phrase = this[phraseType];
+        const langs = this.direction.split('-');
+        return phraseType === 'target' ? langs[0] : langs[1];
+    }
+
+    isQuestion(phraseType) {
+        return this[phraseType][this[phraseType].length - 1] == '?'
+    }
+
+    FormatType() {
+        const withSpaces = this.type.replace(/_/g, ' ');
+        return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
+    }
+
+    CleanText(phraseType) {
+        return this[phraseType].replace(/\([^()]*\)|\[[^\][]*\]/g, '').trim();
+    }
+}
+
+Phrase.createList = (sourceList)=>{
+    let result = [];
+    for (let key in sourceList)
+        result.push(new Phrase(sourceList[key]));
+    return result;
+}
+
 $(document).ready(function() {
     
     // Инициализируем синтезатор речи
@@ -100,6 +148,11 @@ $(document).ready(function() {
 
     let _pageScrollTimerId;
     const state = stateManager.getState();
+
+    var appData = {
+        currentPhraseList: [],
+        currentPhrase: null
+    };
 
     // DOM элементы
     const elements = {
@@ -132,7 +185,7 @@ $(document).ready(function() {
     var recognition = null;
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition)
-        recognition = new SpeechRecognition();
+        recognition = new VRecognition(new SpeechRecognition());
     else $('#recognizeToggleForm').style('display', 'none');
 
     // Инициализация
@@ -160,7 +213,7 @@ $(document).ready(function() {
         loadPhraseList();
 
         // Восстанавливаем отображение из сохранённого состояния
-        if (state.currentPhrase) {
+        if (appData.currentPhrase) {
             updateDisplay();
         }
 
@@ -232,12 +285,12 @@ $(document).ready(function() {
     function loadPhraseList(resetIndex = false) {
         if (state.currentListType === 'all') {
             // Смешиваем все фразы
-            state.currentPhraseList = [];
+            appData.currentPhraseList = [];
             Object.keys(phrasesData).forEach(key => {
-                state.currentPhraseList = state.currentPhraseList.concat(phrasesData[key]);
+                appData.currentPhraseList = appData.currentPhraseList.concat(Phrase.createList(phrasesData[key]));
             });
         } else {
-            state.currentPhraseList = [].concat(phrasesData[state.currentListType]) || [];
+            appData.currentPhraseList = Phrase.createList(phrasesData[state.currentListType]) || [];
         }
         
         // Применяем порядок с сохранением seed для воспроизводимости
@@ -245,18 +298,18 @@ $(document).ready(function() {
             // Используем сохранённый seed или создаём новый
             const seed = state.randomSeed || Date.now();
             state.randomSeed = seed;
-            shuffleArrayWithSeed(state.currentPhraseList, seed);
+            shuffleArrayWithSeed(appData.currentPhraseList, seed);
             stateManager.setCurrentListData(state.currentListKey, seed);
         } else {
             state.randomSeed = null;
         }
         
         // Восстанавливаем индекс из сохранённого состояния
-        if (resetIndex || (state.currentPhraseIndex >= state.currentPhraseList.length)) {
+        if (resetIndex || (state.currentPhraseIndex >= appData.currentPhraseList.length)) {
             setCurrentPhraseIndex(0);
         }
         
-        state.currentPhrase = state.currentPhraseList[state.currentPhraseIndex];
+        appData.currentPhrase = appData.currentPhraseList[state.currentPhraseIndex];
     }
 
     // Функция перемешивания с seed
@@ -272,15 +325,6 @@ $(document).ready(function() {
             [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
-    }
-
-    function playerMessage(text, showTimeSec = 0) {
-        let elem = $('#payerMessage');
-        elem.html(text);
-        if (showTimeSec)
-            setTimeout(()=>{
-                elem.text('');
-            }, showTimeSec * 1000);
     }
 
     // Настройка обработчиков событий
@@ -348,42 +392,14 @@ $(document).ready(function() {
         });
 
         elements.progressControl.click((e)=>{
-            if (state.currentPhraseList) {
+            if (appData.currentPhraseList) {
                 const rect = e.target.getBoundingClientRect();
                 const clickX = e.clientX - rect.left;
-                setCurrentPhraseIndex(Math.round(state.currentPhraseList.length * clickX / rect.width));
+                setCurrentPhraseIndex(Math.round(appData.currentPhraseList.length * clickX / rect.width));
                 if (stateManager.isPlaying && !stateManager.isPaused)
                     playCurrentPhrase();
             }
         });
-
-        if (recognition) {
-            
-            recognition.onerror = (event) => {
-                let errorMessage = 'Ошибка распознавания: ';
-                
-                switch(event.error) {
-                    case 'not-allowed':
-                        errorMessage += 'Доступ к микрофону запрещен. Разрешите доступ в настройках браузера.';
-                        break;
-                    case 'no-speech':
-                        errorMessage += 'Речь не обнаружена. Проверьте микрофон.';
-                        break;
-                    case 'audio-capture':
-                        errorMessage += 'Не удалось получить доступ к микрофону.';
-                        break;
-                    case 'network':
-                        errorMessage += 'Проблемы с сетью.';
-                        break;
-                    default:
-                        errorMessage += event.error;
-                }
-                playerMessage('');
-                
-                showAlert(errorMessage);
-                recognition.stop();
-            };
-        }
     }
 
     // Открытие модального окна настроек
@@ -542,7 +558,7 @@ $(document).ready(function() {
 
     // Начать воспроизведение
     function startPlayback() {
-        if (state.currentPhraseList.length === 0) {
+        if (appData.currentPhraseList.length === 0) {
             showAlert('Список фраз пуст!', 'warning');
             return;
         }
@@ -606,8 +622,8 @@ $(document).ready(function() {
     function setCurrentPhraseIndexNextOrPrev(index) {
         if (state.currentPhraseIndex != index) {
 
-            setCurrentPhraseIndex(Math.max(0, Math.min(state.currentPhraseList.length - 1, index)), false);
-            state.currentPhrase = state.currentPhraseList[state.currentPhraseIndex];
+            setCurrentPhraseIndex(Math.max(0, Math.min(appData.currentPhraseList.length - 1, index)), false);
+            appData.currentPhrase = appData.currentPhraseList[state.currentPhraseIndex];
 
             updateDisplay();
             debouncePage(()=>{                
@@ -626,25 +642,25 @@ $(document).ready(function() {
 
     // Следующая фраза
     function nextPhrase() {
-        setCurrentPhraseIndexNextOrPrev((state.currentPhraseIndex + 1) % state.currentPhraseList.length);
+        setCurrentPhraseIndexNextOrPrev((state.currentPhraseIndex + 1) % appData.currentPhraseList.length);
     }
 
     // Предыдущая фраза
     function prevPhrase() {
         setCurrentPhraseIndexNextOrPrev(state.currentPhraseIndex > 0 ? 
                 state.currentPhraseIndex - 1 : 
-                state.currentPhraseList.length - 1);
+                appData.currentPhraseList.length - 1);
     }
 
     // Воспроизвести текущую фразу
     function playCurrentPhrase() {
         if (!stateManager.isPlaying || stateManager.isPaused) return;
         
-        if (state.currentPhraseIndex >= state.currentPhraseList.length) {
+        if (state.currentPhraseIndex >= appData.currentPhraseList.length) {
             setCurrentPhraseIndex(0);
         }
         
-        state.currentPhrase = state.currentPhraseList[state.currentPhraseIndex];
+        appData.currentPhrase = appData.currentPhraseList[state.currentPhraseIndex];
         updateDisplay();
         
         // Определяем режим воспроизведения
@@ -662,11 +678,11 @@ $(document).ready(function() {
 
     function calcTime(lang) {
         return state.pauseBetweenPhrases * 1000 + 
-                state.currentPhrase[lang].length * AppConst.charTime[lang];
+                appData.currentPhrase[lang].length * AppConst.charTime[lang];
     }
 
     function setCurrentPhraseIndex(index, useRepeat = true) {
-        let newIndex = index < 0 ? state.currentPhraseList.length - index : index % state.currentPhraseList.length;
+        let newIndex = index < 0 ? appData.currentPhraseList.length - index : index % appData.currentPhraseList.length;
 
         if (useRepeat && (state.repeatCount > 0) && (newIndex % state.repeatLength == 0)) {
             state.currentRepeat++;
@@ -685,99 +701,6 @@ $(document).ready(function() {
         speechSynthesizer.stop();
     }
 
-    function compareStringsIgnoreCaseAndPunctuation(str1, str2) {
-        // Очищаем строки от знаков препинания и лишних пробелов
-        const cleanStr1 = normalizeString(str1);
-        const cleanStr2 = normalizeString(str2);
-        
-        // Сравниваем без учета регистра
-        return cleanStr1 === cleanStr2;
-    }
-
-    function normalizeString(str) {
-        if (typeof str !== 'string') return '';
-        
-        return str
-            .toLowerCase()                    // К нижнему регистру
-            .normalize('NFD')                 // Разделяем символы и диакритические знаки
-            .replace(/[\u0300-\u036f]/g, '')  // Удаляем диакритические знаки (акценты)
-            .replace(/[^\w\s]/g, '')          // Удаляем все знаки препинания
-            .replace(/\s+/g, ' ')             // Заменяем множественные пробелы одним
-            .trim();                          // Убираем пробелы по краям
-    }
-
-    function startRecognition(waitTime, phrase, lang = 'en-US') {
-
-        if (recognition && stateManager.state.recognize) {
-            var output = '';
-
-            recognition.continuous = true; // Продолжать слушать после паузы
-            recognition.interimResults = false; // Показывать промежуточные результаты
-            recognition.lang = lang;
-
-            function onStart() {
-                playerMessage('Слушаю...', waitTime);
-            }
-
-            function showResult() {
-
-                if (output) {
-                    if (compareStringsIgnoreCaseAndPunctuation(output, phrase)) {
-                        $(window).trigger('success');
-                        playerMessage('<span class="success">Отлично!</span>', 5);
-                    }
-                    else {
-                        $(window).trigger('fail');
-                        playerMessage(`<span class="wrong">${output}</span>`, 5);
-                    }
-                } else playerMessage('');
-            }
-
-            function onResult(event) {
-                
-                for (let i = event.resultIndex; i < event.results.length; i++) {
-                    const transcript = event.results[i][0].transcript;
-                    output += transcript + ' ';
-                }
-
-                console.log(output);
-                showResult();
-            }
-
-            function onEnd() {
-                console.log('Запись остановлена');
-            }
-
-            function clearListeners() {
-                recognition.onstart = null;
-                recognition.onresult = null;
-                recognition.onend = null;
-            }
-
-            function setListeners() {
-
-                // События распознавания
-                recognition.onstart = onStart;
-                recognition.onresult = onResult;
-                recognition.onend = onEnd;
-            }
-
-            setListeners();
-            
-            recognition.stop();
-            recognition.start();
-
-            setTimeout(()=>{
-                recognition.stop();
-                setTimeout(()=>{
-                    clearListeners();
-                    if (isEmpty(output))
-                        playerMessage('');
-                }, 100);
-            }, waitTime);
-        }
-    }
-
     // Воспроизведение в обоих направлениях
     function playBothDirections() {
         const isEnFirst = state.direction === 'target-native-both';
@@ -788,13 +711,13 @@ $(document).ready(function() {
             // Показываем и озвучиваем первый язык
             showPhrase(firstLang);
 
-            speechSynthesizer.speak(state.currentPhrase[firstLang], firstLang, 
-                    state.currentPhrase.type, state.speed, state.genderVoice)
+            speechSynthesizer.speak(appData.currentPhrase, firstLang, 
+                    appData.currentPhrase.type, state.speed, state.genderVoice)
                 .then(()=>{
 
                     let time = calcTime(firstLang);
-                    if (firstLang == 'native') 
-                        startRecognition(time, state.currentPhrase[secondLang]);
+                    if ((firstLang == 'native') && recognition && stateManager.state.recognize)
+                        recognition.startRecognition(time, appData.currentPhrase, secondLang);
 
                     clearTimeout(state.timeoutId);
                     state.timeoutId = setTimeout(() => {
@@ -806,16 +729,16 @@ $(document).ready(function() {
         } else {
             // Показываем и озвучиваем второй язык
             let totalTime = state.pauseBetweenPhrases * 1000 + 
-                state.currentPhrase[secondLang].length * AppConst.charTime[secondLang] * 1 / state.speed;
+                appData.currentPhrase[secondLang].length * AppConst.charTime[secondLang] * 1 / state.speed;
 
             showPhrase(secondLang);
-            speechSynthesizer.speak(state.currentPhrase[secondLang], secondLang, 
-                    state.currentPhrase.type, state.speed, state.genderVoice)
+            speechSynthesizer.speak(appData.currentPhrase, secondLang, 
+                    appData.currentPhrase.type, state.speed, state.genderVoice)
                 .then(()=>{
 
                     let time = calcTime(secondLang);
                     if (secondLang == 'native') 
-                        startRecognition(time, firstLang);
+                        startRecognition(time, appData.currentPhrase, firstLang);
 
                     clearTimeout(state.timeoutId);
                     state.timeoutId = setTimeout(() => {
@@ -832,12 +755,12 @@ $(document).ready(function() {
         const speakLang = state.direction === 'target-native' ? 'native' : 'target';
         
         showPhrase(showLang);
-        speechSynthesizer.speak(state.currentPhrase[speakLang], speakLang, 
-                    state.currentPhrase.type, state.speed, state.genderVoice)
+        speechSynthesizer.speak(appData.currentPhrase, speakLang, 
+                    appData.currentPhrase.type, state.speed, state.genderVoice)
             .then(()=>{
 
                 let time = calcTime(speakLang);
-                if (speakLang == 'target') startRecognition(time, speakLang);
+                if (speakLang == 'target') startRecognition(time, appData.currentPhrase, speakLang);
                 
                 state.timeoutId = setTimeout(() => {
                     setCurrentPhraseIndex(state.currentPhraseIndex + 1);
@@ -861,12 +784,12 @@ $(document).ready(function() {
     // Показать фразу
     function showPhrase(lang) {
         if (lang === 'target') {
-            updatePhrases(state.currentPhrase.target, state.currentPhrase.native);
+            updatePhrases(appData.currentPhrase.target, appData.currentPhrase.native);
 
             elements.phraseText.addClass('text-info');
             elements.phraseHint.removeClass('text-info').addClass('text-muted');
         } else {
-            updatePhrases(state.currentPhrase.native, state.currentPhrase.target);
+            updatePhrases(appData.currentPhrase.native, appData.currentPhrase.target);
 
             elements.phraseText.removeClass('text-info');
             elements.phraseHint.addClass('text-info');
@@ -883,13 +806,13 @@ $(document).ready(function() {
 
     // Озвучить текущую фразу
     function speakCurrentPhrase(lang) {
-        if (!state.currentPhrase) return;
-        return speechSynthesizer.speak(state.currentPhrase[lang], lang, 
-                    state.currentPhrase.type, state.speed, state.genderVoice);
+        if (!appData.currentPhrase) return;
+        return speechSynthesizer.speak(appData.currentPhrase, lang, 
+                    appData.currentPhrase.type, state.speed, state.genderVoice);
     }
 
     function refreshProgressBar() {
-        let percent = state.currentPhraseList ? Math.round(state.currentPhraseIndex / state.currentPhraseList.length * 100) : 0;
+        let percent = appData.currentPhraseList ? Math.round(state.currentPhraseIndex / appData.currentPhraseList.length * 100) : 0;
         elements.progressBar.css('width', percent + '%');
     }
 
@@ -910,32 +833,27 @@ $(document).ready(function() {
         }, 100);
     }
 
-    function formatTitle(str) {
-        const withSpaces = str.replace(/_/g, ' ');
-        return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
-    }
-
     // Обновить отображение
     function updateDisplay() {
-        if (state.currentPhraseList.length === 0) {
+        if (appData.currentPhraseList.length === 0) {
             updatePhrases('Список фраз пуст', 'Выберите список фраз в настройках');
             elements.phraseCounter.text('0 / 0');
             elements.phraseType.text('Не выбран');
             return;
         }
         
-        if (!state.currentPhrase) {
-            state.currentPhrase = state.currentPhraseList[0];
+        if (!appData.currentPhrase) {
+            appData.currentPhrase = appData.currentPhraseList[0];
         }
         
-        if (state.currentPhrase) {
+        if (appData.currentPhrase) {
 
-            updatePhrases(state.currentPhrase.native, state.currentPhrase.target);
+            updatePhrases(appData.currentPhrase.native, appData.currentPhrase.target);
             elements.phraseText.removeClass('text-info');
             elements.phraseHint.addClass('text-info');
             
-            elements.phraseCounter.text(`${state.currentPhraseIndex + 1} / ${state.currentPhraseList.length}`);
-            elements.phraseType.text(formatTitle(state.currentPhrase.type));
+            elements.phraseCounter.text(`${state.currentPhraseIndex + 1} / ${appData.currentPhraseList.length}`);
+            elements.phraseType.text(appData.currentPhrase.FormatType());
         }
 
         refreshProgressBar();
@@ -952,8 +870,8 @@ $(document).ready(function() {
         if (playerControls) {
             playerControls.updatePlayButton(stateManager.isPlaying && !stateManager.isPaused);
             
-            const hasPrev = stateManager.isPlaying && state.currentPhraseList.length > 0;
-            const hasNext = state.currentPhraseList.length > 0;
+            const hasPrev = stateManager.isPlaying && appData.currentPhraseList.length > 0;
+            const hasNext = appData.currentPhraseList.length > 0;
             playerControls.updateNavigationButtons(hasPrev, hasNext);
         }
 

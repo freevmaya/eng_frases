@@ -245,9 +245,9 @@ class SpeechSynthesizer {
     }
 
     // Умное воспроизведение с проверкой и генерацией
-    async smartSpeak(text, language = 'en', category = null, speed = 1.0, genderVoice = 'male') {
-        const cleanText = text.replace(/\([^()]*\)|\[[^\][]*\]/g, '').trim();
-        const phraseType = language === 'en' ? 'target' : 'native';
+    async smartSpeak(phraseObj, phraseType, category = null, speed = 1.0, genderVoice = 'male') {
+        const cleanText = phraseObj.CleanText(phraseType);
+        const language = phraseObj.Language(phraseType);
         
         // Проверяем, занят ли плеер
         if (this.state.isBusy) {
@@ -341,7 +341,7 @@ class SpeechSynthesizer {
             // 4. Fallback на локальный синтез речи
             if (this.config.fallbackToSpeech && this.state.hasSpeechSynthesis) {
                 console.log('Using fallback speech synthesis');
-                const synthesisResult = this._speakWithSynthesis(cleanText, phraseType, speed);
+                const synthesisResult = this._speakWithSynthesis(phraseObj, phraseType, speed);
                 
                 if (synthesisResult) {
                     return {
@@ -368,7 +368,7 @@ class SpeechSynthesizer {
             
             // Final fallback
             if (this.config.fallbackToSpeech && this.state.hasSpeechSynthesis) {
-                const synthesisResult = this._speakWithSynthesis(cleanText, phraseType, speed);
+                const synthesisResult = this._speakWithSynthesis(phraseObj, phraseType, speed);
                 
                 if (synthesisResult) {
                     return {
@@ -494,25 +494,26 @@ class SpeechSynthesizer {
     }
 
     // Основной метод воспроизведения (обратная совместимость)
-    async speak(phrase, phraseType = 'target', category = null, speed = 1.0, genderVoice = 'male') {
-        const language = phraseType === 'target' ? 'en' : 'ru';
+    async speak(phraseObj, phraseType = 'target', category = null, speed = 1.0, genderVoice = 'male') {
 
         if (this.state.isBusy) {
             return;
             await this.waitForCompletion();
         }
 
-        if ((phrase[phrase.length - 1] == '?') && (language == 'ru'))
+        if ((phraseType == 'native') && phraseObj.isQuestion(phraseType))
             $(window).trigger('question_phrase');
 
-        console.log(`Attemp play ${phrase}`);
+        //console.log(`Attemp play ${phraseObj[phraseType]}`);
 
-        return this.smartSpeak(phrase, language, category, speed, genderVoice);
+        return this.smartSpeak(phraseObj, phraseType, category, speed, genderVoice);
     }
 
     // Внутренний метод для синтеза речи
-    _speakWithSynthesis(text, phraseType = 'target', speed = 1.0) {
+    _speakWithSynthesis(phraseObj, phraseType = 'target', speed = 1.0) {
         if (!this.state.hasSpeechSynthesis) return false;
+
+        const text = phraseObj.CleanText(phraseType);
         
         try {
             this._setBusy('speaking');
@@ -550,6 +551,7 @@ class SpeechSynthesizer {
         }
     }
 
+    /*
     // Воспроизведение пары фраз (target и native)
     async speakPhrasePair(phrasePair, category = null, speed = 1.0, delayBetween = 500) {
         const results = {};
@@ -635,6 +637,7 @@ class SpeechSynthesizer {
         
         return results;
     }
+    */
 
     // Ожидание завершения текущего воспроизведения
     async waitForCompletion(timeout = 30000) {
@@ -721,7 +724,7 @@ class SpeechSynthesizer {
         };
     }
 }
-
+/*
 // Пример использования
 async function exampleUsage() {
     const synthesizer = new SpeechSynthesizer({
@@ -754,6 +757,7 @@ async function exampleUsage() {
     // Получение статуса
     console.log('Synthesizer status:', synthesizer.getStatus());
 }
+*/
 
 // Экспорт для использования в других модулях
 if (typeof module !== 'undefined' && module.exports) {

@@ -137,6 +137,7 @@ class PhrasesModel extends BaseModel {
 	            pt.type_name,
 	            p.target_text,
 	            p.native_text,
+	            p.direction,
 	            p.context
 	        FROM phrases p
 	        INNER JOIN phrase_types pt ON p.type_id = pt.id
@@ -158,7 +159,8 @@ class PhrasesModel extends BaseModel {
 	        
 	        $phraseObj = [
 	            'target' => $row['target_text'] ?? '',
-	            'native' => $row['native_text'] ?? ''
+	            'native' => $row['native_text'] ?? '',
+	            'direction' => $row['direction'] ?? ''
 	        ];
 	        
 	        // Добавляем опциональные поля
@@ -194,6 +196,7 @@ class PhrasesModel extends BaseModel {
 	            pt.type_name,
 	            p.target_text,
 	            p.native_text,
+	            p.direction,
 	            p.context,
 	            p.difficulty_level
 	        FROM phrases p
@@ -214,7 +217,8 @@ class PhrasesModel extends BaseModel {
 	        
 	        $phraseObj = [
 	            'target' => $row['target_text'] ?? '',
-	            'native' => $row['native_text'] ?? ''
+	            'native' => $row['native_text'] ?? '',
+	            'direction' => $row['direction'] ?? ''
 	        ];
 	        
 	        if (!empty($row['context'])) {

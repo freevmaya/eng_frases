@@ -1157,3 +1157,47 @@ $(window).ready(()=>{
     }
 
 })( jQuery );
+
+
+const LanguageMap = {
+  "en": "en-US",
+  "ru": "ru-RU",
+  "es": "es-ES",
+  "fr": "fr-FR",
+  "de": "de-DE",
+  "zh": "zh-CN",
+  "ja": "ja-JP",
+  "ko": "ko-KR",
+  "pt": "pt-BR",
+  "it": "it-IT",
+  "ar": "ar-SA",
+  "hi": "hi-IN",
+  "tr": "tr-TR",
+  "nl": "nl-NL",
+  "pl": "pl-PL",
+  "uk": "uk-UA",
+  "vi": "vi-VN",
+  "th": "th-TH",
+  "el": "el-GR",
+  "he": "he-IL",
+  "sv": "sv-SE",
+  "no": "nb-NO",
+  "da": "da-DK",
+  "fi": "fi-FI",
+  "cs": "cs-CZ",
+  "hu": "hu-HU",
+  "ro": "ro-RO",
+  "bg": "bg-BG",
+  "sr": "sr-RS",
+  "hr": "hr-HR",
+  "sk": "sk-SK",
+  "sl": "sl-SI",
+  "et": "et-EE",
+  "lv": "lv-LV",
+  "lt": "lt-LT",
+  "id": "id-ID",
+  "ms": "ms-MY",
+  "fa": "fa-IR",
+  "ur": "ur-PK",
+  "bn": "bn-BD"
+}
