@@ -221,6 +221,8 @@ class SpeechSynthesizer {
         try {
                 
             const localUrlInfo = await this.getAudioUrl(cleanText, language, category, genderVoice);
+            console.log(`Attemp play ${phraseObj[phraseType]}: ${localUrlInfo.url}`);
+
             if (this.config.noServer)
                 return await this.playAudioFromUrl(localUrlInfo.url);
             
@@ -287,17 +289,7 @@ class SpeechSynthesizer {
             // 4. Fallback на локальный синтез речи
             if (this.config.fallbackToSpeech && this.state.hasSpeechSynthesis) {
                 console.log('Using fallback speech synthesis');
-                const synthesisResult = this._speakWithSynthesis(phraseObj, phraseType, speed);
-                
-                if (synthesisResult) {
-                    return {
-                        success: true,
-                        type: 'synthesis',
-                        fallback: true,
-                        phrase: cleanText,
-                        phraseType: phraseType
-                    };
-                }
+                return this._speakWithSynthesis(phraseObj, phraseType, speed);
             }
             
             // Если ничего не сработало, очищаем состояние
@@ -314,17 +306,7 @@ class SpeechSynthesizer {
             
             // Final fallback
             if (this.config.fallbackToSpeech && this.state.hasSpeechSynthesis) {
-                const synthesisResult = this._speakWithSynthesis(phraseObj, phraseType, speed);
-                
-                if (synthesisResult) {
-                    return {
-                        success: true,
-                        type: 'synthesis',
-                        fallback: true,
-                        error: error.message,
-                        phrase: cleanText
-                    };
-                }
+                return this._speakWithSynthesis(phraseObj, phraseType, speed);
             }
             
             // Очищаем состояние при ошибке
@@ -449,8 +431,6 @@ class SpeechSynthesizer {
         if ((phraseType == 'native') && phraseObj.isQuestion(phraseType))
             $(window).trigger('question_phrase');
 
-        console.log(`Attemp play ${phraseObj[phraseType]}`);
-
         return this.smartSpeak(phraseObj, phraseType, category, speed, genderVoice);
     }
 
@@ -459,6 +439,7 @@ class SpeechSynthesizer {
         if (!this.state.hasSpeechSynthesis) return false;
 
         const text = phraseObj.CleanText(phraseType);
+        const language = phraseObj.Language(phraseType);
         
         try {
             this._setBusy('speaking');
@@ -466,27 +447,37 @@ class SpeechSynthesizer {
             const utterance = new SpeechSynthesisUtterance(text);
             this.currentUtterance = utterance;
             
-            utterance.lang = phraseType === 'target' ? 'en-US' : 'ru-RU';
+            utterance.lang = LanguageMap[language];// phraseType === 'target' ? 'en-US' : 'ru-RU';
             utterance.rate = speed;
             utterance.volume = 1;
             
             if (this.state.voicesLoaded && this.state.voices.length > 0) {
-                const langPrefix = phraseType === 'target' ? 'en' : 'ru';
-                const voice = this.state.voices.find(v => v.lang.startsWith(langPrefix));
+
+                const voice = this.state.voices.find(v => v.lang.startsWith(language));
                 if (voice) utterance.voice = voice;
             }
+
+            return new Promise((resolve, reject)=>{
             
-            utterance.onend = () => {
-                this._afterFinishSpeak();
-            };
-            
-            utterance.onerror = (event) => {
-                console.error('Speech synthesis error:', event);
-                this._afterFinishSpeak();
-            };
-            
-            speechSynthesis.speak(utterance);
-            return true;
+                utterance.onend = () => {
+                    this._afterFinishSpeak();
+                    resolve({
+                        success: true
+                    });
+                };
+                
+                utterance.onerror = (event) => {
+                    console.error('Speech synthesis error:', event);
+                    this._afterFinishSpeak();
+                    resolve({
+                        success: false,
+                        error: event
+                    });
+                };
+                
+                speechSynthesis.speak(utterance);
+
+            })
             
         } catch (error) {
             console.error('Speech synthesis failed:', error);
@@ -495,94 +486,6 @@ class SpeechSynthesizer {
             return false;
         }
     }
-
-    /*
-    // Воспроизведение пары фраз (target и native)
-    async speakPhrasePair(phrasePair, category = null, speed = 1.0, delayBetween = 500) {
-        const results = {};
-        
-        if (phrasePair.target && phrasePair.target.trim()) {
-            results.target = await this.smartSpeak(
-                phrasePair.target, 
-                'en', 
-                category, 
-                speed
-            );
-            
-            if (results.target.success && phrasePair.native) {
-                await this.waitForCompletion();
-                await new Promise(resolve => setTimeout(resolve, delayBetween));
-            }
-        }
-        
-        if (phrasePair.native && phrasePair.native.trim()) {
-            results.native = await this.smartSpeak(
-                phrasePair.native, 
-                'ru', 
-                category, 
-                speed
-            );
-        }
-        
-        return results;
-    }
-
-    // Предварительная генерация аудио на сервере
-    async pregenerateAudios(phrases, language = 'en', category = null) {
-        const results = [];
-        
-        for (const phrase of phrases) {
-            if (!phrase || !phrase.trim()) continue;
-            
-            const cleanText = phrase.replace(/\([^()]*\)|\[[^\][]*\]/g, '').trim();
-            
-            console.log(`Pre-generating audio for: "${cleanText.substring(0, 50)}..."`);
-            
-            try {
-                // Сначала проверяем
-                const checkResult = await this.checkAudioOnServer(cleanText, language, category);
-                
-                if (checkResult.status === 'found') {
-                    results.push({
-                        phrase: cleanText,
-                        status: 'already_exists',
-                        filename: checkResult.data.filename
-                    });
-                    continue;
-                }
-                
-                // Генерируем если нет
-                const genResult = await this.generateAudioOnServer(cleanText, language, category);
-                
-                if (genResult.status === 'success' || genResult.status === 'ok') {
-                    results.push({
-                        phrase: cleanText,
-                        status: 'generated',
-                        filename: genResult.data.filename
-                    });
-                } else {
-                    results.push({
-                        phrase: cleanText,
-                        status: 'error',
-                        error: genResult.message
-                    });
-                }
-                
-                // Небольшая пауза между запросами
-                await new Promise(resolve => setTimeout(resolve, 500));
-                
-            } catch (error) {
-                results.push({
-                    phrase: cleanText,
-                    status: 'error',
-                    error: error.message
-                });
-            }
-        }
-        
-        return results;
-    }
-    */
 
     // Ожидание завершения текущего воспроизведения
     async waitForCompletion(timeout = 30000) {
