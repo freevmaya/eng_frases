@@ -10,9 +10,32 @@ from pathlib import Path
 
 app = Flask(__name__)
 
-# Конфигурация
-BASE_OUTPUT_DIR = os.path.abspath("/home/vmaya/www/eng_frases/public/data/voices")
+# Получаем путь к директории с аудиофайлами из переменной окружения
+# или используем значение по умолчанию
+BASE_AUDIO_DIR = os.environ.get('BASE_AUDIO_DIR', 
+    os.path.abspath("/home/vmaya/www/eng_frases/public/data/voices"))
+
+# Инициализация генератора речи с Edge-TTS
+# Используем ту же директорию для Edge-TTS
+BASE_OUTPUT_DIR = BASE_AUDIO_DIR
+
+# Убедимся, что директория существует
+Path(BASE_OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
+
+# JSON файл с фразами
 JSON_FILE_PATH = os.path.abspath("/home/vmaya/www/eng_frases/public/data/en-ru.json")
+
+print(f"Инициализация SpeechGenerator...")
+print(f"BASE_OUTPUT_DIR: {BASE_OUTPUT_DIR}")
+print(f"JSON_FILE_PATH: {JSON_FILE_PATH}")
+
+try:
+    # Инициализация генератора речи с Edge-TTS
+    speech_generator = SpeechGenerator(BASE_OUTPUT_DIR, use_edge_tts=True)
+    print("✓ SpeechGenerator инициализирован успешно")
+except Exception as e:
+    print(f"✗ Ошибка инициализации SpeechGenerator: {e}")
+    sys.exit(1)
 
 Path(BASE_OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
 

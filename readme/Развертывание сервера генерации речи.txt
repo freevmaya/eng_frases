@@ -181,7 +181,7 @@ server {
     
     # Статические файлы аудио
     location /audio/ {
-        alias /home/vmaya/www/eng_frases/public/data/audio_files_gtts/;
+        alias /home/vmaya/www/eng_frases/public/data/voices/;
         expires 1y;
         add_header Cache-Control "public, immutable";
         access_log off;
