@@ -1,3 +1,8 @@
+# ============================================================
+# FILE: .\classes\SpeechGenerator.py (модифицированный)
+# TYPE: .PY
+# ============================================================
+
 from gtts import gTTS
 import json
 import hashlib
@@ -6,19 +11,32 @@ from pathlib import Path
 import time
 from typing import Dict, List, Optional, Tuple
 import requests
+from .EdgeTTSGenerator import EdgeTTSGenerator
 
 class SpeechGenerator:
-    def __init__(self, base_output_dir: Optional[str] = None):
+    def __init__(self, base_output_dir: Optional[str] = None, use_edge_tts: bool = True):
         """
-        Инициализация генератора речи с использованием gTTS
+        Инициализация генератора речи с возможностью выбора движка
         
         Args:
             base_output_dir: Базовая директория для сохранения аудиофайлов
+            use_edge_tts: Использовать Edge-TTS (True) или gTTS (False)
         """
         self.phrases_data = None
         
-        # Директория для сохранения аудиофайлов
-        self.BASE_OUTPUT_DIR = base_output_dir or "../public/data/audio_files_gtts"
+        # Выбираем движок
+        self.use_edge_tts = use_edge_tts
+        
+        if use_edge_tts:
+            # Используем Edge-TTS
+            self.engine_type = 'edge_tts'
+            self.edge_tts_generator = EdgeTTSGenerator(base_output_dir)
+            self.BASE_OUTPUT_DIR = base_output_dir or "../public/data/audio_files_edge_tts"
+        else:
+            # Используем gTTS
+            self.engine_type = 'gtts'
+            self.BASE_OUTPUT_DIR = base_output_dir or "../public/data/audio_files_gtts"
+        
         Path(self.BASE_OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
         
         # Настройки для gTTS
@@ -27,25 +45,20 @@ class SpeechGenerator:
             'native': 'ru'     # Русский
         }
         
-        # Задержка между запросами (чтобы не превысить лимиты)
+        # Задержка между запросами
         self.REQUEST_DELAY = 0.5
         
         # Проверяем интернет-соединение
         self._check_internet_connection()
     
     def _check_internet_connection(self) -> bool:
-        """
-        Проверка интернет-соединения
-        
-        Returns:
-            bool: True если есть соединение
-        """
+        """Проверка интернет-соединения"""
         try:
             requests.get('https://www.google.com', timeout=5)
             print("✓ Интернет-соединение доступно")
             return True
         except requests.ConnectionError:
-            print("✗ Нет интернет-соединения. gTTS требует интернет.")
+            print("✗ Нет интернет-соединения. Требуется интернет.")
             return False
     
     def _get_language_settings(self, phrase_type: str) -> Tuple[str, str, float]:
@@ -64,15 +77,7 @@ class SpeechGenerator:
             return ('ru', 'com', 0.9)  # Немного медленнее для русского
     
     def load_json_data(self, json_file_path: str) -> Dict:
-        """
-        Загрузка данных из JSON файла
-        
-        Args:
-            json_file_path: Путь к JSON файлу
-        
-        Returns:
-            dict: Загруженные данные
-        """
+        """Загрузка данных из JSON файла"""
         if not os.path.exists(json_file_path):
             raise FileNotFoundError(f"JSON файл не найден: {json_file_path}")
         
@@ -85,7 +90,7 @@ class SpeechGenerator:
             raise ValueError(f"Ошибка чтения JSON файла: {e}")
     
     def _generate_filename(self, phrase: str, language: str = 'en') -> str:
-         # Нормализуем фразу (удаляем лишние пробелы, приводим к нижнему регистру)
+        # Нормализуем фразу (удаляем лишние пробелы, приводим к нижнему регистру)
         normalized_phrase = ' '.join(phrase.strip().split()).lower()
         
         # Создаем MD5 хэш нормализованной фразы
@@ -95,14 +100,18 @@ class SpeechGenerator:
         return f"{language}_{phrase_hash}.mp3"
     
     def generate_audio(self, text: str, language: str = 'en', 
-                      category: Optional[str] = None) -> Optional[Dict]:
+                      category: Optional[str] = None,
+                      gender: Optional[str] = None,
+                      voice_name: Optional[str] = None) -> Optional[Dict]:
         """
-        Генерация аудиофайла для фразы с использованием gTTS
+        Генерация аудиофайла для фразы
         
         Args:
             text: Текст фразы
             language: Язык ('en' или 'ru')
             category: Категория (опционально)
+            gender: Гендер голоса ('male' или 'female') - только для Edge-TTS
+            voice_name: Конкретное имя голоса - только для Edge-TTS
         
         Returns:
             dict: Информация о сгенерированном файле или None при ошибке
@@ -114,8 +123,27 @@ class SpeechGenerator:
         # Нормализуем текст
         clean_text = ' '.join(text.strip().split())
         
+        if self.use_edge_tts:
+            # Используем Edge-TTS с гендером
+            if gender is None:
+                gender = 'female'  # Значение по умолчанию
+                
+            return self.edge_tts_generator.generate_audio(
+                text=clean_text,
+                language=language,
+                gender=gender,
+                voice_name=voice_name,
+                category=category
+            )
+        else:
+            # Используем gTTS (без поддержки гендера)
+            return self._generate_with_gtts(clean_text, language, category)
+    
+    def _generate_with_gtts(self, text: str, language: str = 'en', 
+                           category: Optional[str] = None) -> Optional[Dict]:
+        """Генерация с использованием gTTS"""
         # Генерация имени файла
-        filename = self._generate_filename(clean_text, language)
+        filename = self._generate_filename(text, language)
         
         # Создаем подпапку для языка
         save_dir = Path(self.BASE_OUTPUT_DIR) / language
@@ -141,7 +169,7 @@ class SpeechGenerator:
         lang, tld, _ = self._get_language_settings('target' if language == 'en' else 'native')
         
         try:
-            print(f"  Генерация аудио для: '{text[:50]}...'")
+            print(f"  Генерация аудио для: '{text[:50]}...' (gTTS)")
             
             # Создаем gTTS объект
             tts = gTTS(
@@ -179,7 +207,8 @@ class SpeechGenerator:
             return None
     
     def check_audio_exists(self, text: str, language: str = 'en', 
-                          category: Optional[str] = None) -> Dict:
+                          category: Optional[str] = None,
+                          gender: Optional[str] = None) -> Dict:
         """
         Проверка существования аудиофайла для фразы
         
@@ -187,6 +216,7 @@ class SpeechGenerator:
             text: Текст фразы
             language: Язык ('en' или 'ru')
             category: Категория (опционально)
+            gender: Гендер голоса (опционально, для Edge-TTS)
         
         Returns:
             dict: Информация о существовании файла
@@ -197,8 +227,12 @@ class SpeechGenerator:
         # Генерация имени файла
         filename = self._generate_filename(clean_text, language)
         
-        # Путь к файлу в подпапке языка
-        filepath = Path(self.BASE_OUTPUT_DIR) / language / filename
+        if self.use_edge_tts and gender:
+            # Для Edge-TTS проверяем в подпапке гендера
+            filepath = Path(self.BASE_OUTPUT_DIR) / gender / language / filename
+        else:
+            # Для gTTS или без гендера проверяем в подпапке языка
+            filepath = Path(self.BASE_OUTPUT_DIR) / language / filename
         
         exists = filepath.exists() and filepath.stat().st_size > 0
         
@@ -206,13 +240,16 @@ class SpeechGenerator:
             'exists': exists,
             'text': clean_text,
             'language': language,
+            'gender': gender,
             'filename': filename,
             'filepath': str(filepath) if exists else None,
-            'category': category
+            'category': category,
+            'engine': self.engine_type
         }
     
     def find_audio_file(self, text: str, language: str = 'en', 
-                       categories: Optional[List[str]] = None) -> Optional[Dict]:
+                       categories: Optional[List[str]] = None,
+                       gender: Optional[str] = None) -> Optional[Dict]:
         """
         Поиск аудиофайла в разных категориях
         
@@ -220,6 +257,7 @@ class SpeechGenerator:
             text: Текст фразы
             language: Язык ('en' или 'ru')
             categories: Список категорий для поиска
+            gender: Гендер голоса (опционально, для Edge-TTS)
         
         Returns:
             dict: Информация о найденном файле или None
@@ -229,63 +267,82 @@ class SpeechGenerator:
         
         filename = self._generate_filename(clean_text, language)
         
-        # Проверяем в подпапке языка
-        lang_filepath = Path(self.BASE_OUTPUT_DIR) / language / filename
-        if lang_filepath.exists() and lang_filepath.stat().st_size > 0:
-            return {
-                'exists': True,
-                'text': clean_text,
-                'language': language,
-                'filename': filename,
-                'filepath': str(lang_filepath),
-                'category': None
-            }
-        
-        # Для обратной совместимости проверяем в старых категориях
-        if categories:
-            for category in categories:
-                filepath = Path(self.BASE_OUTPUT_DIR) / category / filename
-                if filepath.exists() and filepath.stat().st_size > 0:
-                    return {
-                        'exists': True,
-                        'text': clean_text,
-                        'language': language,
-                        'filename': filename,
-                        'filepath': str(filepath),
-                        'category': category
-                    }
-        
-        # Также проверяем в корневой директории для обратной совместимости
-        root_filepath = Path(self.BASE_OUTPUT_DIR) / filename
-        if root_filepath.exists() and root_filepath.stat().st_size > 0:
-            return {
-                'exists': True,
-                'text': clean_text,
-                'language': language,
-                'filename': filename,
-                'filepath': str(root_filepath),
-                'category': None
-            }
+        if self.use_edge_tts:
+            # Для Edge-TTS ищем в структуре гендер/язык
+            if gender:
+                # Ищем в конкретном гендере
+                gender_dir = Path(self.BASE_OUTPUT_DIR) / gender
+                if gender_dir.exists():
+                    filepath = gender_dir / language / filename
+                    if filepath.exists() and filepath.stat().st_size > 0:
+                        return {
+                            'exists': True,
+                            'text': clean_text,
+                            'language': language,
+                            'gender': gender,
+                            'filename': filename,
+                            'filepath': str(filepath),
+                            'category': None,
+                            'engine': self.engine_type
+                        }
+            
+            # Ищем во всех гендерах
+            base_dir = Path(self.BASE_OUTPUT_DIR)
+            if base_dir.exists():
+                for gender_dir in base_dir.iterdir():
+                    if gender_dir.is_dir():
+                        filepath = gender_dir / language / filename
+                        if filepath.exists() and filepath.stat().st_size > 0:
+                            return {
+                                'exists': True,
+                                'text': clean_text,
+                                'language': language,
+                                'gender': gender_dir.name,
+                                'filename': filename,
+                                'filepath': str(filepath),
+                                'category': None,
+                                'engine': self.engine_type
+                            }
+        else:
+            # Для gTTS ищем в структуре язык
+            lang_filepath = Path(self.BASE_OUTPUT_DIR) / language / filename
+            if lang_filepath.exists() and lang_filepath.stat().st_size > 0:
+                return {
+                    'exists': True,
+                    'text': clean_text,
+                    'language': language,
+                    'filename': filename,
+                    'filepath': str(lang_filepath),
+                    'category': None,
+                    'engine': self.engine_type
+                }
         
         return None
     
-    def _get_all_categories(self) -> List[str]:
+    def get_available_voices(self, language: str = 'en', gender: Optional[str] = None) -> List[str]:
         """
-        Получение всех категорий из директории
+        Получение списка доступных голосов (только для Edge-TTS)
+        
+        Args:
+            language: Язык ('en' или 'ru')
+            gender: Гендер ('male', 'female' или None для всех)
         
         Returns:
-            list: Список категорий
+            Список доступных голосов
         """
-        categories = []
-        base_dir = Path(self.BASE_OUTPUT_DIR)
-        
-        if base_dir.exists():
-            for item in base_dir.iterdir():
-                if item.is_dir():
-                    categories.append(item.name)
-        
-        return categories
+        if self.use_edge_tts:
+            return self.edge_tts_generator.get_available_voices(language, gender)
+        else:
+            print("⚠️ Список голосов доступен только для Edge-TTS")
+            return []
+    
+    def list_all_voices(self):
+        """Вывод всех доступных голосов (только для Edge-TTS)"""
+        if self.use_edge_tts:
+            self.edge_tts_generator.list_all_voices()
+        else:
+            print("⚠️ Список голосов доступен только для Edge-TTS")
     
     def cleanup(self):
-        """Очистка (gTTS не требует специальной очистки)"""
+        """Очистка ресурсов"""
         pass

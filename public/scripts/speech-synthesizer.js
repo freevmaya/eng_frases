@@ -146,7 +146,7 @@ class SpeechSynthesizer {
     }
 
     // Генерация аудиофайла на сервере
-    async generateAudioOnServer(text, language = 'en', category = null, genderVoice = 'male') {
+    async generateAudioOnServer(text, language = 'en', category = null, gender = 'male', voice_name = '') {
         if (this._isBusyWith('generating')) {
             return {
                 status: 'error',
@@ -175,7 +175,9 @@ class SpeechSynthesizer {
                 body: JSON.stringify({
                     text: text,
                     language: language,
-                    type: category
+                    type: category,
+                    gender: gender,
+                    voice_name: voice_name
                 })
             });
             
@@ -255,7 +257,7 @@ class SpeechSynthesizer {
             // 3. Если не нашли, генерируем на сервере (если разрешено)
             if (this.config.autoGenerateAudio) {
                 console.log('Audio not found, generating on server...');
-                const generationResult = await this.generateAudioOnServer(cleanText, language, category);
+                const generationResult = await this.generateAudioOnServer(cleanText, language, category, genderVoice);
                 
                 if (generationResult.status === 'success' || generationResult.status === 'ok') {
                     console.log('Audio generated successfully:', generationResult.data.filename);

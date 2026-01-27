@@ -1,3 +1,8 @@
+# ============================================================
+# FILE: .\server.py (модифицированный)
+# TYPE: .PY
+# ============================================================
+
 from flask import Flask, request, jsonify
 from classes.SpeechGenerator import SpeechGenerator
 import os
@@ -6,24 +11,13 @@ from pathlib import Path
 app = Flask(__name__)
 
 # Конфигурация
-BASE_OUTPUT_DIR = os.path.abspath("/home/vmaya/www/eng_frases/public/data/audio_files_male")
+BASE_OUTPUT_DIR = os.path.abspath("/home/vmaya/www/eng_frases/public/data/voices")
 JSON_FILE_PATH = os.path.abspath("/home/vmaya/www/eng_frases/public/data/en-ru.json")
 
 Path(BASE_OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
 
-# Инициализация генератора речи
-speech_generator = SpeechGenerator(BASE_OUTPUT_DIR)
-
-'''
-# CORS Middleware - ТОЛЬКО ЭТОТ КОД
-@app.after_request
-def add_cors_headers(response):
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization,Accept'
-    response.headers['Access-Control-Allow-Methods'] = 'GET,POST,PUT,DELETE,OPTIONS'
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    return response
-'''
+# Инициализация генератора речи с Edge-TTS
+speech_generator = SpeechGenerator(BASE_OUTPUT_DIR, use_edge_tts=True)
 
 @app.before_request
 def handle_options():
@@ -38,7 +32,7 @@ def handle_options():
 @app.route('/api/generate-audio', methods=['POST'])
 def generate_audio():
     """
-    Обработка запроса на генерацию аудио
+    Обработка запроса на генерацию аудио с поддержкой Edge-TTS
     """
     try:
         # Получение данных из запроса
@@ -55,6 +49,10 @@ def generate_audio():
         language = data.get('language', 'en').strip().lower()
         category = data.get('type', '').strip()
         
+        # Новые параметры для Edge-TTS
+        gender = data.get('gender', 'female').strip().lower()
+        voice_name = data.get('voice_name', '').strip()
+        
         if not text:
             return jsonify({
                 "status": "error",
@@ -67,8 +65,14 @@ def generate_audio():
                 "message": "Language must be 'en' or 'ru'"
             }), 400
         
-        # Проверка существования файла
-        check_result = speech_generator.check_audio_exists(text, language, category)
+        if gender not in ['male', 'female']:
+            return jsonify({
+                "status": "error",
+                "message": "Gender must be 'male' or 'female'"
+            }), 400
+        
+        # Проверка существования файла (с учетом гендера)
+        check_result = speech_generator.check_audio_exists(text, language, category, gender)
         
         if check_result['exists']:
             return jsonify({
@@ -76,28 +80,34 @@ def generate_audio():
                 "message": "Audio file already exists",
                 "data": {
                     "filename": check_result['filename'],
+                    "gender": gender,
                     "category": category or "root"
                 }
             }), 200
         
         # Если файл не найден, пробуем найти в других категориях
         if category:
-            found_file = speech_generator.find_audio_file(text, language)
+            found_file = speech_generator.find_audio_file(text, language, gender=gender)
             if found_file:
                 return jsonify({
                     "status": "ok",
                     "message": "Audio file found in another category",
                     "data": {
                         "filename": found_file['filename'],
+                        "gender": found_file.get('gender', gender),
                         "category": found_file['category'] or "root"
                     }
                 }), 200
         
         # Генерация нового аудиофайла
         print(f"\nГенерация аудио для: '{text[:50]}...'")
-        print(f"Язык: {language}, Категория: {category or 'root'}")
+        print(f"Язык: {language}, Гендер: {gender}, Категория: {category or 'root'}")
+        if voice_name:
+            print(f"Голос: {voice_name}")
         
-        generation_result = speech_generator.generate_audio(text, language, category)
+        generation_result = speech_generator.generate_audio(
+            text, language, category, gender, voice_name if voice_name else None
+        )
         
         if generation_result:
             if generation_result.get('already_exists'):
@@ -106,6 +116,8 @@ def generate_audio():
                     "message": "Audio file already exists (generated during check)",
                     "data": {
                         "filename": generation_result['filename'],
+                        "gender": gender,
+                        "voice": generation_result.get('voice', 'default'),
                         "category": category or "root"
                     }
                 }), 200
@@ -115,6 +127,8 @@ def generate_audio():
                     "message": "Audio file generated successfully",
                     "data": {
                         "filename": generation_result['filename'],
+                        "gender": gender,
+                        "voice": generation_result.get('voice', 'default'),
                         "file_size_kb": round(generation_result['file_size'] / 1024, 2),
                         "category": category or "root"
                     }
@@ -130,6 +144,46 @@ def generate_audio():
         return jsonify({
             "status": "error",
             "message": f"Internal server error: {str(e)}"
+        }), 500
+
+# Добавляем новый эндпоинт для получения списка голосов
+@app.route('/api/get-voices', methods=['GET'])
+def get_voices():
+    """
+    Получение списка доступных голосов Edge-TTS
+    """
+    try:
+        language = request.args.get('language', 'en').strip().lower()
+        gender = request.args.get('gender', '').strip().lower()
+        
+        if language not in ['en', 'ru']:
+            return jsonify({
+                "status": "error",
+                "message": "Language must be 'en' or 'ru'"
+            }), 400
+        
+        if gender and gender not in ['male', 'female']:
+            return jsonify({
+                "status": "error",
+                "message": "Gender must be 'male', 'female' or empty for all"
+            }), 400
+        
+        voices = speech_generator.get_available_voices(language, gender if gender else None)
+        
+        return jsonify({
+            "status": "success",
+            "data": {
+                "language": language,
+                "gender": gender if gender else "all",
+                "voices": voices,
+                "count": len(voices)
+            }
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": f"Error: {str(e)}"
         }), 500
 
 @app.route('/api/check-audio', methods=['POST'])
