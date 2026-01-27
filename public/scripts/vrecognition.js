@@ -5,7 +5,7 @@ class VRecognition {
 		this.waitTime 		= 0;
 		this.timerId		= null;
 		this.output			= '';
-		this.outputted		= false;
+		this.success		= false;
 		this.text  			= '';
 		this.setListeners();
 	}
@@ -46,28 +46,33 @@ class VRecognition {
         	this.timerId = null;
         }
 
-		this.showResult();
+        if (isEmpty(this.output))
+			playerMessage('');
+		this.text = '';
+		this.output = '';
 	}
 
     showResult() {
 
-    	if (!this.outputted) {
+    	if (!this.success) {
 	        if (this.output) {
 	            if (compareStringsIgnoreCaseAndPunctuation(this.output, this.text)) {
 	                $(window).trigger('success');
 	                playerMessage('<span class="success">Отлично!</span>', 5);
+	        		this.success = true;
+	        		this.stop();
 	            }
 	            else {
 	                $(window).trigger('fail');
 	                playerMessage(`<span class="wrong">${this.output}</span>`, 5);
 	            }
-	        } else playerMessage('');
-	        this.outputted	= true;
+	        }
 	    }
     }
 
     onResult(event) {
         
+        this.output = '';
         for (let i = event.resultIndex; i < event.results.length; i++) {
             const transcript = event.results[i][0].transcript;
             this.output += transcript + ' ';
@@ -113,6 +118,9 @@ class VRecognition {
         
         if (this.isRecognize) {
 
+        	if (this.text == phraseObj[phraseType])
+        		return;
+
         	this.stop();
         	setTimeout((()=>{
         		this.startRecognition(waitTime, phraseObj, phraseType);
@@ -122,10 +130,10 @@ class VRecognition {
 
         this.text 						= phraseObj[phraseType];
         this.output 					= '';
-        this.outputted					= false;
+        this.success					= false;
         this.waitTime 					= waitTime;
         this.recognition.continuous 	= true; 	// Продолжать слушать после паузы
-        this.recognition.interimResults = false; 	// Показывать промежуточные результаты
+        this.recognition.interimResults = true; 	// Показывать промежуточные результаты
         this.recognition.lang 			= LanguageMap[phraseObj.Language(phraseType)];
 
         try {

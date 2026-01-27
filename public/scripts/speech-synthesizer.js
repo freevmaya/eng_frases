@@ -504,7 +504,7 @@ class SpeechSynthesizer {
         if ((phraseType == 'native') && phraseObj.isQuestion(phraseType))
             $(window).trigger('question_phrase');
 
-        //console.log(`Attemp play ${phraseObj[phraseType]}`);
+        console.log(`Attemp play ${phraseObj[phraseType]}`);
 
         return this.smartSpeak(phraseObj, phraseType, category, speed, genderVoice);
     }
