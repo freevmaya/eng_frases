@@ -29,6 +29,7 @@
 	<script src="scripts/user-app.js?v=<?=$v?>"></script>
 
     <?if (isset(Page::$request['vk_app_id'])) {
+
     	$userModel = new UserModel();
     	$source = isset(Page::$request['vk_client']) && (Page::$request['vk_client'] == 'ok') ? 'ok' : 'vk';
 
@@ -76,6 +77,14 @@
 	<!-- Eruda is console for mobile browsers-->
 	<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 	<script>eruda.init();</script>
+
+	<!--Инициализация пользователя VK. Только при разработке!-->
+	<script type="text/javascript">
+		var user_data = <?=file_get_contents(BASEPATH.'/dev/vk-parameters.json');?>;
+		setTimeout(()=>{
+			userApp.init(user_data.id, 'vk', user_data);
+		}, 1000);
+	</script>
 	<?}?>
 </body>
 </html>

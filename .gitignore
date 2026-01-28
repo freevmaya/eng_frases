@@ -11,6 +11,8 @@ sessions/*
 audio_files*
 sessions
 test
+tmp
+dev
 output
 myenv
 venv

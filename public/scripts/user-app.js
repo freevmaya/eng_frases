@@ -1,12 +1,12 @@
 class UserApp {
-	init(id, source, data) {
+	init(source_id, source, data) {
 
 		Ajax({
 			action: 'initUser',
 			data: {
-				id: id,
+				source_id: source_id,
 				source: source,
-				source_user: data
+				user_data:  data
 			}
 		});
 	}

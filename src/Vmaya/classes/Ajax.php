@@ -44,16 +44,24 @@ class Ajax extends Page {
 
 		$userModel = new UserModel();
 
-		$source_user = $data['source_user'];
+		$user_data = $data['user_data'];
+		$source = $data['source'];
 
-		return $userModel->Update([
-			'id'=>$data['id'],
+		$values = [
+			'source_id'=>$data['source_id'],
 			'source'=>$data['source'],
-			'first_name'=>$source_user['first_name'],
-			'last_name'=>$source_user['last_name'],
+			'first_name'=>$user_data['first_name'],
+			'last_name'=>$user_data['last_name'],
 			'last_time'=>date('Y-m-d H:i:s'),
-			'data'=>json_encode($source_user, JSON_FLAGS)
-		]);
+			'language_code'=>'ru',
+			'data'=>json_encode($user_data, JSON_FLAGS)
+		];
+
+    	$items = $userModel->getItems("source_id = ".$data['source_id']." AND source = '{$source}'");
+    	if (count($items) > 0)
+    		$values['id'] = $items[0]['id'];
+
+		return $userModel->Update($values);
 	}
 
 	protected function getList() {
