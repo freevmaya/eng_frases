@@ -48,7 +48,7 @@
 
 	<script type="text/javascript">
 		$(window).ready(()=>{
-			new VKApp(<?=VK_APP_ID?>, <?=$user_id?>);
+			new VKApp(<?=VK_APP_ID?>);
 		});
 	</script>
     <?}?>
