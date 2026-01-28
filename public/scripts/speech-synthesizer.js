@@ -112,7 +112,7 @@ class SpeechSynthesizer {
     }
 
     // Проверка аудиофайла на сервере через API
-    async checkAudioOnServer(text, language, category = null) {
+    async checkAudioOnServer(text, language, category = null, gender='male') {
         try {
             const response = await fetch(`${this.config.apiBaseUrl}check-audio`, {
                 method: 'POST',
@@ -125,7 +125,8 @@ class SpeechSynthesizer {
                 body: JSON.stringify({
                     text: text,
                     language: language,
-                    type: category
+                    type: category,
+                    gender: gender
                 })
             });
             
@@ -235,7 +236,7 @@ class SpeechSynthesizer {
             
             // 2. Проверяем на сервере
             console.log(`Checking audio "${cleanText}" on server...`);
-            const checkResult = await this.checkAudioOnServer(cleanText, language, category);
+            const checkResult = await this.checkAudioOnServer(cleanText, language, category, genderVoice);
             
             if (checkResult.status === 'found') {
                 this.audioCache.push(localUrlInfo.url);

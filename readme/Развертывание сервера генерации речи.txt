@@ -248,3 +248,11 @@ curl -X POST https://api.vmaya.ru/api/generate-audio   -H "Content-Type: applica
 
 ls -l /run/audio-generator/audio-generator.sock
 sudo journalctl -u audio-generator.service -n 50 --no-pager
+
+
+Перезагрузка
+# Перезагрузите systemd
+systemctl daemon-reload
+
+# Запустите службу
+systemctl start audio-generator | systemctl restart audio-generator
