@@ -57,7 +57,7 @@ def generate_audio():
         category = data.get('type', '').strip()
         
         # Новые параметры для Edge-TTS
-        gender = data.get('gender', 'female').strip().lower()
+        gender = data.get('gender', 'male').strip().lower()
         voice_name = data.get('voice_name', '').strip()
         
         if not text:
@@ -79,7 +79,7 @@ def generate_audio():
             }), 400
         
         # Проверка существования файла (с учетом гендера)
-        check_result = speech_generator.check_audio_exists(text, language, category, gender)
+        check_result = speech_generator.check_audio_exists(text, language, gender=gender)
         
         if check_result['exists']:
             return jsonify({
@@ -170,7 +170,7 @@ def check_audio():
         text = data.get('text', '').strip()
         language = data.get('language', 'en').strip().lower()
         category = data.get('type', '').strip()
-        gender = data.get('gender', 'female').strip().lower()
+        gender = data.get('gender', 'male').strip().lower()
         
         if not text:
             return jsonify({
