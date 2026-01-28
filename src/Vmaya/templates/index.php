@@ -26,6 +26,7 @@
 
 	<script src="scripts/component.js?v=<?=$v?>"></script>
 	<script src="scripts/main.js?v=<?=$v?>"></script>
+	<script src="scripts/user-app.js?v=<?=$v?>"></script>
 
     <?if (isset(Page::$request['vk_app_id'])) {
     	$userModel = new UserModel();
@@ -67,7 +68,9 @@
 	<!-- /Yandex.Metrika counter -->
 </head>
 <body class="dark-theme">
-	<?=$content?>
+	<div class="wrap-content">
+		<?=$content?>
+	</div>
 
 	<?if (DEV) {?>
 	<!-- Eruda is console for mobile browsers-->

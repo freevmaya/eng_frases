@@ -48,6 +48,7 @@ class Ajax extends Page {
 
 		return $userModel->Update([
 			'id'=>$data['id'],
+			'source'=>$data['source'],
 			'first_name'=>$source_user['first_name'],
 			'last_name'=>$source_user['last_name'],
 			'last_time'=>date('Y-m-d H:i:s'),

@@ -15,13 +15,7 @@ class VKApp {
 		vkBridge.send('VKWebAppGetUserInfo', {})
 			.then((user) => { 
 				if (user.id) {
-					Ajax({
-						action: 'initUser',
-						data: {
-							id: user_id,
-							source_user: user
-						}
-					});
+					userApp.init(user_id, 'vk', user);
 				}
 			});
 

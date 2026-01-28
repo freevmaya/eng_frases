@@ -485,6 +485,29 @@ def server_info():
     }), 200
 
 if __name__ == '__main__':
+
+    # CORS Middleware
+    @app.after_request
+    def add_cors_headers(response):
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization,Accept'
+        response.headers['Access-Control-Allow-Methods'] = 'GET,POST,PUT,DELETE,OPTIONS'
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        if response.content_type.startswith('application/json') or response.is_json:
+            response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        return response
+
+    @app.before_request
+    def handle_options():
+        if request.method == 'OPTIONS':
+            response = jsonify({'status': 'preflight'})
+            response.headers['Access-Control-Allow-Origin'] = '*'
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization,Accept'
+            response.headers['Access-Control-Allow-Methods'] = 'GET,POST,PUT,DELETE,OPTIONS'
+            response.headers['Access-Control-Max-Age'] = '86400'
+            return response 
+
+            
     # Создание необходимых директорий
     Path(BASE_OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
     
