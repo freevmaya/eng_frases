@@ -3,6 +3,7 @@
 *.zip
 *.mp3
 *.log.*
+.vs
 logs/*
 config/*
 config.php
