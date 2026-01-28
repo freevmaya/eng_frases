@@ -226,6 +226,7 @@ def check_audio():
         text = data.get('text', '').strip()
         language = data.get('language', 'en').strip().lower()
         category = data.get('type', '').strip()
+        gender = data.get('gender', 'male').strip().lower()
         
         if not text:
             return jsonify({
@@ -234,13 +235,14 @@ def check_audio():
             }), 400
         
         # Поиск файла
-        found_file = speech_generator.find_audio_file(text, language)
+        found_file = speech_generator.find_audio_file(text, language, gender=gender)
         
         if found_file:
             return jsonify({
                 "status": "found",
                 "message": "Audio file found",
-                "data": found_file
+                "data": found_file,
+                "gender": gender
             }), 200
         else:
             return jsonify({
@@ -250,7 +252,8 @@ def check_audio():
                     "text": text,
                     "language": language,
                     "category": category
-                }
+                },
+                "gender": gender
             }), 200
             
     except Exception as e:
