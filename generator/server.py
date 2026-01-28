@@ -272,6 +272,7 @@ def health_check():
         checks = {
             "server": "running",
             "audio_directory": base_dir.exists(),
+            "base_output_dir": BASE_OUTPUT_DIR,
             "json_file": json_file.exists(),
             "internet_connection": speech_generator._check_internet_connection()
         }

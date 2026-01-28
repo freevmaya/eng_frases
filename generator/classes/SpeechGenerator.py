@@ -31,11 +31,11 @@ class SpeechGenerator:
             # Используем Edge-TTS
             self.engine_type = 'edge_tts'
             self.edge_tts_generator = EdgeTTSGenerator(base_output_dir)
-            self.BASE_OUTPUT_DIR = base_output_dir or "../public/data/audio_files_edge_tts"
+            self.BASE_OUTPUT_DIR = base_output_dir or "../public/data/voices"
         else:
             # Используем gTTS
             self.engine_type = 'gtts'
-            self.BASE_OUTPUT_DIR = base_output_dir or "../public/data/audio_files_gtts"
+            self.BASE_OUTPUT_DIR = base_output_dir or "../public/data/voices"
         
         Path(self.BASE_OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
         

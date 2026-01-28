@@ -22,6 +22,7 @@ Flask==2.3.3
 gtts==2.3.1
 requests==2.31.0
 gunicorn==21.2.0
+edge-tts
 EOF
 
 # Установите зависимости
@@ -29,12 +30,12 @@ pip install -r requirements.txt
 ---------------------------------------------------------------------------------------------------------
 
 
-audio-generator.service:
+/etc/systemd/system/audio-generator.service
 
 [Unit]
 Description=Audio Generator API Service
-After=network.target nginx.target
-Requires=nginx.target
+After=network.target nginx.service
+Requires=nginx.service
 
 [Service]
 Type=simple
@@ -45,7 +46,7 @@ WorkingDirectory=/home/vmaya/www/eng_frases/generator
 # Environment variables
 Environment="PATH=/home/vmaya/www/eng_frases/generator/venv/bin"
 Environment="PYTHONPATH=/home/vmaya/www/eng_frases/generator"
-Environment="BASE_OUTPUT_DIR=/home/vmaya/www/eng_frases/public/data/audio_files_gtts"
+Environment="BASE_OUTPUT_DIR=/home/vmaya/www/eng_frases/public/data/voices"
 Environment="JSON_FILE_PATH=/home/vmaya/www/eng_frases/public/data/en-ru.json"
 
 # Команда запуска
@@ -68,19 +69,22 @@ RestartSec=5
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
-ReadWritePaths=/home/vmaya/www/eng_frases/public/data/audio_files_gtts
+ReadWritePaths=/home/vmaya/www/eng_frases/public/data/voices
 ReadWritePaths=/var/log/audio-generator
 
 # Лимиты
 LimitNOFILE=65536
 LimitNPROC=65536
 
+RuntimeDirectory=audio-generator
+RuntimeDirectoryMode=0755
+
 [Install]
 WantedBy=multi-user.target
 ------------------------------------------------------------------------------------------------
 
-chown -R nginx:nginx /home/vmaya/www/eng_frases/public/data/audio_files_gtts
-chmod -R 755 /home/vmaya/www/eng_frases/public/data/audio_files_gtts
+chown -R nginx:nginx /home/vmaya/www/eng_frases/public/data/voices
+chmod -R 755 /home/vmaya/www/eng_frases/public/data/voices
 
 chown -R nginx:nginx /home/vmaya/www/eng_frases/generator
 chmod -R 755 /home/vmaya/www/eng_frases/generator
@@ -232,3 +236,15 @@ SSL
 
 Certificate is saved at: /etc/letsencrypt/live/api.vmaya.ru/fullchain.pem
 Key is saved at:         /etc/letsencrypt/live/api.vmaya.ru/privkey.pem
+
+
+--------------------------------------------------------------------------------------------
+
+Проверки
+
+sudo systemctl status audio-generator
+curl -X GET https://api.vmaya.ru/api/health
+curl -X POST https://api.vmaya.ru/api/generate-audio   -H "Content-Type: application/json"   -d '{"text": "Hello world", "language": "en", "gender": "female"}'
+
+ls -l /run/audio-generator/audio-generator.sock
+sudo journalctl -u audio-generator.service -n 50 --no-pager
