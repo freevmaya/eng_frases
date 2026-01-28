@@ -143,9 +143,9 @@
 <div class="container py-6">
     <!-- Header -->
     <header class="text-center mb-1">
-        <h1 class="display-4 text-gradient mb-3">
+        <h1 class="display-4 text-gradient app-name">
             <i class="bi bi-translate text-primary"></i>
-            <?php echo APP_NAME; ?>
+            <?php echo APP_NAME;?>
         </h1>
     </header>
 

@@ -254,7 +254,7 @@ $(document).ready(function() {
     }
 
     function blockItem(key, text) {
-        let item = $(`<div class="item"><a href="#" data-key="${key}">${text}</a></div>`);
+        let item = $(`<div class="item"><a data-key="${key}">${text}</a></div>`);
         item.click(typeClick);
         return item;
     }
@@ -759,10 +759,10 @@ $(document).ready(function() {
             });
     }
 
-    function setText(elem, text, k = 1, maxSize = 28, minSize = 16) {
+    function setText(elem, text, k = 1, maxSize = 30, minSize = 16) {
         let width = $(window).width();
 
-        let size = Math.max(Math.min(1 / text.length * width * 2, maxSize * k), minSize * k);
+        let size = Math.round(Math.max(Math.min(1 / text.length * width * 2.2, maxSize * k), minSize * k));
         elem.text(text);
         elem.css('font-size', size);
     }

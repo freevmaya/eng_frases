@@ -402,6 +402,7 @@ footer {
     /*font-size: 1.2em;*/
     width: 100%;
     display: inline-block;
+    cursor: pointer;
 }
 
 #other-content .item a:hover {
@@ -442,4 +443,14 @@ footer {
 
 #payerMessage .fail {
     color: gray;
+}
+
+.app-name {
+    margin-bottom: 0px;
+
+    font-size: clamp(1em, 6vw, 3em);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100vw;
 }
