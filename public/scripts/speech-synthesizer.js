@@ -238,7 +238,7 @@ class SpeechSynthesizer {
             console.log(`Checking audio "${cleanText}" on server...`);
             const checkResult = await this.checkAudioOnServer(cleanText, language, category, genderVoice);
             
-            if (checkResult.status === 'found') {
+            if ((checkResult.status === 'found') && (checkResult.data.gender == genderVoice)) {
                 this.audioCache.push(localUrlInfo.url);
                 console.log(`Audio "${cleanText}" found on server: ${checkResult.data.filename}`);
                 

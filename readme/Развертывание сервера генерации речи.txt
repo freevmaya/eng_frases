@@ -246,6 +246,9 @@ sudo systemctl status audio-generator
 curl -X GET https://api.vmaya.ru/api/health
 curl -X POST https://api.vmaya.ru/api/generate-audio   -H "Content-Type: application/json"   -d '{"text": "Hello world", "language": "en", "gender": "female"}'
 
+
+curl -X POST https://api.vmaya.ru/api/check-audio   -H "Content-Type: application/json"   -d '{"text": "Hello world", "language": "en", "gender": "female"}'
+
 ls -l /run/audio-generator/audio-generator.sock
 sudo journalctl -u audio-generator.service -n 50 --no-pager
 
