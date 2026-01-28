@@ -8,6 +8,8 @@ class UserApp {
 				source: source,
 				user_data:  data
 			}
+		}).then((data)=>{
+			console.log(data);
 		});
 	}
 }

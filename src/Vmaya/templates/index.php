@@ -52,6 +52,23 @@
 		});
 	</script>
     <?}?>
+	<script type="text/javascript">
+	<?if (DEV) {?>
+		//Инициализация пользователя VK. Только при разработке!
+		var user_data = <?=file_get_contents(BASEPATH.'/dev/vk-parameters.json');?>;
+		setTimeout(()=>{
+			userApp.init(user_data.id, 'vk', user_data);
+		}, 1000);
+
+		var tracer = {
+			log(...arguments) {
+				console.log(...arguments);
+			}
+		}
+	<?} else {?>
+		var tracer = {log(...arguments) {}};
+	<?}?>
+	</script>
 
 
 	<!-- Yandex.Metrika counter -->
@@ -77,14 +94,6 @@
 	<!-- Eruda is console for mobile browsers-->
 	<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 	<script>eruda.init();</script>
-
-	<!--Инициализация пользователя VK. Только при разработке!-->
-	<script type="text/javascript">
-		var user_data = <?=file_get_contents(BASEPATH.'/dev/vk-parameters.json');?>;
-		setTimeout(()=>{
-			userApp.init(user_data.id, 'vk', user_data);
-		}, 1000);
-	</script>
 	<?}?>
 </body>
 </html>
