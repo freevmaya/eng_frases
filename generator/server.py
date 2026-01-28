@@ -91,36 +91,6 @@ except Exception as e:
     speech_generator = DummySpeechGenerator()
     print("⚠️ Используется заглушка SpeechGenerator")
 
-# Расширенная CORS Middleware
-@app.after_request
-def add_cors_headers(response):
-    """
-    Добавляет CORS заголовки к каждому ответу
-    """
-    origin = request.headers.get('Origin', '*')
-    
-    # Разрешаем все источники или конкретные домены
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With, Accept, Origin'
-    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, PATCH'
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
-    response.headers['Access-Control-Expose-Headers'] = 'Content-Type, Content-Length, X-Request-Id'
-    response.headers['Access-Control-Max-Age'] = '86400'
-    
-    # Для безопасности добавляем дополнительные заголовки
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    response.headers['X-Frame-Options'] = 'DENY'
-    response.headers['X-XSS-Protection'] = '1; mode=block'
-    
-    # Для JSON ответов устанавливаем правильный Content-Type
-    if response.content_type.startswith('application/json') or response.is_json:
-        response.headers['Content-Type'] = 'application/json; charset=utf-8'
-    
-    # Добавляем время ответа для отладки
-    response.headers['X-Response-Time'] = str(datetime.now())
-    
-    return response
-
 @app.before_request
 def handle_options():
     """
