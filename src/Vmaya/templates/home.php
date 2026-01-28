@@ -139,18 +139,19 @@
     </div>
 </div>
 
+<!-- Header -->
+<header class="text-center mb-1">
+    <h1 class="display-4 text-gradient app-name">
+        <i class="bi bi-translate text-primary"></i>
+        <?php echo APP_NAME;?>
+    </h1>
+</header>
+
 <!-- Main Container -->
 <div class="container py-6">
-    <!-- Header -->
-    <header class="text-center mb-1">
-        <h1 class="display-4 text-gradient app-name">
-            <i class="bi bi-translate text-primary"></i>
-            <?php echo APP_NAME;?>
-        </h1>
-    </header>
 
     <!-- Main Content -->
-    <div class="row">
+    <div class="row app-display">
         <!-- Left Column - Phrase Card -->
         <div class="col-lg-12">
             <div class="card bg-dark-gradient border-primary border-3 animate-card">

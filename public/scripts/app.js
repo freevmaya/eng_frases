@@ -760,7 +760,7 @@ $(document).ready(function() {
     }
 
     function setText(elem, text, k = 1, maxSize = 30, minSize = 16) {
-        let width = $(window).width();
+        let width = $('.app-display .card-body').innerWidth();
 
         let size = Math.round(Math.max(Math.min(1 / text.length * width * 2.2, maxSize * k), minSize * k));
         elem.text(text);

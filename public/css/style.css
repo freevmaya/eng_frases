@@ -134,9 +134,39 @@
 .container {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 3.8rem - 10vw);
-    min-height: calc(100vh - 3.8rem - 10vw);
+    height: calc(100vh - 120px);
     gap: 1rem;
+    overflow: hidden;
+}
+
+@media (max-height: 600px) {
+
+    .container {
+        flex-direction: row;
+        height: calc(100vh - 60px);
+    }
+
+    .container > div {
+        width: 50%;
+    }
+
+    .app-name {
+        display: none;
+    }
+}
+
+
+
+@media (max-height: 340px) {
+
+    .container {
+        flex-direction: row;
+        height: 100vh;
+    }
+
+    footer {
+        display: none;
+    }
 }
 
 /* Phrase Container */
@@ -384,7 +414,7 @@
 footer {
     position: fixed;
     bottom: 0px;
-    width: calc(100% - 22px);
+    width: min(calc(100% - 22px), var(--max-width));
 }
 
 #other-content {
