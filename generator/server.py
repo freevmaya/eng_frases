@@ -52,7 +52,7 @@ except Exception as e:
         def find_audio_file(self, text, language='en', gender=None):
             return None
         
-        def generate_audio(self, text, language='en', category=None, gender=None, voice_name=None):
+        def generate_audio(self, text, language='en', gender=None, voice_name=None):
             return None
         
         def get_available_voices(self, language='en', gender=None):
@@ -113,7 +113,6 @@ def generate_audio():
         # Проверка обязательных полей
         text = data.get('text', '').strip()
         language = data.get('language', 'en').strip().lower()
-        category = data.get('type', '').strip()
         
         # Новые параметры для Edge-TTS
         gender = data.get('gender', 'male').strip().lower()
@@ -146,28 +145,13 @@ def generate_audio():
                 "message": "Audio file already exists",
                 "data": {
                     "filename": check_result['filename'],
-                    "gender": gender,
-                    "category": category or "root"
+                    "gender": gender
                 }
             }), 200
         
-        # Если файл не найден, пробуем найти в других категориях
-        if category:
-            found_file = speech_generator.find_audio_file(text, language, gender=gender)
-            if found_file:
-                return jsonify({
-                    "status": "ok",
-                    "message": "Audio file found in another category",
-                    "data": {
-                        "filename": found_file['filename'],
-                        "gender": found_file.get('gender', gender),
-                        "category": found_file['category'] or "root"
-                    }
-                }), 200
-        
         # Генерация нового аудиофайла
         print(f"\nГенерация аудио для: '{text[:50]}...'")
-        print(f"Язык: {language}, Гендер: {gender}, Категория: {category or 'root'}")
+        print(f"Язык: {language}, Гендер: {gender}")
         if voice_name:
             print(f"Голос: {voice_name}")
         
@@ -183,8 +167,7 @@ def generate_audio():
                     "data": {
                         "filename": generation_result['filename'],
                         "gender": gender,
-                        "voice": generation_result.get('voice', 'default'),
-                        "category": category or "root"
+                        "voice": generation_result.get('voice', 'default')
                     }
                 }), 200
             else:
@@ -195,8 +178,7 @@ def generate_audio():
                         "filename": generation_result['filename'],
                         "gender": gender,
                         "voice": generation_result.get('voice', 'default'),
-                        "file_size_kb": round(generation_result['file_size'] / 1024, 2),
-                        "category": category or "root"
+                        "file_size_kb": round(generation_result['file_size'] / 1024, 2)
                     }
                 }), 201
         else:
@@ -268,7 +250,6 @@ def check_audio():
         
         text = data.get('text', '').strip()
         language = data.get('language', 'en').strip().lower()
-        category = data.get('type', '').strip()
         gender = data.get('gender', 'male').strip().lower()
         
         if not text:
@@ -293,8 +274,7 @@ def check_audio():
                 "message": "Audio file not found",
                 "data": {
                     "text": text,
-                    "language": language,
-                    "category": category
+                    "language": language
                 },
                 "gender": gender
             }), 200
