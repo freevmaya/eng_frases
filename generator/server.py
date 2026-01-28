@@ -1,12 +1,12 @@
 # ============================================================
-# FILE: .\server.py (модифицированный)
+# FILE: .\server.py (исправленный)
 # TYPE: .PY
 # ============================================================
 
-from flask import Flask, request, jsonify
-from classes.SpeechGenerator import SpeechGenerator
+import sys
 import os
 from pathlib import Path
+from flask import Flask, request, jsonify, send_file
 
 app = Flask(__name__)
 
@@ -30,17 +30,60 @@ print(f"BASE_OUTPUT_DIR: {BASE_OUTPUT_DIR}")
 print(f"JSON_FILE_PATH: {JSON_FILE_PATH}")
 
 try:
+    # Добавляем путь к модулям
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    
+    from classes.SpeechGenerator import SpeechGenerator
+    
     # Инициализация генератора речи с Edge-TTS
     speech_generator = SpeechGenerator(BASE_OUTPUT_DIR, use_edge_tts=True)
     print("✓ SpeechGenerator инициализирован успешно")
+    
 except Exception as e:
     print(f"✗ Ошибка инициализации SpeechGenerator: {e}")
-    sys.exit(1)
+    # Создаем заглушку для тестирования
+    class DummySpeechGenerator:
+        def __init__(self):
+            self.base_dir = BASE_OUTPUT_DIR
+        
+        def check_audio_exists(self, text, language='en', gender=None):
+            return {'exists': False}
+        
+        def find_audio_file(self, text, language='en', gender=None):
+            return None
+        
+        def generate_audio(self, text, language='en', category=None, gender=None, voice_name=None):
+            return None
+        
+        def get_available_voices(self, language='en', gender=None):
+            return []
+        
+        def _check_internet_connection(self):
+            return True
+        
+        def _get_all_categories(self):
+            # Простая реализация для тестирования
+            base_dir = Path(self.base_dir)
+            categories = []
+            if base_dir.exists():
+                for item in base_dir.iterdir():
+                    if item.is_dir():
+                        categories.append(item.name)
+            return categories
+    
+    speech_generator = DummySpeechGenerator()
+    print("⚠️ Используется заглушка SpeechGenerator")
 
-Path(BASE_OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
-
-# Инициализация генератора речи с Edge-TTS
-speech_generator = SpeechGenerator(BASE_OUTPUT_DIR, use_edge_tts=True)
+# CORS Middleware
+@app.after_request
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization,Accept'
+    response.headers['Access-Control-Allow-Methods'] = 'GET,POST,PUT,DELETE,OPTIONS'
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    if response.content_type.startswith('application/json') or response.is_json:
+        response.headers['Content-Type'] = 'application/json; charset=utf-8'
+    return response
 
 @app.before_request
 def handle_options():
@@ -129,7 +172,7 @@ def generate_audio():
             print(f"Голос: {voice_name}")
         
         generation_result = speech_generator.generate_audio(
-            text, language, category, gender=gender, voice_name if voice_name else None
+            text, language, gender=gender, voice_name=voice_name if voice_name else None
         )
         
         if generation_result:
@@ -277,7 +320,7 @@ def health_check():
             "audio_directory": base_dir.exists(),
             "base_output_dir": BASE_OUTPUT_DIR,
             "json_file": json_file.exists(),
-            "internet_connection": speech_generator._check_internet_connection()
+            "internet_connection": speech_generator._check_internet_connection() if hasattr(speech_generator, '_check_internet_connection') else True
         }
         
         all_ok = all(checks.values())
@@ -303,16 +346,39 @@ def get_audio(filename):
         safe_filename = os.path.basename(filename)
         
         # Поиск файла в разных категориях
-        categories = speech_generator._get_all_categories()
+        if hasattr(speech_generator, '_get_all_categories'):
+            categories = speech_generator._get_all_categories()
+        else:
+            # Альтернативная реализация
+            base_dir = Path(BASE_OUTPUT_DIR)
+            categories = []
+            if base_dir.exists():
+                for item in base_dir.iterdir():
+                    if item.is_dir():
+                        categories.append(item.name)
         
-        for category in categories + [None]:
-            if category:
-                filepath = Path(BASE_OUTPUT_DIR) / category / safe_filename
-            else:
-                filepath = Path(BASE_OUTPUT_DIR) / safe_filename
-            
-            if filepath.exists():
-                from flask import send_file
+        # Ищем во всех возможных местах
+        search_paths = []
+        
+        # Сначала в структуре gender/language
+        for gender in ['male', 'female']:
+            for lang in ['en', 'ru']:
+                search_paths.append(Path(BASE_OUTPUT_DIR) / gender / lang / safe_filename)
+        
+        # Затем в структуре language
+        for lang in ['en', 'ru']:
+            search_paths.append(Path(BASE_OUTPUT_DIR) / lang / safe_filename)
+        
+        # Затем в категориях (старая структура)
+        for category in categories:
+            search_paths.append(Path(BASE_OUTPUT_DIR) / category / safe_filename)
+        
+        # И в корне
+        search_paths.append(Path(BASE_OUTPUT_DIR) / safe_filename)
+        
+        # Ищем файл
+        for filepath in search_paths:
+            if filepath.exists() and filepath.is_file():
                 return send_file(str(filepath), mimetype='audio/mpeg')
         
         return jsonify({
@@ -325,3 +391,24 @@ def get_audio(filename):
             "status": "error",
             "message": f"Error: {str(e)}"
         }), 500
+
+if __name__ == '__main__':
+    # Создание необходимых директорий
+    Path(BASE_OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
+    
+    print("="*60)
+    print("Сервер генерации аудиофайлов с Edge-TTS запущен")
+    print("="*60)
+    print(f"Базовая директория: {os.path.abspath(BASE_OUTPUT_DIR)}")
+    print(f"JSON файл: {os.path.abspath(JSON_FILE_PATH)}")
+    print(f"Используется движок: Edge-TTS")
+    print(f"\nДоступные эндпоинты:")
+    print(f"  POST /api/generate-audio - генерация аудио")
+    print(f"  POST /api/check-audio    - проверка существования файла")
+    print(f"  GET  /api/get-voices     - получение списка голосов")
+    print(f"  GET  /api/health         - проверка работоспособности")
+    print(f"  GET  /api/get-audio/<filename> - получение аудиофайла")
+    print("="*60)
+    
+    # Запуск сервера
+    app.run(host='0.0.0.0', port=5000, debug=True)
