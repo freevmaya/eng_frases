@@ -4,6 +4,8 @@ class AppSound {
     		...config
     	}
 
+    	this.cache = {};
+
     	for (let key in config.events) {
     		let data = config.events[key];
 
@@ -16,9 +18,15 @@ class AppSound {
     }
 
     play(data) {
-    	let audio = new Audio(data.file);
+    	let audio;
+    	if (data.file in this.cache)
+    		audio = this.cache[data.file];
+    	else {
+    		audio = new Audio(data.file);
             
-        audio.volume = data.volume || 1;
+        	audio.volume = data.volume || 1;
+    		this.cache[data.file] = audio;
+    	}
 
     	audio.play();
     }
