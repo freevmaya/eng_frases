@@ -129,7 +129,7 @@ def generate_audio():
             print(f"Голос: {voice_name}")
         
         generation_result = speech_generator.generate_audio(
-            text, language, category, gender, voice_name if voice_name else None
+            text, language, category, gender=gender, voice_name if voice_name else None
         )
         
         if generation_result:

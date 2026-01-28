@@ -24,6 +24,8 @@ def add_cors_headers(response):
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization,Accept'
     response.headers['Access-Control-Allow-Methods'] = 'GET,POST,PUT,DELETE,OPTIONS'
     response.headers['Access-Control-Allow-Credentials'] = 'true'
+    if response.content_type.startswith('application/json') or response.is_json:
+        response.headers['Content-Type'] = 'application/json; charset=utf-8'
     return response
 
 @app.before_request

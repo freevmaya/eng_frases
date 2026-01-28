@@ -100,7 +100,6 @@ class SpeechGenerator:
         return f"{language}_{phrase_hash}.mp3"
     
     def generate_audio(self, text: str, language: str = 'en', 
-                      category: Optional[str] = None,
                       gender: Optional[str] = None,
                       voice_name: Optional[str] = None) -> Optional[Dict]:
         """
@@ -109,7 +108,6 @@ class SpeechGenerator:
         Args:
             text: Текст фразы
             language: Язык ('en' или 'ru')
-            category: Категория (опционально)
             gender: Гендер голоса ('male' или 'female') - только для Edge-TTS
             voice_name: Конкретное имя голоса - только для Edge-TTS
         
@@ -132,15 +130,13 @@ class SpeechGenerator:
                 text=clean_text,
                 language=language,
                 gender=gender,
-                voice_name=voice_name,
-                category=category
+                voice_name=voice_name
             )
         else:
             # Используем gTTS (без поддержки гендера)
-            return self._generate_with_gtts(clean_text, language, category)
+            return self._generate_with_gtts(clean_text, language)
     
-    def _generate_with_gtts(self, text: str, language: str = 'en', 
-                           category: Optional[str] = None) -> Optional[Dict]:
+    def _generate_with_gtts(self, text: str, language: str = 'en') -> Optional[Dict]:
         """Генерация с использованием gTTS"""
         # Генерация имени файла
         filename = self._generate_filename(text, language)
@@ -207,7 +203,6 @@ class SpeechGenerator:
             return None
     
     def check_audio_exists(self, text: str, language: str = 'en', 
-                          category: Optional[str] = None,
                           gender: Optional[str] = None) -> Dict:
         """
         Проверка существования аудиофайла для фразы
@@ -215,7 +210,6 @@ class SpeechGenerator:
         Args:
             text: Текст фразы
             language: Язык ('en' или 'ru')
-            category: Категория (опционально)
             gender: Гендер голоса (опционально, для Edge-TTS)
         
         Returns:
@@ -243,12 +237,10 @@ class SpeechGenerator:
             'gender': gender,
             'filename': filename,
             'filepath': str(filepath) if exists else None,
-            'category': category,
             'engine': self.engine_type
         }
     
     def find_audio_file(self, text: str, language: str = 'en', 
-                       categories: Optional[List[str]] = None,
                        gender: Optional[str] = None) -> Optional[Dict]:
         """
         Поиск аудиофайла в разных категориях
@@ -256,7 +248,6 @@ class SpeechGenerator:
         Args:
             text: Текст фразы
             language: Язык ('en' или 'ru')
-            categories: Список категорий для поиска
             gender: Гендер голоса (опционально, для Edge-TTS)
         
         Returns:
@@ -282,7 +273,6 @@ class SpeechGenerator:
                             'gender': gender,
                             'filename': filename,
                             'filepath': str(filepath),
-                            'category': None,
                             'engine': self.engine_type
                         }
             
@@ -300,7 +290,6 @@ class SpeechGenerator:
                                 'gender': gender_dir.name,
                                 'filename': filename,
                                 'filepath': str(filepath),
-                                'category': None,
                                 'engine': self.engine_type
                             }
         else:
@@ -313,7 +302,6 @@ class SpeechGenerator:
                     'language': language,
                     'filename': filename,
                     'filepath': str(lang_filepath),
-                    'category': None,
                     'engine': self.engine_type
                 }
         
