@@ -9,6 +9,7 @@
 	define('TEMPLATES_PATH', BASEPATH.'/src/Vmaya/templates/');
 	define("CHARSET", "utf-8");
 	define("DEFAULTPAGE", "home");
+	define("SCRIPTS_VERSION", 87);
 	
 	// Конфигурация приложения
 	define('APP_VERSION', '1.0.2');

@@ -1,5 +1,5 @@
 <?php
-	$v = 86;
+	$v = SCRIPTS_VERSION;
 ?>
 <!DOCTYPE html>
 <html lang="ru" data-bs-theme="dark">
