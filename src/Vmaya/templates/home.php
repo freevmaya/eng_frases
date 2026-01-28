@@ -260,6 +260,9 @@
 
 <script type="text/javascript">
     var SPEECH_CONFIG = <?=SPEECH_CONFIG?>;
+    <?if (isset(Page::$request['SPEECH_CONFIG'])) {?>
+        Object.assign(SPEECH_CONFIG, <?=Page::$request['SPEECH_CONFIG']?>);
+    <?}?>
     var phrasesData = <?=json_encode(PhrasesModel::getPhrasesAsJsonWithDifficulty(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);?>;
 
     function showAdvices() {

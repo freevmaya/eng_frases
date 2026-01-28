@@ -94,7 +94,7 @@ chmod -R 755 /home/vmaya/www/eng_frases/generator
 systemctl daemon-reload
 
 # Запустите службу
-systemctl start audio-generator
+systemctl start audio-generator | systemctl restart audio-generator
 
 # Включите автозапуск
 systemctl enable audio-generator
