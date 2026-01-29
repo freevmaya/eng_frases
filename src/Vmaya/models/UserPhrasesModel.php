@@ -68,7 +68,7 @@ class UserPhrasesModel extends BaseModel {
 		    
 		$result = [];
 	    
-	    if ($user_id = intval($user_id)) {
+	    if ($user_id = filter_var($user_id, FILTER_SANITIZE_NUMBER_INT)) {
 		    $conditions = "p.is_active = 1 AND ul.is_active = 1 AND ul.user_id = {$user_id}";
 		    
 		    if ($maxDifficulty !== null && $maxDifficulty >= 1 && $maxDifficulty <= 5)
