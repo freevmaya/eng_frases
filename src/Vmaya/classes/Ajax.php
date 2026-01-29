@@ -63,15 +63,18 @@ class Ajax extends Page {
 
     	$user_id = $userModel->Update($values);
 
-    	if ($user_id)
-    		$user_lists = (new UserPhrasesModel())->getPhrasesAsJsonWithDifficulty($user_id);
-
     	$this->setUser($userModel->getItem($user_id));
 
 		return [
-			'user_id'=>$user_id,
-			'user_lists'=>$user_lists
+			'user_id'=>$user_id
 		];
+	}
+
+	protected function getUserLists($data) {
+		if ($user_id = $data['user_id']) {
+    		return (new UserPhrasesModel())->getPhrasesAsJsonWithDifficulty($user_id);
+		}
+		return 0;
 	}
 
 	protected function updatePhraseList($data) {

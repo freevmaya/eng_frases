@@ -130,7 +130,6 @@ $(document).ready(function() {
     stateManager.loadState();
 
     playerControls = new PlayerControls();
-    phrasesList = new PhrasesListView($('#other-content .list-view'));
 
     const AppConst = {
         charTime: {
@@ -198,6 +197,8 @@ $(document).ready(function() {
     function afterLoadList(data) {
 
         phrasesData = data;
+        phrasesList = new PhrasesListView($('#other-content .list-view'));
+        
         initPhraseList();
         loadPhraseList();
 
@@ -628,7 +629,7 @@ $(document).ready(function() {
         stateManager.updatePlaybackState({
             currentPhraseIndex: state.currentPhraseIndex
         });
-        
+
         refreshProgressBar();
         updateDisplay();
 
