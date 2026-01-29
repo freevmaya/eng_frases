@@ -624,6 +624,11 @@ $(document).ready(function() {
 
         state.currentPhraseIndex = newIndex;
         state.showingFirstLang = true;
+
+        stateManager.updatePlaybackState({
+            currentPhraseIndex: state.currentPhraseIndex
+        });
+        
         refreshProgressBar();
         updateDisplay();
 
