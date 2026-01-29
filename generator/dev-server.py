@@ -17,7 +17,7 @@ JSON_FILE_PATH = "../public/data/en-ru.json"
 # Инициализация генератора речи с Edge-TTS
 speech_generator = SpeechGenerator(BASE_OUTPUT_DIR, use_edge_tts=True)
 
-# CORS Middleware - ТОЛЬКО ЭТОТ КОД
+# CORS Middleware
 @app.after_request
 def add_cors_headers(response):
     response.headers['Access-Control-Allow-Origin'] = '*'

@@ -163,7 +163,7 @@ async function initializeMicrophone() {
     });
 
     if (result.success) {
-        console.log('Микрофон доступен!', result.stream);
+        tracer.log('Микрофон доступен!', result.stream);
         // Начинаем работу с микрофоном
     } else {
         console.error('Не удалось получить доступ к микрофону:', result);

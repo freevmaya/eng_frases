@@ -98,7 +98,7 @@ class SpeechSynthesizer {
             console.error(`Invalid MD5 hash length: ${hash.length}, expected 32`);
             // Используем fallback хэш
             const fallbackHash = this._simpleHash32(cleanPhrase);
-            console.log(`Using fallback hash: ${fallbackHash}`);
+            tracer.log(`Using fallback hash: ${fallbackHash}`);
         }
         
         // Формируем имя файла
@@ -114,7 +114,7 @@ class SpeechSynthesizer {
             fullUrl = `${baseUrl}/${fileName}`;
         }
         
-        console.log(`Generated audio URL for "${cleanPhrase.substring(0, 30)}...": ${fileName}`);
+        tracer.log(`Generated audio URL for "${cleanPhrase.substring(0, 30)}...": ${fileName}`);
         
         return {
             fileName,
@@ -195,7 +195,7 @@ class SpeechSynthesizer {
             const exists = await this.checkAudioUrlExists(urlInfo.url);
             
             if (exists) {
-                console.log(`Found audio in category: ${category}`);
+                tracer.log(`Found audio in category: ${category}`);
                 return urlInfo;
             }
         }
@@ -206,7 +206,7 @@ class SpeechSynthesizer {
     // Воспроизведение MP3 файла по URL
     async playAudioFromUrl(urlInfo, phrase) {
         if (this.state.isPlayingAudio || this.state.isSpeaking) {
-            console.log('Already playing audio or speaking');
+            tracer.log('Already playing audio or speaking');
             return false;
         }
 
@@ -238,7 +238,7 @@ class SpeechSynthesizer {
                 let timeoutId;
                 
                 const onLoaded = () => {
-                    console.log(`Audio loaded: ${urlInfo.fileName}`);
+                    tracer.log(`Audio loaded: ${urlInfo.fileName}`);
                 };
                 
                 const onEnded = () => {
@@ -345,7 +345,7 @@ class SpeechSynthesizer {
                     if (this.config.checkAudioBeforePlay) {
                         const exists = await this.checkAudioUrlExists(urlInfo.url);
                         if (!exists) {
-                            console.log(`Audio not found in category ${category}, searching...`);
+                            tracer.log(`Audio not found in category ${category}, searching...`);
                             urlInfo = null;
                         }
                     }
@@ -358,7 +358,7 @@ class SpeechSynthesizer {
                 
                 // Если нашли файл, воспроизводим его
                 if (urlInfo) {
-                    console.log(`Playing cached audio: ${urlInfo.fileName}`);
+                    tracer.log(`Playing cached audio: ${urlInfo.fileName}`);
                     
                     try {
                         const result = await this.playAudioFromUrl(urlInfo, cleanText);
@@ -377,7 +377,7 @@ class SpeechSynthesizer {
                 
                 // Если не нашли аудиофайл и разрешен fallback, используем синтез речи
                 if (this.config.fallbackToSpeech && this.state.hasSpeechSynthesis) {
-                    console.log('Audio file not found, falling back to speech synthesis');
+                    tracer.log('Audio file not found, falling back to speech synthesis');
                     const synthesisResult = this._speakWithSynthesis(cleanText, phraseType, speed);
                     
                     if (synthesisResult) {
@@ -552,7 +552,7 @@ class SpeechSynthesizer {
                 
                 audio.addEventListener('loadeddata', () => {
                     this.preloadedAudios.set(urlInfo.url, audio);
-                    console.log(`Preloaded: ${urlInfo.fileName}`);
+                    tracer.log(`Preloaded: ${urlInfo.fileName}`);
                     resolve();
                 });
                 
@@ -579,7 +579,7 @@ class SpeechSynthesizer {
             await Promise.all(loadPromises);
         }
         
-        console.log(`Preloaded ${this.preloadedAudios.size} audio files`);
+        tracer.log(`Preloaded ${this.preloadedAudios.size} audio files`);
     }
 
     // Очистка кэша предзагруженных аудио
@@ -590,7 +590,7 @@ class SpeechSynthesizer {
         });
         this.preloadedAudios.clear();
         this.audioCache.clear();
-        console.log('Audio cache cleared');
+        tracer.log('Audio cache cleared');
     }
 
     // Остановка текущего воспроизведения
@@ -719,14 +719,14 @@ async function exampleUsage() {
     
     // Воспроизведение фраз
     for (const phrasePair of phrases) {
-        console.log(`Playing: ${phrasePair.target} / ${phrasePair.native}`);
+        tracer.log(`Playing: ${phrasePair.target} / ${phrasePair.native}`);
         
         const result = await synthesizer.speakPhrasePair(phrasePair, firstCategory, 1.0, 1000);
         
         if (result.target?.success || result.native?.success) {
-            console.log('Playback successful');
+            tracer.log('Playback successful');
         } else {
-            console.log('Playback failed, both audio and synthesis failed');
+            tracer.log('Playback failed, both audio and synthesis failed');
         }
         
         // Ждем между фразами
@@ -734,7 +734,7 @@ async function exampleUsage() {
     }
     
     // Получение статуса
-    console.log('Synthesizer status:', synthesizer.getStatus());
+    tracer.log('Synthesizer status:', synthesizer.getStatus());
 }
 
 // Экспорт для использования в других модулях

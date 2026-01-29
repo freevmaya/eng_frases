@@ -42,18 +42,6 @@
 
                 <div class="mb-4">
                     <h6 class="text-info mb-3">
-                        <i class="bi bi-card-checklist me-2"></i>Выбор списка фраз
-                    </h6>
-                    <select class="form-select bg-dark text-light border-secondary" id="phraseListSelect">
-                        <option value="all">Все фразы (смешанные)</option>
-                        <option value="past_simple_active">Past Simple (активный залог)</option>
-                        <option value="past_simple_passive">Past Simple (пассивный залог)</option>
-                        <option value="future_simple_passive">Future Simple (пассивный залог)</option>
-                    </select>
-                </div>
-
-                <div class="mb-4">
-                    <h6 class="text-info mb-3">
                         <i class="bi bi-arrow-left-right me-2"></i>Направление перевода
                     </h6>
                     <div class="btn-group w-100" role="group">
@@ -306,6 +294,7 @@
 <script src="scripts/state-manager.js?v=<?=$v?>"></script>
 <script src="scripts/player-controls.js?v=<?=$v?>"></script>
 <!--<script src="scripts/headphone-controls.js?v=<?=$v?>"></script>-->
+<script src="scripts/phrases-list-view.js?v=<?=$v?>"></script>
 <script src="scripts/app.js?v=<?=$v?>"></script>
 <script src="scripts/sound.js?v=<?=$v?>"></script>
 <script src="scripts/advice-modal.js?v=<?=$v?>"></script>

@@ -1,5 +1,4 @@
 <?
-use \Telegram\Bot\Api;
 $user;
 
 class Page {

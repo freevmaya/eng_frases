@@ -1,8 +1,8 @@
 <?php
-class PhrasesModel extends BaseModel {
+class UserPhrasesModel extends BaseModel {
     
     protected function getTable() {
-        return 'phrases';
+        return 'user_phrases';
     }
 
     public function getFields() {
@@ -11,12 +11,13 @@ class PhrasesModel extends BaseModel {
                 'type' => 'hidden',
                 'dbtype' => 'i'
             ],
-            'type_id' => [
-                'label' => 'Phrase Type',
-                'type' => 'select',
-                'validator' => 'required|integer',
-                'dbtype' => 'i',
-                'relation' => 'phrase_types'
+            'is_active' => [
+                'label' => 'is_active',
+                'dbtype' => 'i'
+            ],
+            'list_id' => [
+                'label' => 'list_id',
+                'dbtype' => 'i'
             ],
             'target_text' => [
                 'label' => 'Phrase Text',
@@ -62,88 +63,34 @@ class PhrasesModel extends BaseModel {
         ];
     }
 
-	public static function getPhrasesAsJsonOptimized() {
+	public static function getPhrasesAsJsonWithDifficulty($user_id, $maxDifficulty = null) {
 	    GLOBAL $dbp;
 	    
-	    // Выполняем JOIN запрос для получения всех данных за один раз
-	    $query = "
-	        SELECT 
-	            pt.type_name,
-	            p.target_text,
-	            p.native_text,
-	            p.direction,
-	            p.context
-	        FROM phrases p
-	        INNER JOIN {$this->getTable()} pt ON p.type_id = pt.id
-	        WHERE p.is_active = 1 AND pt.is_active = 1
-	        ORDER BY pt.type_name, p.id
-	    ";
+	    $conditions = "p.is_active = 1 AND ul.is_active = 1 AND ul.user_id = {$user_id}";
 	    
-	    $rows = $dbp->asArray($query);
-	    
-	    // Группируем результаты по типам фраз
-	    $result = [];
-	    
-	    foreach ($rows as $row) {
-	        $typeName = $row['type_name'];
-	        
-	        if (!isset($result[$typeName])) {
-	            $result[$typeName] = [];
-	        }
-	        
-	        $phraseObj = [
-	            'target' => $row['target_text'] ?? '',
-	            'native' => $row['native_text'] ?? '',
-	            'direction' => $row['direction'] ?? ''
-	        ];
-	        
-	        // Добавляем опциональные поля
-	        if (!empty($row['context'])) {
-	            $phraseObj['context'] = $row['context'];
-	        }
-	        
-	        $result[$typeName][] = $phraseObj;
-	    }
-	    
-	    // Преобразуем в JSON
-	    $jsonOptions = JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
-	    return json_encode($result, $jsonOptions);
-	}
-
-	/**
-	 * Версия с фильтрацией по уровню сложности
-	 * 
-	 * @param int|null $maxDifficulty Максимальный уровень сложности (1-5)
-	 * @return string JSON строка
-	 */
-	public static function getPhrasesAsJsonWithDifficulty($maxDifficulty = null) {
-	    GLOBAL $dbp;
-	    
-	    $conditions = "p.is_active = 1 AND pt.is_active = 1";
-	    
-	    if ($maxDifficulty !== null && $maxDifficulty >= 1 && $maxDifficulty <= 5) {
+	    if ($maxDifficulty !== null && $maxDifficulty >= 1 && $maxDifficulty <= 5)
 	        $conditions .= " AND p.difficulty_level <= " . intval($maxDifficulty);
-	    }
 	    
 	    $query = "
 	        SELECT 
-	            pt.type_name,
+	            ul.name,
+	            ul.description,
 	            p.target_text,
 	            p.native_text,
 	            p.direction,
 	            p.context,
 	            p.difficulty_level
-	        FROM phrases p
-	        INNER JOIN phrase_types pt ON p.type_id = pt.id
+	        FROM user_phrases p
+	        INNER JOIN user_lists ul ON p.list_id = ul.id
 	        WHERE {$conditions}
-	        ORDER BY pt.`order`, p.difficulty_level, p.id
+	        ORDER BY ul.`order`, p.difficulty_level, p.id
 	    ";
 	    
 	    $rows = $dbp->asArray($query);
 	    
 	    $result = [];
 	    foreach ($rows as $row) {
-	        $typeName = $row['type_name'];
+	        $typeName = $row['name'];
 	        
 	        if (!isset($result[$typeName])) {
 	            $result[$typeName] = [];

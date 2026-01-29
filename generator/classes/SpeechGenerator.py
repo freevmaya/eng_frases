@@ -275,23 +275,6 @@ class SpeechGenerator:
                             'filepath': str(filepath),
                             'engine': self.engine_type
                         }
-            
-            # Ищем во всех гендерах
-            base_dir = Path(self.BASE_OUTPUT_DIR)
-            if base_dir.exists():
-                for gender_dir in base_dir.iterdir():
-                    if gender_dir.is_dir():
-                        filepath = gender_dir / language / filename
-                        if filepath.exists() and filepath.stat().st_size > 0:
-                            return {
-                                'exists': True,
-                                'text': clean_text,
-                                'language': language,
-                                'gender': gender_dir.name,
-                                'filename': filename,
-                                'filepath': str(filepath),
-                                'engine': self.engine_type
-                            }
         else:
             # Для gTTS ищем в структуре язык
             lang_filepath = Path(self.BASE_OUTPUT_DIR) / language / filename

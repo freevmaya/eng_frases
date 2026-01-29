@@ -33,7 +33,7 @@ class VRecognition {
 
     onStart() {
         this.isRecognize = true;
-        console.log('Запись начата');
+        tracer.log('Запись начата');
         playerMessage('Слушаю...', this.waitTime);
     }
 
@@ -78,12 +78,12 @@ class VRecognition {
             this.output += transcript + ' ';
         }
 
-        //console.log(this.output);
+        //tracer.log(this.output);
         this.showResult();
     }
 
     onEnd() {
-        console.log('Запись остановлена');
+        tracer.log('Запись остановлена');
         this.isRecognize = false;
         this.stop();
     }

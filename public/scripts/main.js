@@ -169,7 +169,7 @@ class App extends EventProvider {
         try {
             this.#screenLock = await navigator.wakeLock.request('screen');
         } catch (err) {
-            console.log('Error with wake lock: ', err);
+            tracer.log('Error with wake lock: ', err);
         }
     }
 }
@@ -357,7 +357,7 @@ class DateTime {
                 this.view.text(toLang('Now')).click(this.onNowClick.bind(this));
             }
             else this.InitInputs();
-        } else console.log("Unknown val format");
+        } else tracer.log("Unknown val format");
     }
 
     onNowClick() {
@@ -648,7 +648,7 @@ function renderList(nameData, toContainer = null) {
     itemSrc.remove();
 
     if (isEmpty(list))
-        console.log("Not found template or data " + nameData);
+        tracer.log("Not found template or data " + nameData);
     else {
         for (let i in list) {
             tmplList.append(templateClone(itemTmpl, list[i]));

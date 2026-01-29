@@ -4,6 +4,7 @@
 *.mp3
 *.log.*
 .vs
+.env
 logs/*
 config/*
 config.php

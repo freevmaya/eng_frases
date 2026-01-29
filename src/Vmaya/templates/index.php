@@ -30,27 +30,32 @@
 
     <?if (isset(Page::$request['vk_app_id'])) {
 
-    	$userModel = new UserModel();
-    	$source = isset(Page::$request['vk_client']) && (Page::$request['vk_client'] == 'ok') ? 'ok' : 'vk';
+	    	$userModel = new UserModel();
+	    	$source = isset(Page::$request['vk_client']) && (Page::$request['vk_client'] == 'ok') ? 'ok' : 'vk';
 
-    	$items = $userModel->getItems("source_id = ".Page::$request['vk_user_id']." AND source = '{$source}'");
+	    	$items = $userModel->getItems("source_id = ".Page::$request['vk_user_id']." AND source = '{$source}'");
 
-    	if (count($items) == 0) {
-    		$user_id = $userModel->Update([
-    			'source_id'=>Page::$request['vk_user_id'],
-    			'source'=>$source,
-    			'language_code'=>'ru'
-    		]);
-    	} else $user_id = $items[0]['id'];
-    ?>
-    <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
-	<script src="scripts/vkapp.js?v=<?=$v?>"></script>
+	    	if (count($items) == 0) {
+	    		$user_id = $userModel->Update([
+	    			'source_id'=>Page::$request['vk_user_id'],
+	    			'source'=>$source,
+	    			'language_code'=>'ru'
+	    		]);
+	    	} else $user_id = $items[0]['id'];
 
-	<script type="text/javascript">
-		$(window).ready(()=>{
-			new VKApp(<?=VK_APP_ID?>);
-		});
-	</script>
+	    	$_SESSION['source_user'] = [
+	    		'id' => Page::$request['vk_user_id'],
+	    		'source' => $source
+	    	];
+	    ?>
+	    <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
+		<script src="scripts/vkapp.js?v=<?=$v?>"></script>
+
+		<script type="text/javascript">
+			$(window).ready(()=>{
+				new VKApp(<?=VK_APP_ID?>, <?=Page::$request['vk_user_id']?>, '<?=$source?>');
+			});
+		</script>
     <?}?>
 	<script type="text/javascript">
 	<?if (DEV) {?>

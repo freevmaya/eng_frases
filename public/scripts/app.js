@@ -2,6 +2,7 @@ let wakeLock = null;
 let speechSynthesizer = null;
 let stateManager = null;
 let _vkWakeLockTimer = null;
+let phrasesList = null;
 
 async function enableWakeLock() {
 
@@ -22,7 +23,7 @@ async function enableWakeLock() {
 
     /*
     if (wakeLock || _vkWakeLockTimer)
-        console.log('Wake Lock активирован');
+        tracer.log('Wake Lock активирован');
         */
 }
 
@@ -30,13 +31,13 @@ async function disableWakeLock() {
     if (wakeLock !== null) {
         await wakeLock.release();
         wakeLock = null;
-        //console.log('Wake Lock деактивирован');
+        //tracer.log('Wake Lock деактивирован');
     }
 
     if (_vkWakeLockTimer != null) {
         clearInterval(_vkWakeLockTimer);
         _vkWakeLockTimer = null;
-        //console.log('Wake Lock деактивирован');
+        //tracer.log('Wake Lock деактивирован');
     }
 }
 
@@ -92,13 +93,13 @@ function playerMessage(text, showTimeSec = 0) {
 }
 
 class Phrase {
-    constructor(data) {
+    constructor(data, type) {
         this.native     = data['native'];
         this.target     = data['target'];
         this.direction  = data['direction'];
         this.context    = data['context'];
         this.difficulty_level = data['difficulty_level'];
-        this.type       = data['type'];
+        this.type       = type;
     }
 
     Language(phraseType) {
@@ -121,10 +122,10 @@ class Phrase {
     }
 }
 
-Phrase.createList = (sourceList)=>{
+Phrase.createList = (sourceList, type)=>{
     let result = [];
     for (let key in sourceList)
-        result.push(new Phrase(sourceList[key]));
+        result.push(new Phrase(sourceList[key], type));
     return result;
 }
 
@@ -138,6 +139,7 @@ $(document).ready(function() {
     stateManager.loadState();
 
     playerControls = new PlayerControls();
+    phrasesList = new PhrasesListView($('#other-content'));
 
     const AppConst = {
         charTime: {
@@ -170,8 +172,6 @@ $(document).ready(function() {
         pauseSlider: $('#pauseSlider'),
         speedValue: $('#speedValue'),
         pauseValue: $('#pauseValue'),
-        phraseListSelect: $('#phraseListSelect'),
-        phraseListPlayer: $('#phraseListPlayer'),
         tvScreenToggle: $('#tvScreenToggle'),
         repeatLength: $('#repeatLength'),
         repeatCount: $('#repeatCount'),
@@ -241,42 +241,16 @@ $(document).ready(function() {
         Object.keys(phrasesData).forEach(key => {
             let count = phrasesData[key].length;
             select.append($(`<option value="${key}">${key} (${count})</option>`));
-            phrasesData[key].forEach((phrase, i) => {
-                phrasesData[key][i].type = key;
-            });
         });
-    }
-
-    function typeClick(e) {
-        let item = $(e.target)
-        console.log(item.data('key'));
-        setCurrentType(item.data('key'));
-    }
-
-    function blockItem(key, text) {
-        let item = $(`<div class="item"><a data-key="${key}">${text}</a></div>`);
-        item.click(typeClick);
-        return item;
-    }
-
-    function fullBlockPhraseList(elem) {
-        elem.empty();
-        elem.append(blockItem("all", "Все фразы (смешанные)"));
-
-        Object.keys(phrasesData).forEach(key => {
-            let count = phrasesData[key].length;
-            elem.append(blockItem(key, key + ` (${count})`));
-            phrasesData[key].forEach((phrase, i) => {
-                phrasesData[key][i].type = key;
-            });
-        });
-        updateBottomList();
     }
 
     function initPhraseList() {
+        /*
         fullPhraseList(elements.phraseListSelect);
         fullPhraseList(elements.phraseListPlayer);
-        fullBlockPhraseList($('#other-content'));
+        */
+        phrasesList.setDefaultList(Object.assign({all: 'Все фразы (смешанные)'}, phrasesData), 
+            state.currentListType, 'Предустановленные типы');
     }
 
     // Загрузка списка фраз
@@ -285,10 +259,10 @@ $(document).ready(function() {
             // Смешиваем все фразы
             appData.currentPhraseList = [];
             Object.keys(phrasesData).forEach(key => {
-                appData.currentPhraseList = appData.currentPhraseList.concat(Phrase.createList(phrasesData[key]));
+                appData.currentPhraseList = appData.currentPhraseList.concat(Phrase.createList(phrasesData[key], key));
             });
         } else {
-            appData.currentPhraseList = Phrase.createList(phrasesData[state.currentListType]) || [];
+            appData.currentPhraseList = Phrase.createList(phrasesData[state.currentListType], state.currentListType) || [];
         }
         
         // Применяем порядок с сохранением seed для воспроизводимости
@@ -368,22 +342,6 @@ $(document).ready(function() {
             $(this).addClass('active');
         });
 
-        
-        elements.phraseListPlayer.on('change', (e)=>{
-
-            state.currentListType = elements.phraseListPlayer.val();
-
-            loadPhraseList();
-            
-            // Сохраняем ключ текущего списка
-            const listKey = stateManager.generateListKey(
-                state.currentListType, 
-                state.order, 
-                phrasesData
-            );
-            stateManager.setCurrentListData(listKey);
-        });
-
         elements.progressControl.click((e)=>{
             if (appData.currentPhraseList) {
                 const rect = e.target.getBoundingClientRect();
@@ -392,6 +350,10 @@ $(document).ready(function() {
                 if (stateManager.isPlaying && !stateManager.isPaused)
                     playCurrentPhrase();
             }
+        });
+
+        $(window).on('select_phrase_list', (e, type)=>{
+            setCurrentType(type);
         });
     }
 
@@ -408,8 +370,6 @@ $(document).ready(function() {
         
         elements.pauseSlider.val(state.pauseBetweenPhrases);
         elements.pauseValue.text(state.pauseBetweenPhrases + ' сек');
-        
-        elements.phraseListSelect.val(state.currentListType);
         elements.tvScreenToggle.prop('checked', state.showTvScreen);
         elements.recognizeToggle.prop('checked', state.recognize);
 
@@ -430,7 +390,6 @@ $(document).ready(function() {
         const newSettings = {
 
             pauseBetweenPhrases: parseFloat(elements.pauseSlider.val()),
-            currentListType: elements.phraseListSelect.val(),
             direction: $('[data-direction].active').data('direction'),
             order: $('[data-order].active').data('order'),
             showTvScreen: elements.tvScreenToggle.prop('checked'),
@@ -442,7 +401,7 @@ $(document).ready(function() {
         
         // Проверяем, изменился ли список фраз
         const listChanged = stateManager.hasListChanged(
-            newSettings.currentListType, 
+            state.currentListType, 
             newSettings.order, 
             phrasesData
         );
@@ -450,8 +409,6 @@ $(document).ready(function() {
         // Обновляем состояние через менеджер
         const changes = stateManager.updateSettings(newSettings);
         Object.assign(state, stateManager.getState());
-
-        updateBottomList();
         
         // Задача 2: Перезагружаем список только если изменился тип списка или порядок
         if (changes.listChanged || listChanged) {
@@ -464,6 +421,7 @@ $(document).ready(function() {
                 phrasesData
             );
             stateManager.setCurrentListData(listKey);
+            $(window).trigger('selected_list_type', state.currentListType);
         }
         
         // Сохраняем состояние
@@ -483,7 +441,7 @@ $(document).ready(function() {
             state.currentListType = type;
 
             speechSynthesizer.stop();
-            updateBottomList();
+            $(window).trigger('selected_list_type', state.currentListType);
 
             debouncePage(()=>{
                 speechSynthesizer.waitForCompletion()
@@ -513,15 +471,6 @@ $(document).ready(function() {
             });
 
         }
-    }
-
-    function updateBottomList() {
-        $('#other-content .item').each((i, item)=>{
-            item = $(item);
-            item.removeClass('current');
-            if (state.currentListType == item.find('a').data('key'))
-                item.addClass('current');
-        });
     }
 
     // Применить состояние TV-экрана
@@ -679,7 +628,7 @@ $(document).ready(function() {
                 state.currentRepeat = 0;
             else newIndex = Math.max(0, newIndex - state.repeatLength);
 
-            console.log(`currentRepeat: ${state.currentRepeat}, newIndex: ${newIndex}`);
+            tracer.log(`currentRepeat: ${state.currentRepeat}, newIndex: ${newIndex}`);
         }
 
         state.currentPhraseIndex = newIndex;

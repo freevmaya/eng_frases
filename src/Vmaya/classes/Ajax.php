@@ -61,7 +61,15 @@ class Ajax extends Page {
     	if (count($items) > 0)
     		$values['id'] = $items[0]['id'];
 
-		return $userModel->Update($values);
+    	$user_id = $userModel->Update($values);
+
+    	if ($user_id)
+    		$user_lists = (new UserPhrasesModel())->getPhrasesAsJsonWithDifficulty($user_id);
+
+		return [
+			'user_id'=>$user_id,
+			'user_lists'=>$user_lists
+		];
 	}
 
 	protected function getList() {

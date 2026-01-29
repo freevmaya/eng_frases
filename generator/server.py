@@ -23,12 +23,8 @@ BASE_OUTPUT_DIR = BASE_AUDIO_DIR
 # Убедимся, что директория существует
 Path(BASE_OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
 
-# JSON файл с фразами
-JSON_FILE_PATH = os.path.abspath("/home/vmaya/www/eng_frases/public/data/en-ru.json")
-
 print(f"Инициализация SpeechGenerator...")
 print(f"BASE_OUTPUT_DIR: {BASE_OUTPUT_DIR}")
-print(f"JSON_FILE_PATH: {JSON_FILE_PATH}")
 
 try:
     # Добавляем путь к модулям
@@ -117,8 +113,8 @@ def generate_audio():
     try:
         # Логируем входящий запрос
         print(f"\n[{datetime.now()}] POST /api/generate-audio")
-        print(f"Headers: {dict(request.headers)}")
-        print(f"Remote IP: {request.remote_addr}")
+        #print(f"Headers: {dict(request.headers)}")
+        #print(f"Remote IP: {request.remote_addr}")
         
         # Получение данных из запроса
         data = request.json
@@ -294,8 +290,8 @@ def check_audio():
     try:
         # Логируем входящий запрос
         print(f"\n[{datetime.now()}] POST /api/check-audio")
-        print(f"Headers: {dict(request.headers)}")
-        print(f"Remote IP: {request.remote_addr}")
+        #print(f"Headers: {dict(request.headers)}")
+        #print(f"Remote IP: {request.remote_addr}")
         
         data = request.json
         
@@ -366,7 +362,6 @@ def health_check():
         
         # Проверка директорий
         base_dir = Path(BASE_OUTPUT_DIR)
-        json_file = Path(JSON_FILE_PATH)
         
         checks = {
             "server": "running",
@@ -515,7 +510,6 @@ if __name__ == '__main__':
     print("Сервер генерации аудиофайлов с Edge-TTS запущен")
     print("="*60)
     print(f"Базовая директория: {os.path.abspath(BASE_OUTPUT_DIR)}")
-    print(f"JSON файл: {os.path.abspath(JSON_FILE_PATH)}")
     print(f"Используется движок: Edge-TTS")
     print(f"\nДоступные эндпоинты:")
     print(f"  GET  /api/test         - тестовый эндпоинт")

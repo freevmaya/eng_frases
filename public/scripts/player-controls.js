@@ -63,7 +63,7 @@ class PlayerControls {
                 e.stopPropagation();
                 self.show();
                 self.resetAutoHide();
-                console.log(e.target);
+                tracer.log(e.target);
             }
         });
         

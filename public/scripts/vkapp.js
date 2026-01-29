@@ -2,22 +2,26 @@
 class VKApp {
 
 	_haveAd = false;
-	constructor(app_id) {
+	constructor(app_id, source_user_id, source) {
+
+		this.app_id = app_id;
+		this.source = source;
+		this.source_user_id = source_user_id;
 
 		showAdvices();
 		vkBridge.send("VKWebAppInit", {})
 			.then((response)=>{
-				console.log(response);
+				tracer.log(response);
 			});
 
 		$('body').addClass('vk_layout');
 
 		vkBridge.send('VKWebAppGetUserInfo', {})
-			.then((user) => { 
-				if (user.id) {
-					userApp.init(user.id, 'vk', user);
-				}
-			});
+			.then(((user) => { 
+				if (user.id == this.source_user_id)
+					userApp.init(user.id, this.source, user);
+				
+			}).bind(this));
 
 		$(window).on('apply_settings', this.onApplySettings.bind(this));
 
@@ -29,7 +33,7 @@ class VKApp {
 				this._haveAd = true;
 			}   
 	  	})
-	  	.catch((error) => { console.log(error); });
+	  	.catch((error) => { tracer.log(error); });
 	}
 
 	showAd() {
@@ -41,7 +45,7 @@ class VKApp {
 			// Реклама была показана
 			}
 		})
-		.catch((error) => { console.log(error); });
+		.catch((error) => { tracer.log(error); });
 	}
 
 	onApplySettings(e) {

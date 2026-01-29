@@ -18,7 +18,7 @@ class HeadphoneControls {
         this.setupKeyboardEvents();
         
         this.initialized = true;
-        console.log('HeadphoneControls initialized');
+        tracer.log('HeadphoneControls initialized');
     }
     
     // Настройка Media Session API
@@ -38,30 +38,30 @@ class HeadphoneControls {
         
         // Устанавливаем действия
         navigator.mediaSession.setActionHandler('play', () => {
-            console.log("Play");
+            tracer.log("Play");
             playerControls.show();
             this.playerController.togglePlay();
         });
         
         navigator.mediaSession.setActionHandler('pause', () => {
-            console.log("Pause");
+            tracer.log("Pause");
             playerControls.show();
             this.playerController.togglePlay();
         });
         
         navigator.mediaSession.setActionHandler('previoustrack', () => {
-            console.log("previoustrack");
+            tracer.log("previoustrack");
             //this.playerController.prevPhrase();
         });
         
         navigator.mediaSession.setActionHandler('nexttrack', () => {
-            console.log("nexttrack");
+            tracer.log("nexttrack");
             //this.playerController.nextPhrase();
         });
         
         // Обработка остановки
         navigator.mediaSession.setActionHandler('stop', () => {
-            console.log("stop");
+            tracer.log("stop");
             //this.playerController.stopPlayback();
         });
         

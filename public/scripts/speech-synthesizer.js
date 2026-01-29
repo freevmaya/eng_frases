@@ -160,7 +160,7 @@ class SpeechSynthesizer {
         showAlert('Звуковой файл фразы генерируется!');
         
         try {
-            console.log(`Requesting audio generation for: "${text.substring(0, 50)}..."`);
+            tracer.log(`Requesting audio generation for: "${text.substring(0, 50)}..."`);
             
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), this.config.generationTimeout);
@@ -189,7 +189,7 @@ class SpeechSynthesizer {
             }
             
             const result = await response.json();
-            console.log('Generation result:', result);
+            tracer.log('Generation result:', result);
             
             return result;
             
@@ -224,23 +224,23 @@ class SpeechSynthesizer {
         try {
                 
             const localUrlInfo = await this.getAudioUrl(cleanText, language, category, genderVoice);
-            console.log(`Attemp play ${phraseObj[phraseType]}: ${localUrlInfo.url}`);
+            tracer.log(`Attemp play ${phraseObj[phraseType]}: ${localUrlInfo.url}`);
 
             if (this.config.noServer)
                 return await this.playAudioFromUrl(localUrlInfo.url);
             
             if (this.audioCache.includes(localUrlInfo.url)) {
-                console.log(`Found local audio: ${localUrlInfo.fileName}`);
+                tracer.log(`Found local audio: ${localUrlInfo.fileName}`);
                 return await this.playAudioFromUrl(localUrlInfo.url);
             }
             
             // 2. Проверяем на сервере
-            console.log(`Checking audio "${cleanText}" on server...`);
+            tracer.log(`Checking audio "${cleanText}" on server...`);
             const checkResult = await this.checkAudioOnServer(cleanText, language, category, genderVoice);
             
             if ((checkResult.status === 'found') && (checkResult.data.gender == genderVoice)) {
                 this.audioCache.push(localUrlInfo.url);
-                console.log(`Audio "${cleanText}" found on server: ${checkResult.data.filename}`);
+                tracer.log(`Audio "${cleanText}" found on server: ${checkResult.data.filename}`);
                 
                 // Пробуем проиграть файл с сервера
                 const serverUrlInfo = {
@@ -257,11 +257,11 @@ class SpeechSynthesizer {
             
             // 3. Если не нашли, генерируем на сервере (если разрешено)
             if (this.config.autoGenerateAudio) {
-                console.log('Audio not found, generating on server...');
+                tracer.log('Audio not found, generating on server...');
                 const generationResult = await this.generateAudioOnServer(cleanText, language, category, genderVoice);
                 
                 if (generationResult.status === 'success' || generationResult.status === 'ok') {
-                    console.log('Audio generated successfully:', generationResult.data.filename);
+                    tracer.log('Audio generated successfully:', generationResult.data.filename);
                     
                     // Даем серверу время на сохранение файла
                     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -291,7 +291,7 @@ class SpeechSynthesizer {
             
             // 4. Fallback на локальный синтез речи
             if (this.config.fallbackToSpeech && this.state.hasSpeechSynthesis) {
-                console.log('Using fallback speech synthesis');
+                tracer.log('Using fallback speech synthesis');
                 return this._speakWithSynthesis(phraseObj, phraseType, speed);
             }
             
@@ -537,7 +537,7 @@ class SpeechSynthesizer {
         });
         this.preloadedAudios.clear();
         this.audioCache = [];
-        console.log('Audio cache cleared');
+        tracer.log('Audio cache cleared');
     }
 
     // Остановка текущего воспроизведения
@@ -587,7 +587,7 @@ async function exampleUsage() {
     
     // Проверяем состояние сервера
     const health = await synthesizer.checkServerHealth();
-    console.log('Server health:', health);
+    tracer.log('Server health:', health);
     
     if (health.status !== 'healthy') {
         console.warn('Server might not be available. Some features may not work.');
@@ -601,10 +601,10 @@ async function exampleUsage() {
         1.0
     );
     
-    console.log('Playback result:', result);
+    tracer.log('Playback result:', result);
     
     // Получение статуса
-    console.log('Synthesizer status:', synthesizer.getStatus());
+    tracer.log('Synthesizer status:', synthesizer.getStatus());
 }
 */
 
