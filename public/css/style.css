@@ -543,6 +543,7 @@ footer {
     opacity: 1;
     transition: all 1s ease;
     cursor: default;
+    padding: 0 5px;
 }
 
 #payerMessage .success {
