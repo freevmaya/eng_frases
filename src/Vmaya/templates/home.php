@@ -216,26 +216,13 @@
         </div>
     </div>
     <div id="other-content">
-        
-    </div>
-
-    <div class="modal fade" tabindex="-1" aria-labelledby="centeredModalLabel" aria-hidden="true" id="instruction">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="centeredModalLabel">Инструкция</h5>
-                </div>
-                <div class="modal-body">
-                    <div class="content" style="height: 320px">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary prev"><</button>
-                    <span class="page-number"></span>
-                    <button type="button" class="btn btn-secondary next">></button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Понятно</button>
-                </div>
-            </div>
+        <?if (DEV) {?>
+        <a href="?page=userlists" class="btn btn-sm btn-outline-secondary floating-button">
+            <i class="bi bi-pencil"></i>
+        </a>
+        <?}?>
+        <div class="list-view">
+            
         </div>
     </div>
 
@@ -255,10 +242,10 @@
     var phrasesData = <?=json_encode(PhrasesModel::getPhrasesAsJsonWithDifficulty(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);?>;
 
     function showAdvices() {
-        new AdviceModal($('#instruction'), [
-            `<p><span class="bi bi-exclamation-triangle me-2"><span> Для эффективного запоминания и доведения речевых навыков до автоматизма рекомендуем чередовать последовательность воспроизведения русской и английской версий фраз.</p><p>Так вы будете тренировать не только автоматизм произношения, но и скоростное восприятие речи на слух.</p>`,
+        appAlert([
+            `<p>Для эффективного запоминания и доведения речевых навыков до автоматизма рекомендуем чередовать последовательность воспроизведения русской и английской версий фраз.</p><p>Так вы будете тренировать не только автоматизм произношения, но и скоростное восприятие речи на слух.</p>`,
 
-            `<p><span class="bi bi-tools me-2"><span> В настройках вы найдёте все необходимые для этого параметры: паузу между фразами, последовательность перевода, различные варианты озвучки, повторы и др.</p>
+            `<p>В настройках вы найдёте все необходимые для этого параметры: паузу между фразами, последовательность перевода, различные варианты озвучки, повторы и др.</p>
             <p>Рекомендуем повторять английские фразы вслед за диктором — это важно! Так вы формируете речевую моторику.</p>`,
 
             `<p>Выбирайте в настройках режим «Оба направления».</p>
@@ -297,5 +284,4 @@
 <script src="scripts/phrases-list-view.js?v=<?=$v?>"></script>
 <script src="scripts/app.js?v=<?=$v?>"></script>
 <script src="scripts/sound.js?v=<?=$v?>"></script>
-<script src="scripts/advice-modal.js?v=<?=$v?>"></script>
 <script src="scripts/vrecognition.js?v=<?=$v?>"></script>

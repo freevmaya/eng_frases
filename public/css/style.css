@@ -23,7 +23,6 @@
         var(--dark) 
     );
     height: 100%;
-    overflow: hidden;
     color: var(--light);
     max-width: var(--max-width);
     margin: 0 auto;
@@ -120,11 +119,11 @@
 }
 
 .card-body {
-    z-index: 41;
+    z-index: 43;
 }
 
 .vk_layout .modal {
-    /*padding-top: 45px;*/
+    /*padding-top: 43px;*/
 }
 
 .wrap-content {
@@ -132,7 +131,6 @@
     flex-direction: column;
     height: calc(100vh - 50px);
     max-height: calc(100vh - 50px);
-    overflow: hidden;
 }
 
 .vk_layout .wrap-content {
@@ -143,12 +141,11 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+
     overflow: hidden;
 
-     flex: 1 1 auto; /* Занимает всё доступное пространство */
-    /* или подробнее: */
-    flex-grow: 1;    /* Может растягиваться */
-    flex-shrink: 1;  /* Может сжиматься */
+    flex-grow: 1; 
+    flex-shrink: 1;
     flex-basis: auto; 
 }
 
@@ -431,8 +428,25 @@ footer {
 }
 
 #other-content {
+    position: relative;
     flex: 1 1 auto;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.list-view {
+    flex: 1;
     overflow-y: scroll;
+    width: 100%;
+}
+
+.floating-button {
+    position: absolute;
+    right: 20px;
+    padding: 10px 20px;
+    cursor: pointer;
+    z-index: 10;
 }
 
 #other-content .item {
@@ -481,14 +495,6 @@ footer {
     padding: 0 0.5em;
 }
 
-#payerMessage .success {
-    color: #1bff00;
-}
-
-#payerMessage .fail {
-    color: gray;
-}
-
 .app-name {
     margin-bottom: 0px;
 
@@ -530,4 +536,33 @@ footer {
     #settingsModal .modal-body > div {
         width: 100%;
     }
+}
+
+#payerMessage {
+    filter: blur(0);
+    opacity: 1;
+    transition: all 1s ease;
+    cursor: default;
+}
+
+#payerMessage .success {
+    color: #1bff00;
+}
+
+#payerMessage .fail {
+    color: gray;
+}
+
+.blurred {
+    filter: blur(10px) !important;
+    opacity: 0 !important;
+}
+
+.hover-blur {
+    transition: all 0.3s ease;
+}
+
+.hover-blur:hover {
+  filter: blur(3px);
+  opacity: 0.8;
 }

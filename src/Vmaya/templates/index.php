@@ -1,5 +1,7 @@
 <?php
 	$v = SCRIPTS_VERSION;
+
+	$userModel = new UserModel();
 ?>
 <!DOCTYPE html>
 <html lang="ru" data-bs-theme="dark">
@@ -27,10 +29,9 @@
 	<script src="scripts/component.js?v=<?=$v?>"></script>
 	<script src="scripts/main.js?v=<?=$v?>"></script>
 	<script src="scripts/user-app.js?v=<?=$v?>"></script>
+	<script src="scripts/advice-modal.js?v=<?=$v?>"></script>
 
     <?if (isset(Page::$request['vk_app_id'])) {
-
-	    	$userModel = new UserModel();
 
 	    	if (isset(Page::$request['vk_client']) && (Page::$request['vk_client'] == 'ok')) {
 	    		$source = 'ok';
@@ -50,10 +51,12 @@
 	    		]);
 	    	} else $user_id = $items[0]['id'];
 
-	    	$_SESSION['source_user'] = [
+	    	Page::setSession('source_user', [
 	    		'id' => $source_user_id,
 	    		'source' => $source
-	    	];
+	    	]);
+
+	    	Page::setSession('user_id', $user_id);
 	    ?>
 	    <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
 		<script src="scripts/vkapp.js?v=<?=$v?>"></script>
@@ -64,12 +67,28 @@
 			});
 		</script>
     <?}?>
+
 	<script type="text/javascript">
-	<?if (DEV) {?>
+	<?
+	if (DEV) {
+
 		//Инициализация пользователя VK. Только при разработке!
-		var user_data = <?=file_get_contents(BASEPATH.'/dev/vk-parameters.json');?>;
+		$source = 'vk';
+		$user_data = json_decode(file_get_contents(BASEPATH.'/dev/vk-parameters.json'), true);
+		Page::setSession('source_user', [
+    		'id' => $user_data['id'],
+    		'source' => $source
+    	]);
+
+    	$items = $userModel->getItems("source_id = {$user_data['id']} AND source = '{$source}'");
+
+    	if (count($items) > 0)
+    		Page::setSession('user_id', $items[0]['id']);
+
+	?>
+		var user_data = <?=json_encode($user_data, JSON_FLAGS)?>;
 		setTimeout(()=>{
-			userApp.init(user_data.id, 'vk', user_data);
+			userApp.init(user_data.id, '<?=$source?>', user_data);
 		}, 1000);
 
 		var tracer = {
@@ -101,6 +120,28 @@
 	<div class="wrap-content">
 		<?=$content?>
 	</div>
+
+    <div class="modal fade" tabindex="-1" aria-labelledby="centeredModalLabel" aria-hidden="true" id="message">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="centeredModalLabel">Внимание!</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="content" style="height: 320px">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                	<div class="page-buttons">
+	                    <button type="button" class="btn btn-secondary prev"><i class="bi bi-arrow-left"></i></button>
+	                    <span class="page-number"></span>
+	                    <button type="button" class="btn btn-secondary next"><i class="bi bi-arrow-right"></i></button>
+                	</div>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Понятно</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 	<?if (DEV) {?>
 	<!-- Eruda is console for mobile browsers-->

@@ -66,10 +66,51 @@ class Ajax extends Page {
     	if ($user_id)
     		$user_lists = (new UserPhrasesModel())->getPhrasesAsJsonWithDifficulty($user_id);
 
+    	$this->setUser($userModel->getItem($user_id));
+
 		return [
 			'user_id'=>$user_id,
 			'user_lists'=>$user_lists
 		];
+	}
+
+	protected function updatePhraseList($data) {
+		if ($user_id = Page::getSession('user_id')) {
+			$model = new UserListsModel();
+			if (!$data['id'])
+				unset($data['id']);
+
+			$data['user_id'] = $user_id;
+
+			return $model->Update($data);
+		}
+		return 0;
+	}
+
+	protected function updatePhrase($data) {
+		if ($user_id = Page::getSession('user_id')) {
+			$model = new UserPhrasesModel();
+			if (!$data['id'])
+				unset($data['id']);
+			return $model->Update($data);
+		}
+		return 0;
+	}
+
+	protected function deleteList($data) {
+		if ($data['id']) {
+			$model = new UserListsModel();
+			return $model->Delete($data['id']) ? 1 : 0;
+		}
+		return null;
+	}
+
+	protected function deletePhrase($data) {
+		if ($data['id']) {
+			$model = new UserPhrasesModel();
+			return $model->Delete($data['id']) ? 1 : 0;
+		}
+		return null;
 	}
 
 	protected function getList() {

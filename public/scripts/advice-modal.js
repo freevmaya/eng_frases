@@ -7,6 +7,7 @@ class AdviceModal {
     	this.refreshAdvice();
     	this.setupEventListeners();
     	this.modal.modal('show');
+        this.modal.find('.page-buttons').css('display', list.length <= 1 ? 'none' : 'inline-block');
     }
 
     setupEventListeners() {
@@ -30,4 +31,8 @@ class AdviceModal {
     	this.modal.find('.content').html(this.list[this.current]);
         this.modal.find('.page-number').text((this.current + 1) + '/' + this.list.length);
     }
+}
+
+function appAlert(msg) {
+    new AdviceModal($('#message'), isStr(msg) ? [msg] : msg);
 }

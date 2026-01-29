@@ -83,15 +83,6 @@ function showAlert(message, type = 'info') {
     setTimeout(() => alert.alert('close'), 3000);
 }
 
-function playerMessage(text, showTimeSec = 0) {
-    let elem = $('#payerMessage');
-    elem.html(text);
-    if (showTimeSec)
-        setTimeout(()=>{
-            elem.text('');
-        }, showTimeSec * 1000);
-}
-
 class Phrase {
     constructor(data, type) {
         this.native     = data['native'];
@@ -139,7 +130,7 @@ $(document).ready(function() {
     stateManager.loadState();
 
     playerControls = new PlayerControls();
-    phrasesList = new PhrasesListView($('#other-content'));
+    phrasesList = new PhrasesListView($('#other-content .list-view'));
 
     const AppConst = {
         charTime: {
@@ -807,13 +798,8 @@ $(document).ready(function() {
         else disableWakeLock();
 
         // Обновить контролы плеера
-        if (playerControls) {
+        if (playerControls)
             playerControls.updatePlayButton(stateManager.isPlaying && !stateManager.isPaused);
-            
-            const hasPrev = stateManager.isPlaying && appData.currentPhraseList.length > 0;
-            const hasNext = appData.currentPhraseList.length > 0;
-            playerControls.updateNavigationButtons(hasPrev, hasNext);
-        }
 
         let playBi = elements.playButton.find('.bi');
         playBi.removeClass('bi-play-circle bi-pause-circle');
