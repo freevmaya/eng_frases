@@ -42,6 +42,7 @@
 	    	}
 
 	    	$items = $userModel->getItems("source_id = {$source_user_id} AND source = '{$source}'");
+	    	$new_user = false;
 
 	    	if (count($items) == 0) {
 	    		$user_id = $userModel->Update([
@@ -49,6 +50,7 @@
 	    			'source'=>$source,
 	    			'language_code'=>'ru'
 	    		]);
+	    		$new_user = $user_id;
 	    	} else $user_id = $items[0]['id'];
 
 	    	Page::setSession('source_user', [
@@ -64,6 +66,9 @@
 		<script type="text/javascript">
 			$(window).ready(()=>{
 				new VKApp(<?=VK_APP_ID?>, <?=$source_user_id?>, '<?=$source?>');
+				<?if ($new_user) {?>
+				showAdvices();
+				<?}?>
 			});
 		</script>
     <?}?>

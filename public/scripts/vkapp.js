@@ -7,8 +7,7 @@ class VKApp {
 		this.app_id = app_id;
 		this.source = source;
 		this.source_user_id = source_user_id;
-
-		showAdvices();
+		
 		vkBridge.send("VKWebAppInit", {})
 			.then((response)=>{
 				tracer.log(response);
