@@ -31,20 +31,27 @@
     <?if (isset(Page::$request['vk_app_id'])) {
 
 	    	$userModel = new UserModel();
-	    	$source = isset(Page::$request['vk_client']) && (Page::$request['vk_client'] == 'ok') ? 'ok' : 'vk';
 
-	    	$items = $userModel->getItems("source_id = ".Page::$request['vk_user_id']." AND source = '{$source}'");
+	    	if (isset(Page::$request['vk_client']) && (Page::$request['vk_client'] == 'ok')) {
+	    		$source = 'ok';
+	    		$source_user_id = Page::$request['vk_ok_user_id'];
+	    	} else {
+	    		$source = 'vk';
+	    		$source_user_id = Page::$request['vk_user_id'];
+	    	}
+
+	    	$items = $userModel->getItems("source_id = {$source_user_id} AND source = '{$source}'");
 
 	    	if (count($items) == 0) {
 	    		$user_id = $userModel->Update([
-	    			'source_id'=>Page::$request['vk_user_id'],
+	    			'source_id'=>$source_user_id,
 	    			'source'=>$source,
 	    			'language_code'=>'ru'
 	    		]);
 	    	} else $user_id = $items[0]['id'];
 
 	    	$_SESSION['source_user'] = [
-	    		'id' => Page::$request['vk_user_id'],
+	    		'id' => $source_user_id,
 	    		'source' => $source
 	    	];
 	    ?>
@@ -53,7 +60,7 @@
 
 		<script type="text/javascript">
 			$(window).ready(()=>{
-				new VKApp(<?=VK_APP_ID?>, <?=Page::$request['vk_user_id']?>, '<?=$source?>');
+				new VKApp(<?=VK_APP_ID?>, <?=$source_user_id?>, '<?=$source?>');
 			});
 		</script>
     <?}?>
