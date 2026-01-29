@@ -65,54 +65,59 @@ class UserPhrasesModel extends BaseModel {
 
 	public static function getPhrasesAsJsonWithDifficulty($user_id, $maxDifficulty = null) {
 	    GLOBAL $dbp;
+		    
+		$result = [];
 	    
-	    $conditions = "p.is_active = 1 AND ul.is_active = 1 AND ul.user_id = {$user_id}";
-	    
-	    if ($maxDifficulty !== null && $maxDifficulty >= 1 && $maxDifficulty <= 5)
-	        $conditions .= " AND p.difficulty_level <= " . intval($maxDifficulty);
-	    
-	    $query = "
-	        SELECT 
-	            ul.name,
-	            ul.description,
-	            p.target_text,
-	            p.native_text,
-	            p.direction,
-	            p.context,
-	            p.difficulty_level
-	        FROM user_phrases p
-	        INNER JOIN user_lists ul ON p.list_id = ul.id
-	        WHERE {$conditions}
-	        ORDER BY ul.`order`, p.difficulty_level, p.id
-	    ";
-	    
-	    $rows = $dbp->asArray($query);
-	    
-	    $result = [];
-	    foreach ($rows as $row) {
-	        $typeName = $row['name'];
-	        
-	        if (!isset($result[$typeName])) {
-	            $result[$typeName] = [];
-	        }
-	        
-	        $phraseObj = [
-	            'target' => $row['target_text'] ?? '',
-	            'native' => $row['native_text'] ?? '',
-	            'direction' => $row['direction'] ?? ''
-	        ];
-	        
-	        if (!empty($row['context'])) {
-	            $phraseObj['context'] = $row['context'];
-	        }
-	        
-	        // Добавляем уровень сложности если нужен
-	        if ($row['difficulty_level']) {
-	            $phraseObj['difficulty'] = $row['difficulty_level'];
-	        }
-	        
-	        $result[$typeName][] = $phraseObj;
-	    }
+	    if ($user_id = intval($user_id)) {
+		    $conditions = "p.is_active = 1 AND ul.is_active = 1 AND ul.user_id = {$user_id}";
+		    
+		    if ($maxDifficulty !== null && $maxDifficulty >= 1 && $maxDifficulty <= 5)
+		        $conditions .= " AND p.difficulty_level <= " . intval($maxDifficulty);
+		    
+		    $query = "
+		        SELECT 
+		            ul.name,
+		            ul.description,
+		            p.target_text,
+		            p.native_text,
+		            p.direction,
+		            p.context,
+		            p.difficulty_level
+		        FROM user_phrases p
+		        INNER JOIN user_lists ul ON p.list_id = ul.id
+		        WHERE {$conditions}
+		        ORDER BY ul.`order`, p.difficulty_level, p.id
+		    ";
+
+			//$rows = $dbp->bget($query, 'i', [intval($user_id)]);
+		    
+		    $rows = $dbp->asArray($query, 's', [$user_id]);
+		    
+		    foreach ($rows as $row) {
+		        $typeName = $row['name'];
+		        
+		        if (!isset($result[$typeName])) {
+		            $result[$typeName] = [];
+		        }
+		        
+		        $phraseObj = [
+		            'target' => $row['target_text'] ?? '',
+		            'native' => $row['native_text'] ?? '',
+		            'direction' => $row['direction'] ?? ''
+		        ];
+		        
+		        if (!empty($row['context'])) {
+		            $phraseObj['context'] = $row['context'];
+		        }
+		        
+		        // Добавляем уровень сложности если нужен
+		        if ($row['difficulty_level']) {
+		            $phraseObj['difficulty'] = $row['difficulty_level'];
+		        }
+		        
+		        $result[$typeName][] = $phraseObj;
+		    }
+		}
 
 	    return $result;
 	}

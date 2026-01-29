@@ -58,10 +58,12 @@ class Ajax extends Page {
 		];
 
     	$items = $userModel->getItems("source_id = ".$data['source_id']." AND source = '{$source}'");
-    	if (count($items) > 0)
-    		$values['id'] = $items[0]['id'];
 
-    	$user_id = $userModel->Update($values);
+    	if (count($items) > 0) {
+    		$values['id'] = $user_id = $items[0]['id'];
+    		trace($user_id);
+    		$userModel->Update($values);
+    	} else $user_id = $userModel->Update($values);
 
     	$this->setUser($userModel->getItem($user_id));
 

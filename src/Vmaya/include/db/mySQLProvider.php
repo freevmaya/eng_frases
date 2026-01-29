@@ -13,6 +13,10 @@
 			$this->result_type = MYSQLI_ASSOC;
 		}
 
+		public function Mysqli() {
+			return $this->mysqli;
+		}
+
     	// Добавляем метод для проверки и восстановления соединения
 	    public function checkConnection() {
 	        if (!$this->mysqli || !$this->mysqli->ping()) {
@@ -89,10 +93,12 @@
 	    public function bget($query, $types, $params) {
 	    	$ret = [];
 			if ($result = $this->bquery($query, $types, $params)) {
-				while ($row = $result->fetch_array($this->result_type)) 
-					$ret[] = $row;
+				 if (is_object($result)) {
+					while ($row = $result->fetch_array($this->result_type)) 
+						$ret[] = $row;
 				
-				$result->free();
+					$result->free();
+				} else trace_error("Wrong query: {$query}, params: ".json_encode($params));
 			}
 			return $ret;
 	    }
