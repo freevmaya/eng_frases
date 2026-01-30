@@ -126,6 +126,14 @@
     /*padding-top: 43px;*/
 }
 
+.alert {
+    top: 0px;
+}
+
+.vk_layout .alert {
+    top: 45px;
+}
+
 .wrap-content {
     display: flex;
     flex-direction: column;

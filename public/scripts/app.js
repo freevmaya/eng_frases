@@ -74,7 +74,7 @@ function showAlert(message, type = 'info') {
     }[type];
     
     const alert = $(`
-        <div class="alert ${alertClass} alert-dismissible fade show position-fixed top-0 end-0 m-3" role="alert">
+        <div class="alert ${alertClass} alert-dismissible fade show position-fixed end-0 m-3" role="alert">
             ${message}
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
         </div>
