@@ -464,8 +464,10 @@ footer {
 
 .list-view {
     flex: 1;
-    overflow-y: scroll;
+    overflow-y: auto;
+    overflow-x: hidden;
     width: 100%;
+    max-height: 100%;
 }
 
 .floating-button {
