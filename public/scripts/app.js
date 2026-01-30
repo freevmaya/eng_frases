@@ -755,7 +755,8 @@ $(document).ready(function() {
     }
 
     function refreshProgressBar() {
-        let percent = appData.currentPhraseList ? Math.round(state.currentPhraseIndex / appData.currentPhraseList.length * 100) : 0;
+        let percent = (appData.currentPhraseList && (appData.currentPhraseList.length > 0)) ? 
+                        Math.round(state.currentPhraseIndex / (appData.currentPhraseList.length - 1) * 100) : 0;
         elements.progressBar.css('width', percent + '%');
     }
 
