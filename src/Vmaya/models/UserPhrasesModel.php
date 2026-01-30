@@ -91,7 +91,7 @@ class UserPhrasesModel extends BaseModel {
 
 			//$rows = $dbp->bget($query, 'i', [intval($user_id)]);
 		    
-		    $rows = $dbp->asArray($query, 's', [$user_id]);
+		    $rows = $dbp->asArray($query);
 		    
 		    foreach ($rows as $row) {
 		        $typeName = $row['name'];

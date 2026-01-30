@@ -2,8 +2,43 @@
 class Ajax extends Page {
 
 	public function Render($page) {
-		header("Content-Type: text/json; charset=".CHARSET);
-		echo json_encode($this->ajax());
+		GLOBAL $_POST;
+
+		if ((count($_POST) > 0) && Ajax::is_valid_referer()) {
+			header("Content-Security-Policy: default-src 'self'; script-src 'self' ".BASEURL.";");
+			header("Content-Type: text/json; charset=".CHARSET);
+
+			header("X-XSS-Protection: 1; mode=block");
+
+			// Запрет кэширования конфиденциальных страниц
+			header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+			header("Pragma: no-cache");
+
+			echo json_encode($this->ajax());
+		} else {
+			header('HTTP/1.1 403 Forbidden');
+    		exit(403);
+		}
+	}
+
+	public static function is_valid_referer() {
+		GLOBAL $_SERVER;
+
+	    // Проверяем, установлен ли Referer
+	    if (!isset($_SERVER['HTTP_REFERER'])) {
+	        return false;
+	    }
+	    
+	    // Получаем домен текущего сайта
+	    $current_domain = $_SERVER['HTTP_HOST'];
+	    
+	    // Получаем домен из Referer
+	    $referer_domain = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
+	    
+	    //trace("$referer_domain $current_domain");
+	    
+	    // Сравниваем домены
+	    return $referer_domain === $current_domain;
 	}
 
 	public function ajax() {
@@ -61,7 +96,6 @@ class Ajax extends Page {
 
     	if (count($items) > 0) {
     		$values['id'] = $user_id = $items[0]['id'];
-    		trace($user_id);
     		$userModel->Update($values);
     	} else $user_id = $userModel->Update($values);
 

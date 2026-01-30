@@ -59,22 +59,25 @@ class Page {
 	}
 
 	public static function Run($userModel, $request) {
+		/*
+		foreach ($request as $key=>$value) {
+			$request[$key] = htmlspecialchars($value);
+		}*/
 		Page::$request = $request;
 
 		$className = 'Page';
+		$classFileName = dirname(__FILE__).'/'.$className.'.php';
 		$page = null;
 		$subpage = null;
+		$hasFile = false;
 
 		foreach (Page::$request as $key=>$value) {
+			$value = htmlspecialchars($value);
+
 			if ($key == 'page') {
 				$page = $value;
 				$className = ucfirst($page);
-
 				$classFileName = dirname(__FILE__).'/'.$className.'.php';
-
-				if (file_exists($classFileName)) {
-					include($classFileName);
-				}
 			}
 
 			if ($key == 'subpage') {
@@ -82,23 +85,24 @@ class Page {
 					Page::$request['id'] = $value;
 				else {
 					$subpage = $value;
-
 					$classFileName = dirname(__FILE__).'/'.$page.'/'.$subpage.'.php';
-
-					if (file_exists($classFileName)) {
-						$className = lcfirst($subpage);
-						include($classFileName);
-					}
 				}
 			}
 		}
 
-		Page::$page = $page;
-		Page::$subpage = $subpage;
+		if (file_exists($classFileName)) {
+			include_once($classFileName);
 
-		$page = new $className($userModel);
-		$page->Render(Page::$page.(Page::$subpage ? ('/'.Page::$subpage) : ''));
-		$page->Close();
+			Page::$page = $page;
+			Page::$subpage = $subpage;
+
+			$page = new $className($userModel);
+			$page->Render(Page::$page.(Page::$subpage ? ('/'.Page::$subpage) : ''));
+			$page->Close();
+		} else {
+			header('HTTP/1.1 403 Forbidden');
+    		exit(403);
+		}
 	}
 
 	protected function isReciveData() {
