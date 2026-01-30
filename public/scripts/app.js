@@ -712,11 +712,13 @@ $(document).ready(function() {
     }
 
     function setText(elem, text, k = 1, maxSize = 30, minSize = 16) {
-        let width = $('.app-display .card-body').innerWidth();
+        if (elem.text() != text) {
+            let width = $('.app-display .card-body').innerWidth();
 
-        let size = Math.round(Math.max(Math.min(1 / text.length * width * 2.2, maxSize * k), minSize * k));
-        elem.text(text);
-        elem.css('font-size', size);
+            let size = Math.round(Math.max(Math.min(1 / text.length * width * 2.2, maxSize * k), minSize * k));
+            elem.text(text);
+            elem.css('font-size', size);
+        }
     }
 
     function updatePhrases(text, hint) {
@@ -760,23 +762,6 @@ $(document).ready(function() {
         elements.progressBar.css('width', percent + '%');
     }
 
-    // Запустить таймер прогресса
-    function startProgressTimer(duration) {
-        let timeLeft = duration;
-        elements.progressBar.css('width', '100%');
-        
-        clearInterval(state.progressInterval);
-        state.progressInterval = setInterval(() => {
-            timeLeft -= 0.1;
-            const percentage = (timeLeft / duration) * 100;
-            elements.progressBar.css('width', percentage + '%');
-            
-            if (timeLeft <= 0) {
-                clearInterval(state.progressInterval);
-            }
-        }, 100);
-    }
-
     // Обновить отображение
     function updateDisplay() {
         if (appData.currentPhraseList.length === 0) {
@@ -812,26 +797,12 @@ $(document).ready(function() {
 
         // Обновить контролы плеера
         if (playerControls)
-            playerControls.updatePlayButton(stateManager.isPlaying && !stateManager.isPaused);
+            playerControls.updatePlayButton(isPlay);
 
-        let playBi = elements.playButton.find('.bi');
-        playBi.removeClass('bi-play-circle bi-pause-circle');
-        
-        // Обновить текст и иконки
-        if (stateManager.isPlaying) {
-            if (stateManager.isPaused) {
-                playBi.addClass('bi-play-circle');
-            } else {
-                playBi.addClass('bi-pause-circle');
-            }
-        } else {
-            playBi.addClass('bi-play-circle');
-        }
-        
-        // Сбросить прогресс-бар
-        if (!stateManager.isPlaying || stateManager.isPaused) {
-            elements.progressBar.css('width', '0%');
-        }
+        if (!isPlay)
+            elements.progressBar.removeClass('progress-bar-animated');
+        else if (!elements.progressBar.hasClass('progress-bar-animated'))
+            elements.progressBar.addClass('progress-bar-animated');
     }
 
     // Вспомогательные функции
