@@ -9,6 +9,7 @@ class VRecognition {
 		this.text  			= '';
         this.msg_timerId    = 0;
         this.playerElem     = $('#payerMessage');
+        this.currentError   = null;
 		this.setListeners();
 	}
 
@@ -33,9 +34,15 @@ class VRecognition {
     }
 
     setTimeout(callback, time) {
+        if (this.msg_timerId) {
+            clearTimeout(this.msg_timerId);
+            this.msg_timerId = null;
+        }
 
-        clearTimeout(this.msg_timerId);
-        this.msg_timerId = setTimeout(callback, time);
+        this.msg_timerId = setTimeout(()=>{
+            this.msg_timerId = null;
+            callback();
+        }, time);
     }
 
     playerMessage(text, showTimeSec = 0) {
@@ -45,15 +52,15 @@ class VRecognition {
         } else {
             this.playerElem.removeClass('blurred');
             this.playerElem.html(text);
+
             if (playerControls && playerControls.state.visible)
                 playerControls.hide();
-        }
 
-        if (showTimeSec) {
-
-            this.setTimeout(()=>{
-                this.playerMessage(null);
-            }, showTimeSec * 1000);
+            if (showTimeSec) {
+                this.setTimeout(()=>{
+                    this.playerMessage(null);
+                }, showTimeSec * 1000);
+            }
         }
     }
 
@@ -68,12 +75,7 @@ class VRecognition {
 		if (this.isRecognize)
 			this.recognition.stop();
 
-        if (this.timerId) {
-        	clearTimeout(this.timerId);
-        	this.timerId = null;
-        }
-
-        if (isEmpty(this.output))
+        if (!this.currentError && isEmpty(this.output))
 			this.playerMessage(null);
 		this.text = '';
 		this.output = '';
@@ -116,27 +118,53 @@ class VRecognition {
     }
 
     onError() {
-        let errorMessage = 'Ошибка распознавания: ';
-        
-        switch(event.error) {
-            case 'not-allowed':
-                errorMessage += 'Доступ к микрофону запрещен. Разрешите доступ в настройках браузера.';
+        let errorMessage = 'Неопределенна';
+
+        let list = [
+            {
+                msg: 'not-allowed',
+                text: 'Доступ к микрофону запрещен. Разрешите доступ в настройках браузера.',
+                level: 0
+            },{
+                msg: 'audio-capture',
+                text: 'Не удалось получить доступ к микрофону.',
+                level: 0
+            },{
+                msg: 'network',
+                text: 'Проблемы с сетью.',
+                level: 0
+            },{
+                msg: 'no-speech',
+                text: 'Речь не обнаружена!',
+                level: 1
+            },{
+                msg: 'aborted',
+                text: 'Пропущено...',
+                level: 1
+            }
+
+        ];
+
+        let eventError = event.error;
+
+        for (var i = list.length - 1; i >= 0; i--) {
+            if (eventError.includes(list[i].msg)) {
+
+                this.currentError = list[i];
+
+                if (list[i].level > 0) {
+                    this.isRecognize = false;
+                    this.playerMessage(list[i].text, 3);
+                    return;
+                }
+                else errorMessage = list[i].text;
                 break;
-            case 'no-speech':
-                errorMessage += 'Речь не обнаружена. Проверьте микрофон.';
-                break;
-            case 'audio-capture':
-                errorMessage += 'Не удалось получить доступ к микрофону.';
-                break;
-            case 'network':
-                errorMessage += 'Проблемы с сетью.';
-                break;
-            default:
-                errorMessage += event.error;
+            }
         }
+
         this.playerMessage(null);
         
-        showAlert(errorMessage);
+        showAlert('Ошибка распознавания: ' + errorMessage);
         this.isRecognize = false;
         this.stop();
     }
@@ -158,7 +186,8 @@ class VRecognition {
         this.text 						= phraseObj[phraseType];
         this.output 					= '';
         this.success					= false;
-        this.waitTime 					= waitTime * 1.5;
+        this.waitTime 					= waitTime * 1.2;
+        this.currentError               = null;
         this.recognition.continuous 	= true; 	// Продолжать слушать после паузы
         this.recognition.interimResults = true; 	// Показывать промежуточные результаты
         this.recognition.lang 			= LanguageMap[phraseObj.Language(phraseType)];
@@ -170,7 +199,7 @@ class VRecognition {
         	console.error(e);
         }
 
-        this.timerId = setTimeout(this.stop.bind(this), this.waitTime);
+        //this.timerId = setTimeout(this.stop.bind(this), this.waitTime);
     }
 }
 
