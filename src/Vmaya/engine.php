@@ -11,8 +11,10 @@
 	define("DEFAULTPAGE", "home");
 	define("SCRIPTS_VERSION", 116);
 	
+	$lv = SCRIPTS_VERSION % 1000;
+	$mv = floor(SCRIPTS_VERSION / 1000);
 	// Конфигурация приложения
-	define('APP_VERSION', '1.0.2');
+	define('APP_VERSION', "1.{$mv}.{$lv}");
 	define('APP_NAME', 'Тренажер английского языка');
 	define('DEFAULT_SPEED', 1.0);
 	define('DEFAULT_PAUSE', 3);
