@@ -608,8 +608,8 @@ $(document).ready(function() {
         return state.direction.includes('both');
     }
 
-    function calcTime(lang) {
-        return state.pauseBetweenPhrases * 1000 + 
+    function calcTime(lang, forSpeak = true) {
+        return (forSpeak ? Math.max(state.pauseBetweenPhrases - 1, 0) : state.pauseBetweenPhrases) * 1000 + 
                 appData.currentPhrase[lang].length * AppConst.charTime[lang];
     }
 
@@ -652,36 +652,31 @@ $(document).ready(function() {
                     appData.currentPhrase.type, state.speed, state.genderVoice)
                 .then((result)=>{
 
-                    let time = calcTime(firstLang);
                     if ((firstLang == 'native') && recognition && stateManager.state.recognize)
-                        recognition.startRecognition(time, appData.currentPhrase, secondLang);
+                        recognition.startRecognition(calcTime(firstLang, false), appData.currentPhrase, secondLang);
 
                     clearTimeout(state.timeoutId);
                     state.timeoutId = setTimeout(() => {
                         state.showingFirstLang = false;
                         playCurrentPhrase();
-                    }, time);
+                    }, calcTime(firstLang));
 
                 });
         } else {
-            // Показываем и озвучиваем второй язык
-            let totalTime = state.pauseBetweenPhrases * 1000 + 
-                appData.currentPhrase[secondLang].length * AppConst.charTime[secondLang] * 1 / state.speed;
 
             showPhrase(secondLang);
             speechSynthesizer.speak(appData.currentPhrase, secondLang, 
                     appData.currentPhrase.type, state.speed, state.genderVoice)
                 .then((result)=>{
 
-                    let time = calcTime(secondLang);
                     if ((secondLang == 'native') && recognition && stateManager.state.recognize)
-                        recognition.startRecognition(time, appData.currentPhrase, firstLang);
+                        recognition.startRecognition(calcTime(secondLang, false), appData.currentPhrase, firstLang);
 
                     clearTimeout(state.timeoutId);
                     state.timeoutId = setTimeout(() => {
                         setCurrentPhraseIndex(state.currentPhraseIndex + 1);
                         playCurrentPhrase();
-                    }, time);
+                    }, calcTime(secondLang));
                 });
         }
     }
@@ -696,14 +691,13 @@ $(document).ready(function() {
                     appData.currentPhrase.type, state.speed, state.genderVoice)
             .then((result)=>{
 
-                let time = calcTime(speakLang);
                 if (recognition && stateManager.state.recognize) 
-                    recognition.startRecognition(time, appData.currentPhrase, 'target');
+                    recognition.startRecognition(calcTime(speakLang, false), appData.currentPhrase, 'target');
                 
                 state.timeoutId = setTimeout(() => {
                     setCurrentPhraseIndex(state.currentPhraseIndex + 1);
                     playCurrentPhrase();
-                }, time);
+                }, calcTime(speakLang));
             });
     }
 
