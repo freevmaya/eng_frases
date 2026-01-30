@@ -222,6 +222,8 @@ class SpeechSynthesizer {
         this._setBusy('processing');
 
         try {
+
+            this._stopPlayback();
                 
             const localUrlInfo = await this.getAudioUrl(cleanText, language, category, genderVoice);
             tracer.log(`Attemp play ${phraseObj[phraseType]}: ${localUrlInfo.url}`);
@@ -348,7 +350,7 @@ class SpeechSynthesizer {
                 audio.preload = 'auto';
                 this.preloadedAudios.set(fileUrl, audio);
             }
-            
+
             this.currentAudio = audio;
             
             audio.volume = 1.0;
@@ -381,6 +383,7 @@ class SpeechSynthesizer {
                     clearTimeout(timeoutId);
                     audio.removeEventListener('ended', onEnded);
                     audio.removeEventListener('error', onError);
+                    this.currentAudio = null;
                 };
                 
                 timeoutId = setTimeout(() => {
@@ -540,8 +543,7 @@ class SpeechSynthesizer {
         tracer.log('Audio cache cleared');
     }
 
-    // Остановка текущего воспроизведения
-    stop() {
+    _stopPlayback() {
         if (this.currentAudio) {
             this.currentAudio.pause();
             this.currentAudio.currentTime = 0;
@@ -552,7 +554,11 @@ class SpeechSynthesizer {
             speechSynthesis.cancel();
             this.currentUtterance = null;
         }
-        
+    }
+
+    // Остановка текущего воспроизведения
+    stop() {
+        this._stopPlayback();
         this._clearBusy();
     }
 

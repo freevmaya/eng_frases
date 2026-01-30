@@ -42,14 +42,14 @@
 
                 <div class="mb-4">
                     <h6 class="text-info mb-3">
-                        <i class="bi bi-arrow-left-right me-2"></i>Направление перевода
+                        <i class="bi bi-arrow-left-right me-2"></i>Режим "Перевод"
                     </h6>
                     <div class="btn-group w-100" role="group">
                         <button type="button" class="btn btn-outline-primary" data-direction="native-target">
-                            Русский → Английский
+                            Рус → Англ(звук)
                         </button>
                         <button type="button" class="btn btn-outline-primary" data-direction="target-native">
-                            Английский → Русский
+                            Англ → Рус(звук)
                         </button>
                     </div>
                 </div>
@@ -60,10 +60,10 @@
                     </h6>
                     <div class="btn-group w-100" role="group">
                         <button type="button" class="btn btn-outline-success" data-direction="target-native-both">
-                            Англ → Рус → Пауза
+                            Англ(звук) → Рус(звук)
                         </button>
                         <button type="button" class="btn btn-outline-success" data-direction="native-target-both">
-                            Рус → Англ → Пауза
+                            Рус(звук) → Англ(звук)
                         </button>
                     </div>
                 </div>

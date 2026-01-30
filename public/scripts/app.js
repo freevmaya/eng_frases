@@ -532,9 +532,14 @@ $(document).ready(function() {
         clearTimeout(state.timeoutId);
         clearInterval(state.progressInterval);
         speechSynthesizer.stop();
-        
+        stopRecognition();
         updateControls();
         updateDisplay();
+    }
+
+    function stopRecognition() {
+        if (recognition)
+            recognition.stop();
     }
 
     function debouncePage(callback) {
@@ -609,7 +614,11 @@ $(document).ready(function() {
     }
 
     function calcTime(lang, forSpeak = true) {
-        return (forSpeak ? Math.max(state.pauseBetweenPhrases - 1, 0) : state.pauseBetweenPhrases) * 1000 + 
+        if (stateManager.state.recognize)
+            return state.pauseBetweenPhrases * 1000 + 
+                appData.currentPhrase[lang].length * AppConst.charTime[lang];
+
+        else return (forSpeak ? Math.max(state.pauseBetweenPhrases - 1, 0) : state.pauseBetweenPhrases) * 1000 + 
                 appData.currentPhrase[lang].length * AppConst.charTime[lang];
     }
 
@@ -652,15 +661,11 @@ $(document).ready(function() {
                     appData.currentPhrase.type, state.speed, state.genderVoice)
                 .then((result)=>{
 
-                    if ((firstLang == 'native') && recognition && stateManager.state.recognize)
-                        recognition.startRecognition(calcTime(firstLang, false), appData.currentPhrase, secondLang);
-
-                    clearTimeout(state.timeoutId);
-                    state.timeoutId = setTimeout(() => {
+                    startCurrentRecognition(secondLang);
+                    speakPause(() => {
                         state.showingFirstLang = false;
                         playCurrentPhrase();
-                    }, calcTime(firstLang));
-
+                    }, firstLang);
                 });
         } else {
 
@@ -669,14 +674,11 @@ $(document).ready(function() {
                     appData.currentPhrase.type, state.speed, state.genderVoice)
                 .then((result)=>{
 
-                    if ((secondLang == 'native') && recognition && stateManager.state.recognize)
-                        recognition.startRecognition(calcTime(secondLang, false), appData.currentPhrase, firstLang);
-
-                    clearTimeout(state.timeoutId);
-                    state.timeoutId = setTimeout(() => {
+                    startCurrentRecognition(firstLang);
+                    speakPause(() => {
                         setCurrentPhraseIndex(state.currentPhraseIndex + 1);
                         playCurrentPhrase();
-                    }, calcTime(secondLang));
+                    }, secondLang);
                 });
         }
     }
@@ -691,14 +693,22 @@ $(document).ready(function() {
                     appData.currentPhrase.type, state.speed, state.genderVoice)
             .then((result)=>{
 
-                if (recognition && stateManager.state.recognize) 
-                    recognition.startRecognition(calcTime(speakLang, false), appData.currentPhrase, 'target');
-                
-                state.timeoutId = setTimeout(() => {
+                startCurrentRecognition('target');                
+                speakPause(() => {
                     setCurrentPhraseIndex(state.currentPhraseIndex + 1);
                     playCurrentPhrase();
-                }, calcTime(speakLang));
+                }, speakLang);
             });
+    }
+
+    function startCurrentRecognition(phraseDirect) {
+        if (recognition && stateManager.state.recognize) 
+            recognition.startRecognition(calcTime(phraseDirect, false), appData.currentPhrase, phraseDirect);
+    }
+
+    function speakPause(callback, phraseDirect) {
+        clearTimeout(state.timeoutId);
+        state.timeoutId = setTimeout(callback, calcTime(phraseDirect));
     }
 
     function setText(elem, text, k = 1, maxSize = 30, minSize = 16) {

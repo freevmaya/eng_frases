@@ -67,7 +67,7 @@ class VRecognition {
 
     onStart() {
         this.isRecognize = true;
-        tracer.log('Запись начата');
+        tracer.log(`Запись начата "${this.text}", waitTime: ${this.waitTime}`);
         this.playerMessage('Слушаю...', this.waitTime);
     }
 
@@ -199,7 +199,7 @@ class VRecognition {
         	console.error(e);
         }
 
-        //this.timerId = setTimeout(this.stop.bind(this), this.waitTime);
+        this.timerId = setTimeout(this.stop.bind(this), this.waitTime);
     }
 }
 
