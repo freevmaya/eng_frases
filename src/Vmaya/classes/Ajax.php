@@ -42,6 +42,7 @@ class Ajax extends Page {
 	}
 
 	public function ajax() {
+		GLOBAL $dbp;
 
 		if (isset(Page::$request['action'])) {
 			$action = Page::$request['action'];
@@ -49,6 +50,9 @@ class Ajax extends Page {
 			if (method_exists($this, $action)) {
 				$data = isset(Page::$request['data']) ? json_decode(Page::$request['data'], true) : null;
 
+				if (is_object($data))
+					foreach($data as $key=>$value)
+						$data[$key] = $dbp->safeVal($value);
 				return $this->$action($data);
 			}
 		}
@@ -76,15 +80,16 @@ class Ajax extends Page {
 	}
 
 	protected function initUser($data) {
+		GLOBAL $dbp;
 
 		$userModel = new UserModel();
 
 		$user_data = $data['user_data'];
-		$source = $data['source'];
+		$source = $dbp->safeVal($data['source']);
 
 		$values = [
 			'source_id'=>$data['source_id'],
-			'source'=>$data['source'],
+			'source'=>$source,
 			'first_name'=>$user_data['first_name'],
 			'last_name'=>$user_data['last_name'],
 			'last_time'=>date('Y-m-d H:i:s'),
@@ -92,7 +97,7 @@ class Ajax extends Page {
 			'data'=>json_encode($user_data, JSON_FLAGS)
 		];
 
-    	$items = $userModel->getItems("source_id = ".$data['source_id']." AND source = '{$source}'");
+    	$items = $userModel->getItems("source_id = ".$dbp->safeVal($data['source_id'])." AND source = '{$source}'");
 
     	if (count($items) > 0) {
     		$values['id'] = $user_id = $items[0]['id'];

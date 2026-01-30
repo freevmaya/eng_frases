@@ -1,18 +1,22 @@
 <?php
-// /home/vmaya/www/eng_frases/public/test.php
-echo "PHP работает!\n\n";
 
-echo "GET параметры:\n";
-print_r($_GET);
 
-echo "\nPOST параметры:\n"; 
-print_r($_POST);
+session_start();
+require dirname(__FILE__, 2).'/src/Vmaya/engine.php';
+		
+$dbp = new mySQLProvider('localhost', _dbname_default, _dbuser, _dbpassword);
 
-echo "\nSERVER:\n";
-echo "QUERY_STRING: " . ($_SERVER['QUERY_STRING'] ?? 'пусто') . "\n";
-echo "REQUEST_METHOD: " . $_SERVER['REQUEST_METHOD'] . "\n";
-echo "SCRIPT_NAME: " . $_SERVER['SCRIPT_NAME'] . "\n";
-echo "REQUEST_URI: " . $_SERVER['REQUEST_URI'] . "\n";
+$source_id = "44108006";
+$source = 'vk" AND (SELECT SLEEP(10)) AND id != "0';
 
-echo "\n\nВсе параметры запроса:\n";
-print_r($_REQUEST);
+$source = $dbp->safeVal($source);
+
+$where = "source_id = ".$source_id." AND source = '{$source}'";
+
+echo "$where\n";
+
+$items = (new UserModel())->getItems($where);
+
+print_r($items);
+
+$dbp->Close();

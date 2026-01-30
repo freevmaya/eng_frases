@@ -3,6 +3,9 @@
 *.zip
 *.mp3
 *.log.*
+
+test*.*
+test.*
 .vs
 .env
 logs/*
