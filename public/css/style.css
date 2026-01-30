@@ -128,6 +128,7 @@
 
 .alert {
     top: 0px;
+    z-index: 100;
 }
 
 .vk_layout .alert {
