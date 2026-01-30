@@ -167,18 +167,6 @@
 
                 <div class="card-body text-center p-4">
 
-                    <div class="play-buttons" id="playButtonsContainer">
-                        <button type="button" class="btn" id="prevBtn" title="Предыдущая фраза">
-                            <i class="bi bi-skip-backward-fill"></i>
-                        </button>
-                        <button type="button" class="btn" id="playButton" title="Воспроизвести/Пауза">
-                            <i class="bi bi-play-fill"></i>
-                        </button>
-                        <button type="button" class="btn" id="nextBtn" title="Следующая фраза">
-                            <i class="bi bi-skip-forward-fill"></i>
-                        </button>
-                    </div>
-
                     <div>
                         <div class="phrase-container">
                             <div class="phrase-text mb-2 animate-text" id="phraseText">
@@ -211,6 +199,20 @@
                             </button>
                         </div>
                     </div>
+
+                    <div class="play-container">
+                        <div class="play-buttons" id="playButtonsContainer">
+                            <button type="button" class="btn" id="prevBtn" title="Предыдущая фраза">
+                                <i class="bi bi-skip-backward-fill"></i>
+                            </button>
+                            <button type="button" class="btn" id="playButton" title="Воспроизвести/Пауза">
+                                <i class="bi bi-play-fill"></i>
+                            </button>
+                            <button type="button" class="btn" id="nextBtn" title="Следующая фраза">
+                                <i class="bi bi-skip-forward-fill"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -225,14 +227,14 @@
             
         </div>
     </div>
-
-    <!-- Footer -->
-    <footer class="mt-2 pt-2 border-top border-secondary text-center text-muted">
-        <p class="small">
-            English Phrases Trainer v<?php echo APP_VERSION; ?>
-        </p>
-    </footer>
 </div>
+
+<!-- Footer -->
+<footer class="mt-2 pt-2 border-top border-secondary text-center text-muted">
+    <p class="small">
+        English Phrases Trainer v<?php echo APP_VERSION; ?>
+    </p>
+</footer>
 
 <script type="text/javascript">
     var SPEECH_CONFIG = <?=SPEECH_CONFIG?>;

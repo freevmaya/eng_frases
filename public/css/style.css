@@ -147,9 +147,10 @@
     flex-grow: 1; 
     flex-shrink: 1;
     flex-basis: auto; 
+    max-width: 100% !important;
 }
 
-@media (max-height: 600px) {
+@media (min-aspect-ratio: 1/1) {
 
     .container {
         flex-direction: row;
@@ -299,16 +300,41 @@
 }
 */
 
+.card-body {
+    container-type: inline-size;
+    container-name: parent;
+}
+
+.play-container {
+    width: 100%;
+    transform: scale(1);
+    transition: transform 0.3s ease;
+}
+
+@container parent (max-width: 300px) {
+    .play-container {
+        transform: scale(0.7);
+    }
+}
+
+@container parent (max-width: 200px) {
+    .play-container {
+        transform: scale(0.5);
+    }
+}
+
+
 /* YouTube-like player controls */
 .play-buttons {
+
     position: absolute;
-    bottom: 1em;
+    bottom: -20px;
     left: 50%;
     transform: translateX(-50%);
     background: rgba(28, 28, 28, 0.3);
     backdrop-filter: blur(3px);
     border-radius: 50px;
-    padding: 10px 20px;
+    padding: 5px 10px;
     display: flex; /* По умолчанию скрыто */
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -424,7 +450,8 @@
 footer {
     position: fixed;
     bottom: 0px;
-    width: min(calc(100% - 22px), var(--max-width));
+    width: 100%;
+    max-width: var(--max-width);
 }
 
 #other-content {
