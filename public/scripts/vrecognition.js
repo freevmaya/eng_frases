@@ -45,6 +45,8 @@ class VRecognition {
         } else {
             this.playerElem.removeClass('blurred');
             this.playerElem.html(text);
+            if (playerControls && playerControls.state.visible)
+                playerControls.hide();
         }
 
         if (showTimeSec) {

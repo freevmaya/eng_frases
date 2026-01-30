@@ -3,6 +3,7 @@ let speechSynthesizer = null;
 let stateManager = null;
 let _vkWakeLockTimer = null;
 let phrasesList = null;
+let playerControls = null;
 
 async function enableWakeLock() {
 
@@ -242,7 +243,7 @@ $(document).ready(function() {
         fullPhraseList(elements.phraseListPlayer);
         */
         phrasesList.setDefaultList(Object.assign({all: 'Все фразы (смешанные)'}, phrasesData), 
-            state.currentListType, 'Предустановленные типы');
+            state.currentListType, 'Предустановленные типы фраз');
     }
 
     // Загрузка списка фраз
@@ -773,7 +774,7 @@ $(document).ready(function() {
     // Обновить отображение
     function updateDisplay() {
         if (appData.currentPhraseList.length === 0) {
-            updatePhrases('Список фраз пуст', 'Выберите список фраз в настройках');
+            updatePhrases('Список фраз пуст', 'Выберите список фраз ниже');
             elements.phraseCounter.text('0 / 0');
             elements.phraseType.text('Не выбран');
             return;
