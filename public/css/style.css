@@ -321,13 +321,13 @@
 
 @container parent (max-width: 300px) {
     .play-container {
-        transform: scale(0.7);
+        transform: scale(0.8);
     }
 }
 
 @container parent (max-width: 200px) {
     .play-container {
-        transform: scale(0.5);
+        transform: scale(0.6);
     }
 }
 

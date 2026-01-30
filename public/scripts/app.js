@@ -4,6 +4,7 @@ let stateManager = null;
 let _vkWakeLockTimer = null;
 let phrasesList = null;
 let playerControls = null;
+let recognition = null;
 
 async function enableWakeLock() {
 
@@ -171,7 +172,6 @@ $(document).ready(function() {
     };
             
     // Создаем объект распознавания
-    var recognition = null;
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition)
         recognition = new VRecognition(new SpeechRecognition());
@@ -434,35 +434,36 @@ $(document).ready(function() {
             state.currentListType = type;
 
             speechSynthesizer.stop();
+            if (recognition)
+                recognition.stop()
+
+            // Сохраняем ключ текущего списка
+            const listKey = stateManager.generateListKey(
+                state.currentListType, 
+                state.order, 
+                phrasesData
+            );
+            loadPhraseList(true);
+
+            stateManager.updateSettings(state);
+            stateManager.setCurrentListData(listKey);
+            stateManager.updatePlaybackState({
+                currentPhraseIndex: state.currentPhraseIndex,
+                showingFirstLang: state.showingFirstLang,
+                currentListType: state.currentListType,
+                order: state.order
+            });  
+            updateDisplay();
             $(window).trigger('selected_list_type', state.currentListType);
 
-            debouncePage(()=>{
-                speechSynthesizer.waitForCompletion()
-                    .then(()=>{ 
-
-                        // Сохраняем ключ текущего списка
-                        const listKey = stateManager.generateListKey(
-                            state.currentListType, 
-                            state.order, 
-                            phrasesData
-                        );
-                        loadPhraseList(true);
-
-                        stateManager.updateSettings(state);
-                        stateManager.setCurrentListData(listKey);
-                        stateManager.updatePlaybackState({
-                            currentPhraseIndex: state.currentPhraseIndex,
-                            showingFirstLang: state.showingFirstLang,
-                            currentListType: state.currentListType,
-                            order: state.order
-                        });  
-                        updateDisplay();
-                
-                        if (stateManager.isPlaying)
+            if (stateManager.isPlaying) {
+                debouncePage(()=>{
+                    speechSynthesizer.waitForCompletion()
+                        .then(()=>{
                             playCurrentPhrase();
-                    });
-            });
-
+                        });
+                });
+            }
         }
     }
 
