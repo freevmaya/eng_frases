@@ -174,7 +174,7 @@ $(document).ready(function() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition)
         recognition = new VRecognition(new SpeechRecognition());
-    else $('#recognizeToggleForm').style('display', 'none');
+    else $('#recognizeToggleForm').css('display', 'none');
 
     // Инициализация
     function init() {
