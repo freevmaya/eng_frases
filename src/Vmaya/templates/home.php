@@ -232,7 +232,7 @@
 <!-- Footer -->
 <footer class="mt-2 pt-2 border-top border-secondary text-center text-muted">
     <p class="small">
-        English Phrases Trainer v<?php echo APP_VERSION; ?>
+        English Phrases Trainer v<?php echo APP_VERSION; ?> | <a class="link" onclick="showAdvices()">Помощь</a>
     </p>
 </footer>
 
@@ -273,7 +273,7 @@
             <p>Делитесь своим опытом, пишите пожелания и предложения по работе тренажёра в нашей группе.</p>
             <hr>
             <p><span class="bi bi-award me-2"><span> Успешного обучения!</p>`
-        ]);
+        ], 'Помощь, советы и рекомендации');
     }
 <?if (DEV) {?>
     $(window).ready(showAdvices);

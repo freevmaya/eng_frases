@@ -496,13 +496,15 @@ footer {
     margin: 0.2em 0.5em;
 }
 
-#other-content .item a {
+#other-content .item a, .link {
     color: var(--info);
     text-decoration: none;
-    /*font-size: 1.2em;*/
+    cursor: pointer;
+}
+
+#other-content .item a {
     width: 100%;
     display: inline-block;
-    cursor: pointer;
 }
 
 #other-content .item a:hover {

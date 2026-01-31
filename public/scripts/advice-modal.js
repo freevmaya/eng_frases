@@ -1,6 +1,6 @@
 class AdviceModal {
 	
-    constructor(modal, list = []) {
+    constructor(modal, list = [], title = null) {
     	this.modal = modal;
     	this.list = list;
     	this.current = 0;
@@ -8,6 +8,7 @@ class AdviceModal {
     	this.setupEventListeners();
     	this.modal.modal('show');
         this.modal.find('.page-buttons').css('display', list.length <= 1 ? 'none' : 'inline-block');
+        if (title) this.modal.find('.modal-title').text(title);
     }
 
     setupEventListeners() {
@@ -33,6 +34,6 @@ class AdviceModal {
     }
 }
 
-function appAlert(msg) {
-    new AdviceModal($('#message'), isStr(msg) ? [msg] : msg);
+function appAlert(msg, title=null) {
+    new AdviceModal($('#message'), isStr(msg) ? [msg] : msg, title);
 }
