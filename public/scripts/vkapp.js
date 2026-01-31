@@ -32,7 +32,7 @@ class VKApp {
 	  	})
 	  	.catch((error) => { tracer.log(error); });
 
-	  	initListeners();
+	  	this.initListeners();
 	}
 
 	initListeners() {
