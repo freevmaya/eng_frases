@@ -568,11 +568,13 @@ $(document).ready(function() {
         if (state.currentPhraseIndex != index) {
 
             setCurrentPhraseIndex(Math.max(0, Math.min(appData.currentPhraseList.length - 1, index)), false);
-            appData.currentPhrase = appData.currentPhraseList[state.currentPhraseIndex];
+            appData.currentPhrase = appData.currentPhraseList[state.currentPhraseIndex];      
+
+            if (isBothDirectionsMode())        
+                state.showingFirstLang = true;
 
             updateDisplay();
-            debouncePage(()=>{                
-                state.showingFirstLang = true;
+            debouncePage(()=>{  
             
                 // Сохраняем состояние
                 stateManager.updatePlaybackState({
@@ -734,7 +736,9 @@ $(document).ready(function() {
         if (elem.text() != text) {
             elem.text(text);
             updateSizeText(elem, k);
+            return true;
         }
+        return false;
     }
 
     function updateSizePlayerTexts() {
@@ -743,31 +747,34 @@ $(document).ready(function() {
     }
 
     function updatePhrases(text, hint) {
-        setText(elements.phraseText, text, 1);
-        setText(elements.phraseHint, hint, 0.7);
+        return setText(elements.phraseText, text, 1) &&
+                setText(elements.phraseHint, hint, 0.7);
     }
 
     // Показать фразу
     function showPhrase(lang) {
+        let updated = false;
         if (lang === 'target') {
-            updatePhrases(appData.currentPhrase.target, appData.currentPhrase.native);
+            updated = updatePhrases(appData.currentPhrase.target, appData.currentPhrase.native);
 
             elements.phraseText.addClass('text-info');
             elements.phraseHint.removeClass('text-info').addClass('text-muted');
         } else {
-            updatePhrases(appData.currentPhrase.native, appData.currentPhrase.target);
+            updated = updatePhrases(appData.currentPhrase.native, appData.currentPhrase.target);
 
             elements.phraseText.removeClass('text-info');
             elements.phraseHint.addClass('text-info');
         }
         
-        // Анимация
-        elements.phraseText.addClass('animate-text');
-        elements.phraseHint.addClass('animate-hint');
-        setTimeout(() => {
-            elements.phraseText.removeClass('animate-text');
-            elements.phraseHint.removeClass('animate-hint');
-        }, 500);
+        if (updated) {
+            // Анимация
+            elements.phraseText.addClass('animate-text');
+            elements.phraseHint.addClass('animate-hint');
+            setTimeout(() => {
+                elements.phraseText.removeClass('animate-text');
+                elements.phraseHint.removeClass('animate-hint');
+            }, 500);
+        }
     }
 
     // Озвучить текущую фразу
@@ -798,9 +805,20 @@ $(document).ready(function() {
         
         if (appData.currentPhrase) {
 
-            updatePhrases(appData.currentPhrase.native, appData.currentPhrase.target);
+            let showLang = state.direction === 'target-native' ? 'target' : 'native';
+
+            if (isBothDirectionsMode()) {
+                let tton = state.direction === 'target-native-both';
+                if (!state.showingFirstLang)
+                    showLang = tton ? 'native' : 'target';
+                else showLang = tton ? 'target' : 'native';
+            }
+
+            showPhrase(showLang);
+            /*
             elements.phraseText.removeClass('text-info');
             elements.phraseHint.addClass('text-info');
+            */
             
             elements.phraseCounter.text(`${state.currentPhraseIndex + 1} / ${appData.currentPhraseList.length}`);
             elements.phraseType.text(appData.currentPhrase.FormatType());
