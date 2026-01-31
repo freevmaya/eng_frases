@@ -1,6 +1,5 @@
 <?php
 	$v = SCRIPTS_VERSION;
-
 	$userModel = new UserModel();
 ?>
 <!DOCTYPE html>

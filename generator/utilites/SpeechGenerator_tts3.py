@@ -10,6 +10,7 @@ import subprocess
 import tempfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import logging
+import re
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -19,7 +20,8 @@ class EnhancedSpeechGenerator:
     def __init__(self, json_file_path: Optional[str] = None, 
                  use_edge_tts: bool = True,
                  voice_name: Optional[str] = None,
-                 output_dir: str = "../public/data/audio_files_enhanced"):
+                 voice_type: Optional[str] = None,
+                 output_dir: str = "../public/data/voises"):
         """
         Улучшенный генератор речи
         
@@ -47,6 +49,9 @@ class EnhancedSpeechGenerator:
             self.edge_tts_available = False
         
         self.voice_name = voice_name
+        self.voice_type = voice_type if voice_type else 'male'
+
+        logger.info(f"voice_type: {self.voice_type}")
         
         # Базовая директория для сохранения аудиофайлов
         self.base_output_dir = output_dir
@@ -231,7 +236,7 @@ class EnhancedSpeechGenerator:
             logger.warning("Нет интернет-соединения")
             return False
     
-    def load_json_data(self, json_file_path: Optional[str] = None) -> Dict:
+    def load_json_data(self) -> Dict:
         """
         Загрузка данных из JSON файла
         
@@ -241,8 +246,6 @@ class EnhancedSpeechGenerator:
         Returns:
             dict: Загруженные данные
         """
-        if json_file_path:
-            self.json_file_path = json_file_path
         
         if not self.json_file_path or not os.path.exists(self.json_file_path):
             raise FileNotFoundError(f"JSON файл не найден: {self.json_file_path}")
@@ -303,7 +306,6 @@ class EnhancedSpeechGenerator:
             import asyncio
             
             # Выбираем голос
-            voice_type = settings.get('voice_type', 'female')
             voice = settings.get('voice_name')
             
             if not voice:
@@ -312,7 +314,7 @@ class EnhancedSpeechGenerator:
                     'en': 'en-US-AriaNeural',
                     'ru': 'ru-RU-SvetlanaNeural'
                 }
-                voice = self.get_voice_by_preference(lang, voice_type) # voices.get(lang, 'en-US-AriaNeural')
+                voice = self.get_voice_by_preference(lang, self.voice_type) # voices.get(lang, 'en-US-AriaNeural')
 
 
             rate = settings.get('rate', '+0%')
@@ -335,15 +337,13 @@ class EnhancedSpeechGenerator:
             logger.error(f"Ошибка Edge-TTS: {e}")
             return None
     
-    def generate_audio(self, phrase: str, phrase_type: str = 'target', 
-                      category: Optional[str] = None) -> Optional[Dict]:
+    def generate_audio(self, phrase: str, phrase_type: str = 'target') -> Optional[Dict]:
         """
         Генерация аудиофайла
         
         Args:
             phrase: Текст фразы
             phrase_type: Тип фразы ('target' или 'native')
-            category: Категория фразы (для создания подпапки)
         
         Returns:
             dict: Информация о сгенерированном файле
@@ -354,7 +354,7 @@ class EnhancedSpeechGenerator:
             return None
         
         # Нормализуем фразу
-        clean_phrase = ' '.join(phrase.strip().split())
+        clean_phrase = re.sub(r'\([^()]*\)|\[[^\[\]]*\]', '', ' '.join(phrase.strip().split())).strip()
         
         # Генерация имени файла
         filename = self._generate_filename(clean_phrase, phrase_type)
@@ -362,9 +362,14 @@ class EnhancedSpeechGenerator:
         # Получаем код языка
         lang_code = self.language_map.get(phrase_type, 'en')
         
+        # Настройки
+        settings = {
+            'rate': '+0%'
+        }
+        
         # Определение директории для сохранения
         # Создаем подпапку с именем языка
-        save_dir = Path(self.base_output_dir) / lang_code
+        save_dir = Path(self.base_output_dir) / self.voice_type / lang_code
         
         save_dir.mkdir(parents=True, exist_ok=True)
         
@@ -377,7 +382,6 @@ class EnhancedSpeechGenerator:
             return {
                 'phrase': clean_phrase,
                 'phrase_type': phrase_type,
-                'category': category,
                 'filename': filename,
                 'filepath': str(filepath),
                 'file_size': filepath.stat().st_size,
@@ -387,12 +391,6 @@ class EnhancedSpeechGenerator:
         
         # Получаем язык
         lang = self.language_map.get(phrase_type, 'en')
-        
-        # Настройки
-        settings = {
-            'voice_type': 'female',
-            'rate': '+0%'
-        }
         
         logger.info(f"Генерация: '{clean_phrase[:60]}...' ({'Edge-TTS' if self.use_edge_tts else 'gTTS'})")
         
@@ -425,7 +423,6 @@ class EnhancedSpeechGenerator:
                 return {
                     'phrase': clean_phrase,
                     'phrase_type': phrase_type,
-                    'category': category,
                     'filename': filename,
                     'filepath': str(filepath),
                     'file_size': filepath.stat().st_size,
@@ -436,10 +433,10 @@ class EnhancedSpeechGenerator:
         logger.error(f"Ошибка генерации для: '{clean_phrase[:30]}...'")
         return None
     
-    def generate_all_from_json(self, json_file_path: Optional[str] = None) -> Dict:
+    def generate_all_from_json(self) -> Dict:
         """Генерация всех аудиофайлов из JSON"""
         # Загружаем данные
-        data = self.load_json_data(json_file_path)
+        data = self.load_json_data()
         
         if not data:
             return {"error": "Нет данных для обработки"}
@@ -487,15 +484,14 @@ class EnhancedSpeechGenerator:
                     logger.info(f"  Фраза #{i} (EN): '{target_phrase[:50]}...'")
                     target_result = self.generate_audio(
                         target_phrase, 
-                        'target', 
-                        category
+                        'target'
                     )
                     
                     if target_result:
                         if target_result.get('already_exists'):
                             results['languages']['en']['existing'] += 1
                             results['existing_files'] += 1
-                            logger.info(f"    ✓ Файл уже существует")
+                            #logger.info(f"    ✓ Файл уже существует")
                         else:
                             results['languages']['en']['files'] += 1
                             results['generated_files'] += 1
@@ -505,20 +501,19 @@ class EnhancedSpeechGenerator:
                         results['errors'] += 1
                         logger.info(f"    ✗ Ошибка создания файла")
                 
-                # Генерация русской версии (native)
+                # Генерация версии (native)
                 if native_phrase:
                     logger.info(f"  Фраза #{i} (RU): '{native_phrase[:50]}...'")
                     native_result = self.generate_audio(
                         native_phrase, 
-                        'native', 
-                        category
+                        'native'
                     )
                     
                     if native_result:
                         if native_result.get('already_exists'):
                             results['languages']['ru']['existing'] += 1
                             results['existing_files'] += 1
-                            logger.info(f"    ✓ Файл уже существует")
+                            #logger.info(f"    ✓ Файл уже существует")
                         else:
                             results['languages']['ru']['files'] += 1
                             results['generated_files'] += 1
@@ -535,6 +530,7 @@ class EnhancedSpeechGenerator:
         logger.info("ИТОГИ:")
         logger.info(f"{'='*60}")
         logger.info(f"Движок: {results['engine']}")
+        logger.info(f"Гендер: {self.voice_type}")
         logger.info(f"Категорий: {results['total_categories']}")
         logger.info(f"Фраз: {results['total_phrases']}")
         logger.info(f"Новых файлов: {results['generated_files']}")
@@ -562,6 +558,7 @@ def main():
     parser.add_argument('--use-gtts', action='store_true',
                        help='Использовать gTTS вместо Edge-TTS')
     parser.add_argument('--voice', help='Имя конкретного голоса для Edge-TTS')
+    parser.add_argument('--voice-type', default='female', help='male or female')
     
     args = parser.parse_args()
     
@@ -570,6 +567,7 @@ def main():
         json_file_path=args.json_file,
         use_edge_tts=not args.use_gtts,  # Если указан --use-gtts, то не использовать Edge-TTS
         voice_name=args.voice,
+        voice_type=args.voice_type,
         output_dir=args.output_dir
     )
     

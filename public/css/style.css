@@ -166,8 +166,12 @@
         height: calc(100vh - 60px);
     }
 
-    .container > div {
-        width: 50%;
+    .container > div:first-child {
+        width: 70%;
+    }
+
+    .container > div:last-child {
+        width: 30%;
     }
 
     .app-name {

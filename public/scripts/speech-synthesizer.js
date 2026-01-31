@@ -83,10 +83,19 @@ class SpeechSynthesizer {
     hash(phrase) {
         if (!phrase) return '';
 
+        const normalizedPhrase = phrase.trim()
+                                   .normalize('NFC')  // или 'NFC'
+                                   .split(/\s+/)
+                                   .join(' ')
+                                   .toLowerCase();
+    
+        //const words = CryptoJS.enc.Utf8.parse(normalizedPhrase);
+        return CryptoJS.MD5(normalizedPhrase).toString();
+/*
         return CryptoJS.MD5(phrase.trim()
                                 .split(/\s+/)
                                 .join(' ')
-                                .toLowerCase()).toString();
+                                .toLowerCase()).toString();*/
     }
 
     getBaseUrl(genderVoice = 'male') {
@@ -208,6 +217,8 @@ class SpeechSynthesizer {
     async smartSpeak(phraseObj, phraseType, category = null, speed = 1.0, genderVoice = 'male') {
         const cleanText = phraseObj.CleanText(phraseType);
         const language = phraseObj.Language(phraseType);
+
+        tracer.log(`cleanText: ${cleanText}`);
         
         // Проверяем, занят ли плеер
         if (this.state.isBusy) {
