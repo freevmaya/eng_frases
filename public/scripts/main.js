@@ -1201,3 +1201,54 @@ const LanguageMap = {
   "ur": "ur-PK",
   "bn": "bn-BD"
 }
+
+
+//'голос[,а,ов]'
+function strEnum(number, pattern, lang = 'ru', show_number = true) {
+    // Парсим паттерн
+    const match = pattern.match(/^([^\[]+)\[([^\]]+)\]$/);
+    if (!match) {
+        // Если паттерн не соответствует формату, возвращаем как есть
+        return `${number} ${pattern}`;
+    }
+    
+    const base = match[1];
+    const forms = match[2].split(',');
+
+    const leftpart = show_number ? `${number} `: '';
+    
+    // Для русского языка
+    if (lang === 'ru') {
+        const num = Math.abs(Number(number));
+        
+        if (num % 10 === 1 && num % 100 !== 11) {
+            return `${leftpart}${base}${forms[0]}`;
+        } else if (num % 10 >= 2 && num % 10 <= 4 && (num % 100 < 10 || num % 100 >= 20)) {
+            return `${leftpart}${base}${forms[1]}`;
+        } else {
+            return `${leftpart}${base}${forms[2]}`;
+        }
+    }
+    // Для английского (простая форма - добавляем 's' для множественного числа)
+    else if (lang === 'en') {
+        const num = Math.abs(Number(number));
+        return num === 1 
+            ? `${leftpart}${base}${forms[0]}` 
+            : `${leftpart}${base}${forms[2] || forms[0] + 's'}`;
+    }
+    // Для других языков можно добавить свои правила
+    else {
+        return `${leftpart}${base}`;
+    }
+}
+
+$.fn.numeral = function (show_number = true) {
+
+    let captionCtrl = this.parent().find('.numeral-target');
+    let pattern = captionCtrl.data('pattern');
+
+
+    this.on('change', (val)=>{
+        captionCtrl.text(strEnum(this.val(), pattern, 'ru', show_number));
+    });
+}

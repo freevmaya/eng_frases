@@ -94,14 +94,14 @@
                             <option value="20">20</option>
                         </select>
                         <span>фраз по</span>
-                        <select class="form-select bg-dark text-light border-secondary" id="repeatCount">
+                        <select class="form-select bg-dark text-light border-secondary numeral-source" id="repeatCount">
                             <option value="0">0</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
                             <option value="4">4</option>
                         </select>
-                        <span>раз</span>
+                        <span data-pattern="раз[у,a,]" class="numeral-target">раз</span>
                     </div>
                 </div>
 
@@ -242,6 +242,8 @@
         Object.assign(SPEECH_CONFIG, <?=Page::$request['SPEECH_CONFIG']?>);
     <?}?>
     var phrasesData = <?=json_encode(PhrasesModel::getPhrasesAsJsonWithDifficulty(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);?>;
+
+    $('.numeral-source').numeral(false);
 
     function showAdvices() {
         appAlert([
