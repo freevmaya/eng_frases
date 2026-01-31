@@ -506,6 +506,8 @@ $(document).ready(function() {
         
         updateControls();
         playCurrentPhrase();
+
+        $(window).trigger("playback", 'start');
     }
 
     // Переключить паузу
@@ -518,8 +520,10 @@ $(document).ready(function() {
         if (stateManager.isPaused) {
             clearTimeout(state.timeoutId);
             clearInterval(state.progressInterval);
+            $(window).trigger("playback", 'stop');
         } else {
             playCurrentPhrase();
+            $(window).trigger("playback", 'start');
         }
         
         updateControls();

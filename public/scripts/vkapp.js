@@ -22,8 +22,6 @@ class VKApp {
 				
 			}).bind(this));
 
-		$(window).on('apply_settings', this.onApplySettings.bind(this));
-
 		vkBridge.send('VKWebAppCheckNativeAds', {
 			ad_format: 'reward' /* Тип рекламы */ 
 		})
@@ -33,6 +31,13 @@ class VKApp {
 			}   
 	  	})
 	  	.catch((error) => { tracer.log(error); });
+
+	  	initListeners();
+	}
+
+	initListeners() {
+		$(window).on('apply_settings', this.onApplySettings.bind(this));
+		$(window).on('playback', this.onPlayback.bind(this));
 	}
 
 	showAd() {
@@ -47,8 +52,25 @@ class VKApp {
 		.catch((error) => { tracer.log(error); });
 	}
 
+	onPlayback(e, data) {
+		if (data == 'start')
+			this.turnOffVKPlayer();
+	}
+
 	onApplySettings(e) {
 		if (this._haveAd)
 			this.showAd();
+	}
+
+	turnOffVKPlayer() {
+		if (window.vkBridge) {
+		    // Приостановить музыку ВК
+		    vkBridge.send('VKWebAppAudioPause');
+		    /*
+		    // Или выключить звук
+		    vkBridge.send('VKWebAppAudioSetVolume', {
+		        volume: 0 // 0-100
+		    });*/
+		}
 	}
 }
