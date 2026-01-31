@@ -236,6 +236,10 @@
     }
 }
 
+.form-range {
+    height: auto !important;
+}
+
 /* Range Slider Customization */
 .form-range::-webkit-slider-thumb {
     background-color: var(--primary);
@@ -246,6 +250,19 @@
     background-color: var(--primary);
     box-shadow: 0 0 10px rgba(13, 110, 253, 0.5);
 }
+
+.form-range::-webkit-slider-runnable-track {
+  background-color: var(--bs-heading-color)
+}
+
+.form-range::-webkit-slider-thumb {
+  background: var(--primary);
+  border: 2px solid var(--light);
+  box-shadow: 0 2px 4px back;
+  height: 30px;
+  margin-top: -11px;
+}
+
 
 .modal-fullscreen {
     width: max(50vw, min(100%, 400px));
