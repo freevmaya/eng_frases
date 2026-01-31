@@ -167,11 +167,11 @@
     }
 
     .container > div:first-child {
-        width: 70%;
+        width: 60%;
     }
 
     .container > div:last-child {
-        width: 30%;
+        width: 40%;
     }
 
     .app-name {
