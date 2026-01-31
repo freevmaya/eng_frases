@@ -176,7 +176,7 @@
                         </div>
                     </div>
 
-                    <div class="mb-2">
+                    <div>
                         <span id="phraseType">Past Simple (активный)</span>
                     </div>
 
