@@ -64,9 +64,9 @@ class VKApp {
 
 	turnOffVKPlayer() {
 		if (window.vkBridge) {
+		    /*
 		    // Приостановить музыку ВК
 		    vkBridge.send('VKWebAppAudioPause');
-		    /*
 		    // Или выключить звук
 		    vkBridge.send('VKWebAppAudioSetVolume', {
 		        volume: 0 // 0-100
