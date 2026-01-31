@@ -201,6 +201,12 @@
     height: min(50vw, 8em);
 }
 
+.phrase-text, .phrase-hint {
+    text-align: center; 
+    hyphens: auto;
+    word-break: break-word;
+}
+
 .phrase-text {
     font-size: 1.6rem;
 } 

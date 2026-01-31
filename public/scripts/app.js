@@ -348,6 +348,10 @@ $(document).ready(function() {
         $(window).on('select_phrase_list', (e, type)=>{
             setCurrentType(type);
         });
+
+        $(window).on('resize', function() {
+            updateSizePlayerTexts();
+        });
     }
 
     // Открытие модального окна настроек
@@ -715,14 +719,27 @@ $(document).ready(function() {
         state.timeoutId = setTimeout(callback, calcTime(phraseDirect));
     }
 
-    function setText(elem, text, k = 1, maxSize = 30, minSize = 16) {
-        if (elem.text() != text) {
-            let width = $('.app-display .card-body').innerWidth();
+    function updateSizeText(elem, k = 1, maxSize = 30, minSize = 16) {
+        let text = elem.text();
+        let width = elem.closest('.phrase-container').innerWidth();
 
-            let size = Math.round(Math.max(Math.min(1 / text.length * width * 2.2, maxSize * k), minSize * k));
+        let wk = 2.376;
+        //let wk = 2.5;
+
+        let size = Math.max(Math.min(1 / text.length * width * wk, maxSize * k), minSize * k);
+        elem.css('font-size', size);
+    }
+
+    function setText(elem, text, k = 1) {
+        if (elem.text() != text) {
             elem.text(text);
-            elem.css('font-size', size);
+            updateSizeText(elem, k);
         }
+    }
+
+    function updateSizePlayerTexts() {
+        updateSizeText(elements.phraseText, 1);
+        updateSizeText(elements.phraseHint, 0.7);
     }
 
     function updatePhrases(text, hint) {
