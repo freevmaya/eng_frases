@@ -145,7 +145,8 @@ $(document).ready(function() {
 
     var appData = {
         currentPhraseList: [],
-        currentPhrase: null
+        currentPhrase: null,
+        playStart: false
     };
 
     // DOM элементы
@@ -167,6 +168,7 @@ $(document).ready(function() {
         tvScreenToggle: $('#tvScreenToggle'),
         repeatLength: $('#repeatLength'),
         repeatCount: $('#repeatCount'),
+        currentRepeat: $('#currentRepeat'),
         genderVoice: $('#genderVoice'),
         recognizeToggle: $('#recognizeToggle')
     };
@@ -270,12 +272,32 @@ $(document).ready(function() {
         }
         
         // Восстанавливаем индекс из сохранённого состояния
-        if (resetIndex || (state.currentPhraseIndex >= appData.currentPhraseList.length)) {
-            let index = state.progress[state.currentListType] ? state.progress[state.currentListType] : 0;
-            setCurrentPhraseIndex(index);
+        setCurrentPhraseIndex(getProgressIndex());
+    }
+
+    function setProgress(curentRepeat, a_index) {
+        let newParams = {
+            currentRepeat: curentRepeat,
+            index: a_index
         }
         
-        appData.currentPhrase = appData.currentPhraseList[state.currentPhraseIndex];
+        state.progress[state.currentListType] = $.extend(state.progress[state.currentListType], newParams);
+        stateManager.updatePlaybackState({
+            progress: state.progress
+        });
+        return 0;
+    }
+
+    function getProgressIndex() {
+        if (typeof state.progress[state.currentListType] == 'object')
+            return state.progress[state.currentListType].index;
+        return 0;
+    }
+
+    function getCurentRepeat() {
+        if (typeof state.progress[state.currentListType] == 'object')
+            return state.progress[state.currentListType].currentRepeat;
+        return 0;
     }
 
     // Функция перемешивания с seed
@@ -340,7 +362,9 @@ $(document).ready(function() {
             if (appData.currentPhraseList) {
                 const rect = e.target.getBoundingClientRect();
                 const clickX = e.clientX - rect.left;
-                setCurrentPhraseIndex(Math.round(appData.currentPhraseList.length * clickX / rect.width));
+                const index = Math.round(appData.currentPhraseList.length * clickX / rect.width);
+                setProgress(0, index);
+                setCurrentPhraseIndex(index);
                 if (stateManager.isPlaying && !stateManager.isPaused)
                     playCurrentPhrase();
             }
@@ -396,6 +420,9 @@ $(document).ready(function() {
             repeatCount: elements.repeatCount.val(),
             genderVoice: elements.genderVoice.val()
         };
+
+        if (newSettings.repeatCount < getCurentRepeat())
+            setProgress(0, getProgressIndex());
         
         // Проверяем, изменился ли список фраз
         const listChanged = stateManager.hasListChanged(
@@ -439,8 +466,7 @@ $(document).ready(function() {
             state.currentListType = type;
 
             speechSynthesizer.stop();
-            if (recognition)
-                recognition.stop()
+            stopRecognition();
 
             // Сохраняем ключ текущего списка
             const listKey = stateManager.generateListKey(
@@ -456,7 +482,7 @@ $(document).ready(function() {
                 currentPhraseIndex: state.currentPhraseIndex,
                 showingFirstLang: state.showingFirstLang,
                 currentListType: state.currentListType,
-                order: state.order
+                order: state.order,
             });  
             updateDisplay();
             $(window).trigger('selected_list_type', state.currentListType);
@@ -480,11 +506,6 @@ $(document).ready(function() {
         else tvScreen.hide();
     }
 
-    function stopPlay() {
-        setCurrentPhraseIndex(0);
-        stopPlayback();
-    }
-
     function togglePlay(e) {
         if (stateManager.isPaused || stateManager.isPlaying) {
             togglePause();
@@ -500,9 +521,10 @@ $(document).ready(function() {
             return;
         }
         
-        stateManager.isPlaying = true;
-        stateManager.isPaused = false;
-        state.showingFirstLang = true;
+        stateManager.isPlaying  = true;
+        stateManager.isPaused   = false;
+        state.showingFirstLang  = true;
+        appData.missOne       = true;
         
         // Сохраняем состояние
         stateManager.updatePlaybackState({
@@ -527,6 +549,7 @@ $(document).ready(function() {
             clearInterval(state.progressInterval);
             $(window).trigger("playback", 'stop');
         } else {
+            appData.missOne = true;
             playCurrentPhrase();
             $(window).trigger("playback", 'start');
         }
@@ -569,10 +592,10 @@ $(document).ready(function() {
         if (state.currentPhraseIndex != index) {
 
             setCurrentPhraseIndex(Math.max(0, Math.min(appData.currentPhraseList.length - 1, index)), false);
-            appData.currentPhrase = appData.currentPhraseList[state.currentPhraseIndex];      
+            appData.missOne = true;
 
-            if (isBothDirectionsMode())        
-                state.showingFirstLang = true;
+            if ((state.repeatCount > 0) && (state.currentPhraseIndex % state.repeatLength == 0))
+                setProgress(0, state.currentPhraseIndex);
 
             updateDisplay();
             debouncePage(()=>{  
@@ -633,27 +656,39 @@ $(document).ready(function() {
                 appData.currentPhrase[lang].length * AppConst.charTime[lang];
     }
 
-    function setCurrentPhraseIndex(index, useRepeat = true) {
-        let newIndex = index < 0 ? appData.currentPhraseList.length - index : index % appData.currentPhraseList.length;
+    function incCurrentPhraseIndex() {
+        let newIndex = (state.currentPhraseIndex + 1) % appData.currentPhraseList.length;
 
-        if (useRepeat && (state.repeatCount > 0) && (newIndex % state.repeatLength == 0)) {
-            state.currentRepeat++;
-            if (state.currentRepeat > state.repeatCount)
-                state.currentRepeat = 0;
-            else newIndex = Math.max(0, newIndex - state.repeatLength);
+        let newRepeat = getCurentRepeat();
+        if ((state.repeatCount > 0) && (newIndex % state.repeatLength == 0)) {
+            if (!appData.missOne) {
 
-            tracer.log(`currentRepeat: ${state.currentRepeat}, newIndex: ${newIndex}`);
+                newRepeat += 1;
+                if (newRepeat > state.repeatCount)
+                    newRepeat = 0;
+                else newIndex = Math.max(0, newIndex - state.repeatLength);
+
+                tracer.log(`newRepeat: ${newIndex}, newIndex: ${newIndex}`);
+            }
         }
+
+        appData.missOne = false;
+        setProgress(newRepeat, newIndex);
+        setCurrentPhraseIndex(newIndex);
+    }
+
+    function setCurrentPhraseIndex(index) {
+        let newIndex = Math.max(0, Math.min(index, appData.currentPhraseList.length - 1));
 
         state.currentPhraseIndex = newIndex;
         state.showingFirstLang = true;
-        state.progress[state.currentListType] = state.currentPhraseIndex;
+        appData.currentPhrase = appData.currentPhraseList[state.currentPhraseIndex];
 
         stateManager.updatePlaybackState({
-            currentPhraseIndex: state.currentPhraseIndex,
-            progress: state.progress
+            currentPhraseIndex: state.currentPhraseIndex
         });
 
+        setProgress(getCurentRepeat(), newIndex);
         refreshProgressBar();
         updateDisplay();
 
@@ -674,7 +709,9 @@ $(document).ready(function() {
                     appData.currentPhrase.type, state.speed, state.genderVoice)
                 .then((result)=>{
 
-                    startCurrentRecognition(secondLang);
+                    if (secondLang == 'target')
+                        startCurrentRecognition(secondLang);
+
                     speakPause(() => {
                         state.showingFirstLang = false;
                         playCurrentPhrase();
@@ -687,9 +724,11 @@ $(document).ready(function() {
                     appData.currentPhrase.type, state.speed, state.genderVoice)
                 .then((result)=>{
 
-                    startCurrentRecognition(firstLang);
+                    if (firstLang == 'target')
+                        startCurrentRecognition(firstLang);
+                    
                     speakPause(() => {
-                        setCurrentPhraseIndex(state.currentPhraseIndex + 1);
+                        incCurrentPhraseIndex();
                         playCurrentPhrase();
                     }, secondLang);
                 });
@@ -708,7 +747,7 @@ $(document).ready(function() {
 
                 startCurrentRecognition('target');                
                 speakPause(() => {
-                    setCurrentPhraseIndex(state.currentPhraseIndex + 1);
+                    incCurrentPhraseIndex();
                     playCurrentPhrase();
                 }, speakLang);
             });
@@ -802,10 +841,6 @@ $(document).ready(function() {
             return;
         }
         
-        if (!appData.currentPhrase) {
-            appData.currentPhrase = appData.currentPhraseList[0];
-        }
-        
         if (appData.currentPhrase) {
 
             let showLang = state.direction === 'target-native' ? 'target' : 'native';
@@ -819,8 +854,11 @@ $(document).ready(function() {
 
             showPhrase(showLang);
             
+            let currentRepeat = getCurentRepeat();
             elements.phraseCounter.text(`${state.currentPhraseIndex + 1} / ${appData.currentPhraseList.length}`);
             elements.phraseType.text(appData.currentPhrase.FormatType());
+            elements.currentRepeat.html((state.repeatCount > 0) && (currentRepeat > 0) ? 
+                ('<i class="bi bi-repeat"></i> ' + currentRepeat + '-й раз') : '');
         }
 
         refreshProgressBar();

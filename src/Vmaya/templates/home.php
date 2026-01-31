@@ -188,7 +188,8 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="text-start">
                             <div class="text-muted small">Прогресс</div>
-                            <div class="h6" id="phraseCounter">0 / 0</div>
+                            <div id="phraseCounter">0 / 0</div>
+                            <div id="currentRepeat" class="text-muted small" style="position:absolute;"></div>
                         </div>
                         <div>
                             <span id="payerMessage"></span>
