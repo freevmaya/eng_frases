@@ -271,7 +271,8 @@ $(document).ready(function() {
         
         // Восстанавливаем индекс из сохранённого состояния
         if (resetIndex || (state.currentPhraseIndex >= appData.currentPhraseList.length)) {
-            setCurrentPhraseIndex(0);
+            let index = state.progress[state.currentListType] ? state.progress[state.currentListType] : 0;
+            setCurrentPhraseIndex(index);
         }
         
         appData.currentPhrase = appData.currentPhraseList[state.currentPhraseIndex];
@@ -646,9 +647,11 @@ $(document).ready(function() {
 
         state.currentPhraseIndex = newIndex;
         state.showingFirstLang = true;
+        state.progress[state.currentListType] = state.currentPhraseIndex;
 
         stateManager.updatePlaybackState({
-            currentPhraseIndex: state.currentPhraseIndex
+            currentPhraseIndex: state.currentPhraseIndex,
+            progress: state.progress
         });
 
         refreshProgressBar();
@@ -815,10 +818,6 @@ $(document).ready(function() {
             }
 
             showPhrase(showLang);
-            /*
-            elements.phraseText.removeClass('text-info');
-            elements.phraseHint.addClass('text-info');
-            */
             
             elements.phraseCounter.text(`${state.currentPhraseIndex + 1} / ${appData.currentPhraseList.length}`);
             elements.phraseType.text(appData.currentPhrase.FormatType());

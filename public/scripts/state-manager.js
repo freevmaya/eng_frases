@@ -14,6 +14,7 @@ class StateManager {
             direction: 'native-target-both',
             order: 'sequential',
             currentListType: 'Present simple',
+            progress: {},
             
             // Состояние воспроизведения
             currentPhraseIndex: 0,
