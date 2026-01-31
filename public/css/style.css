@@ -273,8 +273,13 @@
     color: white;
 }
 
+.phrase-type-container {
+    margin-top: 5px;
+}
+
 #phraseType {
     color: #9eaf10;
+    margin-top: 2px;
 }
 
 /* Responsive Adjustments */

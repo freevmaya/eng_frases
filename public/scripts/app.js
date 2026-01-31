@@ -719,11 +719,11 @@ $(document).ready(function() {
         state.timeoutId = setTimeout(callback, calcTime(phraseDirect));
     }
 
-    function updateSizeText(elem, k = 1, maxSize = 30, minSize = 16) {
+    function updateSizeText(elem, k = 1, maxSize = 36, minSize = 18) {
         let text = elem.text();
         let width = elem.closest('.phrase-container').innerWidth();
 
-        let wk = 2.376;
+        let wk = 2.37;
         //let wk = 2.5;
 
         let size = Math.max(Math.min(1 / text.length * width * wk, maxSize * k), minSize * k);
