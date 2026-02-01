@@ -21,7 +21,7 @@ async function enableWakeLock() {
         try {
             wakeLock = await navigator.wakeLock.request('screen');
         } catch (err) {
-            tracer.error('Wake Lock ошибка:', err);
+            console.error('Wake Lock ошибка:', err);
         }
     } else tracer.log("navigator not have wakeLock");
 
