@@ -99,7 +99,10 @@ class StateManager {
                         this.state = { ...this.DEFAULT_STATE, ...data.state };
                         resolve(this.state);
                     }
-                    else returnDefault();
+                    else {
+                        this.isServer = data == 0;
+                        returnDefault();
+                    }
                 }).catch(()=>{
                     returnDefault();                    
                 });
