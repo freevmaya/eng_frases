@@ -483,7 +483,6 @@ $(document).ready(function() {
                 state.order, 
                 phrasesData
             );
-            loadPhraseList(true);
 
             stateManager.updateSettings(state);
             stateManager.setCurrentListData(listKey);
@@ -492,8 +491,9 @@ $(document).ready(function() {
                 showingFirstLang: state.showingFirstLang,
                 currentListType: state.currentListType,
                 order: state.order,
-            });  
-            updateDisplay();
+            });
+            loadPhraseList(true);
+            
             $(window).trigger('selected_list_type', state.currentListType);
 
             if (stateManager.isPlaying) {
