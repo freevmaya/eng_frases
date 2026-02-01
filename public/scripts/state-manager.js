@@ -36,7 +36,7 @@ class StateManager {
         this.state = { ...this.DEFAULT_STATE };
         this.try_saveStateToServer = debounce(()=>{
             this.saveStateServer();
-        }, 2000);
+        }, 1000);
 
         ['beforeunload', 'unload', 'pagehide', 'visibilitychange', 'blur'].forEach((item)=>{
             window.addEventListener(item, ()=>{
