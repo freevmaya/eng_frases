@@ -1,6 +1,7 @@
 <?php
 	$v = SCRIPTS_VERSION;
 	$userModel = new UserModel();
+	$is_developer = DEV || (DEVUSER == Page::getSession('user_id'));
 ?>
 <!DOCTYPE html>
 <html lang="ru" data-bs-theme="dark">
@@ -73,8 +74,17 @@
     <?}?>
 
 	<script type="text/javascript">
-	<?
-	if (DEV) {
+	<?if ($is_developer) {?>
+		var tracer = {
+			log(...arguments) {
+				console.log(...arguments);
+			}
+		}
+	<?} else {?>
+		var tracer = {log(...arguments) {}};
+	<?}?>
+
+	<?if (DEV) {
 
 		//Инициализация пользователя VK. Только при разработке!
 		$source = 'vk';
@@ -94,14 +104,6 @@
 		setTimeout(()=>{
 			userApp.init(user_data.id, '<?=$source?>', user_data);
 		}, 1000);
-
-		var tracer = {
-			log(...arguments) {
-				console.log(...arguments);
-			}
-		}
-	<?} else {?>
-		var tracer = {log(...arguments) {}};
 	<?}?>
 	</script>
 
@@ -147,7 +149,7 @@
         </div>
     </div>
 
-	<?if (DEV || (DEVUSER == Page::getSession('user_id'))) {?>
+	<?if ($is_developer) {?>
 	<!-- Eruda is console for mobile browsers-->
 	<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 	<script>eruda.init();</script>
