@@ -220,6 +220,17 @@ $(document).ready(function() {
         }
 
         $(window).trigger('phrases_loaded');
+
+        //setTimeout(randomTest, 2000);
+    }
+
+    function randomTest() {
+        let keys = Object.keys(phrasesData);
+        setTimeout(()=>{
+            let index = Math.round(Math.random() * (keys.length - 1));
+            setCurrentType(keys[index]);
+            randomTest();
+        }, 10 + Math.round(Math.random() * 100));
     }
 
     function loadList() {
@@ -471,7 +482,10 @@ $(document).ready(function() {
 
     function setCurrentType(type) {
 
-        if (state.currentListType != type) {
+        let keys = Object.keys(phrasesData);
+        if ((state.currentListType != type) && keys.includes(type)) {
+
+
             state.currentListType = type;
 
             speechSynthesizer.stop();
@@ -493,7 +507,7 @@ $(document).ready(function() {
                 order: state.order,
             });
             loadPhraseList(true);
-            
+
             $(window).trigger('selected_list_type', state.currentListType);
 
             if (stateManager.isPlaying) {
