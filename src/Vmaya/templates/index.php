@@ -1,7 +1,6 @@
 <?php
 	$v = SCRIPTS_VERSION;
 	$userModel = new UserModel();
-	$is_developer = DEV || (DEVUSER == Page::getSession('user_id', 0));
 ?>
 <!DOCTYPE html>
 <html lang="ru" data-bs-theme="dark">
@@ -12,11 +11,6 @@
 
     <!-- PWA Support -->
     <link rel="manifest" href="manifest.json">
-
-    <script type="text/javascript">
-    	let user_id = <?=Page::getSession('user_id', 0)?>;
-    	let admin_id = <?=DEVUSER?>;
-    </script>
     
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -78,6 +72,8 @@
 		</script>
     <?}?>
 
+	<?$is_developer = DEV || (DEVUSER == Page::getSession('user_id', 0));?>
+	
 	<script type="text/javascript">
 	<?if ($is_developer) {?>
 		var tracer = {
