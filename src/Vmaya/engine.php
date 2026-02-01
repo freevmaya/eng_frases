@@ -9,7 +9,7 @@
 	define('TEMPLATES_PATH', BASEPATH.'/src/Vmaya/templates/');
 	define("CHARSET", "utf-8");
 	define("DEFAULTPAGE", "home");
-	define("SCRIPTS_VERSION", 134);
+	define("SCRIPTS_VERSION", 135);
 	
 	$lv = SCRIPTS_VERSION % 1000;
 	$mv = floor(SCRIPTS_VERSION / 1000);

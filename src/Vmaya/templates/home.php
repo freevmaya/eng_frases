@@ -88,6 +88,7 @@
                     </h6>
                     <div class="btn-group repeat-block" role="group">
                         <select class="form-select bg-dark text-light border-secondary" id="repeatLength">
+                            <option value="1">1</option>
                             <option value="5">5</option>
                             <option value="10">10</option>
                             <option value="15">15</option>

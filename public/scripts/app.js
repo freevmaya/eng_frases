@@ -533,7 +533,7 @@ $(document).ready(function() {
         stateManager.isPlaying  = true;
         stateManager.isPaused   = false;
         state.showingFirstLang  = true;
-        appData.missOne       = true;
+        appData.missOne         = state.repeatLength > 1;
         
         // Сохраняем состояние
         stateManager.updatePlaybackState({
@@ -558,7 +558,7 @@ $(document).ready(function() {
             clearInterval(state.progressInterval);
             $(window).trigger("playback", 'stop');
         } else {
-            appData.missOne = true;
+            appData.missOne  = state.repeatLength > 1;
             playCurrentPhrase();
             $(window).trigger("playback", 'start');
         }
