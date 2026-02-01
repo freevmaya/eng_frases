@@ -25,10 +25,8 @@ async function enableWakeLock() {
         }
     } else tracer.log("navigator not have wakeLock");
 
-    /*
-    if (wakeLock || _vkWakeLockTimer)
+    if (wakeLock)
         tracer.log('Wake Lock активирован');
-        */
 }
 
 async function disableWakeLock() {
