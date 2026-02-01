@@ -126,7 +126,7 @@ class Ajax extends Page {
 		if ($user_id = Page::getSession('user_id')) {
     		return (new UserStateModel())->Update([
     			'user_id'=>$user_id,
-    			'data'=>json_encode($data, JSON_FLAGS)
+    			'data' => json_encode($data, JSON_FLAGS)
     		], 'user_id');
 		}
 		return 0;

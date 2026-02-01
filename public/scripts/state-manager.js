@@ -44,13 +44,16 @@ class StateManager {
     }
 
     saveImmediately() {
+        /*
         Ajax({
             action: 'setUserState',
             data: this.state
         })
         .catch((e)=>{
             localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
-        });
+        });*/
+
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
     }
     
     // Загрузка состояния из localStorage
@@ -63,7 +66,7 @@ class StateManager {
                 if (saved)
                     saved = JSON.parse(saved);
 
-                this.state = { ...this.DEFAULT_STATE };
+                this.state = { ...this.DEFAULT_STATE, ...saved };
 
                 //Удаляем со старой версией
                 if (this.state.currentPhraseList)
@@ -73,6 +76,9 @@ class StateManager {
             }
 
             try {
+
+                returnDefault();
+                /*
                 Ajax({
                     action: 'getUserState'
                 }).then((data)=>{
@@ -83,7 +89,7 @@ class StateManager {
                     else returnDefault();
                 }).catch(()=>{
                     returnDefault();                    
-                });
+                });*/
             } catch (error) {
                 console.error('Ошибка загрузки состояния:', error);
                 reject(error);
@@ -93,7 +99,7 @@ class StateManager {
     
     // Сохранение состояния в localStorage
     saveState() {
-        this.saveStateToServer();
+        this.saveImmediately();
     }
     
     // Обновление настроек
