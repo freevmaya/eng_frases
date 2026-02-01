@@ -1,7 +1,7 @@
 <?php
 	$v = SCRIPTS_VERSION;
 	$userModel = new UserModel();
-	$is_developer = DEV || (DEVUSER == Page::getSession('user_id'));
+	$is_developer = DEV || (DEVUSER == intval(Page::getSession('user_id', 0)));
 ?>
 <!DOCTYPE html>
 <html lang="ru" data-bs-theme="dark">
@@ -74,6 +74,7 @@
     <?}?>
 
 	<script type="text/javascript">
+		let user_id = <?=Page::getSession('user_id', 0)?>;
 	<?if ($is_developer) {?>
 		var tracer = {
 			log(...arguments) {
