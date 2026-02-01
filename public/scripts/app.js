@@ -15,13 +15,15 @@ async function enableWakeLock() {
                 style: 'light'
             }).catch(() => {});
         }, 60000);
-    } else if ('wakeLock' in navigator) {
+    }
+
+    if ('wakeLock' in navigator) {
         try {
             wakeLock = await navigator.wakeLock.request('screen');
         } catch (err) {
             tracer.error('Wake Lock ошибка:', err);
         }
-    }
+    } else tracer.log("navigator not have wakeLock");
 
     /*
     if (wakeLock || _vkWakeLockTimer)
