@@ -51,6 +51,10 @@ class StateManager {
         });
     }
 
+    saveImmediately() {
+        this.saveState();
+    }
+
     saveStateLocale() {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
     }
