@@ -194,9 +194,9 @@ class Page {
 		$_SESSION[$name] = $value;
 	}
 
-	public static function getSession($name) {
+	public static function getSession($name, $default = null) {
 		GLOBAL $_SESSION;
-		return isset($_SESSION[$name]) ? $_SESSION[$name] : null;
+		return isset($_SESSION[$name]) ? $_SESSION[$name] : $default;
 	}
 
 	public function colorSheme($defaultValue = null) {

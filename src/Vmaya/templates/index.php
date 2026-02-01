@@ -74,7 +74,7 @@
     <?}?>
 
 	<script type="text/javascript">
-		let user_id = <?=Page::getSession('user_id')?>;
+		let user_id = <?=Page::getSession('user_id', 0)?>;
 	<?if ($is_developer) {?>
 		var tracer = {
 			log(...arguments) {
