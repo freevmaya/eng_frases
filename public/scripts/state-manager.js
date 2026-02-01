@@ -3,6 +3,7 @@ class StateManager {
     constructor() {
         this.isPlaying;
         this.isPaused;
+        this.isServer = false;
 
         this.STORAGE_KEY = 'english_trainer_state';
         this.DEFAULT_STATE = {
@@ -33,14 +34,8 @@ class StateManager {
         };
         
         this.state = { ...this.DEFAULT_STATE };
-        this.saveStateToServer = debounce(()=>{
-            Ajax({
-                action: 'setUserState',
-                data: this.state
-            })
-            .catch((e)=>{
-                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
-            });
+        this.try_saveStateToServer = debounce(()=>{
+            this.saveStateServer();
         }, 2000);
 
         ['beforeunload', 'unload', 'pagehide', 'visibilitychange', 'blur'].forEach((item)=>{
@@ -53,6 +48,23 @@ class StateManager {
 
     saveImmediately() {
         this.saveState();
+    }
+
+    saveStateServer() {
+        Ajax({
+            action: 'setUserState',
+            data: this.state
+        })
+        .then((response)=>{
+            if (!response) {
+                this.isServer = false;
+                this.saveStateLocale();
+            }
+        })
+        .catch((e)=>{
+            this.isServer = false;
+            this.saveStateLocale();
+        });
     }
 
     saveStateLocale() {
@@ -79,20 +91,18 @@ class StateManager {
             }
 
             try {
-
-                returnDefault();
-                /*
                 Ajax({
                     action: 'getUserState'
                 }).then((data)=>{
-                    if (data.state) {
+                    if (data && data.state) {
+                        this.isServer = true;
                         this.state = { ...this.DEFAULT_STATE, ...data.state };
                         resolve(this.state);
                     }
                     else returnDefault();
                 }).catch(()=>{
                     returnDefault();                    
-                });*/
+                });
             } catch (error) {
                 console.error('Ошибка загрузки состояния:', error);
                 reject(error);
@@ -102,8 +112,9 @@ class StateManager {
     
     // Сохранение состояния в localStorage
     saveState() {
-        this.saveStateLocale();
-        this.saveStateToServer();
+        if (this.isServer)
+            this.try_saveStateToServer();
+        else this.saveStateLocale();
     }
     
     // Обновление настроек
