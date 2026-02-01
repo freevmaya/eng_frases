@@ -33,7 +33,7 @@ async function disableWakeLock() {
     if (wakeLock !== null) {
         await wakeLock.release();
         wakeLock = null;
-        //tracer.log('Wake Lock деактивирован');
+        tracer.log('Wake Lock деактивирован');
     }
 
     if (_vkWakeLockTimer != null) {
