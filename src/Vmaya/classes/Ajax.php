@@ -111,6 +111,27 @@ class Ajax extends Page {
 		];
 	}
 
+	protected function getUserState($data) {
+		if ($user_id = Page::getSession('user_id')) {
+    		if ($stateItem = (new UserStateModel())->getItem($user_id, 'user_id')) {
+    			return [
+    				'state' => json_decode($stateItem['data'], true)
+    			];
+    		}
+		}
+		return 0;
+	}
+
+	protected function setUserState($data) {
+		if ($user_id = Page::getSession('user_id')) {
+    		return (new UserStateModel())->Update([
+    			'user_id'=>$user_id,
+    			'data'=>json_encode($data, JSON_FLAGS)
+    		], 'user_id');
+		}
+		return 0;
+	}
+
 	protected function getUserLists($data) {
 		if ($user_id = $data['user_id']) {
     		return (new UserPhrasesModel())->getPhrasesAsJsonWithDifficulty($user_id);

@@ -133,7 +133,7 @@ def main():
     
     parser.add_argument('output_file', help='Путь к выходному JSON файлу')
     parser.add_argument('--host', default='localhost', help='Хост MySQL')
-    parser.add_argument('--database', default='phrases_db', help='Имя базы данных')
+    parser.add_argument('--database', default='eng_phrases', help='Имя базы данных')
     parser.add_argument('--user', default='root', help='Имя пользователя MySQL')
     parser.add_argument('--password', default='', help='Пароль MySQL')
     parser.add_argument('--port', type=int, default=3306, help='Порт MySQL')

@@ -33,32 +33,67 @@ class StateManager {
         };
         
         this.state = { ...this.DEFAULT_STATE };
+        this.saveStateToServer = debounce(this.saveImmediately.bind(this), 2000);
+
+        ['beforeunload', 'unload', 'pagehide', 'visibilitychange', 'blur'].forEach((item)=>{
+            window.addEventListener(item, ()=>{
+                if (document.visibilityState != 'visible')
+                    this.saveImmediately();
+            });
+        });
+    }
+
+    saveImmediately() {
+        Ajax({
+            action: 'setUserState',
+            data: this.state
+        })
+        .catch((e)=>{
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
+        });
     }
     
     // Загрузка состояния из localStorage
     loadState() {
-        try {
-            const saved = localStorage.getItem(this.STORAGE_KEY);
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                this.state = { ...this.DEFAULT_STATE, ...parsed };
-                return true;
+        return new Promise((resolve, reject)=>{
+
+            let returnDefault = ()=>{
+
+                let saved = localStorage.getItem(this.STORAGE_KEY);
+                if (saved)
+                    saved = JSON.parse(saved);
+
+                this.state = { ...this.DEFAULT_STATE };
+
+                //Удаляем со старой версией
+                if (this.state.currentPhraseList)
+                    delete(this.state.currentPhraseList);
+
+                resolve(this.state);
             }
-        } catch (error) {
-            console.error('Ошибка загрузки состояния:', error);
-        }
-        return false;
+
+            try {
+                Ajax({
+                    action: 'getUserState'
+                }).then((data)=>{
+                    if (data.state) {
+                        this.state = { ...this.DEFAULT_STATE, ...data.state };
+                        resolve(this.state);
+                    }
+                    else returnDefault();
+                }).catch(()=>{
+                    returnDefault();                    
+                });
+            } catch (error) {
+                console.error('Ошибка загрузки состояния:', error);
+                reject(error);
+            }
+        });
     }
     
     // Сохранение состояния в localStorage
     saveState() {
-        try {
-            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
-            return true;
-        } catch (error) {
-            console.error('Ошибка сохранения состояния:', error);
-            return false;
-        }
+        this.saveStateToServer();
     }
     
     // Обновление настроек

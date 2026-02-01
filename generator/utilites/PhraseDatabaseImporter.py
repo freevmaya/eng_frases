@@ -114,38 +114,38 @@ class PhraseDatabaseImporter:
     def create_tables(self):
         """Создание таблиц"""
         try:
+
             # Удаляем существующие таблицы
+            '''
             self.drop_table_if_exists('phrases')
             self.drop_table_if_exists('phrase_types')
             
             # Таблица типов фраз (phrase_types)
             create_phrase_types_table = """
-            CREATE TABLE phrase_types (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                type_name VARCHAR(255) NOT NULL UNIQUE,
-                description TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                INDEX idx_type_name (type_name)
+            CREATE TABLE `phrase_types` (
+              `id` int NOT NULL,
+              `type_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+              `order` int NOT NULL DEFAULT '0',
+              `description` text COLLATE utf8mb4_unicode_ci,
+              `is_active` tinyint(1) NOT NULL DEFAULT '1',
+              `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+              `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             """
             
             # Таблица фраз (phrases)
             create_phrases_table = """
-            CREATE TABLE phrases (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                type_id INT NOT NULL,
-                target_text TEXT NOT NULL,
-                native_text TEXT NOT NULL,
-                direction VARCHAR(10) DEFAULT 'en-ru',
-                is_active BOOLEAN DEFAULT TRUE,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                FOREIGN KEY (type_id) REFERENCES phrase_types(id) ON DELETE CASCADE,
-                INDEX idx_type_id (type_id),
-                INDEX idx_direction (direction),
-                INDEX idx_active (is_active),
-                FULLTEXT idx_text_search (target_text, native_text)
+            CREATE TABLE `phrases` (
+              `id` int NOT NULL,
+              `type_id` int NOT NULL,
+              `target_text` text COLLATE utf8mb4_unicode_ci NOT NULL,
+              `context` text COLLATE utf8mb4_unicode_ci,
+              `native_text` text COLLATE utf8mb4_unicode_ci NOT NULL,
+              `difficulty_level` tinyint NOT NULL DEFAULT '2',
+              `direction` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT 'en-ru',
+              `is_active` tinyint(1) DEFAULT '1',
+              `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+              `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             """
             
@@ -157,6 +157,7 @@ class PhraseDatabaseImporter:
             logger.info("✓ Таблица phrases создана")
             
             self.connection.commit()
+            '''
             
         except Error as e:
             logger.error(f"Ошибка создания таблиц: {e}")
@@ -176,13 +177,15 @@ class PhraseDatabaseImporter:
         try:
             # Проверяем, существует ли таблица phrase_types
             if not self.check_table_exists('phrase_types'):
-                logger.warning("Таблица phrase_types не существует. Создаем...")
-                self.create_tables()
+                logger.warning("Таблица phrase_types не существует.")
+                self.connection.rollback()
+                raise
             
             # Проверяем структуру таблицы
             if not self.check_column_exists('phrase_types', 'type_name'):
-                logger.warning("Столбец type_name не найден. Создаем таблицу заново...")
-                self.create_tables()
+                logger.error("Столбец type_name не найден!")
+                self.connection.rollback()
+                raise
             
             # Пытаемся найти существующий тип
             query = "SELECT id FROM phrase_types WHERE type_name = %s"
@@ -224,8 +227,9 @@ class PhraseDatabaseImporter:
         try:
             # Проверяем, существует ли таблица phrases
             if not self.check_table_exists('phrases'):
-                logger.warning("Таблица phrases не существует. Создаем...")
-                self.create_tables()
+                logger.warning("Таблица phrases не существует.")
+                self.connection.rollback()
+                raise
             
             # Проверяем структуру таблицы
             if not all([
@@ -233,8 +237,18 @@ class PhraseDatabaseImporter:
                 self.check_column_exists('phrases', 'native_text'),
                 self.check_column_exists('phrases', 'direction')
             ]):
-                logger.warning("Неправильная структура таблицы phrases. Создаем заново...")
-                self.create_tables()
+                logger.warning("Неправильная структура таблицы phrases.")
+                self.connection.rollback()
+                raise
+
+            # Пытаемся найти фразу
+            query = "SELECT id FROM phrases WHERE target_text = %s"
+            self.cursor.execute(query, (target_text,))
+            result = self.cursor.fetchone()
+
+            if result:
+                logger.debug(f"Фраза найдена (ID: {result[0]})")
+                return False
             
             # Вставляем фразу
             query = """
@@ -319,7 +333,7 @@ class PhraseDatabaseImporter:
                             stats['total_phrases'] += 1
                         else:
                             stats['errors'] += 1
-                            logger.error(f"  ✗ Ошибка добавления фразы #{i}")
+                            #logger.error(f"  ✗ Ошибка добавления фразы #{i}")
                     
                     logger.info(f"✓ Завершено: {len(phrases_list)} фраз обработано")
                     
@@ -534,7 +548,7 @@ def main():
         importer.connect()
         
         # Создаем таблицы
-        importer.create_tables()
+        # importer.create_tables()
         
         # Импортируем данные
         importer.import_json_file(args.json_file, clear_existing=args.clear)

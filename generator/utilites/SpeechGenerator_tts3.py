@@ -433,9 +433,13 @@ class EnhancedSpeechGenerator:
         logger.error(f"Ошибка генерации для: '{clean_phrase[:30]}...'")
         return None
     
-    def generate_all_from_json(self) -> Dict:
+    def generate_all_from_json(self, voice_type: Optional[str] = None) -> Dict:
         """Генерация всех аудиофайлов из JSON"""
         # Загружаем данные
+
+        if voice_type:
+            self.voice_type = voice_type;
+
         data = self.load_json_data()
         
         if not data:
@@ -558,7 +562,7 @@ def main():
     parser.add_argument('--use-gtts', action='store_true',
                        help='Использовать gTTS вместо Edge-TTS')
     parser.add_argument('--voice', help='Имя конкретного голоса для Edge-TTS')
-    parser.add_argument('--voice-type', default='female', help='male or female')
+    parser.add_argument('--voice-type', help='male or female')
     
     args = parser.parse_args()
     
@@ -573,12 +577,26 @@ def main():
     
     # Запускаем генерацию
     start_time = time.time()
-    results = generator.generate_all_from_json()
-    end_time = time.time()
-    
-    # Добавляем время выполнения
-    results['total_time'] = f"{end_time - start_time:.2f} сек"
-    
+
+    if (not args.voice_type):
+
+        total_time = 0;
+        results = generator.generate_all_from_json('male')
+        end_time = time.time()
+        total_time += end_time - start_time;
+
+        results = generator.generate_all_from_json('female')
+        end_time = time.time()
+        total_time += end_time - start_time;
+
+        results['total_time'] = f"{total_time:.2f} сек"
+
+    else: 
+        results = generator.generate_all_from_json()
+        end_time = time.time()
+        # Добавляем время выполнения
+        results['total_time'] = f"{end_time - start_time:.2f} сек"
+        
     print(f"\n{'='*60}")
     print("ЗАВЕРШЕНО!")
     print(f"{'='*60}")

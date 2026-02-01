@@ -129,8 +129,17 @@ $(document).ready(function() {
     speechSynthesizer = new SpeechSynthesizer(SPEECH_CONFIG);
 
     // Инициализируем менеджер состояния
+    var state;
     stateManager = new StateManager();
-    stateManager.loadState();
+    stateManager.loadState()
+        .then((a_state)=>{
+            state = a_state;
+            init();
+        })
+        .catch(()=>{
+            state = stateManager.getState();
+            init();
+        });
 
     playerControls = new PlayerControls({
         autoHideDelay: 0
@@ -144,7 +153,6 @@ $(document).ready(function() {
     }
 
     let _pageScrollTimerId;
-    const state = stateManager.getState();
 
     var appData = {
         currentPhraseList: [],
@@ -911,6 +919,4 @@ $(document).ready(function() {
         }
         return array;
     }
-    
-    init();
 });

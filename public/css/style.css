@@ -545,18 +545,12 @@ footer {
     z-index: 10;
 }
 
-#other-content .item {
+.list-view .item {
     padding: 0.2em 0.8em;
     margin: 0.2em 0.5em;
 }
 
-#other-content .item a, .link {
-    color: var(--info);
-    text-decoration: none;
-    cursor: pointer;
-}
-
-#other-content .item a {
+.list-view .header h6, .list-view .item a {
     width: 100%;
     display: inline-block;
     overflow: hidden;
@@ -564,19 +558,28 @@ footer {
     white-space: nowrap;
 }
 
-#other-content .item a:hover {
+.list-view .item  a, .link {
+    color: var(--info);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.list-view .item a {
+}
+
+.list-view .item a:hover {
     color: var(--light);
 }
 
-#other-content .current {
+.list-view.current {
     background: #00568975;
     color: black;
     border-radius: 1em;
     box-shadow: 0 0 1em #005689c4;
 }
 
-#other-content .current a,
-#other-content .current a:hover {
+.list-view .current a,
+.list-view .current a:hover {
     color: #ffffff;
     text-decoration: none;
 }

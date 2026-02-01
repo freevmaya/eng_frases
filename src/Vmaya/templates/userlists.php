@@ -23,6 +23,9 @@
 
         .phrase-item td:last-child {
             text-align: right;
+            position: sticky;
+            right: 0;
+            z-index: 10;
         }
 
         .phrase-item td {
@@ -177,97 +180,91 @@
 
     <!-- Header -->
     <header class="text-center mb-1 compact-header" id="mainHeader">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center header-controls">
-                <div>
-                    <button class="btn btn-outline-secondary" id="backBtn" title="Назад">
-                        <i class="bi bi-arrow-left"></i>
-                        <span class="header-text ms-1">Назад</span>
-                    </button>
-                </div>
-                <div>
-                    <h1 class="display-6 text-gradient app-name">
-                        <i class="bi bi-pencil-square text-primary"></i>
-                        <span class="header-text">Редактор фраз</span>
-                    </h1>
-                </div>
-                <div>
-                    <button class="btn btn-outline-info" id="helpBtn" title="Помощь">
-                        <i class="bi bi-question-circle"></i>
-                        <span class="header-text ms-1">Помощь</span>
-                    </button>
-                </div>
+        <div class="d-flex justify-content-between align-items-center header-controls">
+            <div>
+                <button class="btn btn-outline-secondary" id="backBtn" title="Назад">
+                    <i class="bi bi-arrow-left"></i>
+                    <span class="header-text ms-1">Назад</span>
+                </button>
+            </div>
+            <div>
+                <h1 class="display-6 text-gradient app-name">
+                    <i class="bi bi-pencil-square text-primary"></i>
+                    <span class="header-text">Редактор фраз</span>
+                </h1>
+            </div>
+            <div>
+                <button class="btn btn-outline-info" id="helpBtn" title="Помощь">
+                    <i class="bi bi-question-circle"></i>
+                    <span class="header-text ms-1">Помощь</span>
+                </button>
             </div>
         </div>
     </header>
 
     <!-- Main Container -->
     <div class="container py-4">
-        <div class="row">
-            <!-- Left Column - User Lists -->
-            <div class="col-lg-6 mb-4">
-                <div class="card bg-dark-gradient border-primary border-3 h-100">
-                    <div class="card-header bg-dark border-secondary">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0 text-info">
-                                <i class="bi bi-folder me-2"></i>Пользовательские списки
-                            </h5>
-                            <button class="btn btn-sm btn-outline-secondary" id="addListBtn">
-                                <i class="bi bi-plus-circle me-1"></i>Добавить
-                            </button>
-                        </div>
+        <!-- Left Column - User Lists -->
+        <div class="col-lg-6 mb-4">
+            <div class="card bg-dark-gradient border-primary border-3 h-100">
+                <div class="card-header bg-dark border-secondary">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0 text-info">
+                            <i class="bi bi-folder me-2"></i>Пользовательские списки
+                        </h5>
+                        <button class="btn btn-sm btn-outline-secondary" id="addListBtn">
+                            <i class="bi bi-plus-circle me-1"></i>Добавить
+                        </button>
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-dark table-hover mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>Статус</th>
-                                        <th>Название</th>
-                                        <th>Описание</th>
-                                        <th>Действия</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="phraseListsTable">
-                                    <!-- Данные будут загружены через JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Статус</th>
+                                    <th>Название</th>
+                                    <th>Описание</th>
+                                </tr>
+                            </thead>
+                            <tbody id="phraseListsTable">
+                                <!-- Данные будут загружены через JavaScript -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Right Column - Phrases -->
-            <div class="col-lg-6 mb-4">
-                <div class="card bg-dark-gradient border-primary border-3 h-100">
-                    <div class="card-header bg-dark border-secondary">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0 text-info">
-                                <i class="bi bi-chat-text me-2"></i>Фразы
-                            </h5>
-                            <button class="btn btn-sm btn-outline-secondary" id="addPhraseBtn">
-                                <i class="bi bi-plus-circle me-1"></i>Добавить
-                            </button>
-                        </div>
+        <!-- Right Column - Phrases -->
+        <div class="col-lg-6 mb-4">
+            <div class="card bg-dark-gradient border-primary border-3 h-100">
+                <div class="card-header bg-dark border-secondary">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0 text-info">
+                            <i class="bi bi-chat-text me-2"></i>Фразы
+                        </h5>
+                        <button class="btn btn-sm btn-outline-secondary" id="addPhraseBtn">
+                            <i class="bi bi-plus-circle me-1"></i>Добавить
+                        </button>
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-dark table-hover mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>Статус</th>
-                                        <th>Английский</th>
-                                        <th>Русский</th>
-                                        <th>Сложность</th>
-                                        <th>Дата</th>
-                                        <th>Действия</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="phrasesTable">
-                                    <!-- Данные будут загружены через JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Статус</th>
+                                    <th>Английский</th>
+                                    <th>Русский</th>
+                                    <th>Сложность</th>
+                                    <th>Дата</th>
+                                </tr>
+                            </thead>
+                            <tbody id="phrasesTable">
+                                <!-- Данные будут загружены через JavaScript -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

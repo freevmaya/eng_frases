@@ -1,0 +1,17 @@
+Выявление дубликтов фраз
+
+
+SELECT 
+    GROUP_CONCAT(max_id ORDER BY max_id) as all_max_ids,
+    COUNT(*) as total_groups
+FROM (
+    SELECT 
+        MAX(id) as max_id
+    FROM phrases
+    GROUP BY type_id, native_text
+    HAVING COUNT(id) > 1
+) as duplicates
+
+Удаление их
+
+DELETE FROM phrases WHERE id IN ()
