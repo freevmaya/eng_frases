@@ -38,16 +38,38 @@ class StateManager {
             this.saveStateServer();
         }, 1000);
 
-        ['beforeunload', 'unload', 'pagehide', 'visibilitychange', 'blur'].forEach((item)=>{
-            window.addEventListener(item, ()=>{
-                if (document.visibilityState != 'visible')
-                    this.saveImmediately();
-            });
+        //['beforeunload', 'unload', 'pagehide', 'visibilitychange', 'blur', 'popstate'];
+
+        window.addEventListener('beforeunload', (e)=>{
+            this.saveImmediately();
+        });
+
+        window.addEventListener('unload', (e)=>{
+            this.saveImmediately();
+        });
+
+        window.addEventListener('pagehide', (e)=>{
+            this.saveImmediately();
+        });
+
+        window.addEventListener('freeze', (e)=>{
+            this.saveImmediately();
+        });
+
+        window.addEventListener('visibilitychange', (e)=>{
+            if (document.visibilityState != 'visible')
+                this.saveImmediately();
+        });
+
+        window.addEventListener('blur', (e)=>{
+            this.saveImmediately();
         });
     }
 
     saveImmediately() {
-        this.saveState();
+        if (this.isServer)
+            this.saveStateServer();
+        else this.saveState();
     }
 
     saveStateServer() {

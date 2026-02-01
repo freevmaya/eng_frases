@@ -32,6 +32,29 @@ class VKApp {
 	  	})
 	  	.catch((error) => { tracer.log(error); });
 
+	  	vkBridge.subscribe((event) => {
+	        tracer.log('VK Bridge event:', event.detail.type);
+	        
+	        switch (event.detail.type) {
+	            case 'VKWebAppGoBack':
+	                this.handleBackButton();
+	                break;
+	                
+	            case 'VKWebAppSwipeDown':
+	                // Свайп вниз для закрытия
+	                this.handleSwipeDown();
+	                break;
+	                
+	            case 'VKWebAppViewHide':
+	                stateManager.saveState();
+	                break;
+	        }
+	    });
+
+	  	vkBridge.send('VKWebAppSetSwipeSettings', {
+        	history: true // Разрешить свайпы для навигации
+    	});
+
 	  	this.initListeners();
 	}
 
@@ -39,6 +62,15 @@ class VKApp {
 		$(window).on('apply_settings', this.onApplySettings.bind(this));
 		$(window).on('playback', this.onPlayback.bind(this));
 	}
+
+	handleSwipeDown() {
+
+	}
+
+
+    handleBackButton() {
+        tracer.log('handleBackButton');
+    }
 
 	showAd() {
 		vkBridge.send('VKWebAppShowNativeAds', {
