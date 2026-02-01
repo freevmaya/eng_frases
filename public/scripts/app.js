@@ -152,7 +152,7 @@ $(document).ready(function() {
         playStart: false,
         scaleBlockUpdater: debounce(() => {
             let block = elements.phraseScaleBlock;
-            let scale = Math.min(1, block.parent().innerHeight() / block.height());
+            let scale = Math.min(1, block.closest('.phrase-container').innerHeight() / block.height());
             block.css('scale', scale);
         }, 50)
     };
@@ -790,7 +790,7 @@ $(document).ready(function() {
     function updateSizeText(elem, k = 1, maxSize = 36, minSize = 18) {
         let text = elem.text();
         let width = elem.closest('.phrase-container').innerWidth();
-        let wk = 2.75;
+        let wk = 2.3;
         let size = Math.max(Math.min(1 / text.length * width * wk, maxSize * k), minSize * k);
         elem.css('font-size', size);
     }
