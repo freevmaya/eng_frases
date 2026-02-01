@@ -3,14 +3,16 @@ class PlayerControls {
 
     constructor(options = {}) {
         this.options = {
-            autoHideDelay: 5000, // 5 секунд
+            autoHideDelay: 3000, // 5 секунд
             showAnimationDuration: 300,
+            clickHideSet: true,
             ...options
         };
         
         this.elements = {
             parent: null,
             container: null,
+            viewer: null,
             playButton: null,
             prevBtn: null,
             nextBtn: null,
@@ -26,11 +28,20 @@ class PlayerControls {
         };
         
         this.init();
+        this.hideProcess = debounce(()=>{
+            this.elements.container.css('display', 'none');
+        }, 500, ()=>{
+            this.state.visible = false;
+            this.elements.container
+                .removeClass('controls-active show')
+                .css('pointer-events', 'none');
+        })
     }
     
     // Инициализация
     init() {
         this.elements.container = $('#playButtonsContainer');
+        this.elements.viewer = this.elements.container.closest('.app-display');
         this.elements.playButton = $('#playButton');
         this.elements.prevBtn = $('#prevBtn');
         this.elements.nextBtn = $('#nextBtn');
@@ -45,17 +56,26 @@ class PlayerControls {
 
     setupClickHide() {
 
-        $('body').click(((e) => {
-            if (this.state.visible && !$(e.target).is(this.elements.container))
-                this.hide();
-        }).bind(this));
+        if (!this.state.isClickHideSet) {
+            $('body').click(((e) => {
+                let t = $(e.target);
+                if (this.state.visible && 
+                    !t.is(this.elements.container) && 
+                    (t.closest(this.elements.viewer).length > 0) && 
+                    !t.hasClass('control'))
+                    this.hide();
+            }).bind(this));
 
-        this.state.isClickHideSet = true;
+            this.state.isClickHideSet = true;
+        }
     }
     
     // Настройка обработчиков событий
     setupEventListeners() {
         const self = this;
+
+        if (this.options.clickHideSet)
+            self.setupClickHide();
         
         // Показ контролов по клику на контейнер
         this.elements.parent.click(function(e) {
@@ -73,9 +93,6 @@ class PlayerControls {
             if (self.state.controlsEnabled) {
                 self.resetAutoHide();
             }
-
-            if (!self.state.isClickHideSet) 
-                self.setupClickHide();
         });
         
         this.elements.prevBtn.click(function(e) {
@@ -113,6 +130,7 @@ class PlayerControls {
         
         clearTimeout(this.state.autoHideTimeout);
         this.state.visible = true;
+        this.elements.container.css('display', 'flex');
         this.elements.container
             .addClass('show controls-active')
             .css('pointer-events', 'auto');
@@ -125,20 +143,17 @@ class PlayerControls {
         if (!this.state.visible) return;
         
         clearTimeout(this.state.autoHideTimeout);
-        
-        this.state.visible = false;
-        this.elements.container
-            .removeClass('controls-active show')
-            .css('pointer-events', 'none')
+        this.hideProcess();
     }
     
     // Сброс таймера автоскрытия
     resetAutoHide() {
         clearTimeout(this.state.autoHideTimeout);
         
-        this.state.autoHideTimeout = setTimeout(() => {
-            this.hide();
-        }, this.options.autoHideDelay);
+        if (this.options.autoHideDelay > 0)
+            this.state.autoHideTimeout = setTimeout(() => {
+                this.hide();
+            }, this.options.autoHideDelay);
     }
     
     // Обновить состояние кнопки воспроизведения

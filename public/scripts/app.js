@@ -55,11 +55,12 @@ function isAnyInputElement(element) {
     return jel.hasClass('control');
 }
 
-function debounce(func, wait) {
+function debounce(func, wait, start = null) {
     var timeout;
     return function() {
         var context = this, args = arguments;
         clearTimeout(timeout);
+        if (start) start();
         timeout = setTimeout(function() {
             func.apply(context, args);
         }, wait);
@@ -131,7 +132,9 @@ $(document).ready(function() {
     stateManager = new StateManager();
     stateManager.loadState();
 
-    playerControls = new PlayerControls();
+    playerControls = new PlayerControls({
+        autoHideDelay: 0
+    });
 
     const AppConst = {
         charTime: {
@@ -146,13 +149,19 @@ $(document).ready(function() {
     var appData = {
         currentPhraseList: [],
         currentPhrase: null,
-        playStart: false
+        playStart: false,
+        scaleBlockUpdater: debounce(() => {
+            let block = elements.phraseScaleBlock;
+            let scale = Math.min(1, block.parent().innerHeight() / block.height());
+            block.css('scale', scale);
+        }, 50)
     };
 
     // DOM элементы
     const elements = {
         phraseText: $('#phraseText'),
         phraseHint: $('#phraseHint'),
+        phraseScaleBlock: $('.scale-block'),
         phraseCounter: $('#phraseCounter'),
         phraseType: $('#phraseType'),
         progressBar: $('#progressBar'),
@@ -766,17 +775,17 @@ $(document).ready(function() {
     function updateSizeText(elem, k = 1, maxSize = 36, minSize = 18) {
         let text = elem.text();
         let width = elem.closest('.phrase-container').innerWidth();
-
-        let wk = 2.37;
-        //let wk = 2.5;
-
+        let wk = 2.75;
         let size = Math.max(Math.min(1 / text.length * width * wk, maxSize * k), minSize * k);
         elem.css('font-size', size);
     }
 
     function setText(elem, text, k = 1) {
-        if (elem.text() != text) {
+        if (elem.data('text') != text) {
+            elem.data('text', text);
+
             elem.text(text);
+
             updateSizeText(elem, k);
             return true;
         }
@@ -786,6 +795,7 @@ $(document).ready(function() {
     function updateSizePlayerTexts() {
         updateSizeText(elements.phraseText, 1);
         updateSizeText(elements.phraseHint, 0.7);
+        appData.scaleBlockUpdater();
     }
 
     function updatePhrases(text, hint) {
@@ -796,6 +806,7 @@ $(document).ready(function() {
     // Показать фразу
     function showPhrase(lang) {
         let updated = false;
+
         if (lang === 'target') {
             updated = updatePhrases(appData.currentPhrase.target, appData.currentPhrase.native);
 
@@ -809,12 +820,11 @@ $(document).ready(function() {
         }
         
         if (updated) {
+            appData.scaleBlockUpdater();
             // Анимация
-            elements.phraseText.addClass('animate-text');
-            elements.phraseHint.addClass('animate-hint');
+            elements.phraseScaleBlock.addClass('animate-text');
             setTimeout(() => {
-                elements.phraseText.removeClass('animate-text');
-                elements.phraseHint.removeClass('animate-hint');
+                elements.phraseScaleBlock.removeClass('animate-text');
             }, 500);
         }
     }

@@ -21,7 +21,7 @@ class UserApp {
 	}
 
 	loadUserPhrases() {
-		if (!this.userPhrasesLoaded && this.user_id && phrasesList) {
+		if (!this.userPhrasesLoaded && this.user_id && (typeof phrasesList == 'object')) {
 			Ajax({
 				action: 'getUserLists',
 				data: {

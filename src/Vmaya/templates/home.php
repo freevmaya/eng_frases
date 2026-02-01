@@ -168,10 +168,12 @@
                 <div class="card-body text-center p-4">
 
                     <div>
-                        <div class="phrase-container">
-                            <div class="phrase-text mb-2 animate-text" id="phraseText">
-                            </div>
-                            <div class="phrase-hint text-muted animate-hint" id="phraseHint">
+                        <div class="phrase-container animate-text">
+                            <div class="scale-block">
+                                <div class="phrase-text mb-2 animate-text phrase" id="phraseText">
+                                </div>
+                                <div class="phrase-hint text-muted animate-hint phrase" id="phraseHint">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -195,7 +197,7 @@
                             <span id="payerMessage"></span>
                         </div>
                         <div class="text-end">
-                            <button class="btn btn-outline-secondary" id="settingsToggle">
+                            <button class="btn btn-outline-secondary control" id="settingsToggle">
                                 <i class="bi bi-sliders"></i>
                             </button>
                         </div>

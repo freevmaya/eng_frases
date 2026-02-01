@@ -73,11 +73,7 @@
 }
 
 .animate-text {
-    animation: fadeIn 0.5s ease-out;
-}
-
-.animate-hint {
-    animation: fadeIn 0.7s ease-out;
+    animation: fadeIn 0.8s ease-out;
 }
 
 @keyframes slideUp {
@@ -194,25 +190,40 @@
 }
 
 /* Phrase Container */
+
 .phrase-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     height: min(50vw, 8em);
+
+    align-items: center; /* Центрирование групп по горизонтали */
+    gap: 5px;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.phrase {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0 0.25em;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.25em;
+
+    min-width: 0; /* КРИТИЧЕСКИ ВАЖНО: разрешает сжатие */
+    box-sizing: border-box;
 }
 
 .phrase-text, .phrase-hint {
     text-align: center; 
     hyphens: auto;
     word-break: break-word;
-}
-
-.phrase-text {
-    font-size: 1.6rem;
-} 
-
-.phrase-hint {
-    font-size: 1.2rem;
 }
 
 .phrase-text {
@@ -360,13 +371,14 @@
 
 @container parent (max-width: 300px) {
     .play-container {
-        transform: scale(0.7);
+        transform: scale(0.65);
     }
 }
 
-@container parent (max-width: 300px) {
+@container parent (max-width: 250px) {
     .play-container .play-buttons {
-        bottom: 100px;
+        position: relative;
+        width: 210px;
     }
 
     .play-container {
@@ -453,6 +465,10 @@
 /* Индикатор активности управления */
 .controls-active {
     animation: pulse-border 2s infinite;
+}
+
+.bi {
+    pointer-events: none;
 }
 
 @keyframes pulse-border {
@@ -543,6 +559,9 @@ footer {
 #other-content .item a {
     width: 100%;
     display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #other-content .item a:hover {
