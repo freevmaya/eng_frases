@@ -33,7 +33,15 @@ class StateManager {
         };
         
         this.state = { ...this.DEFAULT_STATE };
-        this.saveStateToServer = debounce(this.saveImmediately.bind(this), 2000);
+        this.saveStateToServer = debounce(()=>{
+            Ajax({
+                action: 'setUserState',
+                data: this.state
+            })
+            .catch((e)=>{
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
+            });
+        }, 2000);
 
         ['beforeunload', 'unload', 'pagehide', 'visibilitychange', 'blur'].forEach((item)=>{
             window.addEventListener(item, ()=>{
@@ -43,16 +51,7 @@ class StateManager {
         });
     }
 
-    saveImmediately() {
-        /*
-        Ajax({
-            action: 'setUserState',
-            data: this.state
-        })
-        .catch((e)=>{
-            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
-        });*/
-
+    saveStateLocale() {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
     }
     
@@ -99,7 +98,8 @@ class StateManager {
     
     // Сохранение состояния в localStorage
     saveState() {
-        this.saveImmediately();
+        this.saveStateLocale();
+        this.saveStateToServer();
     }
     
     // Обновление настроек
