@@ -483,6 +483,7 @@ $(document).ready(function() {
     function setCurrentType(type) {
 
         let keys = Object.keys(phrasesData);
+        keys.push('all');
         if ((state.currentListType != type) && keys.includes(type)) {
 
 
@@ -797,10 +798,7 @@ $(document).ready(function() {
     function setText(elem, text, k = 1) {
         if (elem.data('text') != text) {
             elem.data('text', text);
-
             elem.text(text);
-
-            updateSizeText(elem, k);
             return true;
         }
         return false;
@@ -834,7 +832,7 @@ $(document).ready(function() {
         }
         
         if (updated) {
-            appData.scaleBlockUpdater();
+            updateSizePlayerTexts();
             // Анимация
             elements.phraseScaleBlock.addClass('animate-text');
             setTimeout(() => {
