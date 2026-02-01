@@ -19,7 +19,7 @@ async function enableWakeLock() {
         try {
             wakeLock = await navigator.wakeLock.request('screen');
         } catch (err) {
-            console.error('Wake Lock ошибка:', err);
+            tracer.error('Wake Lock ошибка:', err);
         }
     }
 

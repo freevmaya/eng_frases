@@ -147,7 +147,7 @@
         </div>
     </div>
 
-	<?if (DEV) {?>
+	<?if (DEV || (DEVUSER == Page::getSession('user_id'))) {?>
 	<!-- Eruda is console for mobile browsers-->
 	<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 	<script>eruda.init();</script>
