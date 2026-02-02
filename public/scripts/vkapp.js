@@ -32,12 +32,6 @@ class VKApp {
 	  	})
 	  	.catch((error) => { tracer.log(error); });
 
-	  	vkBridge.subscribe((e) => {
-	        if (e.detail.type === 'VKWebAppClose') {
-	            return !this.closeModalWindow();
-	        }
-	    });
-
 	  	this.initListeners();
 	}
 
@@ -56,15 +50,6 @@ class VKApp {
 			}
 		})
 		.catch((error) => { tracer.log(error); });
-	}
-
-	closeModalWindow() {
-		let modal = $('.modal.show');
-		if (modal.length > 0) {
-			modal.modal('hide');
-			return true;
-		}
-		return false;
 	}
 
 	onPlayback(e, data) {
