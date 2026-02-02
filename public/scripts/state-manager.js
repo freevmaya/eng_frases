@@ -34,6 +34,9 @@ class StateManager {
         };
         
         this.state = { ...this.DEFAULT_STATE };
+
+        this.state.sadsdadsa();
+
         this.try_saveStateToServer = debounce(()=>{
             this.saveStateServer();
         }, 1000);

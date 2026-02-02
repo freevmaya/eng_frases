@@ -43,7 +43,8 @@ const ErrorTracker = {
                     if (res.duration > 10000) {
                         this.handleError({
                             message: 'resource_error',
-                            error: res.name + ':' + res.transferSize
+                            source: res.name + ':' + res.transferSize,
+                            error: 'Long loading time'
                         });
                     }
                 }
