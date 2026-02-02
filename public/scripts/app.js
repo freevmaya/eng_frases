@@ -55,18 +55,6 @@ function isAnyInputElement(element) {
     return jel.hasClass('control');
 }
 
-function debounce(func, wait, start = null) {
-    var timeout;
-    return function() {
-        var context = this, args = arguments;
-        clearTimeout(timeout);
-        if (start) start();
-        timeout = setTimeout(function() {
-            func.apply(context, args);
-        }, wait);
-    };
-}
-
 function showAlert(message, type = 'info') {
     const alertClass = {
         'info': 'alert-info',
@@ -212,6 +200,8 @@ $(document).ready(function() {
         if (phrasesData)
             afterLoadList(phrasesData);
         else loadList();
+
+        $('body').css('display', 'block');
     }
 
     function afterLoadList(data) {

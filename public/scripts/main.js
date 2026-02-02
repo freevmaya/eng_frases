@@ -1103,15 +1103,6 @@ function PrepareInput() {
     });
 }
 
-function afterCondition(checkFunc, resolve) {
-    let timerId = setInterval(()=>{
-        if (checkFunc()) {
-            resolve();
-            clearInterval(timerId);
-        }
-    }, 10);
-}
-
 function Last(arr) {
   return arr[arr.length - 1];
 };
@@ -1251,4 +1242,32 @@ $.fn.numeral = function (show_number = true) {
     this.on('change', (val)=>{
         captionCtrl.text(strEnum(this.val(), pattern, 'ru', show_number));
     });
+}
+
+function debounce(func, wait, start = null) {
+    var timeout;
+    return function() {
+        var context = this, args = arguments;
+        clearTimeout(timeout);
+        if (start) start();
+        timeout = setTimeout(function() {
+            func.apply(context, args);
+        }, wait);
+    };
+}
+
+
+function afterCondition(checkFunc, resolve, count = -1) {
+    let timerId = setInterval(()=>{
+        if (checkFunc()) {
+            resolve();
+            clearInterval(timerId);
+        }
+
+        if (count > -1) {
+            count--;
+            if (count == 0)
+                clearInterval(timerId);
+        }
+    }, 10);
 }

@@ -4,6 +4,7 @@
 	ini_set('session.cookie_httponly', 1);
 	ini_set('session.use_only_cookies', 1);
 
+	/*
 	// Для PHP 7.3+ можно использовать session_set_cookie_params
 	session_set_cookie_params([
 	    'lifetime' => 0,
@@ -13,7 +14,7 @@
 	    'httponly' => true,
 	    'samesite' => 'None'
 	]);
-
+*/
 	session_start();
 	require dirname(__FILE__, 2).'/src/Vmaya/engine.php';
 

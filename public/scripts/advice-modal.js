@@ -6,9 +6,15 @@ class AdviceModal {
     	this.current = 0;
     	this.refreshAdvice();
     	this.setupEventListeners();
-    	this.modal.modal('show');
         this.modal.find('.page-buttons').css('display', list.length <= 1 ? 'none' : 'inline-block');
         if (title) this.modal.find('.modal-title').text(title);
+
+
+        afterCondition(()=>{
+            return $('body').is(':visible');
+        }, ()=>{
+            this.modal.modal('show');
+        });
     }
 
     setupEventListeners() {

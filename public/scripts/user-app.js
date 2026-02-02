@@ -1,6 +1,6 @@
 class UserApp {
 	constructor() {
-		this.userPhrasesLoaded = false;
+		this.userPhrasesLoaded = 0;
 	}
 
 	init(source_id, source, data) {
@@ -21,7 +21,8 @@ class UserApp {
 	}
 
 	loadUserPhrases() {
-		if (!this.userPhrasesLoaded && this.user_id && (typeof phrasesList == 'object')) {
+		if ((this.userPhrasesLoaded == 0) && this.user_id) {
+			this.userPhrasesLoaded = 1;
 			Ajax({
 				action: 'getUserLists',
 				data: {
@@ -29,18 +30,17 @@ class UserApp {
 				}
 			}).then((data)=>{
 				if (data) {
-					phrasesList.setUserLists(data);
-					this.userPhrasesLoaded = true;
+					afterCondition(()=>{
+						return phrasesList != null;
+					}, ()=>{
+						phrasesList.setUserLists(data);
+						this.userPhrasesLoaded = 2;
+					})
 				}
 			});
 		}
 	}
-
-	onPhrasesLoaded() {
-		this.phrases_loaded = true;
-		this.loadUserPhrases();
-	}
 }
 
 var userApp = new UserApp();
-$(window).on('phrases_loaded', userApp.onPhrasesLoaded.bind(userApp));
+$(window).on('phrases_loaded', userApp.loadUserPhrases.bind(userApp));
