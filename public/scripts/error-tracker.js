@@ -40,8 +40,7 @@ const ErrorTracker = {
             const resources = performance.getEntriesByType('resource');
             resources.forEach(res => {
                 if (res.initiatorType === 'script' || res.initiatorType === 'css') {
-                    if (res.duration > 5000) {
-                        tracer.log(res);
+                    if (res.duration > 10000) {
                         this.handleError({
                             message: 'resource_error',
                             error: res.name + ':' + res.transferSize
