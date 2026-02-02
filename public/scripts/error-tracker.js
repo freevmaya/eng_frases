@@ -66,7 +66,7 @@ const ErrorTracker = {
         // Отправляем на сервер
         this.sendToServer(errorInfo);
     },
-    
+
     sendToServer(data) {
         data.version = this.config.version;
         Ajax({

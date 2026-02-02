@@ -50,12 +50,6 @@
     <link rel="stylesheet" href="css/style.css?v=<?=$v?>" media="all">
     <link rel="stylesheet" href="css/style-waves.css?v=<?=$v?>" media="all">
 	<script src="scripts/error-tracker.js?v=<?=$v?>"></script>
-	<script type="text/javascript">
-		ErrorTracker.init({
-			version: <?=SCRIPTS_VERSION;?>,
-			user_id: <?=$user_id;?>
-		});
-	</script>
 
 	<!-- Bootstrap & jQuery -->
 	<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -66,6 +60,12 @@
 	<script src="scripts/main.js?v=<?=$v?>"></script>
 	<script src="scripts/user-app.js?v=<?=$v?>" defer></script>
 	<script src="scripts/advice-modal.js?v=<?=$v?>"></script>
+	<script type="text/javascript">
+		ErrorTracker.init({
+			version: <?=SCRIPTS_VERSION;?>,
+			user_id: <?=$user_id;?>
+		});
+	</script>
 
     <?if (isset(Page::$request['vk_app_id'])) {?>
 	    <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
