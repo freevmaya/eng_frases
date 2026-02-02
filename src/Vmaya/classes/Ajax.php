@@ -169,7 +169,7 @@ class Ajax extends Page {
 			if (isset($data['id']))
 				unset($data['id']);
 
-			$data['col'] = $data['column'];
+			$data['col'] = isset($data['column']) ? $data['column'] : 0;
 			$data['user_id'] = $user_id;
 			return $model->Update($data);
 		}

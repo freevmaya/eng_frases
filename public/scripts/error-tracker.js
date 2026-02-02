@@ -35,6 +35,21 @@ const ErrorTracker = {
                 error: e.error
             });
         }, true);
+
+        window.addEventListener('load', () => {
+            const resources = performance.getEntriesByType('resource');
+            resources.forEach(res => {
+                if (res.initiatorType === 'script' || res.initiatorType === 'css') {
+                    if (res.duration > 5000) {
+                        tracer.log(res);
+                        this.handleError({
+                            message: 'resource_error',
+                            error: res.name + ':' + res.transferSize
+                        });
+                    }
+                }
+            });
+        });
     },
     
     handleError(details) {
