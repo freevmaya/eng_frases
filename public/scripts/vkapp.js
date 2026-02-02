@@ -7,11 +7,6 @@ class VKApp {
 		this.app_id = app_id;
 		this.source = source;
 		this.source_user_id = source_user_id;
-		
-		vkBridge.send("VKWebAppInit", {})
-			.then((response)=>{
-				tracer.log(response);
-			});
 
 		$('body').addClass('vk_layout');
 

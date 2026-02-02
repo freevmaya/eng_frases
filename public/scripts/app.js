@@ -252,7 +252,7 @@ function Application() {
 
         $(window).trigger('phrases_loaded');
 
-        $('.page').css('display', 'block');
+        $('.page').addClass('page-loaded');
 
         //setTimeout(randomTest, 2000);
     }

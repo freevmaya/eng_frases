@@ -28,6 +28,15 @@
     margin: 0 auto;
 }
 
+.page {
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.page-loaded {
+    opacity: 1;
+}
+
 .text-muted {
     color: var(--info) !important;
 }

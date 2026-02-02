@@ -2,8 +2,11 @@
 	$v 			= '?v='.SCRIPTS_VERSION;
 	$userModel 	= new UserModel();
 	$user_id 	= Page::getSession('user_id', 0);
+	$vkok	= isset(Page::$request['vk_app_id']);
 
-	if (isset(Page::$request['vk_app_id'])) {
+	if ($vkok) {
+
+
     	if (isset(Page::$request['vk_client']) && (Page::$request['vk_client'] == 'ok')) {
     		$source = 'ok';
     		$source_user_id = Page::$request['vk_ok_user_id'];
@@ -49,6 +52,15 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css<?=$v?>" media="all">
     <link rel="stylesheet" href="css/style-waves.css<?=$v?>" media="all">
+    <?if ($vkok) {?>
+	<script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
+	<script>
+		vkBridge.send("VKWebAppInit", {})
+			.then((response)=>{
+				tracer.log(response);
+			});
+	</script>
+    <?}?>
 	<script src="scripts/error-tracker.js<?=$v?>"></script>
 
 	<!-- Bootstrap & jQuery -->
@@ -67,8 +79,7 @@
 		});
 	</script>
 
-    <?if (isset(Page::$request['vk_app_id'])) {?>
-	    <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
+    <?if ($vkok) {?>
 		<script src="scripts/vkapp.js<?=$v?>" defer></script>
 
 		<script type="text/javascript">
@@ -133,7 +144,7 @@
 	<!-- /Yandex.Metrika counter -->
 </head>
 <body class="dark-theme">
-	<div class="page" style="display:none">
+	<div class="page">
 		<div class="wrap-content">
 			<?=$content?>
 		</div>
