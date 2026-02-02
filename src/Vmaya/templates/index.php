@@ -1,7 +1,36 @@
 <?php
-	$v = SCRIPTS_VERSION;
-	$userModel = new UserModel();
-	$user_id = Page::getSession('user_id', 0);
+	$v 			= SCRIPTS_VERSION;
+	$userModel 	= new UserModel();
+	$user_id 	= Page::getSession('user_id', 0);
+
+	if (isset(Page::$request['vk_app_id'])) {
+    	if (isset(Page::$request['vk_client']) && (Page::$request['vk_client'] == 'ok')) {
+    		$source = 'ok';
+    		$source_user_id = Page::$request['vk_ok_user_id'];
+    	} else {
+    		$source = 'vk';
+    		$source_user_id = Page::$request['vk_user_id'];
+    	}
+
+    	$items = $userModel->getItems("source_id = {$source_user_id} AND source = '{$source}'");
+    	$new_user = false;
+
+    	if (count($items) == 0) {
+    		$user_id = $userModel->Update([
+    			'source_id'=>$source_user_id,
+    			'source'=>$source,
+    			'language_code'=>'ru'
+    		]);
+    		$new_user = $user_id;
+    	} else $user_id = $items[0]['id'];
+
+    	Page::setSession('source_user', [
+    		'id' => $source_user_id,
+    		'source' => $source
+    	]);
+
+    	Page::setSession('user_id', $user_id);
+    }
 ?>
 <!DOCTYPE html>
 <html lang="ru" data-bs-theme="dark">
@@ -20,6 +49,13 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css?v=<?=$v?>" media="all">
     <link rel="stylesheet" href="css/style-waves.css?v=<?=$v?>" media="all">
+	<script src="scripts/error-tracker.js?v=<?=$v?>"></script>
+	<script type="text/javascript">
+		ErrorTracker.init({
+			version: <?=SCRIPTS_VERSION;?>,
+			user_id: <?=$user_id;?>
+		});
+	</script>
 
 	<!-- Bootstrap & jQuery -->
 	<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -31,35 +67,7 @@
 	<script src="scripts/user-app.js?v=<?=$v?>" defer></script>
 	<script src="scripts/advice-modal.js?v=<?=$v?>"></script>
 
-    <?if (isset(Page::$request['vk_app_id'])) {
-
-	    	if (isset(Page::$request['vk_client']) && (Page::$request['vk_client'] == 'ok')) {
-	    		$source = 'ok';
-	    		$source_user_id = Page::$request['vk_ok_user_id'];
-	    	} else {
-	    		$source = 'vk';
-	    		$source_user_id = Page::$request['vk_user_id'];
-	    	}
-
-	    	$items = $userModel->getItems("source_id = {$source_user_id} AND source = '{$source}'");
-	    	$new_user = false;
-
-	    	if (count($items) == 0) {
-	    		$user_id = $userModel->Update([
-	    			'source_id'=>$source_user_id,
-	    			'source'=>$source,
-	    			'language_code'=>'ru'
-	    		]);
-	    		$new_user = $user_id;
-	    	} else $user_id = $items[0]['id'];
-
-	    	Page::setSession('source_user', [
-	    		'id' => $source_user_id,
-	    		'source' => $source
-	    	]);
-
-	    	Page::setSession('user_id', $user_id);
-	    ?>
+    <?if (isset(Page::$request['vk_app_id'])) {?>
 	    <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
 		<script src="scripts/vkapp.js?v=<?=$v?>" defer></script>
 
@@ -99,7 +107,7 @@
     	$items = $userModel->getItems("source_id = {$user_data['id']} AND source = '{$source}'");
 
     	if (count($items) > 0)
-    		Page::setSession('user_id', $items[0]['id']);
+    		Page::setSession('user_id', $user_id = $items[0]['id']);
 
 	?>
 		$(window).ready(()=>{

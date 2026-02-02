@@ -2,6 +2,7 @@
 *.pid
 *.zip
 *.mp3
+*.conf
 *.log.*
 
 test*.*

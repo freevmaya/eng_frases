@@ -105,6 +105,7 @@ class Ajax extends Page {
     	} else $user_id = $userModel->Update($values);
 
     	$this->setUser($userModel->getItem($user_id));
+    	Page::setSession('user_id', $user_id);
 
 		return [
 			'user_id'=>$user_id
@@ -156,11 +157,23 @@ class Ajax extends Page {
 	protected function updatePhrase($data) {
 		if ($user_id = Page::getSession('user_id')) {
 			$model = new UserPhrasesModel();
-			if (!$data['id'])
-				unset($data['id']);
+
 			return $model->Update($data);
 		}
 		return 0;
+	}
+
+	protected function addError($data) {
+		if ($user_id = Page::getSession('user_id')) {
+			$model = new ErrorsModel();
+			if (isset($data['id']))
+				unset($data['id']);
+
+			$data['col'] = $data['column'];
+			$data['user_id'] = $user_id;
+			return $model->Update($data);
+		}
+		return 0;		
 	}
 
 	protected function deleteList($data) {
