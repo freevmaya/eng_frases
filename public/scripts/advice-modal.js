@@ -11,7 +11,7 @@ class AdviceModal {
 
 
         afterCondition(()=>{
-            return $('body').is(':visible');
+            return this.modal.parent().is(':visible');
         }, ()=>{
             this.modal.modal('show');
         });

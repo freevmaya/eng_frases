@@ -18,8 +18,8 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/style.css?v=<?=$v?>">
-    <link rel="stylesheet" href="css/style-waves.css?v=<?=$v?>">
+    <link rel="stylesheet" href="css/style.css?v=<?=$v?>" media="all">
+    <link rel="stylesheet" href="css/style-waves.css?v=<?=$v?>" media="all">
 
 	<!-- Bootstrap & jQuery -->
 	<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -28,7 +28,7 @@
 
 	<script src="scripts/component.js?v=<?=$v?>"></script>
 	<script src="scripts/main.js?v=<?=$v?>"></script>
-	<script src="scripts/user-app.js?v=<?=$v?>"></script>
+	<script src="scripts/user-app.js?v=<?=$v?>" defer></script>
 	<script src="scripts/advice-modal.js?v=<?=$v?>"></script>
 
     <?if (isset(Page::$request['vk_app_id'])) {
@@ -61,7 +61,7 @@
 	    	Page::setSession('user_id', $user_id);
 	    ?>
 	    <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
-		<script src="scripts/vkapp.js?v=<?=$v?>"></script>
+		<script src="scripts/vkapp.js?v=<?=$v?>" defer></script>
 
 		<script type="text/javascript">
 			$(window).ready(()=>{
@@ -102,10 +102,10 @@
     		Page::setSession('user_id', $items[0]['id']);
 
 	?>
-		var user_data = <?=json_encode($user_data, JSON_FLAGS)?>;
-		setTimeout(()=>{
+		$(window).ready(()=>{
+			var user_data = <?=json_encode($user_data, JSON_FLAGS)?>;
 			userApp.init(user_data.id, '<?=$source?>', user_data);
-		}, 1000);
+		});
 	<?}?>
 	</script>
 
@@ -125,36 +125,38 @@
 	<!-- /Yandex.Metrika counter -->
 </head>
 <body class="dark-theme">
-	<div class="wrap-content">
-		<?=$content?>
+	<div class="page" style="display:none">
+		<div class="wrap-content">
+			<?=$content?>
+		</div>
+
+	    <div class="modal fade" tabindex="-1" aria-labelledby="centeredModalLabel" aria-hidden="true" id="message">
+	        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <h5 class="modal-title" id="centeredModalLabel">Внимание!</h5>
+	                </div>
+	                <div class="modal-body">
+	                    <div class="content" style="height: 320px">
+	                    </div>
+	                </div>
+	                <div class="modal-footer">
+	                	<div class="page-buttons">
+		                    <button type="button" class="btn btn-secondary prev"><i class="bi bi-arrow-left"></i></button>
+		                    <span class="page-number"></span>
+		                    <button type="button" class="btn btn-secondary next"><i class="bi bi-arrow-right"></i></button>
+	                	</div>
+	                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Понятно</button>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+
+		<?if ($is_developer) {?>
+		<!-- Eruda is console for mobile browsers-->
+		<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+		<script>eruda.init();</script>
+		<?}?>
 	</div>
-
-    <div class="modal fade" tabindex="-1" aria-labelledby="centeredModalLabel" aria-hidden="true" id="message">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="centeredModalLabel">Внимание!</h5>
-                </div>
-                <div class="modal-body">
-                    <div class="content" style="height: 320px">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                	<div class="page-buttons">
-	                    <button type="button" class="btn btn-secondary prev"><i class="bi bi-arrow-left"></i></button>
-	                    <span class="page-number"></span>
-	                    <button type="button" class="btn btn-secondary next"><i class="bi bi-arrow-right"></i></button>
-                	</div>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Понятно</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-	<?if ($is_developer) {?>
-	<!-- Eruda is console for mobile browsers-->
-	<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-	<script>eruda.init();</script>
-	<?}?>
 </body>
 </html>

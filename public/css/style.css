@@ -16,10 +16,6 @@
     --max-width: 900px;
 }
 
-body {    
-    display: none;
-}
-
 .dark-theme {
     background: linear-gradient(180deg, 
         var(--dark), 

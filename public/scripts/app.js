@@ -111,7 +111,7 @@ Phrase.createList = (sourceList, type)=>{
     return result;
 }
 
-$(document).ready(function() {
+function Application() {
     
     // Инициализируем синтезатор речи
     speechSynthesizer = new SpeechSynthesizer(SPEECH_CONFIG);
@@ -200,8 +200,6 @@ $(document).ready(function() {
         if (phrasesData)
             afterLoadList(phrasesData);
         else loadList();
-
-        $('body').css('display', 'block');
     }
 
     function afterLoadList(data) {
@@ -218,6 +216,8 @@ $(document).ready(function() {
         }
 
         $(window).trigger('phrases_loaded');
+
+        $('.page').css('display', 'block');
 
         //setTimeout(randomTest, 2000);
     }
@@ -909,4 +909,6 @@ $(document).ready(function() {
         }
         return array;
     }
-});
+};
+
+$(window).ready(Application);

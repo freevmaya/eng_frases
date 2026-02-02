@@ -290,6 +290,6 @@
 <script src="scripts/player-controls.js?v=<?=$v?>"></script>
 <!--<script src="scripts/headphone-controls.js?v=<?=$v?>"></script>-->
 <script src="scripts/phrases-list-view.js?v=<?=$v?>"></script>
-<script src="scripts/app.js?v=<?=$v?>"></script>
+<script src="scripts/app.js?v=<?=$v?>" defer></script>
 <script src="scripts/sound.js?v=<?=$v?>"></script>
 <script src="scripts/vrecognition.js?v=<?=$v?>"></script>
