@@ -4,7 +4,7 @@ const ErrorTracker = {
         // 1. Используем window.onerror как основной
         const originalOnerror = window.onerror;
         this.config = config;
-        
+        /*
         window.onerror = (msg, source, line, col, error) => {
             this.handleError({
                 message: msg,
@@ -20,19 +20,19 @@ const ErrorTracker = {
             }
             
             return false; // Разрешаем стандартную обработку
-        };
+        };*/
         
         // 2. Event listener как fallback
-        window.addEventListener('error', (e) => {
+        window.addEventListener('error', (event) => {
             // Если событие уже обработано window.onerror, пропускаем
-            if (e.defaultPrevented) return;
+            if (event.defaultPrevented) return;
             
             this.handleError({
-                message: e.message,
-                source: e.filename || window.location.href,
-                line: e.lineno,
-                column: e.colno,
-                error: e.error
+                message: event.message,
+                source: event.filename,
+                line: event.lineno,
+                column: event.colno,
+                error: event.error
             });
         }, true);
 

@@ -1,5 +1,5 @@
 <?php
-    $v = SCRIPTS_VERSION;
+    $v = '?v='.SCRIPTS_VERSION;
 ?>
 <!-- Settings Modal -->
 <div class="modal fade fullscreen-modal" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
@@ -255,11 +255,11 @@
     });
 <?}?>
 </script>
-<script src="scripts/speech-synthesizer.js?v=<?=$v?>"></script>
-<script src="scripts/state-manager.js?v=<?=$v?>"></script>
-<script src="scripts/player-controls.js?v=<?=$v?>"></script>
-<!--<script src="scripts/headphone-controls.js?v=<?=$v?>"></script>-->
-<script src="scripts/phrases-list-view.js?v=<?=$v?>"></script>
-<script src="scripts/app.js?v=<?=$v?>" defer></script>
-<script src="scripts/sound.js?v=<?=$v?>"></script>
-<script src="scripts/vrecognition.js?v=<?=$v?>"></script>
+<script src="scripts/speech-synthesizer.js<?=$v?>"></script>
+<script src="scripts/state-manager.js<?=$v?>"></script>
+<script src="scripts/player-controls.js<?=$v?>"></script>
+<!--<script src="scripts/headphone-controls.js<?=$v?>"></script>-->
+<script src="scripts/phrases-list-view.js<?=$v?>"></script>
+<script src="scripts/app.js<?=$v?>" defer></script>
+<script src="scripts/sound.js<?=$v?>"></script>
+<script src="scripts/vrecognition.js<?=$v?>"></script>
