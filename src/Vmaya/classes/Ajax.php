@@ -156,7 +156,7 @@ class Ajax extends Page {
 		if ($user_id = intval($data['user_id'])) {
 			if ($list = (new UserPhrasesModel())->getPhrasesAsJsonWithDifficulty($user_id))
     			return $list;
-    		return return 0;
+    		else return 0;
 		}
 		Page::Wrong();
 	}
