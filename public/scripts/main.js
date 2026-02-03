@@ -196,6 +196,7 @@ async function Ajax(params, after = null, userData = null) {
     // Добавляем токен если он есть
     if (token) {
         headers['X-CSRF-Token'] = token;
+        formData.append('token', token);
     }
 
     headers['X-Requested-With'] = 'XMLHttpRequest';

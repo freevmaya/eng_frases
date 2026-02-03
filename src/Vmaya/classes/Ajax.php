@@ -48,6 +48,7 @@ class Ajax extends Page {
 			$action = Page::$request['action'];
 
 			$token = isset($_SERVER['HTTP_X_CSRF_TOKEN']) ? $_SERVER['HTTP_X_CSRF_TOKEN'] : null;
+			if (!$token) $token = isset(Page::$request['token']) ? Page::$request['token'] : null;
 
 			if (Page::HasToken($token) 
 				&& method_exists($this, $action)) {
