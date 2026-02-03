@@ -13,12 +13,10 @@ class Ajax extends Page {
 			// Запрет кэширования конфиденциальных страниц
 			header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 			header("Pragma: no-cache");
+			header('Access-Control-Allow-Headers: X-CSRF-Token, Content-Type');
 
 			echo json_encode($this->ajax());
-		} else {
-			header('HTTP/1.1 403 Forbidden');
-    		exit(403);
-		}
+		} else Page::Wrong();
 	}
 
 	public static function is_valid_referer() {
@@ -46,8 +44,9 @@ class Ajax extends Page {
 
 		if (isset(Page::$request['action'])) {
 			$action = Page::$request['action'];
-			$requestId = @Page::$request['ajax-request-id'];
+
 			if (method_exists($this, $action)) {
+
 				$data = isset(Page::$request['data']) ? json_decode(Page::$request['data'], true) : null;
 
 				if (is_object($data))
@@ -57,7 +56,12 @@ class Ajax extends Page {
 			}
 		}
 
-		return Page::$request;
+		if (DEV)
+			return [
+				'error' => 1,
+				'request' => Page::$request
+			];
+		else Page::Wrong();
 	}
 
 	protected function trace($data) {
@@ -83,62 +87,71 @@ class Ajax extends Page {
 		GLOBAL $dbp;
 
 		$userModel = new UserModel();
-
-		$user_data = $data['user_data'];
 		$source = $dbp->safeVal($data['source']);
+		$source_id = intval($data['source_id']);
+		$user_data = $data['user_data'];
 
-		$values = [
-			'source_id'=>$data['source_id'],
-			'source'=>$source,
-			'first_name'=>$user_data['first_name'],
-			'last_name'=>$user_data['last_name'],
-			'last_time'=>date('Y-m-d H:i:s'),
-			'language_code'=>'ru',
-			'data'=>json_encode($user_data, JSON_FLAGS)
-		];
+		if (in_array($source, SOURCES) && $source_id && $user_data) {
 
-    	$items = $userModel->getItems("source_id = ".$dbp->safeVal($data['source_id'])." AND source = '{$source}'");
+			$values = [
+				'source_id'=>$source_id,
+				'source'=>$source,
+				'first_name'=>$user_data['first_name'],
+				'last_name'=>$user_data['last_name'],
+				'last_time'=>date('Y-m-d H:i:s'),
+				'language_code'=>'ru',
+				'data'=>json_encode($user_data, JSON_FLAGS)
+			];
 
-    	if (count($items) > 0) {
-    		$values['id'] = $user_id = $items[0]['id'];
-    		$userModel->Update($values);
-    	} else $user_id = $userModel->Update($values);
+	    	$items = $userModel->getItems("source_id = {$source_id} AND source = '{$source}'");
 
-    	$this->setUser($userModel->getItem($user_id));
-    	Page::setSession('user_id', $user_id);
+	    	if (count($items) > 0) {
+	    		$values['id'] = $user_id = $items[0]['id'];
+	    		$userModel->Update($values);
+	    	} else $user_id = $userModel->Update($values);
 
-		return [
-			'user_id'=>$user_id
-		];
+	    	$this->setUser($userModel->getItem($user_id));
+	    	Page::setSession('user_id', $user_id);
+
+			return [
+				'user_id'=>intval($user_id)
+			];
+		} else Page::Wrong();
 	}
 
 	protected function getUserState($data) {
 		if ($user_id = Page::getSession('user_id')) {
     		if ($stateItem = (new UserStateModel())->getItem($user_id, 'user_id')) {
-    			return [
-    				'state' => json_decode($stateItem['data'], true)
-    			];
+    			if ($json_data = trim($stateItem['data']))
+	    			return [
+	    				'state' => json_decode($json_data, true)
+	    			];
     		}
+			return 0;
 		}
-		return 0;
+
+		Page::Wrong();
 	}
 
 	protected function setUserState($data) {
 		if ($user_id = Page::getSession('user_id')) {
 			$data = json_encode($data, JSON_FLAGS);
-    		return (new UserStateModel())->Update([
-    			'user_id'=>$user_id,
-    			'data' => $data
-    		], 'user_id');
-		}
-		return 0;
+			return [
+				'success'=> ((new UserStateModel())->Update([
+					    			'user_id'=>$user_id,
+					    			'data' => $data
+					    		], 'user_id')) ? true : false
+			];
+		} 
+		Page::Wrong();
 	}
 
 	protected function getUserLists($data) {
-		if ($user_id = $data['user_id']) {
-    		return (new UserPhrasesModel())->getPhrasesAsJsonWithDifficulty($user_id);
+		if ($user_id = intval($data['user_id'])) {
+			if ($list = (new UserPhrasesModel())->getPhrasesAsJsonWithDifficulty($user_id))
+    			return $list;
 		}
-		return 0;
+		Page::Wrong();
 	}
 
 	protected function updatePhraseList($data) {
@@ -149,18 +162,22 @@ class Ajax extends Page {
 
 			$data['user_id'] = $user_id;
 
-			return $model->Update($data);
+			return [
+				'success'=> $model->Update($data) ? true : false
+			];
 		}
-		return 0;
+		Page::Wrong();
 	}
 
 	protected function updatePhrase($data) {
 		if ($user_id = Page::getSession('user_id')) {
 			$model = new UserPhrasesModel();
 
-			return $model->Update($data);
+			return [
+				'success'=> $model->Update($data) ? true : false
+			];
 		}
-		return 0;
+		Page::Wrong();
 	}
 
 	protected function addError($data) {
@@ -169,27 +186,33 @@ class Ajax extends Page {
 			if (isset($data['id']))
 				unset($data['id']);
 
-			$data['col'] = isset($data['column']) ? $data['column'] : 0;
+			$data['col'] = isset($data['column']) ? intval($data['column']) : 0;
 			$data['user_id'] = $user_id;
-			return $model->Update($data);
+			return [
+				'success'=> $model->Update($data) ? true : false
+			];
 		}
-		return 0;		
+		Page::Wrong();	
 	}
 
 	protected function deleteList($data) {
-		if ($data['id']) {
+		if ($id = intval($data['id'])) {
 			$model = new UserListsModel();
-			return $model->Delete($data['id']) ? 1 : 0;
+			return [
+				'success'=> $model->Delete($id) ? true : false
+			];
 		}
-		return null;
+		Page::Wrong();
 	}
 
 	protected function deletePhrase($data) {
-		if ($data['id']) {
+		if ($id = intval($data['id'])) {
 			$model = new UserPhrasesModel();
-			return $model->Delete($data['id']) ? 1 : 0;
+			return [
+				'success'=> $model->Delete($id) ? true : false
+			];
 		}
-		return null;
+		Page::Wrong();
 	}
 
 	protected function getList() {

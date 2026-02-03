@@ -10,6 +10,7 @@
 	define("CHARSET", "utf-8");
 	define("DEFAULTPAGE", "home");
 	define("SCRIPTS_VERSION", 155);
+	define("SOURCES", ['vk', 'ok']);
 	
 	$lv = SCRIPTS_VERSION % 1000;
 	$mv = floor(SCRIPTS_VERSION / 1000);

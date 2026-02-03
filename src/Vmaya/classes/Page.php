@@ -105,6 +105,28 @@ class Page {
 		}
 	}
 
+	public static function Wrong() {
+		header('HTTP/1.1 403 Forbidden');
+		exit(403);
+	}
+
+	public static function GenerateHeaderToken() {
+		$token = bin2hex(random_bytes(32));
+		Page::setSession('X-CSRF-Token', $token);
+		header('X-CSRF-Token: ' . $token);
+		return $token;
+	}
+
+	public static function LastToken() {
+		return Page::getSession('X-CSRF-Token', null);
+	}
+
+	public static function EqualsLastToken($token) {
+		if (($last = Page::LastToken()) && $token)
+			return hash_equals($last, $token);
+		return false;
+	}
+
 	protected function isReciveData() {
 		return isset(Page::$request['form-request-id']);
 	}
