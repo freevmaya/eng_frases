@@ -253,8 +253,6 @@ function Application() {
         $(window).trigger('phrases_loaded');
 
         $('.page').addClass('page-loaded');
-
-        //setTimeout(randomTest, 2000);
     }
 
     function randomTest() {
@@ -429,6 +427,14 @@ function Application() {
 
         $(window).on('resize', function() {
             updateSizePlayerTexts();
+        });
+
+        window.addEventListener('focus', (e)=>{
+            stateManager.loadState()
+                .then(()=>{
+                    loadPhraseList();
+                    updateDisplay();
+                });
         });
     }
 
