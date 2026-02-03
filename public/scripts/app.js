@@ -175,11 +175,11 @@ function Application() {
         }
     }
 
-    let _pageScrollTimerId;
-
     var appData = {
         currentPhraseList: [],
         currentPhrase: null,
+        timeoutId: null,
+        pageScrollTimerId: null,
         playStart: false,
         scaleBlockUpdater: debounce(() => {
             let block = elements.phraseScaleBlock;
@@ -411,13 +411,12 @@ function Application() {
 
         elements.progressControl.click((e)=>{
             if (appData.currentPhraseList) {
-                stopPlayback();
                 const rect = e.target.getBoundingClientRect();
                 const clickX = e.clientX - rect.left;
                 const index = Math.round(appData.currentPhraseList.length * clickX / rect.width);
                 setProgress(0, index);
                 setCurrentPhraseIndex(index);
-                if (stateManager.isPlaying && !stateManager.isPaused)
+                if (isPlaying())
                     playCurrentPhrase();
             }
         });
@@ -572,6 +571,10 @@ function Application() {
         else tvScreen.hide();
     }
 
+    function isPlaying() {
+        return stateManager.isPlaying && !stateManager.isPaused;
+    }
+
     function togglePlay(e) {
         if (stateManager.isPaused || stateManager.isPlaying) {
             togglePause();
@@ -611,8 +614,7 @@ function Application() {
         stateManager.isPaused = !stateManager.isPaused;
         
         if (stateManager.isPaused) {
-            clearTimeout(state.timeoutId);
-            clearInterval(state.progressInterval);
+            clearTimeout(appData.timeoutId);
             $(window).trigger("playback", 'stop');
         } else {
             appData.missOne  = state.repeatLength > 1;
@@ -627,8 +629,7 @@ function Application() {
     function stopPlayback() {
         stateManager.isPlaying = false;
         stateManager.isPaused = false;
-        clearTimeout(state.timeoutId);
-        clearInterval(state.progressInterval);
+        clearTimeout(appData.timeoutId);
         speechSynthesizer.stop();
         stopRecognition();
         updateControls();
@@ -642,14 +643,13 @@ function Application() {
 
     function debouncePage(callback) {
 
-        clearTimeout(state.timeoutId);
-        clearInterval(state.progressInterval);
+        clearTimeout(appData.timeoutId);
 
-        if (_pageScrollTimerId) 
-            clearTimeout(_pageScrollTimerId);
+        if (appData.pageScrollTimerId) 
+            clearTimeout(appData.pageScrollTimerId);
 
-        _pageScrollTimerId = setTimeout(()=>{
-            _pageScrollTimerId = null;
+        appData.pageScrollTimerId = setTimeout(()=>{
+            appData.pageScrollTimerId = null;
             callback();
         }, 500);
     }
@@ -662,8 +662,6 @@ function Application() {
 
             if ((state.repeatCount > 0) && (state.currentPhraseIndex % state.repeatLength == 0))
                 setProgress(0, state.currentPhraseIndex);
-
-            stopPlayback();
 
             updateDisplay();
             debouncePage(()=>{  
@@ -765,6 +763,10 @@ function Application() {
 
     // Воспроизведение в обоих направлениях
     function playBothDirections() {
+
+        if (!isPlaying()) return;
+        clearTimeout(appData.timeoutId);
+
         const isEnFirst = state.direction === 'target-native-both';
         const firstLang = isEnFirst ? 'target' : 'native';
         const secondLang = isEnFirst ? 'native' : 'target';
@@ -776,14 +778,15 @@ function Application() {
             speechSynthesizer.speak(appData.currentPhrase, firstLang, 
                     appData.currentPhrase.type, state.speed, state.genderVoice)
                 .then((result)=>{
+                    if (isPlaying()) {
+                        if (secondLang == 'target')
+                            startCurrentRecognition(secondLang);
 
-                    if (secondLang == 'target')
-                        startCurrentRecognition(secondLang);
-
-                    speakPause(() => {
-                        state.showingFirstLang = false;
-                        playCurrentPhrase();
-                    }, firstLang);
+                        speakPause(() => {
+                            state.showingFirstLang = false;
+                            playCurrentPhrase();
+                        }, firstLang);
+                    }
                 });
         } else {
 
@@ -792,19 +795,25 @@ function Application() {
                     appData.currentPhrase.type, state.speed, state.genderVoice)
                 .then((result)=>{
 
-                    if (firstLang == 'target')
-                        startCurrentRecognition(firstLang);
-                    
-                    speakPause(() => {
-                        incCurrentPhraseIndex();
-                        playCurrentPhrase();
-                    }, secondLang);
+                    if (isPlaying()) {
+                        if (firstLang == 'target')
+                            startCurrentRecognition(firstLang);
+                        
+                        speakPause(() => {
+                            incCurrentPhraseIndex();
+                            playCurrentPhrase();
+                        }, secondLang);
+                    }
                 });
         }
     }
 
     // Воспроизведение в одном направлении
     function playSingleDirection() {
+
+        if (!isPlaying()) return;
+        clearTimeout(appData.timeoutId);
+
         const showLang = state.direction === 'target-native' ? 'target' : 'native';
         const speakLang = state.direction === 'target-native' ? 'native' : 'target';
         
@@ -813,11 +822,13 @@ function Application() {
                     appData.currentPhrase.type, state.speed, state.genderVoice)
             .then((result)=>{
 
-                startCurrentRecognition('target');                
-                speakPause(() => {
-                    incCurrentPhraseIndex();
-                    playCurrentPhrase();
-                }, speakLang);
+                if (isPlaying()) {
+                    startCurrentRecognition('target');                
+                    speakPause(() => {
+                        incCurrentPhraseIndex();
+                        playCurrentPhrase();
+                    }, speakLang);
+                }
             });
     }
 
@@ -827,8 +838,8 @@ function Application() {
     }
 
     function speakPause(callback, phraseDirect) {
-        clearTimeout(state.timeoutId);
-        state.timeoutId = setTimeout(callback, calcTime(phraseDirect));
+        clearTimeout(appData.timeoutId);
+        appData.timeoutId = setTimeout(callback, calcTime(phraseDirect));
     }
 
     function updateSizeText(elem, k = 1, maxSize = 36, minSize = 18) {
@@ -885,13 +896,6 @@ function Application() {
         }
     }
 
-    // Озвучить текущую фразу
-    function speakCurrentPhrase(lang) {
-        if (!appData.currentPhrase) return;
-        return speechSynthesizer.speak(appData.currentPhrase, lang, 
-                    appData.currentPhrase.type, state.speed, state.genderVoice);
-    }
-
     function refreshProgressBar() {
         let percent = (appData.currentPhraseList && (appData.currentPhraseList.length > 0)) ? 
                         Math.round(state.currentPhraseIndex / (appData.currentPhraseList.length - 1) * 100) : 0;
@@ -932,7 +936,7 @@ function Application() {
 
     // Обновить кнопки управления
     function updateControls() {
-        let isPlay = stateManager.isPlaying && !stateManager.isPaused;
+        let isPlay = isPlaying();
 
         if (isPlay) enableWakeLock();
         else disableWakeLock();
