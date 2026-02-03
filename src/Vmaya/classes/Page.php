@@ -146,7 +146,7 @@ class Page {
 
 	public static function HasToken($value) {
 
-		if ($value) {
+		if ($value && is_string($value)) {
 			Page::CleanExpiredTokens();
 			$tokens = Page::getSession('X-CSRF-Tokens', []);
 			$curtime = time();
