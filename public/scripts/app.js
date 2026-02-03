@@ -662,6 +662,8 @@ function Application() {
             if ((state.repeatCount > 0) && (state.currentPhraseIndex % state.repeatLength == 0))
                 setProgress(0, state.currentPhraseIndex);
 
+            stopPlayback();
+
             updateDisplay();
             debouncePage(()=>{  
             
