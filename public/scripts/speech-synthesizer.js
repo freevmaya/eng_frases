@@ -48,6 +48,10 @@ class SpeechSynthesizer {
         return true;
     }
 
+    isBusy() {
+        return this.state.isBusy;
+    }
+
     // Инициализация синтезатора речи
     init() {
         if (this.state.hasSpeechSynthesis) {
@@ -304,6 +308,12 @@ class SpeechSynthesizer {
             
             // 4. Fallback на локальный синтез речи
             if (this.config.fallbackToSpeech && this.state.hasSpeechSynthesis) {
+                if (!this.isBusy()) {
+                    return {
+                        success: false,
+                        type: 'none'
+                    };
+                }
                 tracer.log('Using fallback speech synthesis');
                 return this._speakWithSynthesis(phraseObj, phraseType, speed);
             }
@@ -318,6 +328,12 @@ class SpeechSynthesizer {
             };
             
         } catch (error) {
+            if (!this.isBusy()) {
+                return {
+                    success: false,
+                    type: 'none'
+                };
+            }
             console.error('Error in smartSpeak:', error);
             
             // Final fallback
