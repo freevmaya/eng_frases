@@ -77,11 +77,12 @@
 			version: <?=SCRIPTS_VERSION;?>,
 			user_id: <?=$user_id;?>,
 			excludeDomains: [
-				'.yandex.ru',
-		        'google-analytics.com',
-		        '.google.com',
-		        'cdn.example.org',
-		        'fonts.googleapis.com'
+				'yandex.ru',
+		        'google.com',
+		        'example.org',
+		        'googleapis.com',
+		        'api/generate-audio',
+		        'api/check-audio'
 		    ]
 		});
 

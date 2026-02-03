@@ -494,10 +494,11 @@ class SpeechSynthesizer {
                 if (voice) utterance.voice = voice;
             }
 
-            ErrorTracker.handleError({
-                message: "_speakWithSynthesis",
-                error: this.getAudioUrl(text, language)
-            });
+            if (typeof ErrorTracker !== 'undefined')
+                ErrorTracker.handleError({
+                    message: "_speakWithSynthesis",
+                    error: this.getAudioUrl(text, language)
+                });
 
             return new Promise((resolve, reject)=>{
             

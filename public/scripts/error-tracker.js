@@ -75,6 +75,9 @@ const ErrorTracker = {
                     });
                 }
             });
+            
+            // Проверяем неудачные загрузки через PerformanceObserver
+            this.setupResourceLoadObserver();
         });
 
         // Отслеживание ошибок для динамически загружаемых ресурсов
@@ -86,25 +89,13 @@ const ErrorTracker = {
         if (!url || typeof url !== 'string') {
             return false;
         }
+        url = url.toLowerCase();
         
         try {
-            const urlObj = new URL(url);
-            const hostname = urlObj.hostname;
             
-            // Проверяем каждый домен из списка исключений
             for (const domain of this.excludeDomains) {
-                // Поддерживаем точное совпадение домена или поддомены
-                if (domain.startsWith('.')) {
-                    // Например, .google.com соответствует google.com и subdomain.google.com
-                    if (hostname === domain.slice(1) || hostname.endsWith(domain)) {
-                        return true;
-                    }
-                } else {
-                    // Точное совпадение или поддомен
-                    if (hostname === domain || hostname.endsWith('.' + domain)) {
-                        return true;
-                    }
-                }
+                if (url.includes(domain.toLowerCase()) !== false)
+                    return true;
             }
             
             return false;
@@ -169,6 +160,48 @@ const ErrorTracker = {
             }
         }
         return attributes;
+    },
+    
+    setupResourceLoadObserver() {
+        if ('PerformanceObserver' in window) {
+            try {
+                const resourceObserver = new PerformanceObserver((list) => {
+                    list.getEntries().forEach((entry) => {
+                        // entryType может быть 'resource', 'navigation' и т.д.
+                        if (entry.entryType === 'resource') {
+                            
+                            // Проверяем, была ли ошибка загрузки
+                            // В некоторых браузерах можно определить неудачные загрузки
+                            // по transferSize = 0 и duration > 0
+                            if (entry.transferSize === 0 && entry.duration > 0 && 
+                                !entry.name.includes(window.location.origin)) {
+
+                                // Проверяем, не является ли ресурс из исключаемого домена
+                                if (this.isExcludedDomain(entry.name)) {
+                                    return; // Пропускаем ресурсы из исключаемых доменов
+                                }
+                                this.handleError({
+                                    type: 'resource_failed',
+                                    message: 'Resource load may have failed',
+                                    source: entry.name,
+                                    initiatorType: entry.initiatorType,
+                                    duration: entry.duration,
+                                    transferSize: entry.transferSize,
+                                    nextHopProtocol: entry.nextHopProtocol,
+                                    timestamp: new Date().toISOString()
+                                });
+                            }
+                        }
+                    });
+                });
+                
+                // Наблюдаем за загрузкой ресурсов
+                resourceObserver.observe({ entryTypes: ['resource'] });
+                this.resourceObserver = resourceObserver;
+            } catch (e) {
+                console.warn('PerformanceObserver not supported:', e);
+            }
+        }
     },
     
     setupMutationObserver() {
