@@ -435,6 +435,7 @@ function Application() {
                     state = stateManager.getState();
                     loadPhraseList();
                     updateDisplay();
+                    $(window).trigger('selected_list_type', state.currentListType);
                 });
         });
     }
