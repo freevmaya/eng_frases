@@ -224,14 +224,14 @@ function Application() {
     function init() {
         setupEventListeners();
         applyTvScreenState();
-
+        /*
         // Обработка события видимости страницы
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 if (!stateManager.isPaused && stateManager.isPlaying)
                     stopPlayback();
             }
-        });
+        });*/
 
         if (phrasesData)
             afterLoadList(phrasesData);

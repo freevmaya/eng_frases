@@ -22,5 +22,10 @@
     "audio": {
       "pause_others": true
     }
-  }
+  },
+  "background_mode": true,
+  "required_permissions": [
+    "audio",
+    "background_audio"
+  ]
 }
