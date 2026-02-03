@@ -43,15 +43,23 @@ class Ajax extends Page {
 
 	public function ajax() {
 		GLOBAL $dbp;
+		$action_without_token = ['getUserState'];
 
 		if (isset(Page::$request['action'])) {
 			$action = Page::$request['action'];
 
-			$token = isset($_SERVER['HTTP_X_CSRF_TOKEN']) ? $_SERVER['HTTP_X_CSRF_TOKEN'] : null;
-			if (!$token) $token = isset(Page::$request['token']) ? Page::$request['token'] : null;
+			if (!in_array($action, $action_without_token)) {
+				$token = isset($_SERVER['HTTP_X_CSRF_TOKEN']) ? $_SERVER['HTTP_X_CSRF_TOKEN'] : null;
+				if (!$token) $token = isset(Page::$request['token']) ? Page::$request['token'] : null;
 
-			if (Page::HasToken($token) 
-				&& method_exists($this, $action)) {
+				if (!Page::HasToken($token))
+					return [
+						'error' => 1,
+						'message' => 'The token has expired'
+					];
+			}
+
+			if (method_exists($this, $action)) {
 
 				$data = isset(Page::$request['data']) ? json_decode(Page::$request['data'], true) : null;
 
