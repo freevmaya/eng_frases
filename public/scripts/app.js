@@ -374,11 +374,6 @@ function Application() {
         elements.prevBtn.click(prevPhrase);
 
         elements.playButton[0].addEventListener('click', () => {
-            /*
-            if (recognition && stateManager.state.recognize) {
-                recognition.lang = 'en-US';
-                recognition.start();
-            }*/
             togglePlay();
         });
         

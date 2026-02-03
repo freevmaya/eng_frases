@@ -296,6 +296,35 @@
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
+/* Для всех кнопок на touch-устройствах */
+@media (hover: none) and (pointer: coarse) {
+  .btn {
+    /* Отключаем hover эффекты */
+    --bs-btn-hover-bg: var(--bs-btn-bg);
+    --bs-btn-hover-border-color: var(--bs-btn-border-color);
+    --bs-btn-hover-color: var(--bs-btn-color);
+    
+    /* Отключаем активное состояние */
+    --bs-btn-active-bg: var(--bs-btn-bg);
+    --bs-btn-active-border-color: var(--bs-btn-border-color);
+    --bs-btn-active-color: var(--bs-btn-color);
+    
+    /* Убираем transition */
+    transition: none !important;
+  }
+
+  .btn.active {
+    color: var(--light);
+  }
+
+  .btn:hover,
+  .btn:focus,
+  .btn:active {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
 /* Button Group Active States */
 .btn-group .btn.active {
     background-color: var(--primary);
