@@ -411,6 +411,7 @@ function Application() {
 
         elements.progressControl.click((e)=>{
             if (appData.currentPhraseList) {
+                stopPlayback();
                 const rect = e.target.getBoundingClientRect();
                 const clickX = e.clientX - rect.left;
                 const index = Math.round(appData.currentPhraseList.length * clickX / rect.width);
