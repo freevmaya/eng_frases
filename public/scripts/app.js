@@ -433,10 +433,14 @@ function Application() {
         window.addEventListener('focus', (e)=>{
             stateManager.loadState()
                 .then(()=>{
-                    state = stateManager.getState();
-                    loadPhraseList();
-                    updateDisplay();
-                    $(window).trigger('selected_list_type', state.currentListType);
+                    if (_isPlaying) {
+                        let server_state = stateManager.getState();
+                        if (server_state.currentListType != state.currentListType) {
+                            loadPhraseList();
+                            updateDisplay();
+                            $(window).trigger('selected_list_type', state.currentListType);
+                        } else state = server_state;
+                    }
                 });
         });
     }
