@@ -6,6 +6,14 @@ let phrasesList = null;
 let playerControls = null;
 let recognition = null;
 
+
+const AppConst = {
+    charTime: {
+        target: 20,
+        native: 30
+    }
+}
+
 async function enableWakeLock() {
 
     if (typeof vkBridge !== 'undefined') {
@@ -167,13 +175,6 @@ function Application() {
     playerControls = new PlayerControls({
         autoHideDelay: 0
     });
-
-    const AppConst = {
-        charTime: {
-            target: 20,
-            native: 30
-        }
-    }
 
     var appData = {
         currentPhraseList: [],

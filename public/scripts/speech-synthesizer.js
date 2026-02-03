@@ -25,8 +25,6 @@ class SpeechSynthesizer {
         
         this.currentUtterance = null;
         this.currentAudio = null;
-        this.audioQueue = [];
-        this.audioCache = [];
         
         this.init();
     }
@@ -62,7 +60,7 @@ class SpeechSynthesizer {
         }
         
         // Предзагрузка аудио элементов
-        this.preloadedAudios = new Map();
+        this.loadedAudios = new Map();
     }
 
     // Загрузка доступных голосов
@@ -241,82 +239,42 @@ class SpeechSynthesizer {
             this._stopPlayback();
                 
             const localUrlInfo = await this.getAudioUrl(cleanText, language, category, genderVoice);
-            tracer.log(`Attemp play ${phraseObj[phraseType]}: ${localUrlInfo.url}`);
+            tracer.log(`Attemp play ${cleanText}: ${localUrlInfo.url}`);
 
-            if (this.config.noServer) {
+            try {
                 return await this.playAudioFromUrl(localUrlInfo.url);
-            }
+            } catch(e) {
             
-            if (this.audioCache.includes(localUrlInfo.url)) {
-                tracer.log(`Found local audio: ${localUrlInfo.fileName}`);
-                return await this.playAudioFromUrl(localUrlInfo.url);
-            }
-            
-            // 2. Проверяем на сервере
-            tracer.log(`Checking audio "${cleanText}" on server...`);
-            const checkResult = await this.checkAudioOnServer(cleanText, language, category, genderVoice);
-            
-            if ((checkResult.status === 'found') && (checkResult.data.gender == genderVoice)) {
-                this.audioCache.push(localUrlInfo.url);
-                tracer.log(`Audio "${cleanText}" found on server: ${checkResult.data.filename}`);
-                
-                // Пробуем проиграть файл с сервера
-                const serverUrlInfo = {
-                    fileName: checkResult.data.filename,
-                    url: `${this.getBaseUrl(genderVoice).replace(/\/$/, '')}/${language}/${checkResult.data.filename}`.replace('//', '/')
-                };
-                
-                try {
-                    return await this.playAudioFromUrl(serverUrlInfo.url);
-                } catch (playError) {
-                    console.warn('Failed to play server audio, trying fallback...', playError);
-                }
-            }
-            
-            // 3. Если не нашли, генерируем на сервере (если разрешено)
-            if (this.config.autoGenerateAudio) {
-                tracer.log('Audio not found, generating on server...');
-                const generationResult = await this.generateAudioOnServer(cleanText, language, category, genderVoice);
-                
-                if (generationResult.status === 'success' || generationResult.status === 'ok') {
-                    tracer.log('Audio generated successfully:', generationResult.data.filename);
+                // 3. Если не нашли, генерируем на сервере (если разрешено)
+                if (this.config.autoGenerateAudio) {
+                    tracer.log('Audio not found, generating on server...');
+                    const generationResult = await this.generateAudioOnServer(cleanText, language, category, genderVoice);
                     
-                    // Даем серверу время на сохранение файла
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    
-                    // Пробуем проиграть сгенерированный файл
-                    const generatedUrlInfo = {
-                        fileName: generationResult.data.filename,
-                        url: generationResult.data.filepath || 
-                             // Изменено: теперь language вместо category
-                             `${this.getBaseUrl(genderVoice).replace(/\/$/, '')}/${language}/${generationResult.data.filename}`.replace('//', '/'),
-                        langPrefix: language,
-                        hash: generationResult.data.filename.replace(`${language}_`, '').replace('.mp3', ''),
-                        phrase: cleanText,
-                        phraseType: phraseType,
-                        category: generationResult.data.category
-                    };
-                    
-                    try {
-                        return await this.playAudioFromUrl(generatedUrlInfo.url);
-                    } catch (playError) {
-                        console.warn('Failed to play generated audio, trying fallback...', playError);
+                    if (generationResult.status === 'success' || generationResult.status === 'ok') {
+                        tracer.log('Audio generated successfully:', generationResult.data.filename);
+                        
+                        // Даем серверу время на сохранение файла
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        
+                        try {
+                            return await this.playAudioFromUrl(localUrlInfo.url);
+                        } catch (playError) {
+                            console.warn('Failed to play generated audio, trying fallback...', playError);
+                        }
+                    } else {
+                        console.warn('Audio generation failed:', generationResult.message);
                     }
-                } else {
-                    console.warn('Audio generation failed:', generationResult.message);
                 }
             }
             
             // 4. Fallback на локальный синтез речи
             if (this.config.fallbackToSpeech && this.state.hasSpeechSynthesis) {
-                if (!this.isBusy()) {
-                    return {
-                        success: false,
-                        type: 'none'
-                    };
-                }
                 tracer.log('Using fallback speech synthesis');
                 return this._speakWithSynthesis(phraseObj, phraseType, speed);
+            } else {
+
+                //Задерживаем на время произношения фразы
+                return await new Promise(resolve => setTimeout(resolve, cleanText.length * AppConst.charTime[phraseType]));
             }
             
             // Если ничего не сработало, очищаем состояние
@@ -329,12 +287,7 @@ class SpeechSynthesizer {
             };
             
         } catch (error) {
-            if (!this.isBusy()) {
-                return {
-                    success: false,
-                    type: 'none'
-                };
-            }
+
             console.error('Error in smartSpeak:', error);
             
             // Final fallback
@@ -369,14 +322,13 @@ class SpeechSynthesizer {
         try {
             
             let audio;
-            if (this.preloadedAudios.has(fileUrl)) {
-                audio = this.preloadedAudios.get(fileUrl);
+            if (this.loadedAudios.has(fileUrl)) {
+                audio = this.loadedAudios.get(fileUrl);
                 audio.currentTime = 0;
             } else {
                 audio = new Audio();
                 audio.src = fileUrl;
                 audio.preload = 'auto';
-                this.preloadedAudios.set(fileUrl, audio);
 
                 if (typeof ErrorTracker !== 'undefined')
                     ErrorTracker.attachResourceErrorHandler(audio);
@@ -389,6 +341,10 @@ class SpeechSynthesizer {
             
             return new Promise((resolve, reject) => {
                 let timeoutId;
+
+                const onLoaded = ()=>{
+                    this.loadedAudios.set(fileUrl, audio);
+                }
                 
                 const onEnded = () => {
                     cleanup();
@@ -428,6 +384,7 @@ class SpeechSynthesizer {
                 
                 audio.addEventListener('ended', onEnded);
                 audio.addEventListener('error', onError);
+                audio.addEventListener('loadeddata', onLoaded);
                 
                 const playPromise = audio.play();
                 
@@ -571,12 +528,11 @@ class SpeechSynthesizer {
 
     // Очистка кэша предзагруженных аудио
     clearAudioCache() {
-        this.preloadedAudios.forEach(audio => {
+        this.loadedAudios.forEach(audio => {
             audio.pause();
             audio.src = '';
         });
-        this.preloadedAudios.clear();
-        this.audioCache = [];
+        this.loadedAudios.clear();
         tracer.log('Audio cache cleared');
     }
 
@@ -607,7 +563,7 @@ class SpeechSynthesizer {
             busyType: this.state.busyType,
             voicesLoaded: this.state.voicesLoaded,
             voicesCount: this.state.voices.length,
-            preloadedAudiosCount: this.preloadedAudios.size,
+            loadedAudiosCount: this.loadedAudios.size,
             config: {
                 audioBaseUrl: this.config.audioBaseUrl,
                 apiBaseUrl: this.config.apiBaseUrl,
