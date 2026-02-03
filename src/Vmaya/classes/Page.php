@@ -146,13 +146,15 @@ class Page {
 
 	public static function HasToken($value) {
 
-		Page::CleanExpiredTokens();
-		$tokens = Page::getSession('X-CSRF-Tokens', []);
-		$curtime = time();
+		if ($value) {
+			Page::CleanExpiredTokens();
+			$tokens = Page::getSession('X-CSRF-Tokens', []);
+			$curtime = time();
 
-		foreach ($tokens as $idx=>$rec)
-			if (hash_equals($rec['value'], $value))
-				return true;
+			foreach ($tokens as $idx=>$rec)
+				if (hash_equals($rec['value'], $value))
+					return true;
+		}
 		return false;
 	}
 
