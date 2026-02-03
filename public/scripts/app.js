@@ -432,6 +432,7 @@ function Application() {
         window.addEventListener('focus', (e)=>{
             stateManager.loadState()
                 .then(()=>{
+                    state = stateManager.getState();
                     loadPhraseList();
                     updateDisplay();
                 });
