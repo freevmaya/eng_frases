@@ -71,8 +71,9 @@ class Page {
 		$subpage = null;
 		$hasFile = false;
 
-		foreach (Page::$request as $key=>$value) {
-			$value = htmlspecialchars($value);
+		foreach ($request as $key=>$value) {
+			if (is_string($value))
+				$value = htmlspecialchars($value);
 
 			if ($key == 'page') {
 				$page = $value;
@@ -82,7 +83,7 @@ class Page {
 
 			if ($key == 'subpage') {
 				if (is_numeric($value))
-					Page::$request['id'] = $value;
+					$request['id'] = $value;
 				else {
 					$subpage = $value;
 					$classFileName = dirname(__FILE__).'/'.$page.'/'.$subpage.'.php';

@@ -62,6 +62,8 @@ const ErrorTracker = {
             // Определяем тип скрипта
             scriptType: details.source === window.location.href ? 'inline' : 'external'
         };
+
+
         
         // Отправляем на сервер
         this.sendToServer(errorInfo);
