@@ -665,7 +665,8 @@ footer {
     flex: 1 0 max(calc(33.333% - 20px), 200px);
 }
 
-#settingsModal .modal-body .text-info {
+#settingsModal .modal-body .text-info,
+#settingsModal label {
 
     white-space: nowrap;
     overflow: hidden;

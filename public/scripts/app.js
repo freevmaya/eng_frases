@@ -211,7 +211,8 @@ function Application() {
         repeatCount: $('#repeatCount'),
         currentRepeat: $('#currentRepeat'),
         genderVoice: $('#genderVoice'),
-        recognizeToggle: $('#recognizeToggle')
+        recognizeToggle: $('#recognizeToggle'),
+        backgroundPlayback: $('#backgroundPlayback')
     };
             
     // Создаем объект распознавания
@@ -224,14 +225,14 @@ function Application() {
     function init() {
         setupEventListeners();
         applyTvScreenState();
-        /*
+
         // Обработка события видимости страницы
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
-                if (!stateManager.isPaused && stateManager.isPlaying)
+                if (!stateManager.isPaused && stateManager.isPlaying && !state.backgroundPlayback)
                     stopPlayback();
             }
-        });*/
+        });
 
         if (phrasesData)
             afterLoadList(phrasesData);
@@ -479,7 +480,8 @@ function Application() {
             recognize: elements.recognizeToggle.prop('checked'),
             repeatLength: elements.repeatLength.val(),
             repeatCount: elements.repeatCount.val(),
-            genderVoice: elements.genderVoice.val()
+            genderVoice: elements.genderVoice.val(),
+            backgroundPlayback: elements.backgroundPlayback.prop('checked')
         };
 
         if (newSettings.repeatCount < getCurentRepeat())

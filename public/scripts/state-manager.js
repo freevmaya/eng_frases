@@ -30,7 +30,9 @@ class StateManager {
             repeatLength: 5,
             repeatCount: 0,
 
-            genderVoice: 'male'
+            genderVoice: 'male',
+
+            backgroundPlayback: true
         };
         
         this.state = { ...this.DEFAULT_STATE };

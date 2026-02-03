@@ -28,6 +28,12 @@
                             Распознавание речи
                         </label>
                     </div>
+                    <div class="form-check form-switch" id="recognizeToggleForm">
+                        <input class="form-check-input" type="checkbox" id="backgroundPlayback" checked>
+                        <label class="form-check-label" for="backgroundPlayback">
+                            Фоновое воспроизведение
+                        </label>
+                    </div>
                 </div>
 
                 <div class="mb-4">
