@@ -4,6 +4,10 @@ const ErrorTracker = {
         // 1. Используем window.onerror как основной
         const originalOnerror = window.onerror;
         this.config = config;
+        
+        // Инициализируем список исключаемых доменов
+        this.excludeDomains = config.excludeDomains || [];
+        
         /*
         window.onerror = (msg, source, line, col, error) => {
             this.handleError({
@@ -27,7 +31,19 @@ const ErrorTracker = {
             // Если событие уже обработано window.onerror, пропускаем
             if (event.defaultPrevented) return;
             
+            // Проверяем, является ли ошибка ошибкой загрузки ресурса
+            const target = event.target;
+            if (target && (target.tagName === 'SCRIPT' || target.tagName === 'LINK' || 
+                target.tagName === 'IMG' || target.tagName === 'VIDEO' || target.tagName === 'AUDIO')) {
+                
+                // Это ошибка загрузки ресурса
+                this.handleResourceLoadError(target);
+                return;
+            }
+            
+            // Обработка обычных JavaScript ошибок
             this.handleError({
+                type: 'js_error',
                 message: event.message,
                 source: event.filename,
                 line: event.lineno,
@@ -36,23 +52,179 @@ const ErrorTracker = {
             });
         }, true);
 
+        // Обработчик для отслеживания ошибок загрузки ресурсов через performance API
         window.addEventListener('load', () => {
             const resources = performance.getEntriesByType('resource');
+            
             resources.forEach(res => {
-                if (res.initiatorType === 'script' || res.initiatorType === 'css') {
-                    if (res.duration > 10000) {
-                        this.handleError({
-                            message: 'resource_error',
-                            source: res.name + ':' + res.transferSize,
-                            error: 'Long loading time'
-                        });
-                    }
+                // Проверяем, не является ли ресурс из исключаемого домена
+                if (this.isExcludedDomain(res.name)) {
+                    return; // Пропускаем ресурсы из исключаемых доменов
+                }
+                
+                // Отслеживаем длительную загрузку ресурсов
+                if (res.duration > 10000) {
+                    this.handleError({
+                        type: 'slow_resource',
+                        message: 'Slow resource loading',
+                        source: res.name,
+                        duration: res.duration,
+                        initiatorType: res.initiatorType,
+                        size: res.transferSize,
+                        error: `Resource took ${Math.round(res.duration)}ms to load`
+                    });
                 }
             });
         });
+
+        // Отслеживание ошибок для динамически загружаемых ресурсов
+        this.setupMutationObserver();
+    },
+    
+    // Проверяет, находится ли URL в списке исключаемых доменов
+    isExcludedDomain(url) {
+        if (!url || typeof url !== 'string') {
+            return false;
+        }
+        
+        try {
+            const urlObj = new URL(url);
+            const hostname = urlObj.hostname;
+            
+            // Проверяем каждый домен из списка исключений
+            for (const domain of this.excludeDomains) {
+                // Поддерживаем точное совпадение домена или поддомены
+                if (domain.startsWith('.')) {
+                    // Например, .google.com соответствует google.com и subdomain.google.com
+                    if (hostname === domain.slice(1) || hostname.endsWith(domain)) {
+                        return true;
+                    }
+                } else {
+                    // Точное совпадение или поддомен
+                    if (hostname === domain || hostname.endsWith('.' + domain)) {
+                        return true;
+                    }
+                }
+            }
+            
+            return false;
+        } catch (e) {
+            // Если URL некорректный, не исключаем его
+            console.debug('Error parsing URL for domain check:', url, e);
+            return false;
+        }
+    },
+    
+    handleResourceLoadError(element) {
+        const resourceType = element.tagName.toLowerCase();
+        const resourceUrl = element.src || element.href;
+        
+        // Проверяем, не является ли ресурс из исключаемого домена
+        if (this.isExcludedDomain(resourceUrl)) {
+            console.debug(`Skipping error for excluded domain: ${resourceUrl}`);
+            return; // Не отправляем ошибку для ресурсов из исключаемых доменов
+        }
+        
+        const errorDetails = {
+            type: 'resource_load_error',
+            resourceType: resourceType,
+            message: `Failed to load ${resourceType}: ${resourceUrl}`,
+            source: resourceUrl,
+            tagName: element.tagName,
+            attributes: this.getElementAttributes(element),
+            url: window.location.href,
+            timestamp: new Date().toISOString(),
+            userAgent: navigator.userAgent
+        };
+
+        // Добавляем дополнительную информацию в зависимости от типа ресурса
+        switch(resourceType) {
+            case 'script':
+                errorDetails.errorType = 'script_load_failure';
+                break;
+            case 'link':
+                const rel = element.getAttribute('rel');
+                errorDetails.errorType = rel === 'stylesheet' ? 'css_load_failure' : 'link_load_failure';
+                break;
+            case 'img':
+                errorDetails.errorType = 'image_load_failure';
+                break;
+            case 'video':
+            case 'audio':
+                errorDetails.errorType = 'media_load_failure';
+                break;
+        }
+
+        this.sendToServer(errorDetails);
+    },
+    
+    getElementAttributes(element) {
+        const attributes = {};
+        for (let attr of element.attributes) {
+            // Не включаем слишком длинные атрибуты (например, data-* с большими значениями)
+            if (attr.value && attr.value.length < 1000) {
+                attributes[attr.name] = attr.value;
+            } else if (attr.value) {
+                attributes[attr.name] = attr.value.substring(0, 100) + '... [truncated]';
+            }
+        }
+        return attributes;
+    },
+    
+    setupMutationObserver() {
+        // Отслеживаем динамически добавленные элементы
+        const mutationObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach((node) => {
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            // Проверяем элементы, которые могут загружать ресурсы
+                            const tagsToWatch = ['SCRIPT', 'LINK', 'IMG', 'VIDEO', 'AUDIO'];
+                            if (tagsToWatch.includes(node.tagName)) {
+                                this.attachResourceErrorHandler(node);
+                            }
+                            
+                            // Рекурсивно проверяем дочерние элементы
+                            if (node.querySelectorAll) {
+                                tagsToWatch.forEach(tag => {
+                                    const elements = node.querySelectorAll(tag);
+                                    elements.forEach(el => this.attachResourceErrorHandler(el));
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        });
+        
+        mutationObserver.observe(document.documentElement, {
+            childList: true,
+            subtree: true
+        });
+        
+        this.mutationObserver = mutationObserver;
+    },
+    
+    attachResourceErrorHandler(element) {
+        // Проверяем, не является ли элемент уже из исключаемого домена
+        const resourceUrl = element.src || element.href;
+        if (resourceUrl && this.isExcludedDomain(resourceUrl)) {
+            return; // Не добавляем обработчик для исключаемых доменов
+        }
+        
+        // Добавляем обработчики ошибок для элементов
+        element.addEventListener('error', (event) => {
+            this.handleResourceLoadError(element);
+        }, { once: true }); // Используем once чтобы избежать дублирования
     },
     
     handleError(details) {
+        // Проверяем, не является ли источник ошибки из исключаемого домена
+        if (details.source && this.isExcludedDomain(details.source)) {
+            console.debug(`Skipping error for excluded domain: ${details.source}`);
+            return;
+        }
+        
         // Добавляем дополнительную информацию
         const errorInfo = {
             ...details,
@@ -63,17 +235,45 @@ const ErrorTracker = {
             scriptType: details.source === window.location.href ? 'inline' : 'external'
         };
 
-
-        
         // Отправляем на сервер
         this.sendToServer(errorInfo);
     },
 
     sendToServer(data) {
         data.version = this.config.version;
+        // Добавляем идентификатор сессии для группировки ошибок
+        if (!data.sessionId) {
+            data.sessionId = this.getSessionId();
+        }
+        
+        // Добавляем информацию об исключаемых доменах для отладки
+        data.excludeDomainsInfo = {
+            configured: this.excludeDomains.length > 0,
+            excluded: this.isExcludedDomain(data.source)
+        };
+        
         Ajax({
             action: 'addError',
             data: data
         });
+    },
+    
+    getSessionId() {
+        // Генерируем или получаем идентификатор сессии
+        if (!this.sessionId) {
+            this.sessionId = 'session_' + Math.random().toString(36).substr(2, 9);
+            sessionStorage.setItem('errorTrackerSessionId', this.sessionId);
+        }
+        return this.sessionId;
+    },
+    
+    // Метод для очистки наблюдателей при необходимости
+    destroy() {
+        if (this.resourceObserver) {
+            this.resourceObserver.disconnect();
+        }
+        if (this.mutationObserver) {
+            this.mutationObserver.disconnect();
+        }
     }
 };

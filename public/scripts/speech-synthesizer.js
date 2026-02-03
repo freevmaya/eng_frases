@@ -243,8 +243,9 @@ class SpeechSynthesizer {
             const localUrlInfo = await this.getAudioUrl(cleanText, language, category, genderVoice);
             tracer.log(`Attemp play ${phraseObj[phraseType]}: ${localUrlInfo.url}`);
 
-            if (this.config.noServer)
+            if (this.config.noServer) {
                 return await this.playAudioFromUrl(localUrlInfo.url);
+            }
             
             if (this.audioCache.includes(localUrlInfo.url)) {
                 tracer.log(`Found local audio: ${localUrlInfo.fileName}`);
@@ -376,6 +377,9 @@ class SpeechSynthesizer {
                 audio.src = fileUrl;
                 audio.preload = 'auto';
                 this.preloadedAudios.set(fileUrl, audio);
+
+                if (typeof ErrorTracker !== 'undefined')
+                    ErrorTracker.attachResourceErrorHandler(audio);
             }
 
             this.currentAudio = audio;
@@ -489,6 +493,11 @@ class SpeechSynthesizer {
                 const voice = this.state.voices.find(v => v.lang.startsWith(language));
                 if (voice) utterance.voice = voice;
             }
+
+            ErrorTracker.handleError({
+                message: "_speakWithSynthesis",
+                error: this.getAudioUrl(text, language)
+            });
 
             return new Promise((resolve, reject)=>{
             

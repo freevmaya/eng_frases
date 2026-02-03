@@ -75,7 +75,14 @@
 	<script type="text/javascript">
 		ErrorTracker.init({
 			version: <?=SCRIPTS_VERSION;?>,
-			user_id: <?=$user_id;?>
+			user_id: <?=$user_id;?>,
+			excludeDomains: [
+				'.yandex.ru',
+		        'google-analytics.com',
+		        '.google.com',
+		        'cdn.example.org',
+		        'fonts.googleapis.com'
+		    ]
 		});
 
 		var X_CSRF_Token = '<?=Page::LastToken();?>';
