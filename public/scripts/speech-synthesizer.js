@@ -244,25 +244,28 @@ class SpeechSynthesizer {
             try {
                 return await this.playAudioFromUrl(localUrlInfo.url);
             } catch(e) {
+
+                if (e.name == 'Error') { // e.code = 20
             
-                // 3. Если не нашли, генерируем на сервере (если разрешено)
-                if (this.config.autoGenerateAudio) {
-                    tracer.log('Audio not found, generating on server...');
-                    const generationResult = await this.generateAudioOnServer(cleanText, language, category, genderVoice);
-                    
-                    if (generationResult.status === 'success' || generationResult.status === 'ok') {
-                        tracer.log('Audio generated successfully:', generationResult.data.filename);
+                    // 3. Если не нашли, генерируем на сервере (если разрешено)
+                    if (this.config.autoGenerateAudio) {
+                        tracer.log('Audio not found, generating on server...');
+                        const generationResult = await this.generateAudioOnServer(cleanText, language, category, genderVoice);
                         
-                        // Даем серверу время на сохранение файла
-                        await new Promise(resolve => setTimeout(resolve, 500));
-                        
-                        try {
-                            return await this.playAudioFromUrl(localUrlInfo.url);
-                        } catch (playError) {
-                            console.warn('Failed to play generated audio, trying fallback...', playError);
+                        if (generationResult.status === 'success' || generationResult.status === 'ok') {
+                            tracer.log('Audio generated successfully:', generationResult.data.filename);
+                            
+                            // Даем серверу время на сохранение файла
+                            await new Promise(resolve => setTimeout(resolve, 500));
+                            
+                            try {
+                                return await this.playAudioFromUrl(localUrlInfo.url);
+                            } catch (playError) {
+                                console.warn('Failed to play generated audio, trying fallback...', playError);
+                            }
+                        } else {
+                            console.warn('Audio generation failed:', generationResult.message);
                         }
-                    } else {
-                        console.warn('Audio generation failed:', generationResult.message);
                     }
                 }
             }
