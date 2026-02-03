@@ -126,10 +126,9 @@ class Page {
 	}
 
 	public static function LastToken() {
-		if ($tokenRec = end(Page::getSession('X-CSRF-Tokens', [])))
-			return $tokenRec['value'];
-
-		return null;
+		$tokens = Page::getSession('X-CSRF-Tokens', []);
+		$count = count($tokens);
+		return $count > 0 ? @$tokens[$count - 1]['value'] : null;
 	}
 
 	public static function CleanExpiredTokens() {
