@@ -190,14 +190,26 @@ async function Ajax(params, after = null, userData = null) {
             formData.append('ajax-request-id', jsdata.ajaxRequestId);
     }
 
+    let headers = {};
+    let token = (typeof X_CSRF_Token === 'string') ? X_CSRF_Token : null;
+
+    // Добавляем токен если он есть
+    if (token) {
+        headers['X-CSRF-Token'] = token;
+    }
+
+    headers['X-Requested-With'] = 'XMLHttpRequest';
+
     const request = new Request(document.location.origin + "?page=ajax", {
         method: "POST",
+        headers: headers,
         body: formData
     });
 
     let result = null;
     let serverTime = Date.now();
     try {
+
         const response = await fetch(request);
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
@@ -205,6 +217,9 @@ async function Ajax(params, after = null, userData = null) {
 
         if (response.headers.has('Server-Time'))
             serverTime = Date.parse(response.headers.get('Server-Time'));
+
+        if (response.headers.has('X-CSRF-Token'))
+            X_CSRF_Token = response.headers.get('X-CSRF-Token');
 
         result = await response.json();
     } catch (error) {

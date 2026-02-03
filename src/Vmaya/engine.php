@@ -9,8 +9,9 @@
 	define('TEMPLATES_PATH', BASEPATH.'/src/Vmaya/templates/');
 	define("CHARSET", "utf-8");
 	define("DEFAULTPAGE", "home");
-	define("SCRIPTS_VERSION", 155);
+	define("SCRIPTS_VERSION", 156);
 	define("SOURCES", ['vk', 'ok']);
+	define("LIVETOKEN", 60 * 10); // Врямя жизни токена 10 мин.
 	
 	$lv = SCRIPTS_VERSION % 1000;
 	$mv = floor(SCRIPTS_VERSION / 1000);

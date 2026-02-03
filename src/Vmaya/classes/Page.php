@@ -111,19 +111,48 @@ class Page {
 	}
 
 	public static function GenerateHeaderToken() {
+
+		$tokens = Page::getSession('X-CSRF-Tokens', []);
 		$token = bin2hex(random_bytes(32));
-		Page::setSession('X-CSRF-Token', $token);
+
+		$tokens[] = [
+			'time' => time(),
+			'value' => $token
+		];
+
+		Page::setSession('X-CSRF-Tokens', $tokens);
 		header('X-CSRF-Token: ' . $token);
 		return $token;
 	}
 
 	public static function LastToken() {
-		return Page::getSession('X-CSRF-Token', null);
+		if ($tokenRec = end(Page::getSession('X-CSRF-Tokens', [])))
+			return $tokenRec['value'];
+
+		return null;
 	}
 
-	public static function EqualsLastToken($token) {
-		if (($last = Page::LastToken()) && $token)
-			return hash_equals($last, $token);
+	public static function CleanExpiredTokens() {
+		$tokens = Page::getSession('X-CSRF-Tokens', []);
+		$curtime = time();
+		$new_tokens = [];
+
+		foreach ($tokens as $idx=>$rec)
+			if (($curtime - $rec['time'] <= LIVETOKEN) || ($idx == count($tokens) - 1))
+				$new_tokens[] = $rec;
+
+		Page::setSession('X-CSRF-Tokens', $new_tokens);
+	}
+
+	public static function HasToken($value) {
+
+		Page::CleanExpiredTokens();
+		$tokens = Page::getSession('X-CSRF-Tokens', []);
+		$curtime = time();
+
+		foreach ($tokens as $idx=>$rec)
+			if (hash_equals($rec['value'], $value))
+				return true;
 		return false;
 	}
 

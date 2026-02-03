@@ -15,6 +15,8 @@ class Ajax extends Page {
 			header("Pragma: no-cache");
 			header('Access-Control-Allow-Headers: X-CSRF-Token, Content-Type');
 
+			Page::GenerateHeaderToken();
+
 			echo json_encode($this->ajax());
 		} else Page::Wrong();
 	}
@@ -45,7 +47,10 @@ class Ajax extends Page {
 		if (isset(Page::$request['action'])) {
 			$action = Page::$request['action'];
 
-			if (method_exists($this, $action)) {
+			$token = isset($_SERVER['HTTP_X_CSRF_TOKEN']) ? $_SERVER['HTTP_X_CSRF_TOKEN'] : null;
+
+			if (Page::HasToken($token) 
+				&& method_exists($this, $action)) {
 
 				$data = isset(Page::$request['data']) ? json_decode(Page::$request['data'], true) : null;
 

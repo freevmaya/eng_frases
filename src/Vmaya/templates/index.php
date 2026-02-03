@@ -77,6 +77,8 @@
 			version: <?=SCRIPTS_VERSION;?>,
 			user_id: <?=$user_id;?>
 		});
+
+		var X_CSRF_Token = '<?=Page::LastToken();?>';
 	</script>
 
     <?if ($vkok) {?>
