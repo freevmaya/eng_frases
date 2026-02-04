@@ -2,12 +2,9 @@ class VRecognition {
 	constructor(recognition) {
 		this.isRecognize 	= false;
 		this.recognition 	= recognition;
-		this.waitTime 		= 0;
-		this.timerId		= null;
 		this.output			= '';
 		this.success		= false;
 		this.text  			= '';
-        this.msg_timerId    = 0;
         this.playerElem     = $('#payerMessage');
         this.currentError   = null;
 		this.setListeners();
@@ -24,6 +21,15 @@ class VRecognition {
         this.recognition.onresult 	= this.onResult.bind(this);
         this.recognition.onend 		= this.onEnd.bind(this);
         this.recognition.onerror 	= this.onError.bind(this);
+
+        if (typeof DEV != 'undefined') {
+            this.playerElem.click(()=>{
+                if (this.isRecognize) {
+                    this.output = this.text;
+                    this.showResult();
+                }
+            });
+        }
     }
 
     clearListeners() {
@@ -33,69 +39,50 @@ class VRecognition {
         this.recognition.onerror 	= null;
     }
 
-    setTimeout(callback, time) {
-        if (this.msg_timerId) {
-            clearTimeout(this.msg_timerId);
-            this.msg_timerId = null;
-        }
+    playerMessage(text) {
+        this.playerElem.html(text);
 
-        this.msg_timerId = setTimeout(()=>{
-            this.msg_timerId = null;
-            callback();
-        }, time);
-    }
-
-    playerMessage(text, showTimeSec = 0) {
-
-        if (isEmpty(text)) {
-            this.playerElem.addClass('blurred');
-        } else {
-            this.playerElem.removeClass('blurred');
-            this.playerElem.html(text);
-
-            if (playerControls && playerControls.state.visible)
-                playerControls.hide();
-
-            if (showTimeSec) {
-                this.setTimeout(()=>{
-                    this.playerMessage(null);
-                }, showTimeSec * 1000);
-            }
-        }
+        if (!isEmpty(text) && 
+            playerControls && 
+            playerControls.state.visible)
+            playerControls.hide();
     }
 
 
     onStart() {
         this.isRecognize = true;
-        tracer.log(`Запись начата "${this.text}", waitTime: ${this.waitTime}`);
-        this.playerMessage('Слушаю...', this.waitTime);
+        tracer.log(`Запись начата "${this.text}"`);
+        this.playerMessage('Слушаю...');
     }
 
-	stop() {
+    Stop() {
+        if (this.isRecognize)
+            this.recognition.stop();
+        setTimeout(()=>{
+            this.playerElem.toggleClass('blurred', true);
+        }, 1000);
+    }
+
+	SummingUp(result = null) {
 		if (this.isRecognize)
 			this.recognition.stop();
 
-        if (!this.currentError && isEmpty(this.output))
-			this.playerMessage(null);
-		this.text = '';
-		this.output = '';
+        if (isEmpty(this.output)) {
+            if (!this.currentError)
+                this.playerMessage('Речь не обнаружена!');
+        } else {
+            if (!result)
+                result = assessPhrase(this.text, this.output);
+
+            $(window).trigger(result.class);
+            this.playerMessage(`<span class="${result.class}">${result.text}</span>`);
+        }
 	}
 
     showResult() {
-
-    	if (!this.success) {
-	        if (this.output) {
-	            if (compareStringsIgnoreCaseAndPunctuation(this.output, this.text)) {
-	                $(window).trigger('success');
-	                this.playerMessage('<span class="success">Отлично!</span>', 5);
-	        		this.success = true;
-	        		this.stop();
-	            }
-	            else {
-	                $(window).trigger('fail');
-	                this.playerMessage(`<span class="wrong">${this.output}</span>`, 5);
-	            }
-	        }
+    	if (!this.success && this.output) {
+            let result = assessPhrase(this.text, this.output);
+            this.playerMessage(`<span class="${result.class}">${this.output}</span>`);
 	    }
     }
 
@@ -106,15 +93,12 @@ class VRecognition {
             const transcript = event.results[i][0].transcript;
             this.output += transcript + ' ';
         }
-
-        //tracer.log(this.output);
         this.showResult();
     }
 
     onEnd() {
         tracer.log('Запись остановлена');
         this.isRecognize = false;
-        this.stop();
     }
 
     onError() {
@@ -158,7 +142,7 @@ class VRecognition {
 
                 if (list[i].level > 0) {
                     this.isRecognize = false;
-                    this.playerMessage(list[i].text, 3);
+                    this.playerMessage(list[i].text);
                     return;
                 }
                 else errorMessage = list[i].text;
@@ -169,41 +153,25 @@ class VRecognition {
         this.playerMessage(null);
         
         showAlert('Ошибка распознавания: ' + errorMessage);
-        this.isRecognize = false;
-        this.stop();
+        this.Stop();
     }
 
-	startRecognition(waitTime, phraseObj, phraseType) {
-        
-        if (this.isRecognize) {
-
-        	if (this.text == phraseObj[phraseType])
-        		return;
-
-        	this.stop();
-        	setTimeout((()=>{
-        		this.startRecognition(waitTime, phraseObj, phraseType);
-        	}).bind(this), 100);
-        	return;
-        } 
+	startRecognition(phraseObj, phraseType) {
 
         this.text 						= phraseObj[phraseType];
         this.output 					= '';
         this.success					= false;
-        this.waitTime 					= waitTime * 1.2;
         this.currentError               = null;
         this.recognition.continuous 	= true; 	// Продолжать слушать после паузы
         this.recognition.interimResults = true; 	// Показывать промежуточные результаты
         this.recognition.lang 			= LanguageMap[phraseObj.Language(phraseType)];
+        this.playerElem.toggleClass('blurred', isEmpty(this.text));
 
         try {
-        	this.isRecognize = true;
         	this.recognition.start();
         } catch (e) {
         	console.error(e);
         }
-
-        this.timerId = setTimeout(this.stop.bind(this), this.waitTime);
     }
 }
 

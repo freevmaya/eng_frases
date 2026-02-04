@@ -1287,3 +1287,85 @@ function afterCondition(checkFunc, resolve, count = -1) {
         }
     }, 10);
 }
+
+function assessPhrase(correctPhrase, userPhrase) {
+    // Нормализация фраз: к нижнему регистру, удаление лишних пробелов
+    const normalizedCorrect = correctPhrase.toLowerCase().trim().replace(/\s+/g, ' ');
+    const normalizedUser = userPhrase.toLowerCase().trim().replace(/\s+/g, ' ');
+
+    let result = {
+        text: "Правильно", 
+        class: 'success', 
+        score: 1
+    };
+    
+    // 1. Проверка на точное совпадение (после нормализации)
+    if (normalizedCorrect === normalizedUser) {
+        return result;
+    }
+    
+    // 2. Удаление пунктуации для более гибкого сравнения
+    const cleanCorrect = normalizedCorrect.replace(/[.,!?;:]/g, '');
+    const cleanUser = normalizedUser.replace(/[.,!?;:]/g, '');
+    
+    if (cleanCorrect === cleanUser) {
+        return result;
+    }
+    
+    // 3. Разделение на слова
+    const correctWords = cleanCorrect.split(' ');
+    const userWords = cleanUser.split(' ');
+    
+    // 4. Расчет процентного совпадения слов
+    const correctWordsSet = new Set(correctWords);
+    const userWordsSet = new Set(userWords);
+    
+    // Количество совпадающих слов
+    let matchingWords = 0;
+    for (const word of userWordsSet) {
+        if (correctWordsSet.has(word)) {
+            matchingWords++;
+        }
+    }
+    
+    // Процент совпадения уникальных слов
+    const uniqueWordMatch = correctWordsSet.size > 0 
+        ? matchingWords / correctWordsSet.size 
+        : 0;
+    
+    // 5. Проверка порядка слов (последовательное совпадение)
+    let sequenceMatch = 0;
+    let userIndex = 0;
+    
+    for (const correctWord of correctWords) {
+        if (userIndex < userWords.length && correctWord === userWords[userIndex]) {
+            sequenceMatch++;
+            userIndex++;
+        }
+    }
+    
+    const wordOrderMatch = correctWords.length > 0 
+        ? sequenceMatch / correctWords.length 
+        : 0;
+    
+    // 6. Комбинированный скоринг
+    let totalScore = (uniqueWordMatch * 0.6) + (wordOrderMatch * 0.4);
+
+    // 7. Определение результата по пороговым значениям
+    if (totalScore >= 0.9) {
+        return result;
+    } else if (totalScore >= 0.6) {
+        result = {
+            text: "Частично верно", 
+            class: 'almost', 
+            score: totalScore
+        };
+    } else {
+        result = {
+            text: "Неправильно", 
+            class: 'fail', 
+            score: totalScore
+        };
+    }
+    return result;
+}

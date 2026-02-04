@@ -693,6 +693,10 @@ footer {
     color: #1bff00;
 }
 
+#payerMessage .almost {
+    color: #709550;
+}
+
 #payerMessage .fail {
     color: gray;
 }

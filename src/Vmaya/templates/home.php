@@ -201,7 +201,7 @@
                             <div id="currentRepeat" class="text-muted small" style="position:absolute;"></div>
                         </div>
                         <div>
-                            <span id="payerMessage"></span>
+                            <span id="payerMessage"<?if (DEV) {?>class="control"<?}?></span>
                         </div>
                         <div class="text-end">
                             <button class="btn btn-outline-secondary control" id="settingsToggle">
@@ -254,12 +254,6 @@
     var phrasesData = <?=json_encode(PhrasesModel::getPhrasesAsJsonWithDifficulty(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);?>;
 
     $('.numeral-source').numeral(false);
-<?if (DEV) {?>
-
-    $(window).ready(()=>{
-        showAdvices();
-    });
-<?}?>
 </script>
 <script src="scripts/speech-synthesizer.js<?=$v?>"></script>
 <script src="scripts/state-manager.js<?=$v?>"></script>

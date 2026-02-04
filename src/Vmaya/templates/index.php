@@ -111,6 +111,8 @@
 				console.log(...arguments);
 			}
 		}
+
+		var DEV = true;
 	<?} else {?>
 		var tracer = {log(...arguments) {}};
 	<?}?>

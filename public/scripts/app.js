@@ -429,7 +429,7 @@ function Application() {
         window.addEventListener('focus', (e)=>{
             stateManager.loadState()
                 .then(()=>{
-                    if (_isPlaying) {
+                    if (isPlaying()) {
                         let server_state = stateManager.getState();
                         if (server_state.currentListType != state.currentListType) {
                             loadPhraseList();
@@ -618,6 +618,7 @@ function Application() {
         if (stateManager.isPaused) {
             clearTimeout(appData.timeoutId);
             $(window).trigger("playback", 'stop');
+            stopRecognition();
         } else {
             appData.missOne  = state.repeatLength > 1;
             playCurrentPhrase();
@@ -640,7 +641,7 @@ function Application() {
 
     function stopRecognition() {
         if (recognition)
-            recognition.stop();
+            recognition.Stop();
     }
 
     function debouncePage(callback) {
@@ -776,6 +777,7 @@ function Application() {
         if (state.showingFirstLang) {
             // Показываем и озвучиваем первый язык
             showPhrase(firstLang);
+            stopRecognition();
 
             speechSynthesizer.speak(appData.currentPhrase, firstLang, 
                     appData.currentPhrase.type, state.speed, state.genderVoice)
@@ -785,6 +787,7 @@ function Application() {
                             startCurrentRecognition(secondLang);
 
                         speakPause(() => {
+                            summingUpRecognition();
                             state.showingFirstLang = false;
                             playCurrentPhrase();
                         }, firstLang);
@@ -802,6 +805,7 @@ function Application() {
                             startCurrentRecognition(firstLang);
                         
                         speakPause(() => {
+                            summingUpRecognition();
                             incCurrentPhraseIndex();
                             playCurrentPhrase();
                         }, secondLang);
@@ -818,7 +822,7 @@ function Application() {
 
         const showLang = state.direction === 'target-native' ? 'target' : 'native';
         const speakLang = state.direction === 'target-native' ? 'native' : 'target';
-        
+
         showPhrase(showLang);
         speechSynthesizer.speak(appData.currentPhrase, speakLang, 
                     appData.currentPhrase.type, state.speed, state.genderVoice)
@@ -827,6 +831,7 @@ function Application() {
                 if (isPlaying()) {
                     startCurrentRecognition('target');                
                     speakPause(() => {
+                        summingUpRecognition();
                         incCurrentPhraseIndex();
                         playCurrentPhrase();
                     }, speakLang);
@@ -834,9 +839,14 @@ function Application() {
             });
     }
 
+    function summingUpRecognition(phraseDirect) {
+        if (recognition && stateManager.state.recognize) 
+            recognition.SummingUp();
+    }
+
     function startCurrentRecognition(phraseDirect) {
         if (recognition && stateManager.state.recognize) 
-            recognition.startRecognition(calcTime(phraseDirect, false), appData.currentPhrase, phraseDirect);
+            recognition.startRecognition(appData.currentPhrase, phraseDirect);
     }
 
     function speakPause(callback, phraseDirect) {
