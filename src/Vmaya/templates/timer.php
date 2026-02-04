@@ -1,30 +1,43 @@
 <script type="text/javascript">
-    // Тестирование разных значений
 
     $(window).ready(()=>{
 
         $('.page').addClass('page-loaded');
 
-        function testTimeout(delay, description) {
-            const start = performance.now();
-            
-            setTimeout(() => {
-                const actual = performance.now() - start;
-                $(output).append(`<p>${description}: ${delay}ms → фактически ${actual.toFixed(2)}ms</p>`);
-            }, delay);
-        }
-
-        // Тесты
-        testTimeout(0, "Ноль");
-        testTimeout(1, "1 миллисекунда");
-        testTimeout(4, "4ms (минимальный в браузерах)");
-        testTimeout(1000.123, "Дробное число");
-        testTimeout(Number.MAX_SAFE_INTEGER, "Максимальное безопасное целое");
-        testTimeout(Infinity, "Бесконечность");
-        testTimeout(-100, "Отрицательное число");
-        testTimeout("1000", "Строка '1000'"); // Будет преобразовано к числу
-
     });
+
+    function play() {
+
+        
+        let audio = new Audio();
+        audio.currentTime = 0;
+        audio.src = "https://eng-frases.com/data/voices/male/en/en_061b8fb45f5f82044d27891c97e9dc3e.mp3";
+        audio.preload = 'auto';
+        audio.volume = 1.0;
+        audio.playbackRate = 1.0;
+
+        const playPromise = audio.play();
+                
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.error(error);
+            });
+        }
+            audio.pause();
+
+        setTimeout(()=>{
+            audio.pause();
+            audio.currentTime = 0;
+        }, 500);
+
+
+        setTimeout(()=>{
+            audio.pause();
+            audio.currentTime = 0;
+        }, 1000);
+
+    };
 </script>
 <div id="output" class="card bg-dark-gradient border-primary border-3 animate-card">
+<button type="button" onclick="play()"> Play</button>
 <div>

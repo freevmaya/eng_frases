@@ -219,8 +219,6 @@ class SpeechSynthesizer {
     async smartSpeak(phraseObj, phraseType, category = null, speed = 1.0, genderVoice = 'male') {
         const cleanText = phraseObj.CleanText(phraseType);
         const language = phraseObj.Language(phraseType);
-
-        tracer.log(`cleanText: ${cleanText}`);
         
         // Проверяем, занят ли плеер
         if (this.state.isBusy) {
@@ -235,11 +233,8 @@ class SpeechSynthesizer {
         this._setBusy('processing');
 
         try {
-
-            this._stopPlayback();
                 
             const localUrlInfo = await this.getAudioUrl(cleanText, language, category, genderVoice);
-            tracer.log(`Attemp play ${cleanText}: ${localUrlInfo.url}`);
 
             try {
                 return await this.playAudioFromUrl(localUrlInfo.url);
@@ -337,6 +332,7 @@ class SpeechSynthesizer {
                     ErrorTracker.attachResourceErrorHandler(audio);
             }
 
+            this._stopPlayback();
             this.currentAudio = audio;
             
             audio.volume = 1.0;
@@ -346,12 +342,12 @@ class SpeechSynthesizer {
                 let timeoutId;
 
                 const onLoaded = ()=>{
+                    tracer.log(`Set loaded: ${fileUrl}`);
                     this.loadedAudios.set(fileUrl, audio);
                 }
                 
                 const onEnded = () => {
                     cleanup();
-                    this._afterFinishPlay();
                     resolve({
                         success: true,
                         type: 'audio',
@@ -359,43 +355,64 @@ class SpeechSynthesizer {
                         duration: audio.duration
                     });
                 };
+
+                const onPause = ()=>{
+                    let finish = audio.currentTime == audio.duration;
+                    cleanup();
+                    if (finish) {
+                        resolve({
+                            success: true,
+                            type: 'audio',
+                            url: fileUrl,
+                            duration: audio.duration
+                        });
+                    }
+                }
                 
                 const onError = (error) => {
-                    cleanup();
                     if (this._isBusyWith('playing')) {
-                        this._afterFinishPlay();
+                        cleanup();
                         console.error('Audio playback error:', error, fileUrl);
                         reject(new Error(`Audio playback failed: ${fileUrl}`));
-                    }
+                    } else cleanup();
                 };
                 
                 const cleanup = () => {
                     clearTimeout(timeoutId);
                     audio.removeEventListener('ended', onEnded);
                     audio.removeEventListener('error', onError);
-                    this.currentAudio = null;
+                    audio.removeEventListener('pause', onPause);
+                    audio.removeEventListener('loadeddata', onLoaded);
+                    this._afterFinishPlay();
                 };
-                
+
+                /*
                 timeoutId = setTimeout(() => {
                     if (this.currentAudio && !this.isPlayingAudio() &&
                         (this.currentAudio.src == fileUrl)) {
                         cleanup();
                         this._afterFinishPlay();
+                        console.error(`Audio playback timeout: ${fileUrl}`);
                         reject(new Error(`Audio playback timeout: ${fileUrl}`));
                     }
                 }, this.config.audioTimeout);
+                */
                 
                 audio.addEventListener('ended', onEnded);
                 audio.addEventListener('error', onError);
+                audio.addEventListener('pause', onPause);
                 audio.addEventListener('loadeddata', onLoaded);
                 
+                tracer.log(`Play: ${fileUrl}`);
                 const playPromise = audio.play();
                 
                 if (playPromise !== undefined) {
                     playPromise.catch(error => {
                         cleanup();
-                        this._afterFinishPlay();
-                        reject(error);
+                        console.error(error);
+                        if (error.name == 'AbortError') {
+                            console.error(fileUrl);
+                        } else reject(error);
                     });
                 }
             });
@@ -454,12 +471,6 @@ class SpeechSynthesizer {
                 if (voice) utterance.voice = voice;
             }
 
-            if (typeof ErrorTracker !== 'undefined')
-                ErrorTracker.handleError({
-                    message: "_speakWithSynthesis",
-                    error: this.getAudioUrl(text, language)
-                });
-
             return new Promise((resolve, reject)=>{
             
                 utterance.onend = () => {
@@ -477,7 +488,8 @@ class SpeechSynthesizer {
                         error: event
                     });
                 };
-                
+
+                this._stopPlayback();
                 speechSynthesis.speak(utterance);
 
             })
@@ -541,8 +553,14 @@ class SpeechSynthesizer {
 
     _stopPlayback() {
         if (this.currentAudio) {
-            this.currentAudio.pause();
-            this.currentAudio.currentTime = 0;
+            if (this.currentAudio.currentTime > 0) {
+                const filename = this.currentAudio.src.split('/').pop();
+                tracer.log(`Pause: ${filename}  ${this.currentAudio.currentTime}`);
+                this.currentAudio.pause();
+                this.currentAudio.currentTime = 0;
+            } else {
+                tracer.log("Attempt pause right after play");
+            }
             this.currentAudio = null;
         }
         

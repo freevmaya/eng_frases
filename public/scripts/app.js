@@ -823,12 +823,16 @@ function Application() {
         const speakLang = state.direction === 'target-native' ? 'native' : 'target';
 
         showPhrase(showLang);
+
+        let startTime = Date.now();
+        tracer.log(`${state.currentPhraseIndex} start`);
         speechSynthesizer.speak(appData.currentPhrase, speakLang, 
                     appData.currentPhrase.type, state.speed, state.genderVoice)
             .then((result)=>{
-
+                diff = Date.now() - startTime;
+                tracer.log(`${state.currentPhraseIndex} finish ${diff}`);
                 if (isPlaying()) {
-                    startCurrentRecognition('target');                
+                    startCurrentRecognition('target');     
                     speakPause(() => {
                         summingUpRecognition();
                         incCurrentPhraseIndex();
