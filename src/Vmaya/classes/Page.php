@@ -111,6 +111,7 @@ class Page {
 	}
 
 	public static function Wrong() {
+		trace_error('wrong');
 		header('HTTP/1.1 403 Forbidden');
 		exit(403);
 	}

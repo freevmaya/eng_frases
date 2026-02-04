@@ -1,5 +1,5 @@
 <?php
-	$v = '?v='.SCRIPTS_VERSION;
+	$v = '?v='.SCRIPTS_VERSION.'_'.filemtime(BASEPATH.'/public/scripts/tg.js');
 
 	$source 		= 'site';
 	$source_user_id = 1;
@@ -26,7 +26,7 @@
     } else $user_id = Page::getSession('user_id');
 ?>
 <!DOCTYPE html>
-<html lang="ru" data-bs-theme="dark">
+<html lang="ru" data-bs-theme="dark" data-source="tg">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -85,9 +85,17 @@
 		var tracer = {log(...arguments) {}};
 	<?}?>
 	</script>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+	<script src="scripts/tg.js<?=$v?>"></script>
+	<script type="text/javascript">
+		$(window).ready(()=>{
+			new TGApp(<?=VK_APP_ID?>);
+		});
+	</script>
 	<?include('ya-mertika.php');?>
 </head>
-<body class="dark-theme site">
+<body class="dark-theme tg">
 	<div class="page">
 		<div class="wrap-content">
 			<?=$content?>

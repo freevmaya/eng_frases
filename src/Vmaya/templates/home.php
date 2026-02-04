@@ -235,9 +235,11 @@
     </div>
     <div id="other-content">
         <?if (DEV) {?>
+        <!--
         <a href="?page=userlists" class="btn btn-sm btn-outline-secondary floating-button" style="background-color: #001e35;">
             <i class="bi bi-pencil"></i>
         </a>
+            -->
         <?}?>
         <div class="list-view">
             
