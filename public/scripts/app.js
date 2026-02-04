@@ -407,17 +407,27 @@ function Application() {
             $(this).addClass('active');
         });
 
-        elements.progressControl.click((e)=>{
-            if (appData.currentPhraseList) {
-                const rect = e.target.getBoundingClientRect();
-                const clickX = e.clientX - rect.left;
-                const index = Math.round(appData.currentPhraseList.length * clickX / rect.width);
-                setProgress(0, index);
+        (()=>{
+            let index = 0;
+
+            let replay = debounce(()=>{
                 setCurrentPhraseIndex(index);
-                if (isPlaying())
-                    playCurrentPhrase();
-            }
-        });
+                startPlayback();
+            }, 200);
+
+            elements.progressControl.click((e)=>{
+                if (appData.currentPhraseList) {
+                    const rect = e.target.getBoundingClientRect();
+                    const clickX = e.clientX - rect.left;
+                    index = Math.round(appData.currentPhraseList.length * clickX / rect.width);
+                    setProgress(0, index);
+                    if (isPlaying()) {
+                        stopPlayback();
+                        replay();
+                    } else setCurrentPhraseIndex(index);
+                }
+            });
+        })();
 
         $(window).on('select_phrase_list', (e, type)=>{
             setCurrentType(type);
