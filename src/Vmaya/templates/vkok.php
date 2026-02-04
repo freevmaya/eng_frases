@@ -143,7 +143,7 @@
 	</script>
 	<?include('ya-mertika.php');?>
 </head>
-<body class="dark-theme index-tmp">
+<body class="dark-theme">
 	<div class="page">
 		<div class="wrap-content">
 			<?=$content?>

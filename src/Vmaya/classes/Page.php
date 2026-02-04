@@ -268,7 +268,8 @@ class Page {
 	public function Render($page) {
 		header("Content-Type: text/html; charset=".CHARSET);
 		$content = $this->getContent($page);
-		include(TEMPLATES_PATH.'/'."index.php");
+		$index = isset(Page::$request['index']) ? Page::$request['index'] : 'index';
+		include(TEMPLATES_PATH."/{$index}.php");
 	}
 
 	public function Close() {
