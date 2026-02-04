@@ -44,6 +44,12 @@
                     <div class="text-center mt-2">
                         <span class="badge bg-primary" id="pauseValue">3 сек</span>
                     </div>
+                    <div class="form-check form-switch" id="recognizeToggleForm">
+                        <input class="form-check-input" type="checkbox" id="useSpeakPhrase" checked>
+                        <label class="form-check-label" for="useSpeakPhrase">
+                            Учитывать время озвучивания фразы
+                        </label>
+                    </div>
                 </div>
 
                 <div class="mb-4">

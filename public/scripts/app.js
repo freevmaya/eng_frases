@@ -212,7 +212,8 @@ function Application() {
         currentRepeat: $('#currentRepeat'),
         genderVoice: $('#genderVoice'),
         recognizeToggle: $('#recognizeToggle'),
-        backgroundPlayback: $('#backgroundPlayback')
+        backgroundPlayback: $('#backgroundPlayback'),
+        useSpeakPhrase: $('#useSpeakPhrase')
     };
             
     // Создаем объект распознавания
@@ -457,6 +458,7 @@ function Application() {
         elements.tvScreenToggle.prop('checked', state.showTvScreen);
         elements.recognizeToggle.prop('checked', state.recognize);
         elements.backgroundPlayback.prop('checked', state.backgroundPlayback);
+        elements.useSpeakPhrase.prop('checked', state.useSpeakPhrase);
 
         elements.repeatLength.val(state.repeatLength);
         elements.repeatCount.val(state.repeatCount);
@@ -482,7 +484,8 @@ function Application() {
             repeatLength: elements.repeatLength.val(),
             repeatCount: elements.repeatCount.val(),
             genderVoice: elements.genderVoice.val(),
-            backgroundPlayback: elements.backgroundPlayback.prop('checked')
+            backgroundPlayback: elements.backgroundPlayback.prop('checked'),
+            useSpeakPhrase: elements.useSpeakPhrase.prop('checked')
         };
 
         if (newSettings.repeatCount < getCurentRepeat())
@@ -717,13 +720,8 @@ function Application() {
         return state.direction.includes('both');
     }
 
-    function calcTime(lang, forSpeak = true) {
-        if (stateManager.state.recognize)
-            return state.pauseBetweenPhrases * 1000 + 
-                appData.currentPhrase[lang].length * AppConst.charTime[lang];
-
-        else return (forSpeak ? Math.max(state.pauseBetweenPhrases - 1, 0) : state.pauseBetweenPhrases) * 1000 + 
-                appData.currentPhrase[lang].length * AppConst.charTime[lang];
+    function calcTime(lang) {
+        return Math.round(Math.max(state.pauseBetweenPhrases - 1, 0) * 1000 + (state.useSpeakPhrase ? appData.currentPhrase[lang].length * AppConst.charTime[lang] : 0));
     }
 
     function incCurrentPhraseIndex() {
@@ -852,7 +850,11 @@ function Application() {
 
     function speakPause(callback, phraseDirect) {
         clearTimeout(appData.timeoutId);
-        appData.timeoutId = setTimeout(callback, calcTime(phraseDirect));
+        let delay = calcTime(phraseDirect);
+
+        if (isNumeric(delay) && (delay > 0))
+            appData.timeoutId = setTimeout(callback, delay);
+        else callback();
     }
 
     function updateSizeText(elem, k = 1, maxSize = 36, minSize = 18) {

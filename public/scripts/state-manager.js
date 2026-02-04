@@ -32,7 +32,8 @@ class StateManager {
 
             genderVoice: 'male',
 
-            backgroundPlayback: true
+            backgroundPlayback: true,
+            useSpeakPhrase: true
         };
         
         this.state = { ...this.DEFAULT_STATE };
