@@ -6,6 +6,8 @@
 
 	if ($vkok) {
 
+		if (!vkVerifyParams(VK_APP_CLIENT_SECRET))
+			Page::Wrong();
 
     	if (isset(Page::$request['vk_client']) && (Page::$request['vk_client'] == 'ok')) {
     		$source = 'ok';

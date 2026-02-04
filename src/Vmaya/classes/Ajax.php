@@ -136,7 +136,7 @@ class Ajax extends Page {
 	protected function getUserState($data) {
 		if ($user_id = Page::getSession('user_id')) {
     		if ($stateItem = (new UserStateModel())->getItem($user_id, 'user_id')) {
-    			trace($stateItem);
+    			
     			if ($json_data = trim($stateItem['data']))
 	    			return [
 	    				'state' => json_decode($json_data, true)

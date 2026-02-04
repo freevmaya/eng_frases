@@ -897,4 +897,30 @@ function encodeTelegramParams(array $params, bool $forceEncode = false): array
     
     return $params;
 }
+
+function vkVerifyParams($secretKey)
+{
+    $params = [];
+    parse_str($_SERVER['QUERY_STRING'] ?? '', $params);
+    
+    // Проверяем обязательные поля
+    if (empty($params['sign']) || empty($params['vk_user_id'])) {
+        return false;
+    }
+    
+    $sign = $params['sign'];
+    unset($params['sign']);
+    
+    // Фильтруем и сортируем
+    $filtered = array_filter($params, function($key) {
+        return strpos($key, 'vk_') === 0;
+    }, ARRAY_FILTER_USE_KEY);
+    
+    ksort($filtered);
+    // Формируем строку
+    $str = http_build_query($filtered);
+    $calc_sign = rtrim(strtr(base64_encode(hash_hmac('sha256', $str, $secretKey, true)), '+/', '-_'), '=');
+    
+    return hash_equals($calc_sign, $sign);
+}
 ?>
