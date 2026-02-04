@@ -86,7 +86,7 @@
 	</script>
 	<?include('ya-mertika.php');?>
 </head>
-<body class="dark-theme">
+<body class="dark-theme site">
 	<div class="page">
 		<div class="wrap-content">
 			<?=$content?>
