@@ -1,24 +1,12 @@
 <?php
-	$v 			= '?v='.SCRIPTS_VERSION;
-	$userModel 	= new UserModel();
-	$user_id 	= Page::getSession('user_id', 0);
-	$vkok		= isset(Page::$request['vk_app_id']);
+	$v = '?v='.SCRIPTS_VERSION;
 
-	if ($vkok) {
+	$source 		= 'site';
+	$source_user_id = 1;
 
-		if (!vkVerifyParams(VK_APP_CLIENT_SECRET))
-			Page::Wrong();
-
-    	if (isset(Page::$request['vk_client']) && (Page::$request['vk_client'] == 'ok')) {
-    		$source = 'ok';
-    		$source_user_id = Page::$request['vk_ok_user_id'];
-    	} else {
-    		$source = 'vk';
-    		$source_user_id = Page::$request['vk_user_id'];
-    	}
+	if (!Page::getSession('source_user')) {
 
     	$items = $userModel->getItems("source_id = {$source_user_id} AND source = '{$source}'");
-    	$new_user = false;
 
     	if (count($items) == 0) {
     		$user_id = $userModel->Update([
@@ -26,10 +14,9 @@
     			'source'=>$source,
     			'language_code'=>'ru'
     		]);
-    		$new_user = $user_id;
     	} else $user_id = $items[0]['id'];
 
-    	Page::setSession('source_user', [
+		Page::setSession('source_user', [
     		'id' => $source_user_id,
     		'source' => $source
     	]);
@@ -54,15 +41,6 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css<?=$v?>" media="all">
     <link rel="stylesheet" href="css/style-waves.css<?=$v?>" media="all">
-    <?if ($vkok) {?>
-	<script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
-	<script>
-		vkBridge.send("VKWebAppInit", {})
-			.then((response)=>{
-				tracer.log(response);
-			});
-	</script>
-    <?}?>
 	<script src="scripts/error-tracker.js<?=$v?>"></script>
 
 	<!-- Bootstrap & jQuery -->
@@ -91,19 +69,6 @@
 		var X_CSRF_Token = '<?=Page::LastToken();?>';
 	</script>
 
-    <?if ($vkok) {?>
-		<script src="scripts/vkapp.js<?=$v?>" defer></script>
-
-		<script type="text/javascript">
-			$(window).ready(()=>{
-				new VKApp(<?=VK_APP_ID?>, <?=$source_user_id?>, '<?=$source?>');
-				<?if ($new_user) {?>
-				showAdvices();
-				<?}?>
-			});
-		</script>
-    <?}?>
-
 	<?$is_developer = DEV || (DEVUSER == $user_id);?>
 	
 	<script type="text/javascript">
@@ -118,32 +83,10 @@
 	<?} else {?>
 		var tracer = {log(...arguments) {}};
 	<?}?>
-
-	<?if (DEV) {
-
-		//Инициализация пользователя VK. Только при разработке!
-		$source = 'vk';
-		$user_data = json_decode(file_get_contents(BASEPATH.'/dev/vk-parameters.json'), true);
-		Page::setSession('source_user', [
-    		'id' => $user_data['id'],
-    		'source' => $source
-    	]);
-
-    	$items = $userModel->getItems("source_id = {$user_data['id']} AND source = '{$source}'");
-
-    	if (count($items) > 0)
-    		Page::setSession('user_id', $user_id = $items[0]['id']);
-
-	?>
-		$(window).ready(()=>{
-			var user_data = <?=json_encode($user_data, JSON_FLAGS)?>;
-			userApp.init(user_data.id, '<?=$source?>', user_data);
-		});
-	<?}?>
 	</script>
 	<?include('ya-mertika.php');?>
 </head>
-<body class="dark-theme index-tmp">
+<body class="dark-theme">
 	<div class="page">
 		<div class="wrap-content">
 			<?=$content?>
