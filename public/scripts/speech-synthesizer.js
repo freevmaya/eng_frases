@@ -553,14 +553,18 @@ class SpeechSynthesizer {
 
     _stopPlayback() {
         if (this.currentAudio) {
-            if (this.currentAudio.currentTime > 0) {
-                const filename = this.currentAudio.src.split('/').pop();
-                tracer.log(`Pause: ${filename}  ${this.currentAudio.currentTime}`);
-                this.currentAudio.pause();
-                this.currentAudio.currentTime = 0;
-            } else {
-                tracer.log("Attempt pause right after play");
-            }
+
+            //Пытаемся выключить текущее аудио
+            let audio = this.currentAudio;
+            afterCondition(()=>{
+                return audio.currentTime > 0;
+            }, ()=>{
+                const filename = audio.src.split('/').pop();
+                tracer.log(`Pause: ${filename}  ${audio.currentTime}`);
+                audio.pause();
+                audio.currentTime = 0;
+            }, 1000);
+            
             this.currentAudio = null;
         }
         
