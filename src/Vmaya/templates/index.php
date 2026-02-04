@@ -22,7 +22,7 @@
     	]);
 
     	Page::setSession('user_id', $user_id);
-    }
+    } else $user_id = Page::getSession('user_id');
 ?>
 <!DOCTYPE html>
 <html lang="ru" data-bs-theme="dark">
