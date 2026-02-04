@@ -456,6 +456,7 @@ function Application() {
         elements.pauseValue.text(state.pauseBetweenPhrases + ' сек');
         elements.tvScreenToggle.prop('checked', state.showTvScreen);
         elements.recognizeToggle.prop('checked', state.recognize);
+        elements.backgroundPlayback.prop('checked', state.backgroundPlayback);
 
         elements.repeatLength.val(state.repeatLength);
         elements.repeatCount.val(state.repeatCount);

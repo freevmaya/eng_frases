@@ -76,20 +76,22 @@ class StateManager {
     }
 
     saveStateServer() {
-        Ajax({
-            action: 'setUserState',
-            data: this.state
-        })
-        .then((response)=>{
-            if (!response) {
+        if (this.state) {
+            Ajax({
+                action: 'setUserState',
+                data: this.state
+            })
+            .then((response)=>{
+                if (!response) {
+                    this.isServer = false;
+                    this.saveStateLocale();
+                }
+            })
+            .catch((e)=>{
                 this.isServer = false;
                 this.saveStateLocale();
-            }
-        })
-        .catch((e)=>{
-            this.isServer = false;
-            this.saveStateLocale();
-        });
+            });
+        }
     }
 
     saveStateLocale() {
@@ -119,7 +121,7 @@ class StateManager {
                 Ajax({
                     action: 'getUserState'
                 }).then((data)=>{
-                    if (data && data.state) {
+                    if (data && data.hasOwnProperty('state')) {
                         this.isServer = true;
                         this.state = { ...this.DEFAULT_STATE, ...data.state };
                         resolve(this.state);
