@@ -91,16 +91,20 @@ class Page {
 			}
 		}
 
-		if (file_exists($classFileName)) {
+		if (file_exists($classFileName))
 			include_once($classFileName);
+		else $className = 'Page';
 
+		try {
 			Page::$page = $page;
 			Page::$subpage = $subpage;
 
 			$page = new $className($userModel);
 			$page->Render(Page::$page.(Page::$subpage ? ('/'.Page::$subpage) : ''));
 			$page->Close();
-		} else {
+			
+		} catch (Exception $e) {
+			trace_error($e->getMessage());
 			header('HTTP/1.1 403 Forbidden');
     		exit(403);
 		}
