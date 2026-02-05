@@ -58,13 +58,13 @@
     <link rel="stylesheet" href="css/style-waves.css<?=$v?>" media="all">
     <?if ($is_developer) {?><script>var DEV = true</script><?}?>
 	<script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
+	<script src="scripts/error-tracker.js<?=$v?>"></script>
 	<script>
 		vkBridge.send("VKWebAppInit", {})
 			.then((response)=>{
 				tracer.log(response);
 			});
 	</script>
-	<script src="scripts/error-tracker.js<?=$v?>"></script>
 
 	<!-- Bootstrap & jQuery -->
 	<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
