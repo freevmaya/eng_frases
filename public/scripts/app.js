@@ -418,13 +418,15 @@ function Application() {
             elements.progressControl.click((e)=>{
                 if (appData.currentPhraseList) {
                     const rect = e.target.getBoundingClientRect();
-                    const clickX = e.clientX - rect.left;
-                    index = Math.round(appData.currentPhraseList.length * clickX / rect.width);
+                    const k = (e.clientX - rect.left) / rect.width;
+                    index = Math.round(appData.currentPhraseList.length * k);
+                    setCurrentPhraseIndex(index);
                     setProgress(0, index);
+                    
                     if (isPlaying()) {
                         stopPlayback();
                         replay();
-                    } else setCurrentPhraseIndex(index);
+                    }
                 }
             });
         })();
@@ -839,7 +841,7 @@ function Application() {
 
         let startTime = Date.now();
 
-        tracer.log(`${state.currentListType}: ${state.currentPhraseIndex} start`);
+        tracer.log(`${state.currentListType}: ${state.currentPhraseIndex} start ${appData.currentPhrase[speakLang]}`);
         speechSynthesizer.speak(appData.currentPhrase, speakLang, 
                     appData.currentPhrase.type, state.speed, state.genderVoice)
             .then((result)=>{
