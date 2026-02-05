@@ -413,7 +413,7 @@ function Application() {
             let replay = debounce(()=>{
                 setCurrentPhraseIndex(index);
                 startPlayback();
-            }, 200);
+            }, 700);
 
             elements.progressControl.click((e)=>{
                 if (appData.currentPhraseList) {
