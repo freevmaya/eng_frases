@@ -779,6 +779,7 @@ function Application() {
     }
 
     function _speak(showLang, speakLang, then) {
+        clearTimeout(appData.timeoutId);
         showPhrase(showLang);
 
         let startTime = Date.now();
@@ -790,7 +791,7 @@ function Application() {
                     if (isPlaying()) {
                         diff = Date.now() - startTime;
                         tracer.log(`${state.currentListType}: ${state.currentPhraseIndex} finish ${diff}`);
-                        then(result);
+                        then();
                     }
                 })
                 .catch((error)=>{
@@ -803,7 +804,6 @@ function Application() {
     function playBothDirections() {
 
         if (!isPlaying()) return;
-        clearTimeout(appData.timeoutId);
 
         const isEnFirst = state.direction === 'target-native-both';
         const firstLang = isEnFirst ? 'target' : 'native';
@@ -813,7 +813,7 @@ function Application() {
             // Показываем и озвучиваем первый язык
             stopRecognition();
 
-            _speak(firstLang, firstLang, (result)=>{
+            _speak(firstLang, firstLang, ()=>{
                 if (secondLang == 'target')
                     startCurrentRecognition(secondLang);
 
@@ -824,7 +824,7 @@ function Application() {
                 }, firstLang);
             });
         } else {
-            _speak(secondLang, secondLang, (result)=>{
+            _speak(secondLang, secondLang, ()=>{
 
                 if (firstLang == 'target')
                     startCurrentRecognition(firstLang);
@@ -842,12 +842,11 @@ function Application() {
     function playSingleDirection() {
 
         if (!isPlaying()) return;
-        clearTimeout(appData.timeoutId);
 
         const showLang = state.direction === 'target-native' ? 'target' : 'native';
         const speakLang = state.direction === 'target-native' ? 'native' : 'target';
-        
-        _speak(showLang, speakLang, (result)=>{
+
+        _speak(showLang, speakLang, ()=>{
 
             startCurrentRecognition('target');     
             speakPause(() => {

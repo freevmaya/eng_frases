@@ -33,7 +33,7 @@ class Page {
 				//trace($user['id']);
 			}*/
 		}
-		else if (DEVUSER) {
+		else if (isset(DEVUSER)) {
 			if ($user = $this->userModel->getItem(DEVUSER))
 				$this->setUser($user);
 		}
