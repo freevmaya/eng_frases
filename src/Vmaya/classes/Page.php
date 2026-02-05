@@ -21,19 +21,7 @@ class Page {
 		$dbp = new mySQLProvider('localhost', _dbname_default, _dbuser, _dbpassword);
 
 		$user = Page::getSession('user');
-		if ($user) {
-			//$this->setUser(null); exit;
-			/*
-			if (!isset($user['id'])) {
-				if (DEVUSER)
-					$this->setUser($user = array_merge(json_decode(DEVUSER, true), $user));
-			}
-			if (!is_array($db_user = (new UserModel())->getItem($user['id']))) {
-				$this->setUser($user);
-				//trace($user['id']);
-			}*/
-		}
-		else if (DEVUSER) {
+		if (!$user && DEV) {
 			if ($user = $this->userModel->getItem(DEVUSER))
 				$this->setUser($user);
 		}
