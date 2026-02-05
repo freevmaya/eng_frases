@@ -814,8 +814,7 @@ function Application() {
             stopRecognition();
 
             _speak(firstLang, firstLang, ()=>{
-                if (secondLang == 'target')
-                    startCurrentRecognition(secondLang);
+                startCurrentRecognition('target');
 
                 speakPause(() => {
                     summingUpRecognition();
@@ -825,9 +824,6 @@ function Application() {
             });
         } else {
             _speak(secondLang, secondLang, ()=>{
-
-                if (firstLang == 'target')
-                    startCurrentRecognition(firstLang);
                 
                 speakPause(() => {
                     summingUpRecognition();

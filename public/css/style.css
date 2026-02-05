@@ -687,9 +687,9 @@ footer {
 #payerMessage {
     filter: blur(0);
     opacity: 1;
-    transition: all 1s ease;
+    transition: all 0.5s ease;
     cursor: default;
-    padding: 0 5px;
+    padding: 0 4px;
 }
 
 #payerMessage .success {
