@@ -134,6 +134,7 @@ class VRecognition {
         ];
 
         let eventError = event.error;
+        this.isRecognize = false;
 
         for (var i = list.length - 1; i >= 0; i--) {
             if (eventError.includes(list[i].msg)) {
@@ -141,7 +142,6 @@ class VRecognition {
                 this.currentError = list[i];
 
                 if (list[i].level > 0) {
-                    this.isRecognize = false;
                     this.playerMessage(list[i].text);
                     return;
                 }
@@ -168,7 +168,8 @@ class VRecognition {
         this.playerElem.toggleClass('blurred', isEmpty(this.text));
 
         try {
-        	this.recognition.start();
+        	if (!this.isRecognize) 
+                this.recognition.start();
         } catch (e) {
         	tracer.error(e);
         }

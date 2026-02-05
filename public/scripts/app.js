@@ -422,7 +422,7 @@ function Application() {
                     index = Math.round(appData.currentPhraseList.length * k);
                     setCurrentPhraseIndex(index);
                     setProgress(0, index);
-                    
+
                     if (isPlaying()) {
                         stopPlayback();
                         replay();
@@ -778,6 +778,27 @@ function Application() {
         speechSynthesizer.stop();
     }
 
+    function _speak(showLang, speakLang, then) {
+        showPhrase(showLang);
+
+        let startTime = Date.now();
+
+        tracer.log(`${state.currentListType}: ${state.currentPhraseIndex} start ${appData.currentPhrase[speakLang]}`);
+        speechSynthesizer.speak(appData.currentPhrase, speakLang, 
+                    appData.currentPhrase.type, state.speed, state.genderVoice)
+                .then((result) => {
+                    if (isPlaying()) {
+                        diff = Date.now() - startTime;
+                        tracer.log(`${state.currentListType}: ${state.currentPhraseIndex} finish ${diff}`);
+                        then(result);
+                    }
+                })
+                .catch((error)=>{
+                    tracer.error(error);
+                    stopPlayback();
+                });
+    }
+
     // Воспроизведение в обоих направлениях
     function playBothDirections() {
 
@@ -790,41 +811,30 @@ function Application() {
         
         if (state.showingFirstLang) {
             // Показываем и озвучиваем первый язык
-            showPhrase(firstLang);
             stopRecognition();
 
-            speechSynthesizer.speak(appData.currentPhrase, firstLang, 
-                    appData.currentPhrase.type, state.speed, state.genderVoice)
-                .then((result)=>{
-                    if (isPlaying()) {
-                        if (secondLang == 'target')
-                            startCurrentRecognition(secondLang);
+            _speak(firstLang, firstLang, (result)=>{
+                if (secondLang == 'target')
+                    startCurrentRecognition(secondLang);
 
-                        speakPause(() => {
-                            summingUpRecognition();
-                            state.showingFirstLang = false;
-                            playCurrentPhrase();
-                        }, firstLang);
-                    }
-                });
+                speakPause(() => {
+                    summingUpRecognition();
+                    state.showingFirstLang = false;
+                    playCurrentPhrase();
+                }, firstLang);
+            });
         } else {
+            _speak(secondLang, secondLang, (result)=>{
 
-            showPhrase(secondLang);
-            speechSynthesizer.speak(appData.currentPhrase, secondLang, 
-                    appData.currentPhrase.type, state.speed, state.genderVoice)
-                .then((result)=>{
-
-                    if (isPlaying()) {
-                        if (firstLang == 'target')
-                            startCurrentRecognition(firstLang);
-                        
-                        speakPause(() => {
-                            summingUpRecognition();
-                            incCurrentPhraseIndex();
-                            playCurrentPhrase();
-                        }, secondLang);
-                    }
-                });
+                if (firstLang == 'target')
+                    startCurrentRecognition(firstLang);
+                
+                speakPause(() => {
+                    summingUpRecognition();
+                    incCurrentPhraseIndex();
+                    playCurrentPhrase();
+                }, secondLang);
+            });
         }
     }
 
@@ -836,27 +846,16 @@ function Application() {
 
         const showLang = state.direction === 'target-native' ? 'target' : 'native';
         const speakLang = state.direction === 'target-native' ? 'native' : 'target';
+        
+        _speak(showLang, speakLang, (result)=>{
 
-        showPhrase(showLang);
-
-        let startTime = Date.now();
-
-        tracer.log(`${state.currentListType}: ${state.currentPhraseIndex} start ${appData.currentPhrase[speakLang]}`);
-        speechSynthesizer.speak(appData.currentPhrase, speakLang, 
-                    appData.currentPhrase.type, state.speed, state.genderVoice)
-            .then((result)=>{
-                diff = Date.now() - startTime;
-                
-                tracer.log(`${state.currentListType}: ${state.currentPhraseIndex} finish ${diff}`);
-                if (isPlaying()) {
-                    startCurrentRecognition('target');     
-                    speakPause(() => {
-                        summingUpRecognition();
-                        incCurrentPhraseIndex();
-                        playCurrentPhrase();
-                    }, speakLang);
-                }
-            });
+            startCurrentRecognition('target');     
+            speakPause(() => {
+                summingUpRecognition();
+                incCurrentPhraseIndex();
+                playCurrentPhrase();
+            }, speakLang);
+        });
     }
 
     function summingUpRecognition(phraseDirect) {

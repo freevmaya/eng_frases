@@ -347,7 +347,6 @@
 
 #phraseType {
     color: #e4ff0047;
-    margin-top: 2px;
 }
 
 /* Responsive Adjustments */
@@ -668,7 +667,9 @@ footer {
 }
 
 #settingsModal .modal-body .text-info,
-#settingsModal label {
+#settingsModal label,
+#phraseType,
+#currentRepeat {
 
     white-space: nowrap;
     overflow: hidden;
