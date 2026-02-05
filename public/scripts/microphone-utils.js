@@ -92,7 +92,7 @@ const MicrophoneUtils = {
                     groupId: device.groupId
                 }));
         } catch (error) {
-            console.error('Ошибка получения списка микрофонов:', error);
+            tracer.error('Ошибка получения списка микрофонов:', error);
             return [];
         }
     },
@@ -153,7 +153,7 @@ const MicrophoneUtils = {
 
 async function initializeMicrophone() {
     if (!MicrophoneUtils.isMicrophoneSupported()) {
-        console.error('Микрофон не поддерживается в этом браузере');
+        tracer.error('Микрофон не поддерживается в этом браузере');
         return;
     }
 
@@ -166,7 +166,7 @@ async function initializeMicrophone() {
         tracer.log('Микрофон доступен!', result.stream);
         // Начинаем работу с микрофоном
     } else {
-        console.error('Не удалось получить доступ к микрофону:', result);
+        tracer.error('Не удалось получить доступ к микрофону:', result);
         
         if (result.permission === 'denied') {
             // Показываем инструкции пользователю

@@ -310,3 +310,16 @@ const ErrorTracker = {
         }
     }
 };
+
+if (typeof DEV != 'undefined') {
+    var tracer = {
+        log(...arguments) {
+            console.log(...arguments);
+        },
+        error(...arguments) {
+            console.error(...arguments);
+        }
+    }
+} else {
+    var tracer = {log(...arguments) {},error(...arguments) {}}
+}

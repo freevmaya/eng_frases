@@ -224,7 +224,7 @@ async function Ajax(params, after = null, userData = null) {
 
         result = await response.json();
     } catch (error) {
-        console.error(error.message);
+        tracer.error(error.message);
     }
     if (after != null) after(result, serverTime, userData);
     return result;
@@ -322,7 +322,7 @@ class AjaxTransport extends EventProvider {
                         extList[i].callback(value.extendResult[i]);
             }
             this.initTimer();
-        } else console.error("The value must not be null");
+        } else tracer.error("The value must not be null");
     }
 
     getStatusToReturn(id, a_status) {
@@ -1273,7 +1273,7 @@ function debounce(func, wait, start = null) {
 }
 
 
-function afterCondition(checkFunc, resolve, count = -1) {
+function afterCondition(checkFunc, resolve, count = -1, wait = 10) {
     let timerId = setInterval(()=>{
         if (checkFunc()) {
             resolve();
@@ -1285,7 +1285,7 @@ function afterCondition(checkFunc, resolve, count = -1) {
             if (count == 0)
                 clearInterval(timerId);
         }
-    }, 10);
+    }, wait);
 }
 
 function assessPhrase(correctPhrase, userPhrase) {

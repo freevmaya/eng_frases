@@ -36,6 +36,8 @@
 
     	Page::setSession('user_id', $user_id);
     }
+
+	$is_developer = DEV || in_array($user_id, [DEVUSER, 93]); //93
 ?>
 <!DOCTYPE html>
 <html lang="ru" data-bs-theme="dark">
@@ -54,7 +56,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css<?=$v?>" media="all">
     <link rel="stylesheet" href="css/style-waves.css<?=$v?>" media="all">
-    <?if ($vkok) {?>
+    <?if ($is_developer) {?><script>var DEV = true</script><?}?>
 	<script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
 	<script>
 		vkBridge.send("VKWebAppInit", {})
@@ -62,7 +64,6 @@
 				tracer.log(response);
 			});
 	</script>
-    <?}?>
 	<script src="scripts/error-tracker.js<?=$v?>"></script>
 
 	<!-- Bootstrap & jQuery -->
@@ -103,22 +104,7 @@
 			});
 		</script>
     <?}?>
-
-	<?$is_developer = DEV || (DEVUSER == $user_id);?>
-	
-	<script type="text/javascript">
-	<?if ($is_developer) {?>
-		var tracer = {
-			log(...arguments) {
-				console.log(...arguments);
-			}
-		}
-
-		var DEV = true;
-	<?} else {?>
-		var tracer = {log(...arguments) {}};
-	<?}?>
-
+    <script type="text/javascript">
 	<?if (DEV) {
 
 		//Инициализация пользователя VK. Только при разработке!

@@ -207,7 +207,7 @@
                             <div id="currentRepeat" class="text-muted small" style="position:absolute;"></div>
                         </div>
                         <div>
-                            <span id="payerMessage"<?if (DEV) {?>class="control"<?}?></span>
+                            <span id="payerMessage"><?if (DEV) {?>class="control"<?}?></span>
                         </div>
                         <div class="text-end">
                             <button class="btn btn-outline-secondary control" id="settingsToggle">

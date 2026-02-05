@@ -24,6 +24,8 @@
 
     	Page::setSession('user_id', $user_id);
     } else $user_id = Page::getSession('user_id');
+
+    $is_developer = DEV || (DEVUSER == $user_id);
 ?>
 <!DOCTYPE html>
 <html lang="ru" data-bs-theme="dark" data-source="tg">
@@ -42,6 +44,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css<?=$v?>" media="all">
     <link rel="stylesheet" href="css/style-waves.css<?=$v?>" media="all">
+    <?if ($is_developer) {?><script>var DEV = true</script><?}?>
 	<script src="scripts/error-tracker.js<?=$v?>"></script>
 
 	<!-- Bootstrap & jQuery -->
@@ -69,23 +72,6 @@
 
 		var X_CSRF_Token = '<?=Page::LastToken();?>';
 	</script>
-
-	<?$is_developer = DEV || (DEVUSER == $user_id);?>
-	
-	<script type="text/javascript">
-	<?if ($is_developer) {?>
-		var tracer = {
-			log(...arguments) {
-				console.log(...arguments);
-			}
-		}
-
-		var DEV = true;
-	<?} else {?>
-		var tracer = {log(...arguments) {}};
-	<?}?>
-	</script>
-
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 	<script src="scripts/tg.js<?=$v?>"></script>
 	<script type="text/javascript">

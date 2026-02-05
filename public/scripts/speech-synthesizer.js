@@ -149,7 +149,7 @@ class SpeechSynthesizer {
             return result;
             
         } catch (error) {
-            console.error('Error checking audio on server:', error);
+            tracer.error('Error checking audio on server:', error);
             return {
                 status: 'error',
                 message: error.message
@@ -205,7 +205,7 @@ class SpeechSynthesizer {
             return result;
             
         } catch (error) {
-            console.error('Error generating audio on server:', error);
+            tracer.error('Error generating audio on server:', error);
             return {
                 status: 'error',
                 message: error.message
@@ -286,7 +286,7 @@ class SpeechSynthesizer {
             
         } catch (error) {
 
-            console.error('Error in smartSpeak:', error);
+            tracer.error('Error in smartSpeak:', error);
             
             // Final fallback
             if (this.config.fallbackToSpeech && this.state.hasSpeechSynthesis) {
@@ -343,7 +343,7 @@ class SpeechSynthesizer {
 
                 const onLoaded = ()=>{
                     tracer.log(`Set loaded: ${fileUrl}`);
-                    this.loadedAudios.set(fileUrl, audio);
+                    //this.loadedAudios.set(fileUrl, audio);
                 }
                 
                 const onEnded = () => {
@@ -372,7 +372,7 @@ class SpeechSynthesizer {
                 const onError = (error) => {
                     if (this._isBusyWith('playing')) {
                         cleanup();
-                        console.error('Audio playback error:', error, fileUrl);
+                        tracer.error('Audio playback error:', error, fileUrl);
                         reject(new Error(`Audio playback failed: ${fileUrl}`));
                     } else cleanup();
                 };
@@ -392,7 +392,7 @@ class SpeechSynthesizer {
                         (this.currentAudio.src == fileUrl)) {
                         cleanup();
                         this._afterFinishPlay();
-                        console.error(`Audio playback timeout: ${fileUrl}`);
+                        tracer.error(`Audio playback timeout: ${fileUrl}`);
                         reject(new Error(`Audio playback timeout: ${fileUrl}`));
                     }
                 }, this.config.audioTimeout);
@@ -409,16 +409,16 @@ class SpeechSynthesizer {
                 if (playPromise !== undefined) {
                     playPromise.catch(error => {
                         cleanup();
-                        console.error(error);
+                        tracer.error(error);
                         if (error.name == 'AbortError') {
-                            console.error(fileUrl);
+                            tracer.error(fileUrl);
                         } else reject(error);
                     });
                 }
             });
             
         } catch (error) {
-            console.error('Error playing audio:', error);
+            tracer.error('Error playing audio:', error);
             this._afterFinishPlay();
             throw error;
         }
@@ -481,7 +481,7 @@ class SpeechSynthesizer {
                 };
                 
                 utterance.onerror = (event) => {
-                    console.error('Speech synthesis error:', event);
+                    tracer.error('Speech synthesis error:', event);
                     this._afterFinishSpeak();
                     resolve({
                         success: false,
@@ -495,7 +495,7 @@ class SpeechSynthesizer {
             })
             
         } catch (error) {
-            console.error('Speech synthesis failed:', error);
+            tracer.error('Speech synthesis failed:', error);
             this._clearBusy();
             this.currentUtterance = null;
             return false;
@@ -533,7 +533,7 @@ class SpeechSynthesizer {
             return result;
             
         } catch (error) {
-            console.error('Error checking server health:', error);
+            tracer.error('Error checking server health:', error);
             return {
                 status: 'error',
                 message: error.message
@@ -551,20 +551,26 @@ class SpeechSynthesizer {
         tracer.log('Audio cache cleared');
     }
 
-    _stopPlayback() {
-        if (this.currentAudio) {
+    stopAudio(audio) {
+        if (audio.currentTime < audio.duration) {
 
-            //Пытаемся выключить текущее аудио
-            let audio = this.currentAudio;
+            const filename = audio.src.split('/').pop();
+            let count = 0;
+
             afterCondition(()=>{
+                count++;
                 return audio.currentTime > 0;
             }, ()=>{
-                const filename = audio.src.split('/').pop();
-                tracer.log(`Pause: ${filename}  ${audio.currentTime}`);
+                tracer.log(`Pause: ${filename}  ${audio.currentTime} ${count}`);
                 audio.pause();
                 audio.currentTime = 0;
-            }, 1000);
-            
+            }, 1000, 100);
+        }
+    }
+
+    _stopPlayback() {
+        if (this.currentAudio) {
+            this.stopAudio(this.currentAudio);
             this.currentAudio = null;
         }
         
@@ -598,39 +604,6 @@ class SpeechSynthesizer {
         };
     }
 }
-/*
-// Пример использования
-async function exampleUsage() {
-    const synthesizer = new SpeechSynthesizer({
-        audioBaseUrl: 'data/audio_files',
-        apiBaseUrl: 'http://localhost:5000/api/',
-        fallbackToSpeech: true,
-        autoGenerateAudio: true, // Включить автоматическую генерацию
-        generationTimeout: 30000
-    });
-    
-    // Проверяем состояние сервера
-    const health = await synthesizer.checkServerHealth();
-    tracer.log('Server health:', health);
-    
-    if (health.status !== 'healthy') {
-        console.warn('Server might not be available. Some features may not work.');
-    }
-    
-    // Умное воспроизведение
-    const result = await synthesizer.smartSpeak(
-        "What do you do?",
-        'en',
-        'Past simple',
-        1.0
-    );
-    
-    tracer.log('Playback result:', result);
-    
-    // Получение статуса
-    tracer.log('Synthesizer status:', synthesizer.getStatus());
-}
-*/
 
 // Экспорт для использования в других модулях
 if (typeof module !== 'undefined' && module.exports) {

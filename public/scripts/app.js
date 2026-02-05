@@ -835,12 +835,14 @@ function Application() {
         showPhrase(showLang);
 
         let startTime = Date.now();
-        tracer.log(`${state.currentPhraseIndex} start`);
+
+        tracer.log(`${state.currentListType}: ${state.currentPhraseIndex} start`);
         speechSynthesizer.speak(appData.currentPhrase, speakLang, 
                     appData.currentPhrase.type, state.speed, state.genderVoice)
             .then((result)=>{
                 diff = Date.now() - startTime;
-                tracer.log(`${state.currentPhraseIndex} finish ${diff}`);
+                
+                tracer.log(`${state.currentListType}: ${state.currentPhraseIndex} finish ${diff}`);
                 if (isPlaying()) {
                     startCurrentRecognition('target');     
                     speakPause(() => {

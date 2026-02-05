@@ -170,7 +170,7 @@ class VRecognition {
         try {
         	this.recognition.start();
         } catch (e) {
-        	console.error(e);
+        	tracer.error(e);
         }
     }
 }
