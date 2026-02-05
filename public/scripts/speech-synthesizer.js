@@ -90,14 +90,7 @@ class SpeechSynthesizer {
                                    .split(/\s+/)
                                    .join(' ')
                                    .toLowerCase();
-    
-        //const words = CryptoJS.enc.Utf8.parse(normalizedPhrase);
         return CryptoJS.MD5(normalizedPhrase).toString();
-/*
-        return CryptoJS.MD5(phrase.trim()
-                                .split(/\s+/)
-                                .join(' ')
-                                .toLowerCase()).toString();*/
     }
 
     getBaseUrl(genderVoice = 'male') {

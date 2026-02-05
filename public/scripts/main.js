@@ -1209,6 +1209,49 @@ const LanguageMap = {
   "bn": "bn-BD"
 }
 
+const LanguageNames = {
+  "en": "English",
+  "ru": "Русский",
+  "es": "Español",
+  "fr": "Français",
+  "de": "Deutsch",
+  "zh": "中文",
+  "ja": "日本語",
+  "ko": "한국어",
+  "pt": "Português",
+  "it": "Italiano",
+  "ar": "العربية",
+  "hi": "हिन्दी",
+  "tr": "Türkçe",
+  "nl": "Nederlands",
+  "pl": "Polski",
+  "uk": "Українська",
+  "vi": "Tiếng Việt",
+  "th": "ไทย",
+  "el": "Ελληνικά",
+  "he": "עברית",
+  "sv": "Svenska",
+  "no": "Norsk",
+  "da": "Dansk",
+  "fi": "Suomi",
+  "cs": "Čeština",
+  "hu": "Magyar",
+  "ro": "Română",
+  "bg": "Български",
+  "sr": "Српски",
+  "hr": "Hrvatski",
+  "sk": "Slovenčina",
+  "sl": "Slovenščina",
+  "et": "Eesti",
+  "lv": "Latviešu",
+  "lt": "Lietuvių",
+  "id": "Bahasa Indonesia",
+  "ms": "Bahasa Melayu",
+  "fa": "فارسی",
+  "ur": "اردو",
+  "bn": "বাংলা"
+}
+
 
 //'голос[,а,ов]'
 function strEnum(number, pattern, lang = 'ru', show_number = true) {

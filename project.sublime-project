@@ -2,7 +2,10 @@
 	"folders":
 	[
 		{
-			"path": "."
-		}
-	]
+			"path": ".",
+		},
+		{
+			"path": "D:\\Projects\\telegram\\eng_phrases_node"
+		},
+	],
 }

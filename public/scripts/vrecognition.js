@@ -2,6 +2,7 @@ class VRecognition {
 	constructor(recognition) {
 		this.isRecognize 	= false;
 		this.recognition 	= recognition;
+        this.language       = 'en';
 		this.output			= '';
 		this.success		= false;
 		this.text  			= '';
@@ -52,7 +53,7 @@ class VRecognition {
     onStart() {
         this.isRecognize = true;
         tracer.log(`Запись начата "${this.text}"`);
-        this.playerMessage('Слушаю...');
+        this.playerMessage('Говорите на ' + LanguageNames[this.language]);
     }
 
     Stop() {
@@ -63,17 +64,16 @@ class VRecognition {
         }, 1000);
     }
 
-	SummingUp(result = null) {
-		if (this.isRecognize)
-			this.recognition.stop();
+	SummingUp() {
+
+        if (this.isRecognize)
+            this.recognition.stop();
 
         if (isEmpty(this.output)) {
             if (!this.currentError)
                 this.playerMessage('Речь не обнаружена!');
         } else {
-            if (!result)
-                result = assessPhrase(this.text, this.output);
-
+            let result = assessPhrase(this.text, this.output);
             $(window).trigger(result.class);
             this.playerMessage(`<span class="${result.class}">${result.text}</span>`);
         }
@@ -157,8 +157,10 @@ class VRecognition {
     }
 
 	startRecognition(phraseObj, phraseType) {
-
+        let langIndex                   = phraseType == 'target' ? 0 : 1;
+        let langs                       = phraseObj.direction.split('-');
         this.text 						= phraseObj[phraseType];
+        this.language                   = langs[langIndex];
         this.output 					= '';
         this.success					= false;
         this.currentError               = null;
