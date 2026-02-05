@@ -192,6 +192,7 @@
                     </div>
 
                     <div class="phrase-type-container">
+                        <span id="currentRepeat" class="text-muted small"></span>
                         <span id="phraseType">Past Simple (активный)</span>
                     </div>
 
@@ -204,7 +205,6 @@
                         <div class="text-start">
                             <div class="text-muted small">Прогресс</div>
                             <div id="phraseCounter">0 / 0</div>
-                            <div id="currentRepeat" class="text-muted small" style="position:absolute;"></div>
                         </div>
                         <div>
                             <span id="payerMessage"><?if (DEV) {?>class="control"<?}?></span>

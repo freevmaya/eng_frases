@@ -25,7 +25,7 @@
     	Page::setSession('user_id', $user_id);
     } else $user_id = Page::getSession('user_id');
 
-    $is_developer = DEV || (DEVUSER == $user_id);
+	$is_developer = DEV || in_array($user_id, DEVUSERS);
 ?>
 <!DOCTYPE html>
 <html lang="ru" data-bs-theme="dark">

@@ -341,10 +341,12 @@
 
 .phrase-type-container {
     margin-top: 5px;
+    display: flex;
+    justify-content: space-between;
 }
 
 #phraseType {
-    color: #9eaf10;
+    color: #e4ff0047;
     margin-top: 2px;
 }
 

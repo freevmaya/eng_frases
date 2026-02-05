@@ -561,7 +561,11 @@ class SpeechSynthesizer {
                 count++;
                 return audio.currentTime > 0;
             }, ()=>{
-                tracer.log(`Pause: ${filename}  ${audio.currentTime} ${count}`);
+                let msg = `Pause: ${filename}  ${audio.currentTime} ${count}`;
+                if (count > 1)
+                    tracer.error(msg);
+                else tracer.log(msg);
+                
                 audio.pause();
                 audio.currentTime = 0;
             }, 1000, 100);

@@ -675,10 +675,13 @@ function Application() {
         if (state.currentPhraseIndex != index) {
 
             setCurrentPhraseIndex(Math.max(0, Math.min(appData.currentPhraseList.length - 1, index)), false);
-            appData.missOne = true;
 
-            if ((state.repeatCount > 0) && (state.currentPhraseIndex % state.repeatLength == 0))
-                setProgress(0, state.currentPhraseIndex);
+            if (state.repeatCount > 0) {
+                appData.missOne = state.repeatLength > 1;
+
+                if (state.currentPhraseIndex % state.repeatLength == 0)
+                    setProgress(0, state.currentPhraseIndex);
+            } else appData.missOne = true;
 
             updateDisplay();
             debouncePage(()=>{  

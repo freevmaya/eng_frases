@@ -37,7 +37,7 @@
     	Page::setSession('user_id', $user_id);
     }
 
-	$is_developer = DEV || in_array($user_id, [DEVUSER, 93]); //93
+	$is_developer = DEV || in_array($user_id, DEVUSERS); //93
 ?>
 <!DOCTYPE html>
 <html lang="ru" data-bs-theme="dark">
