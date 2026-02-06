@@ -3,7 +3,6 @@ class StateManager {
     constructor(config) {
         this.isPlaying;
         this.isPaused;
-        this.isServer = false;
         this.config = $.extend({
             use_server: true
         }, config);
@@ -74,7 +73,7 @@ class StateManager {
     }
 
     saveImmediately() {
-        if (this.isServer)
+        if (this.config.use_server)
             this.saveStateServer();
         else this.saveState();
     }
@@ -88,12 +87,12 @@ class StateManager {
                 })
                 .then((response)=>{
                     if (!response) {
-                        this.isServer = false;
+                        this.config.use_server = false;
                         this.saveStateLocale();
                     }
                 })
                 .catch((e)=>{
-                    this.isServer = false;
+                    this.config.use_server = false;
                     this.saveStateLocale();
                 });
             } else this.saveStateLocale();
@@ -129,12 +128,12 @@ class StateManager {
                         action: 'getUserState'
                     }).then((data)=>{
                         if (data && data.hasOwnProperty('state')) {
-                            this.isServer = true;
+                            this.config.use_server = true;
                             this.state = { ...this.DEFAULT_STATE, ...data.state };
                             resolve(this.state);
                         }
                         else {
-                            this.isServer = data == 0;
+                            this.config.use_server = data == 0;
                             returnDefault();
                         }
                     }).catch(()=>{
@@ -150,7 +149,7 @@ class StateManager {
     
     // Сохранение состояния в localStorage
     saveState() {
-        if (this.isServer)
+        if (this.config.use_server)
             this.try_saveStateToServer();
         else this.saveStateLocale();
     }

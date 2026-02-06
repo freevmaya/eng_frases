@@ -410,6 +410,22 @@ function Application() {
             $(this).addClass('active');
         });
 
+        elements.progressControl.click((e)=>{
+            const rect = e.target.getBoundingClientRect();
+            const k = (e.clientX - rect.left) / rect.width;
+            let index = Math.round(appData.currentPhraseList.length * k);
+            if (appData.currentPhraseList) {
+                setCurrentPhraseIndex(index);
+                setProgress(0, index);
+                debouncePage(()=>{
+                    if (isPlaying()) {
+                        stopPlayback();
+                        replay();
+                    }
+                });
+            }
+        });
+
         (()=>{
             let index = 0;
 
@@ -417,21 +433,6 @@ function Application() {
                 setCurrentPhraseIndex(index);
                 startPlayback();
             }, 700);
-
-            elements.progressControl.click((e)=>{
-                if (appData.currentPhraseList) {
-                    const rect = e.target.getBoundingClientRect();
-                    const k = (e.clientX - rect.left) / rect.width;
-                    index = Math.round(appData.currentPhraseList.length * k);
-                    setCurrentPhraseIndex(index);
-                    setProgress(0, index);
-
-                    if (isPlaying()) {
-                        stopPlayback();
-                        replay();
-                    }
-                }
-            });
         })();
 
         $(window).on('select_phrase_list', (e, type)=>{
