@@ -58,6 +58,9 @@
 	<script src="scripts/user-app.js<?=$v?>" defer></script>
 	<script src="scripts/advice-modal.js<?=$v?>"></script>
 	<script type="text/javascript">
+		<?if (isset(Page::$request['params'])) {?>
+			let app_init_params = <?=urldecode(Page::$request['params'])?>;
+		<?}?>
 		ErrorTracker.init({
 			version: <?=SCRIPTS_VERSION;?>,
 			user_id: <?=$user_id;?>,
@@ -77,7 +80,7 @@
 	<script src="scripts/tg.js<?=$v?>"></script>
 	<script type="text/javascript">
 		$(window).ready(()=>{
-			new TGApp(<?=VK_APP_ID?>, <?=isset(Page::$request['params']) ? urldecode(Page::$request['params']) : 'null'?>);
+			new TGApp(<?=VK_APP_ID?>);
 		});
 	</script>
 	<?include('ya-mertika.php');?>

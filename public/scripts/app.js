@@ -243,10 +243,23 @@ function Application() {
         else loadList();
     }
 
+    function setInitParams(init_params) {
+        tracer.log(init_params);
+
+        state.currentListType = init_params.type;
+        state.voiceType = init_params.voice;
+        state.direction = init_params.translate_direct == 'en-ru' ? 'target-native-both' : 'native-target-both';
+        state.pauseBetweenPhrases =init_params.pause;
+    }
+
     function afterLoadList(data) {
 
         phrasesData = data;
         phrasesList = new PhrasesListView($('#other-content .list-view'));
+
+
+        if (typeof app_init_params != 'undefined')
+            setInitParams(app_init_params);
         
         initPhraseList();
         loadPhraseList();

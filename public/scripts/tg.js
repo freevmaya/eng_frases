@@ -1,8 +1,6 @@
 class TGApp {
 	constructor(app_id, params) {
 		this.tg = window.Telegram?.WebApp;
-
-		tracer.log(params);
         
         // Initialize
         if (this.tg) {
