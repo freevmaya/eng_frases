@@ -100,8 +100,8 @@ async function Ajax(params, after = null, userData = null) {
         result = await response.json();
 
         if (result.error && (result.message == 'The token has expired') && (token != X_CSRF_Token)) {
-            await sleep(400);
-            result = Ajax(params, after, userData);
+            //await sleep(400);
+            //result = Ajax(params, after, userData);
         }
     } catch (error) {
         tracer.error(error.message);
