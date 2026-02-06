@@ -3,6 +3,7 @@ class StateManager {
     constructor(config) {
         this.isPlaying;
         this.isPaused;
+        this.lastHash = '';
         this.config = $.extend({
             use_server: true
         }, config);
@@ -42,7 +43,9 @@ class StateManager {
 
         this.try_saveStateToServer = debounce(()=>{
             this.saveStateServer();
-        }, 1000);
+        }, 1000, ()=>{
+            this.lastHash = this.getHash();
+        });
 
         //['beforeunload', 'unload', 'pagehide', 'visibilitychange', 'blur', 'popstate'];
 
@@ -72,10 +75,29 @@ class StateManager {
         });
     }
 
+    getHash() {
+        return CryptoJS.MD5(JSON.stringify(this.state)).toString();
+    }
+
+    isChanges() {
+        return this.lastHash != this.getHash();
+    }
+
     saveImmediately() {
-        if (this.config.use_server)
-            this.saveStateServer();
-        else this.saveState();
+        if (this.isChanges()) {
+            if (this.config.use_server)
+                this.saveStateServer();
+            else this.saveState();
+        }
+    }
+    
+    // Сохранение состояния в localStorage
+    saveState() {
+        if (this.isChanges()) {
+            if (this.config.use_server)
+                this.try_saveStateToServer();
+            else this.saveStateLocale();
+        }
     }
 
     saveStateServer() {
@@ -96,11 +118,13 @@ class StateManager {
                     this.saveStateLocale();
                 });
             } else this.saveStateLocale();
+            this.lastHash = this.getHash();
         }
     }
 
     saveStateLocale() {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
+        this.lastHash = this.getHash();
     }
     
     // Загрузка состояния из localStorage
@@ -145,13 +169,6 @@ class StateManager {
                 }
             } else returnDefault();
         });
-    }
-    
-    // Сохранение состояния в localStorage
-    saveState() {
-        if (this.config.use_server)
-            this.try_saveStateToServer();
-        else this.saveStateLocale();
     }
     
     // Обновление настроек

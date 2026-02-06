@@ -48,132 +48,6 @@ class EventProvider extends Component {
     }
 }
 
-class App extends EventProvider {
-
-    #geoId;
-    #listeners;
-    #question;
-    #screenLock;
-    #lastGeoPosition;
-
-    get Question() { return this.#question; }
-    get isEnableGeo() { return this.#geoId; }
-
-    constructor() {
-        super();
-        this.#listeners = {};
-        /* Прятать строку адреса браузера
-        window.addEventListener('load', function() {
-            setTimeout(scrollTo, 0, 0, 1);
-        }, false);
-        */
-
-    }
-
-    SetUser(user, doAfter) {
-        Ajax({"action":"setUser", "data": user}, doAfter);
-        //$.getScript('scripts/language/' + user.language_code + '.js');
-    }
-
-    AddListener(event, action) {
-        if (!this.#listeners[event])
-            this.#listeners[event] = [];
-
-        this.#listeners[event].push(action);
-    }
-
-    RemoveListener(event, action) {
-        if (this.#listeners[event])
-            this.#listeners[event].remove(action);
-    }
-
-    SendEvent(event, params) {
-        if (this.#listeners[event]) {
-            for (let i=0; i<this.#listeners[event].length; i++)
-                this.#listeners[event][i](params);
-        }
-    }
-
-    ToggleWarning(elem, visible, text) {
-
-        let parent = elem.closest('.field');
-        if (parent.length == 0) parent = elem.parent();
-
-        let w = parent.find('.warning');
-
-        if (visible) {
-            if (w.length > 0)
-                w.text(text);
-            else parent.append(w = $('<div class="warning" style="width: ' + (elem.width() - 10) + 'px">' + text + '</div>'));
-        } else w.Remove();
-    }
-
-    showQuestion(text, afterOkOrAction = {}) {
-        if (this.#question == null) {
-
-            let actions = isFunc(afterOkOrAction) ? {
-                'Ok': (()=>{
-                        this.#question.Close();
-                        afterOkOrAction();
-                    }).bind(this),
-                'Cancel': (()=>{
-                    this.#question.Close();
-                }).bind(this)
-            } : afterOkOrAction;
-
-            this.#question = viewManager.Create({modal: true,
-                title: 'Warning!',
-                content: [
-                    {
-                        text: text,
-                        class: TextField
-                    }
-                ],
-                actions: actions
-            }, View, (()=>{
-                this.#question = null;
-            }).bind(this));
-
-            return this.#question;
-        }
-        return false;
-    }
-
-    receiveGeo(coordinates) {
-        if (coordinates) {
-            let latLng = toLatLngF(coordinates);
-
-            if (!(this.#lastGeoPosition && LatLngEquals(this.#lastGeoPosition, latLng)))
-                this.SendEvent('GEOPOS', coordinates);
-
-            this.#lastGeoPosition = latLng;
-        }
-    }
-
-    enableGeo(enable) {
-        if (enable && !this.#geoId) {
-            //this.#geoId = watchPosition(this.receiveGeo.bind(this));
-
-            this.#geoId = setInterval((()=>{
-                getLocation(this.receiveGeo.bind(this));
-            }).bind(this), 5000);
-
-        } else if (!enable && (this.#geoId > 0)) {
-            //clearWatchPosition(this.#geoId);
-            //this.#geoId = false;
-            clearTimeout(this.#geoId);
-        }
-    }
-
-    async ScreenLock() {
-        try {
-            this.#screenLock = await navigator.wakeLock.request('screen');
-        } catch (err) {
-            tracer.log('Error with wake lock: ', err);
-        }
-    }
-}
-
 async function Ajax(params, after = null, userData = null) {
 
     var formData;
@@ -219,10 +93,21 @@ async function Ajax(params, after = null, userData = null) {
         if (response.headers.has('Server-Time'))
             serverTime = Date.parse(response.headers.get('Server-Time'));
 
-        if (response.headers.has('X-CSRF-Token'))
+        if (response.headers.has('X-CSRF-Token')) {
             X_CSRF_Token = response.headers.get('X-CSRF-Token');
+        }
 
         result = await response.json();
+
+        if (result.error) {
+            tracer.error(result);
+            if (result.message == 'The token has expired') {
+                if (token != X_CSRF_Token) {
+                    await sleep(400);
+                    result = Ajax(params, after, userData);
+                }
+            }
+        }
     } catch (error) {
         tracer.error(error.message);
     }
@@ -438,77 +323,6 @@ class DateTime {
     }
 }
 
-class GPSFilter {
-    #options
-    #timeline;
-
-    get length() { return this.#timeline.length; }
-    get lastPoint() { return this.#timeline[this.#timeline.length - 1][0]; }
-
-    constructor(options) {
-        this.#options = $.extend(this.getDefaultOptions(), options);
-        this.#timeline = [];
-    }
-
-    calcPosition(latLng, timeSec, accuracy) {
-
-        let last = this.#timeline[this.#timeline.length - 1];
-        let timeDiff = timeSec - last[1];
-        let direct = LatLngSub(latLng, last[0]);
-        let distance = Distance(latLng, last[0]);
-        let speedKmH = distance / timeDiff * SPEEDCNV;
-
-        if (speedKmH > this.#options.speedLimit.max) {
-
-            let mma = this.#options.minMaxAccuracy;
-            let newDistance = timeDiff * this.#options.speedLimit.max / SPEEDCNV;
-            if (accuracy < mma.max) {
-                let kaccuracy = 1 - Math.max((accuracy - mma.min) / (mma.max - mma.min), 0);
-                let newDirect = LatLngMul(direct, (newDistance / distance) * kaccuracy);
-
-                latLng = LatLngAdd(last[0], newDirect);
-            } else latLng = last[0];
-        }
-
-        let ak = Math.min(last[2] / accuracy, 1);
-
-        return [
-                LatLngAdd(LatLngMul(latLng, ak), LatLngMul(last[0], 1 - ak)),
-                timeSec,
-                accuracy];
-    }
-
-    push(latLng, timeSec, accuracy) {
-        let itm = [latLng, timeSec, accuracy];
-        if (this.#timeline.length > 0)
-            itm = this.calcPosition(latLng, timeSec, accuracy);
-
-        this.#timeline.push(itm);
-    }
-
-    getPoints() {
-        let result = [];
-        for (var i = 0; i < this.#timeline.length - 1; i++)
-            result.push(this.#timeline[i][0]);
-
-        return result;
-    }
-
-    getDefaultOptions() {
-        return {
-            speedLimit: { // В км/ч
-                min: -30,
-                max: 60
-            },
-
-            minMaxAccuracy: {
-                min: 50,
-                max: 800
-            }
-        }
-    }
-}
-
 Number.prototype.toHHMMSS = function () {
 
     var sec_num = isFinite(this) && (this > 0) ? Math.floor(this) : 0; // don't forget the second param
@@ -520,6 +334,10 @@ Number.prototype.toHHMMSS = function () {
     if (minutes < 10) {minutes = "0"+minutes;}
     if (seconds < 10) {seconds = "0"+seconds;}
     return Math.min(hours, 30)+':'+minutes+':'+seconds;
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function round(x, p) {
