@@ -271,8 +271,3 @@
 <script src="scripts/app.js<?=$v?>" defer></script>
 <script src="scripts/sound.js<?=$v?>"></script>
 <script src="scripts/vrecognition.js<?=$v?>"></script>
-<script type="text/javascript">
-    window.stateManager = new StateManager({
-        use_server: <?=Page::getSession('user_id', false) ? 'true' : 'false'?>
-    });
-</script>

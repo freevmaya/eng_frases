@@ -108,6 +108,11 @@
 	            </div>
 	        </div>
 	    </div>
+		<script type="text/javascript">
+		    window.stateManager = new StateManager({
+		        use_server: <?=Page::getSession('user_id', false) ? 'true' : 'false'?>
+		    });
+		</script>
 
 		<?if ($is_developer) {?>
 		<!-- Eruda is console for mobile browsers-->
