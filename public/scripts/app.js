@@ -410,25 +410,31 @@ function Application() {
             $(this).addClass('active');
         });
 
-        elements.progressControl.click((e)=>{
+        (()=>{
             let index = 0;
-            if (appData.currentPhraseList) {
-                const rect = e.target.getBoundingClientRect();
-                const k = (e.clientX - rect.left) / rect.width;
-                index = Math.round(appData.currentPhraseList.length * k);
-                if (index != state.currentPhraseIndex) {
-                    setCurrentPhraseIndex(index);
-                    setProgress(0, index);
-                    if (isPlaying()) {
-                        stopPlayback();
-                        debouncePage(()=>{
-                            setCurrentPhraseIndex(index);
-                            startPlayback();
-                        });
+
+            let replay = debounce(()=>{
+                setCurrentPhraseIndex(index);
+                startPlayback();
+            }, 700);
+
+            elements.progressControl.click((e)=>{
+                if (appData.currentPhraseList) {
+                    const rect = e.target.getBoundingClientRect();
+                    const k = (e.clientX - rect.left) / rect.width;
+                    index = Math.round(appData.currentPhraseList.length * k);
+                    if (index != state.currentPhraseIndex) {
+                        setCurrentPhraseIndex(index);
+                        setProgress(0, index);
+
+                        if (isPlaying()) {
+                            stopPlayback();
+                            replay();
+                        }
                     }
                 }
-            }
-        });
+            });
+        })();
 
         $(window).on('select_phrase_list', (e, type)=>{
             setCurrentType(type);
