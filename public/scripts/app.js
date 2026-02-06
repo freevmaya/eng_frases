@@ -447,14 +447,12 @@ function Application() {
         window.addEventListener('focus', (e)=>{
             stateManager.loadState()
                 .then(()=>{
-                    if (isPlaying()) {
-                        let server_state = stateManager.getState();
-                        if (server_state.currentListType != state.currentListType) {
-                            loadPhraseList();
-                            updateDisplay();
-                            $(window).trigger('selected_list_type', state.currentListType);
-                        } else state = server_state;
-                    }
+                    let server_state = stateManager.getState();
+                    if (server_state.currentListType != state.currentListType) {
+                        loadPhraseList();
+                        updateDisplay();
+                        $(window).trigger('selected_list_type', state.currentListType);
+                    } else state = server_state;
                 });
         });
     }
