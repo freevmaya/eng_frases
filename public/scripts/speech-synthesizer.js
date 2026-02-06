@@ -264,6 +264,9 @@ class SpeechSynthesizer {
                 return this._speakWithSynthesis(phraseObj, phraseType, speed);
             } else {
 
+                $(window).trigger("play_autio_error", {
+                    name: 'No speech synthesis'
+                });
                 //Задерживаем на время произношения фразы
                 return await new Promise(resolve => setTimeout(resolve, cleanText.length * AppConst.charTime[phraseType]));
             }
@@ -284,6 +287,13 @@ class SpeechSynthesizer {
             // Final fallback
             if (this.config.fallbackToSpeech && this.state.hasSpeechSynthesis) {
                 return this._speakWithSynthesis(phraseObj, phraseType, speed);
+            } else {
+
+                $(window).trigger("play_autio_error", {
+                    name: 'No speech synthesis'
+                });
+                //Задерживаем на время произношения фразы
+                return await new Promise(resolve => setTimeout(resolve, cleanText.length * AppConst.charTime[phraseType]));
             }
             
             // Очищаем состояние при ошибке

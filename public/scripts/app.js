@@ -460,11 +460,14 @@ function Application() {
         $(window).on('play_autio_error', function(e, error) {
             if (error.name == 'NotAllowedError') {
                 showAlert("Ваш браузер блокирует проигрывание звука. Нажмите 'Воспроизвести'");
-            } else {
+                stopPlayback();
+            } else if (error.name == 'AbortError') {
                 showAlert("Проигрывание прервано. Нажмите 'Воспроизвести'");
+                stopPlayback();
+            } else if (error.name == 'No speech synthesis') {
+                showAlert("Невозможно проиграть эту фразу");
+                stopPlayback();
             }
-
-            stopPlayback();
         });
                         
     }
