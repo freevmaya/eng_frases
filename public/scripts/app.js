@@ -456,6 +456,17 @@ function Application() {
                     } else state = server_state;
                 });
         });
+
+        $(window).on('play_autio_error', function(e, error) {
+            if (error.name == 'NotAllowedError') {
+                showAlert("Ваш браузер блокирует проигрывание звука. Нажмите 'Воспроизвести'");
+            } else {
+                showAlert("Проигрывание прервано. Нажмите 'Воспроизвести'");
+            }
+
+            stopPlayback();
+        });
+                        
     }
 
     // Открытие модального окна настроек

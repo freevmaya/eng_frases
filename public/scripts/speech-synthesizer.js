@@ -15,7 +15,7 @@ class SpeechSynthesizer {
         this.config = {
             audioBaseUrl: config.audioBaseUrl || './audio_files/',
             apiBaseUrl: config.apiBaseUrl || 'http://localhost:5000/api/',
-            fallbackToSpeech: config.fallbackToSpeech !== false,
+            fallbackToSpeech: config.   fallbackToSpeech !== false,
             checkAudioBeforePlay: config.checkAudioBeforePlay !== false,
             autoGenerateAudio: config.autoGenerateAudio !== false,
             audioTimeout: config.audioTimeout || 2000,
@@ -396,16 +396,15 @@ class SpeechSynthesizer {
                 audio.addEventListener('pause', onPause);
                 audio.addEventListener('loadeddata', onLoaded);
                 
-                tracer.log(`Play: ${fileUrl}`);
+                tracer.log(`Play:${fileUrl}`);
                 const playPromise = audio.play();
                 
                 if (playPromise !== undefined) {
                     playPromise.catch(error => {
                         cleanup();
                         tracer.error(error);
-                        if (error.name == 'AbortError') {
-                            tracer.error(fileUrl);
-                        } else reject(error);
+                        $(window).trigger("play_autio_error", error);
+                        reject(error);
                     });
                 }
             });
