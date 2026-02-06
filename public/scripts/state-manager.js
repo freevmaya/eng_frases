@@ -1,9 +1,12 @@
 // Класс для управления состоянием приложения и localStorage
 class StateManager {
-    constructor() {
+    constructor(config) {
         this.isPlaying;
         this.isPaused;
         this.isServer = false;
+        this.config = $.extend({
+            use_server: true
+        }, config);
 
         this.STORAGE_KEY = 'english_trainer_state';
         this.DEFAULT_STATE = {
@@ -78,20 +81,22 @@ class StateManager {
 
     saveStateServer() {
         if (this.state) {
-            Ajax({
-                action: 'setUserState',
-                data: this.state
-            })
-            .then((response)=>{
-                if (!response) {
+            if (this.config.use_server) {
+                Ajax({
+                    action: 'setUserState',
+                    data: this.state
+                })
+                .then((response)=>{
+                    if (!response) {
+                        this.isServer = false;
+                        this.saveStateLocale();
+                    }
+                })
+                .catch((e)=>{
                     this.isServer = false;
                     this.saveStateLocale();
-                }
-            })
-            .catch((e)=>{
-                this.isServer = false;
-                this.saveStateLocale();
-            });
+                });
+            } else this.saveStateLocale();
         }
     }
 
@@ -118,26 +123,28 @@ class StateManager {
                 resolve(this.state);
             }
 
-            try {
-                Ajax({
-                    action: 'getUserState'
-                }).then((data)=>{
-                    if (data && data.hasOwnProperty('state')) {
-                        this.isServer = true;
-                        this.state = { ...this.DEFAULT_STATE, ...data.state };
-                        resolve(this.state);
-                    }
-                    else {
-                        this.isServer = data == 0;
-                        returnDefault();
-                    }
-                }).catch(()=>{
-                    returnDefault();                    
-                });
-            } catch (error) {
-                console.error('Ошибка загрузки состояния:', error);
-                reject(error);
-            }
+            if (this.config.use_server) {
+                try {
+                    Ajax({
+                        action: 'getUserState'
+                    }).then((data)=>{
+                        if (data && data.hasOwnProperty('state')) {
+                            this.isServer = true;
+                            this.state = { ...this.DEFAULT_STATE, ...data.state };
+                            resolve(this.state);
+                        }
+                        else {
+                            this.isServer = data == 0;
+                            returnDefault();
+                        }
+                    }).catch(()=>{
+                        returnDefault();                    
+                    });
+                } catch (error) {
+                    console.error('Ошибка загрузки состояния:', error);
+                    reject(error);
+                }
+            } else returnDefault();
         });
     }
     

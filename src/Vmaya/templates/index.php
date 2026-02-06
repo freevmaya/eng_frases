@@ -1,8 +1,12 @@
 <?php
 	$v = '?v='.SCRIPTS_VERSION;
 
+	/*
 	$source 		= 'site';
 	$source_user_id = 1;
+	*/
+	Page::setSession('user_id', null);
+	/*
 	$userModel 		= new UserModel();
 
 	if (!Page::getSession('source_user')) {
@@ -24,6 +28,7 @@
 
     	Page::setSession('user_id', $user_id);
     } else $user_id = Page::getSession('user_id');
+    */
 
 	$is_developer = DEV || in_array($user_id, DEVUSERS);
 ?>
@@ -59,7 +64,7 @@
 	<script type="text/javascript">
 		ErrorTracker.init({
 			version: <?=SCRIPTS_VERSION;?>,
-			user_id: <?=$user_id;?>,
+			user_id: <?=Page::getSession('user_id', 0);?>,
 			excludeDomains: [
 				'yandex.ru',
 		        'google.com',

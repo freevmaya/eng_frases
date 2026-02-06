@@ -161,7 +161,10 @@ function Application() {
 
     // Инициализируем менеджер состояния
     var state;
-    stateManager = new StateManager();
+    if (window.stateManager)
+        stateManager = window.stateManager;
+    else stateManager = new StateManager();
+
     stateManager.loadState()
         .then((a_state)=>{
             state = a_state;
@@ -991,8 +994,6 @@ function Application() {
     }
 };
 
-$(window).ready(Application);
-
 $(document).ready(function() {
     let isModalOpen = false;
     let backButtonPressed = false;
@@ -1057,4 +1058,6 @@ $(document).ready(function() {
         isModalOpen = true;
         history.pushState({ modalOpen: true }, '');
     });
+
+    Application();
 });
