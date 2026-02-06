@@ -5,7 +5,9 @@
 	$source 		= 'site';
 	$source_user_id = 1;
 	*/
-	Page::setSession('user_id', null);
+
+	$user_id = 0;
+	Page::setSession('user_id', 0);
 	/*
 	$userModel 		= new UserModel();
 
