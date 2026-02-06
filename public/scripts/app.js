@@ -449,6 +449,7 @@ function Application() {
                 .then(()=>{
                     let server_state = stateManager.getState();
                     if (server_state.currentListType != state.currentListType) {
+                        state = server_state;
                         loadPhraseList();
                         updateDisplay();
                         $(window).trigger('selected_list_type', state.currentListType);
