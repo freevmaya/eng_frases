@@ -411,29 +411,22 @@ function Application() {
         });
 
         elements.progressControl.click((e)=>{
-            const rect = e.target.getBoundingClientRect();
-            const k = (e.clientX - rect.left) / rect.width;
-            let index = Math.round(appData.currentPhraseList.length * k);
+            let index = 0;
             if (appData.currentPhraseList) {
+                const rect = e.target.getBoundingClientRect();
+                const k = (e.clientX - rect.left) / rect.width;
+                index = Math.round(appData.currentPhraseList.length * k);
                 setCurrentPhraseIndex(index);
                 setProgress(0, index);
-                debouncePage(()=>{
-                    if (isPlaying()) {
-                        stopPlayback();
-                        replay();
-                    }
-                });
+                if (isPlaying()) {
+                    stopPlayback();
+                    debouncePage(()=>{
+                        setCurrentPhraseIndex(index);
+                        startPlayback();
+                    });
+                }
             }
         });
-
-        (()=>{
-            let index = 0;
-
-            let replay = debounce(()=>{
-                setCurrentPhraseIndex(index);
-                startPlayback();
-            }, 700);
-        })();
 
         $(window).on('select_phrase_list', (e, type)=>{
             setCurrentType(type);
