@@ -4,7 +4,7 @@ class Ajax extends Page {
 	public function Render($page) {
 		GLOBAL $_POST;
 
-		if ((count($_POST) > 0) && Ajax::is_valid_referer()) {
+		if (count($_POST) > 0) {
 			header("Content-Security-Policy: default-src 'self'; script-src 'self' ".BASEURL.";");
 			header("Content-Type: text/json; charset=".CHARSET);
 
