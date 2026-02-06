@@ -189,7 +189,7 @@ function Application() {
             let block = elements.phraseScaleBlock;
             let scale = Math.min(1, block.closest('.phrase-container').innerHeight() / block.height());
             block.css('scale', scale);
-        }, 50)
+        }, 5)
     };
 
     // DOM элементы
@@ -256,7 +256,6 @@ function Application() {
 
         phrasesData = data;
         phrasesList = new PhrasesListView($('#other-content .list-view'));
-
 
         if (typeof app_init_params != 'undefined')
             setInitParams(app_init_params);
