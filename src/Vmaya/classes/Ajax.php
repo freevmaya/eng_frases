@@ -1,88 +1,10 @@
 <?
-class Ajax extends Page {
+class Ajax extends BaseAjax {
 
-	public function Render($page) {
-		GLOBAL $_POST;
-
-		if (count($_POST) > 0) {
-			header("Content-Security-Policy: default-src 'self'; script-src 'self' ".BASEURL.";");
-			header("Content-Type: text/json; charset=".CHARSET);
-
-			header("X-XSS-Protection: 1; mode=block");
-
-			// Запрет кэширования конфиденциальных страниц
-			header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-			header("Pragma: no-cache");
-			header('Access-Control-Allow-Headers: X-CSRF-Token, Content-Type');
-
-			Page::GenerateHeaderToken();
-
-			echo json_encode($this->ajax());
-		} else Page::Wrong();
+	public function getActionWithoutToken() {
+		return ['getUserState'];
 	}
-
-	public static function is_valid_referer() {
-		GLOBAL $_SERVER;
-
-	    // Проверяем, установлен ли Referer
-	    if (!isset($_SERVER['HTTP_REFERER'])) {
-	        return false;
-	    }
-	    
-	    // Получаем домен текущего сайта
-	    $current_domain = $_SERVER['HTTP_HOST'];
-	    
-	    // Получаем домен из Referer
-	    $referer_domain = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
-	    
-	    //trace("$referer_domain $current_domain");
-	    
-	    // Сравниваем домены
-	    return $referer_domain === $current_domain;
-	}
-
-	public function ajax() {
-		GLOBAL $dbp;
-		$action_without_token = ['getUserState'];
-
-		if (isset(Page::$request['action'])) {
-			$action = Page::$request['action'];
-
-			if (!in_array($action, $action_without_token)) {
-				$token = isset($_SERVER['HTTP_X_CSRF_TOKEN']) ? $_SERVER['HTTP_X_CSRF_TOKEN'] : null;
-				if (!$token) $token = isset(Page::$request['token']) ? Page::$request['token'] : null;
-
-				if (!Page::HasToken($token))
-					return [
-						'error' => 1,
-						'message' => 'The token has expired'
-					];
-			}
-
-			if (method_exists($this, $action)) {
-
-				$data = isset(Page::$request['data']) ? json_decode(Page::$request['data'], true) : null;
-
-				if (is_object($data))
-					foreach($data as $key=>$value)
-						$data[$key] = $dbp->safeVal($value);
-				return $this->$action($data);
-			}
-		}
-
-		if (DEV)
-			return [
-				'error' => 1,
-				'request' => Page::$request
-			];
-		else Page::Wrong();
-	}
-
-	protected function trace($data) {
-		trace($data);
-		return true;
-	}
-
+	
 	protected function setValue($data) {
 		$result = false;
 		if ($nameModel 	= @$data['model']) {

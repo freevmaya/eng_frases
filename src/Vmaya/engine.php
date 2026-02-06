@@ -12,7 +12,7 @@
 	define("SCRIPTS_VERSION", 193);
 	
 	define("SOURCES", ['vk', 'ok', 'site', 'tg']);
-	define("LIVETOKEN", DEV ? 10 : 60 * 10); // Врямя жизни токена 10 мин.
+	define("LIVETOKEN", DEV ? 1 : 60 * 10); // Врямя жизни токена 10 мин.
 	
 	$lv = SCRIPTS_VERSION % 1000;
 	$mv = floor(SCRIPTS_VERSION / 1000);

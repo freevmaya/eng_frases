@@ -130,6 +130,7 @@ class Page {
 		$curtime = time();
 		$new_tokens = [];
 
+		// Крайний токен живет бесконечно
 		foreach ($tokens as $idx=>$rec)
 			if (($curtime - $rec['time'] <= LIVETOKEN) || ($idx == count($tokens) - 1))
 				$new_tokens[] = $rec;
