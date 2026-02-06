@@ -416,14 +416,16 @@ function Application() {
                 const rect = e.target.getBoundingClientRect();
                 const k = (e.clientX - rect.left) / rect.width;
                 index = Math.round(appData.currentPhraseList.length * k);
-                setCurrentPhraseIndex(index);
-                setProgress(0, index);
-                if (isPlaying()) {
-                    stopPlayback();
-                    debouncePage(()=>{
-                        setCurrentPhraseIndex(index);
-                        startPlayback();
-                    });
+                if (index != state.currentPhraseIndex) {
+                    setCurrentPhraseIndex(index);
+                    setProgress(0, index);
+                    if (isPlaying()) {
+                        stopPlayback();
+                        debouncePage(()=>{
+                            setCurrentPhraseIndex(index);
+                            startPlayback();
+                        });
+                    }
                 }
             }
         });
