@@ -76,7 +76,7 @@
 	<script src="scripts/tg.js<?=$v?>"></script>
 	<script type="text/javascript">
 		$(window).ready(()=>{
-			new TGApp(<?=VK_APP_ID?>);
+			new TGApp(<?=VK_APP_ID?>, <?=isset(Page::$request['params']) ? urldecode(Page::$request['params']) : 'null'?>);
 		});
 	</script>
 	<?include('ya-mertika.php');?>

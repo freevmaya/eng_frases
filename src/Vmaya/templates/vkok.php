@@ -80,7 +80,7 @@
 			version: <?=SCRIPTS_VERSION;?>,
 			user_id: <?=$user_id;?>,
 			excludeDomains: [
-				'yandex.ru',
+				'yandex',
 		        'google.com',
 		        'example.org',
 		        'googleapis.com',

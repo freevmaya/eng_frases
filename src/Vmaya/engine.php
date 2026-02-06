@@ -9,7 +9,7 @@
 	define('TEMPLATES_PATH', BASEPATH.'/src/Vmaya/templates/');
 	define("CHARSET", "utf-8");
 	define("DEFAULTPAGE", "home");
-	define("SCRIPTS_VERSION", 189);
+	define("SCRIPTS_VERSION", 190);
 	define("SOURCES", ['vk', 'ok', 'site', 'tg']);
 	define("LIVETOKEN", DEV ? 10 : 60 * 10); // Врямя жизни токена 10 мин.
 	
@@ -31,6 +31,7 @@
 
 	define('DEFAULT_LANGUAGE', 'ru');
 
+	include(INCLUDE_PATH.DS."SessionManager.php");
 	include(INCLUDE_PATH.DS."_edbu2.php");
 	include(INCLUDE_PATH.DS."console.php");
 	include(INCLUDE_PATH.DS."fdbg.php");
