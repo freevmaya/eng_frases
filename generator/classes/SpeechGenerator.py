@@ -101,6 +101,7 @@ class SpeechGenerator:
     
     def generate_audio(self, text: str, language: str = 'en', 
                       gender: Optional[str] = None,
+                      checkExists: bool = True,
                       voice_name: Optional[str] = None) -> Optional[Dict]:
         """
         Генерация аудиофайла для фразы
@@ -130,6 +131,7 @@ class SpeechGenerator:
                 text=clean_text,
                 language=language,
                 gender=gender,
+                checkExists=checkExists,
                 voice_name=voice_name
             )
         else:

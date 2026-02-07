@@ -218,19 +218,27 @@
 
                     <div class="play-container">
                         <div class="play-buttons" id="playButtonsContainer">
-                            <button type="button" class="btn" id="prevBtn" title="Предыдущая фраза">
+                            <button type="button" class="btn ext" id="prevBtn" title="Предыдущая фраза">
                                 <i class="bi bi-skip-backward-fill"></i>
                             </button>
                             <button type="button" class="btn" id="playButton" title="Воспроизвести/Пауза">
                                 <i class="bi bi-play-fill"></i>
                             </button>
-                            <button type="button" class="btn" id="nextBtn" title="Следующая фраза">
+                            <button type="button" class="btn ext" id="nextBtn" title="Следующая фраза">
                                 <i class="bi bi-skip-forward-fill"></i>
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
+            <?if (in_array(Page::getSession('user_id'), DEVUSERS)) {?>
+            <div class="dev card bg-theme-gradient mt-2">
+                <div>Dev panel</div>
+                <button type="button" class="btn ext" id="regenerateBtn" title="Регенерировать">
+                    <i class="bi bi-soundwave"></i>
+                </button>
+            </div>
+            <?}?>
         </div>
     </div>
     <div id="other-content">

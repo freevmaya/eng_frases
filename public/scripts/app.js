@@ -205,6 +205,7 @@ function Application() {
         playButton: $('#playButton'),
         nextBtn: $('#nextBtn'),
         prevBtn: $('#prevBtn'),
+        regenerateBtn: $('#regenerateBtn'),
         settingsToggle: $('#settingsToggle'),
         applySettings: $('#applySettings'),
         pauseSlider: $('#pauseSlider'),
@@ -390,6 +391,16 @@ function Application() {
         // Кнопки управления
         elements.nextBtn.click(nextPhrase);
         elements.prevBtn.click(prevPhrase);
+        elements.regenerateBtn.click(()=>{
+
+            let directLang = state.direction === 'target-native' ? 'target' : (
+                    state.direction === 'native-target' ? 'native' :
+                        (state.direction === 'target-native-both' ? 'target' : 'native'));
+
+            let phrase = appData.currentPhrase[directLang];
+            tracer.log(`Attempt regenerate ${phrase}, ${state.genderVoice}`);
+            speechSynthesizer.Regenerate(appData.currentPhrase, directLang, state.genderVoice);
+        });
 
         elements.playButton[0].addEventListener('click', () => {
             togglePlay();

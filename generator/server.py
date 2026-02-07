@@ -136,6 +136,8 @@ def generate_audio():
         # Новые параметры для Edge-TTS
         gender = data.get('gender', 'male').strip().lower()
         voice_name = data.get('voice_name', '').strip()
+
+        rewrite = data.get('rewrite', False)
         
         if not text:
             print("Ошибка: пустой текст")
@@ -163,29 +165,35 @@ def generate_audio():
         
         print(f"Processing: text='{text[:50]}...', language={language}, gender={gender}")
         
-        # Проверка существования файла (с учетом гендера)
-        check_result = speech_generator.check_audio_exists(text, language, gender=gender)
-        
-        if check_result['exists']:
-            print(f"Файл уже существует: {check_result.get('filename', 'unknown')}")
-            return jsonify({
-                "status": "ok",
-                "message": "Audio file already exists",
-                "data": {
-                    "filename": check_result['filename'],
-                    "gender": gender
-                },
-                "timestamp": str(datetime.now())
-            }), 200
-        
-        # Генерация нового аудиофайла
-        print(f"Генерация нового аудиофайла...")
+        if (rewrite):
+            # Генерация аудиофайла
+            print(f"Генерация аудиофайла...")
+        else:
+            # Проверка существования файла (с учетом гендера)
+            check_result = speech_generator.check_audio_exists(text, language, gender=gender)
+            
+            if check_result['exists']:
+                print(f"Файл уже существует: {check_result.get('filename', 'unknown')}")
+                return jsonify({
+                    "status": "ok",
+                    "message": "Audio file already exists",
+                    "data": {
+                        "filename": check_result['filename'],
+                        "gender": gender
+                    },
+                    "timestamp": str(datetime.now())
+                }), 200
+
+            # Генерация нового аудиофайла
+            print(f"Генерация нового аудиофайла...")
+
         print(f"Язык: {language}, Гендер: {gender}")
         if voice_name:
             print(f"Голос: {voice_name}")
         
         generation_result = speech_generator.generate_audio(
-            text, language, gender=gender, voice_name=voice_name if voice_name else None
+            text, language, checkExists=not rewrite, 
+            gender=gender, voice_name=voice_name if voice_name else None
         )
         
         if generation_result:

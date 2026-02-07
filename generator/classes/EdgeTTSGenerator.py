@@ -243,7 +243,8 @@ class EdgeTTSGenerator:
     
     def generate_audio(self, text: str, language: str = 'en', 
                       gender: str = 'female', voice_name: Optional[str] = None,
-                      category: Optional[str] = None) -> Optional[Dict]:
+                      category: Optional[str] = None,
+                      checkExists: bool = True) -> Optional[Dict]:
         """
         Генерация аудиофайла для фразы
         
@@ -282,7 +283,7 @@ class EdgeTTSGenerator:
         filepath = save_dir / filename
         
         # Проверяем, существует ли уже файл
-        if filepath.exists() and filepath.stat().st_size > 0:
+        if checkExists and filepath.exists() and filepath.stat().st_size > 0:
             print(f"✓ Файл уже существует: {filename}")
             return {
                 'text': text,  # Оригинальный текст

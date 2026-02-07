@@ -151,7 +151,8 @@ class SpeechSynthesizer {
     }
 
     // Генерация аудиофайла на сервере
-    async generateAudioOnServer(text, language = 'en', category = null, gender = 'male', voice_name = '') {
+    async generateAudioOnServer(text, language = 'en', category = null, 
+                            gender = 'male', voice_name = '', rewrite = false) {
         if (this._isBusyWith('generating')) {
             return {
                 status: 'error',
@@ -182,7 +183,8 @@ class SpeechSynthesizer {
                     language: language,
                     type: category,
                     gender: gender,
-                    voice_name: voice_name
+                    voice_name: voice_name,
+                    rewrite: rewrite
                 })
             });
             
@@ -205,6 +207,23 @@ class SpeechSynthesizer {
             };
         } finally {
             this._clearBusy();
+        }
+    }
+    
+    async Regenerate(phraseObj, phraseType = 'target', genderVoice = 'male') {
+
+        if (this.state.isBusy)
+            return;
+
+        const cleanText = phraseObj.CleanText(phraseType);
+        const language = phraseObj.Language(phraseType);
+
+        try {
+                
+            const localUrlInfo = await this.getAudioUrl(cleanText, language, null, genderVoice);
+            const generationResult = await this.generateAudioOnServer(cleanText, language, null, genderVoice, '', true);
+        } catch (error) {
+            tracer.error(error);
         }
     }
 
@@ -435,6 +454,7 @@ class SpeechSynthesizer {
         this._clearBusy();
         this.currentUtterance = null;
     }
+
 
     // Основной метод воспроизведения (обратная совместимость)
     async speak(phraseObj, phraseType = 'target', category = null, speed = 1.0, genderVoice = 'male') {

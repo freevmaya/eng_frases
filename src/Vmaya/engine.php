@@ -9,7 +9,7 @@
 	define('TEMPLATES_PATH', BASEPATH.'/src/Vmaya/templates/');
 	define("CHARSET", "utf-8");
 	define("DEFAULTPAGE", "home");
-	define("SCRIPTS_VERSION", 205);
+	define("SCRIPTS_VERSION", 206);
 	
 	define("SOURCES", ['vk', 'ok', 'site', 'tg']);
 	define("LIVETOKEN", DEV ? 1 : 60 * 10); // Врямя жизни токена 10 мин.
@@ -26,7 +26,7 @@
 	define('DOWNLOADS_PATH', BASEPATH.'downloads'.DS);
 	define('DOWNLOADS_URL', BASEURL.'downloads'.DS);
 
-	define('DEVUSERS', [49, 93]);
+	define('DEVUSERS', [49, 14]);
 	define('DEVUSER', 49);
 	define("JSON_FLAGS", JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT);
 

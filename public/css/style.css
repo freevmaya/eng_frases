@@ -455,15 +455,13 @@
     background: linear-gradient(135deg, #FF3333, #CC3333);
 }
 
-.play-buttons #prevBtn,
-.play-buttons #nextBtn {
+.play-buttons .ext {
     background: rgba(255, 255, 255, 0.1);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.play-buttons #prevBtn:hover,
-.play-buttons #nextBtn:hover {
+.play-buttons .ext:hover {
     background: rgba(255, 255, 255, 0.2);
     border-color: rgba(255, 255, 255, 0.3);
 }
@@ -683,4 +681,23 @@ footer {
 .hover-blur:hover {
   filter: blur(3px);
   opacity: 0.8;
+}
+
+.dev {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: row;
+    gap: 10px;
+    position: absolute;
+    z-index: 101;
+    min-width: 140px;
+    right: 10px;
+}
+
+.dev > *:first-child {
+    position: absolute;
+    left: 0;
+    margin: 0.5em 1em;
+    font-size: 0.8em;
+    color: var(--info);
 }
