@@ -206,7 +206,7 @@
     <div class="container py-4">
         <!-- Left Column - User Lists -->
         <div class="col-lg-6 mb-4">
-            <div class="card bg-dark-gradient border-primary border-3 h-100">
+            <div class="card bg-theme-gradient border-primary border-3 h-100">
                 <div class="card-header bg-dark border-secondary">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0 text-info">
@@ -238,7 +238,7 @@
 
         <!-- Right Column - Phrases -->
         <div class="col-lg-6 mb-4">
-            <div class="card bg-dark-gradient border-primary border-3 h-100">
+            <div class="card bg-theme-gradient border-primary border-3 h-100">
                 <div class="card-header bg-dark border-secondary">
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0 text-info">

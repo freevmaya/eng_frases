@@ -49,6 +49,7 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/themes.css<?=$v?>" media="all">
     <link rel="stylesheet" href="css/style.css<?=$v?>" media="all">
     <link rel="stylesheet" href="css/style-waves.css<?=$v?>" media="all">
     <?if ($is_developer) {?><script>var DEV = true</script><?}?>
@@ -81,7 +82,7 @@
 	</script>
 	<?include('ya-mertika.php');?>
 </head>
-<body class="dark-theme site">
+<body class="theme site">
 	<div class="page">
 		<div class="wrap-content">
 			<?=$content?>

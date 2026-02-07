@@ -1,27 +1,4 @@
-/* Web 2.0 Modern Dark Theme */
-:root {
-    --primary: #0d6efd;
-    --secondary: #6c757d;
-    --success: #198754;
-    --info: #819295 !important;
-    --bs-heading-color: #dedede99;
-    --bs-badge-color: #EEE !important;
-    --warning: #ffc107;
-    --danger: #dc3545;
-    --dark: #212529;
-    --darker: #121416;
-    --light: #f8f9fa;
-    --gray: #adb5bd;
-    --bs-btn-color: gray !important;
-    --max-width: 900px;
-}
-
-.dark-theme {
-    background: linear-gradient(180deg, 
-        var(--dark), 
-        #0b2135,
-        var(--dark) 
-    );
+.theme {
     height: 100%;
     color: var(--light);
     max-width: var(--max-width);
@@ -37,25 +14,15 @@
     opacity: 1;
 }
 
-.text-muted {
+.text-muted, .text-start {
     color: var(--info) !important;
 }
 
-/* Text Gradients */
 .text-gradient {
-    background: linear-gradient(
-4deg, #0067ff03, var(--info));
+    background: linear-gradient(4deg, var(--text-g1), var(--info));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-}
-
-/* Card Styles */
-.bg-dark-gradient {
-    background: linear-gradient(145deg, #2d3338, #1a1d20);
-    border: none;
-    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .border-primary {
@@ -619,7 +586,7 @@ footer {
 
 .list-view .current a,
 .list-view .current a:hover {
-    color: #ffffff;
+    color: var(--max-contrast);
     text-decoration: none;
 }
 

@@ -38,6 +38,6 @@
 
     };
 </script>
-<div id="output" class="card bg-dark-gradient border-primary border-3 animate-card">
+<div id="output" class="card bg-theme-gradient border-primary border-3 animate-card">
 <button type="button" onclick="play()"> Play</button>
 <div>

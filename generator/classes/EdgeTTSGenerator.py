@@ -7,6 +7,7 @@ import asyncio
 import json
 import hashlib
 import time
+import unicodedata
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 import requests
@@ -30,8 +31,64 @@ class EdgeTTSGenerator:
         # Задержка между запросами
         self.REQUEST_DELAY = 0.3
         
+        # Таблица для преобразования акцентных символов в две буквы
+        self.ACCENT_REPLACEMENTS = {
+            'а́': 'аа', 'е́': 'ее', 'и́': 'ии', 'о́': 'оо', 'у́': 'уу', 
+            'ы́': 'ыы', 'э́': 'ээ', 'ю́': 'юю', 'я́': 'яя',
+            'А́': 'Аа', 'Е́': 'Ее', 'И́': 'Ии', 'О́': 'Оо', 'У́': 'Уу',
+            'Ы́': 'Ыы', 'Э́': 'Ээ', 'Ю́': 'Юю', 'Я́': 'Яя'
+        }
+        
         # Проверяем интернет-соединение
         self._check_internet_connection()
+    
+    def _normalize_accented_chars(self, text: str) -> str:
+        """
+        Замена акцентных символов на две соответствующие буквы
+        Пример: "сбега́ть" -> "сбегаать"
+        
+        Args:
+            text: Исходный текст
+            
+        Returns:
+            Текст с замененными акцентными символами
+        """
+        if not text:
+            return text
+            
+        result = text
+        
+        # Заменяем акцентные символы согласно таблице
+        for accented_char, replacement in self.ACCENT_REPLACEMENTS.items():
+            result = result.replace(accented_char, replacement)
+        
+        # Дополнительная обработка: разложение комбинированных символов
+        # Например, символ "а́" может быть представлен как комбинация 'а' + U+0301
+        normalized_text = unicodedata.normalize('NFD', result)
+        
+        # Заменяем комбинированные диакритические знаки на дополнительные буквы
+        output_chars = []
+        i = 0
+        while i < len(normalized_text):
+            char = normalized_text[i]
+            
+            # Проверяем, является ли следующий символ комбинированным диакритическим знаком
+            if i + 1 < len(normalized_text) and unicodedata.category(normalized_text[i + 1]) == 'Mn':
+                # Это акцентная буква: добавляем саму букву дважды
+                output_chars.append(char)
+                output_chars.append(char)
+                i += 2  # Пропускаем и букву и диакритический знак
+            else:
+                output_chars.append(char)
+                i += 1
+        
+        result = ''.join(output_chars)
+        
+        # Для отладки (можно закомментировать)
+        if result != text:
+            print(f"  Преобразовано: '{text[:50]}...' -> '{result[:50]}...'")
+        
+        return result
     
     async def _load_voices_async(self):
         """Асинхронная загрузка всех доступных голосов Edge-TTS"""
@@ -145,6 +202,7 @@ class EdgeTTSGenerator:
     def _generate_filename(phrase: str, language: str = 'en') -> str:
         """
         Генерация имени файла на основе фразы
+        ИСПОЛЬЗУЕТСЯ ОРИГИНАЛЬНЫЙ ТЕКСТ (без замены акцентов)
         
         Args:
             phrase: Текст фразы
@@ -153,7 +211,7 @@ class EdgeTTSGenerator:
         Returns:
             str: Имя файла
         """
-        # Нормализуем фразу
+        # Используем оригинальный текст для хэширования
         normalized_phrase = ' '.join(phrase.strip().split()).lower()
         
         phrase_hash = hashlib.md5(normalized_phrase.encode('utf-8')).hexdigest()
@@ -162,9 +220,10 @@ class EdgeTTSGenerator:
     async def _generate_audio_async(self, text: str, voice: str, output_file: str) -> bool:
         """
         Асинхронная генерация аудиофайла
+        Использует текст с замененными акцентами
         
         Args:
-            text: Текст для преобразования
+            text: Текст для преобразования (УЖЕ с замененными акцентами)
             voice: Имя голоса Edge-TTS
             output_file: Путь к выходному файлу
         
@@ -202,14 +261,17 @@ class EdgeTTSGenerator:
             print("✗ Пустая фраза")
             return None
         
-        # Нормализуем текст
+        # Нормализуем текст (убираем лишние пробелы)
         clean_text = ' '.join(text.strip().split())
+        
+        # Генерация имени файла на основе оригинального текста
+        filename = self._generate_filename(clean_text, language)
+        
+        # Для генерации звука используем текст с замененными акцентными символами
+        text_for_tts = self._normalize_accented_chars(clean_text)
         
         # Получаем голос
         voice = self._get_voice_for_language(language, gender, voice_name)
-        
-        # Генерация имени файла
-        filename = self._generate_filename(clean_text, language)
         
         # Создаем подпапки: BASE_OUTPUT_DIR/gender/language
         save_dir = Path(self.BASE_OUTPUT_DIR) / gender / language
@@ -223,7 +285,8 @@ class EdgeTTSGenerator:
         if filepath.exists() and filepath.stat().st_size > 0:
             print(f"✓ Файл уже существует: {filename}")
             return {
-                'text': text,
+                'text': text,  # Оригинальный текст
+                'text_for_tts': text_for_tts,  # Текст, использованный для TTS
                 'language': language,
                 'gender': gender,
                 'voice': voice,
@@ -234,15 +297,16 @@ class EdgeTTSGenerator:
             }
         
         try:
-            print(f"  Генерация аудио для: '{text[:50]}...'")
+            print(f"  Генерация аудио для: '{clean_text[:50]}...'")
+            print(f"  Текст для TTS: '{text_for_tts[:50]}...'")
             print(f"  Голос: {voice} (гендер: {gender})")
             
-            # Запускаем асинхронную генерацию
+            # Запускаем асинхронную генерацию с текстом с замененными акцентами
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             
             success = loop.run_until_complete(
-                self._generate_audio_async(clean_text, voice, str(filepath))
+                self._generate_audio_async(text_for_tts, voice, str(filepath))
             )
             
             loop.close()
@@ -255,7 +319,8 @@ class EdgeTTSGenerator:
                 print(f"  ✓ Создан: {filename} ({file_size_kb:.1f} KB)")
                 
                 return {
-                    'text': text,
+                    'text': text,  # Оригинальный текст
+                    'text_for_tts': text_for_tts,  # Текст, использованный для TTS
                     'language': language,
                     'gender': gender,
                     'voice': voice,
@@ -269,7 +334,7 @@ class EdgeTTSGenerator:
                 return None
                 
         except Exception as e:
-            print(f"✗ Ошибка при генерации аудио для '{text[:30]}...': {str(e)}")
+            print(f"✗ Ошибка при генерации аудио для '{clean_text[:30]}...': {str(e)}")
             return None
     
     def get_available_voices(self, language: str = 'en', gender: Optional[str] = None) -> List[str]:

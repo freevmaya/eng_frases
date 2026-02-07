@@ -1,0 +1,51 @@
+[data-bs-theme="dark"] {
+    --primary: #0d6efd;
+    --secondary: #6c757d;
+    --success: #198754;
+    --info: #819295 !important;
+    --bs-heading-color: #dedede99;
+    --bs-badge-color: #EEE !important;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --dark: #212529;
+    --dark2: #0b2135;
+    --darker: #121416;
+    --light: #f8f9fa;
+    --gray: #adb5bd;
+    --bs-btn-color: gray !important;
+    --max-width: 900px;
+    --bs-body-bg: #212529;
+    --max-contrast: white;
+
+    --text-g1: #0067ff03;
+}
+
+[data-bs-theme="dark"] .theme {
+    background: linear-gradient(180deg, 
+        var(--dark), 
+        var(--dark2),
+        var(--dark) 
+    );
+}
+
+[data-bs-theme="dark"] .bg-theme-gradient {
+    background: linear-gradient(145deg, #2d3338, #1a1d20);
+    border: none;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/*LIGHT*/
+
+[data-bs-theme="light"] {
+    --max-contrast: black;
+    --info: #666 !important;
+    --text-g1: #e5e5e5;
+}
+
+[data-bs-theme="light"] .bg-theme-gradient {
+    background: linear-gradient(145deg, #dbdbdb, #d5d5d5);
+    border: none;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}

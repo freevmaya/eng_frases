@@ -155,7 +155,7 @@
     <div class="row app-display">
         <!-- Left Column - Phrase Card -->
         <div class="col-lg-12">
-            <div class="card bg-dark-gradient border-primary border-3 animate-card">
+            <div class="card bg-theme-gradient border-primary border-3 animate-card">
 
                 <div class="tv-screen">
                     <div class="water-effect">
