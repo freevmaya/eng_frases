@@ -40,7 +40,7 @@
 	$is_developer = in_array($user_id, DEVUSERS); //93
 ?>
 <!DOCTYPE html>
-<html lang="ru" data-bs-theme="dark">
+<html lang="ru" data-bs-theme="<?=isset(Page::$request['theme']) ? Page::$request['theme'] : 'dark' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -66,6 +66,15 @@
 			.then((response)=>{
 				tracer.log(response);
 			});
+
+
+		vkBridge.send('VKWebAppGetConfig', {})
+			.then(((data) => { 
+				if (data && data.appearance) {
+		            tracer.log('Тема VK:', data.appearance);
+		            document.documentElement.setAttribute('data-bs-theme', data.appearance);
+		        }
+			}).bind(this));
 	</script>
 
 	<!-- Bootstrap & jQuery -->

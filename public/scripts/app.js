@@ -978,13 +978,13 @@ function Application() {
         if (lang === 'target') {
             updated = updatePhrases(appData.currentPhrase.target, appData.currentPhrase.native);
 
-            elements.phraseText.addClass('text-info');
-            elements.phraseHint.removeClass('text-info').addClass('text-muted');
+            elements.phraseText.addClass('text-target');
+            elements.phraseHint.removeClass('text-target').addClass('text-muted');
         } else {
             updated = updatePhrases(appData.currentPhrase.native, appData.currentPhrase.target);
 
-            elements.phraseText.removeClass('text-info');
-            elements.phraseHint.addClass('text-info');
+            elements.phraseText.removeClass('text-target');
+            elements.phraseHint.addClass('text-target');
         }
         
         if (updated) {

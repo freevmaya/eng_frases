@@ -4,7 +4,7 @@
 <!-- Settings Modal -->
 <div class="modal fade fullscreen-modal" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-fullscreen">
-        <div class="modal-content bg-dark">
+        <div class="modal-content bg-form">
             <div class="modal-header border-secondary">
                 <h5 class="modal-title text-primary" id="settingsModalLabel">
                     <i class="bi bi-gear me-2"></i>Настройки
@@ -71,10 +71,10 @@
                         <i class="bi bi-arrow-repeat me-2"></i>Режим "Оба направления"
                     </h6>
                     <div class="btn-group w-100" role="group">
-                        <button type="button" class="btn btn-outline-success" data-direction="target-native-both">
+                        <button type="button" class="btn btn-outline-primary" data-direction="target-native-both">
                             Англ(звук) → Рус(звук)
                         </button>
-                        <button type="button" class="btn btn-outline-success" data-direction="native-target-both">
+                        <button type="button" class="btn btn-outline-primary" data-direction="native-target-both">
                             Рус(звук) → Англ(звук)
                         </button>
                     </div>
@@ -85,10 +85,10 @@
                         <i class="bi bi-shuffle me-2"></i>Порядок фраз
                     </h6>
                     <div class="btn-group w-100" role="group">
-                        <button type="button" class="btn btn-outline-warning active" data-order="sequential">
+                        <button type="button" class="btn btn-outline-primary active" data-order="sequential">
                             По порядку
                         </button>
-                        <button type="button" class="btn btn-outline-warning" data-order="random">
+                        <button type="button" class="btn btn-outline-primary" data-order="random">
                             Случайный
                         </button>
                     </div>
@@ -99,7 +99,7 @@
                         <i class="bi bi-repeat me-2"></i>Повтор блока
                     </h6>
                     <div class="btn-group repeat-block" role="group">
-                        <select class="form-select bg-dark text-light border-secondary" id="repeatLength">
+                        <select class="form-select bg-form border-secondary" id="repeatLength">
                             <option value="1">1</option>
                             <option value="5">5</option>
                             <option value="10">10</option>
@@ -107,7 +107,7 @@
                             <option value="20">20</option>
                         </select>
                         <span>фраз по</span>
-                        <select class="form-select bg-dark text-light border-secondary numeral-source" id="repeatCount">
+                        <select class="form-select bg-form border-secondary numeral-source" id="repeatCount">
                             <option value="0">0</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -123,7 +123,7 @@
                         <i class="bi bi-gender-ambiguous me-2"></i>Гендер голоса
                     </h6>
                     <div class="btn-group repeat-block" role="group">
-                        <select class="form-select bg-dark text-light border-secondary" id="genderVoice">
+                        <select class="form-select bg-form border-secondary" id="genderVoice">
                             <option value="male">Мужской</option>
                             <option value="female">Женский</option>
                         </select>
