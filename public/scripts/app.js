@@ -189,7 +189,8 @@ function Application() {
             let block = elements.phraseScaleBlock;
             let scale = Math.min(1, block.closest('.phrase-container').innerHeight() / block.height());
             block.css('scale', scale);
-        }, 5)
+        }, 5),
+        backgroundAudio: null
     };
 
     // DOM элементы
@@ -631,6 +632,30 @@ function Application() {
         }
     }
 
+    function playBackgrounAudio() {
+
+        if (state.backgroundPlayback) {
+            if (!appData.backgroundAudio) {
+                let audio = new Audio();
+                audio.src = 'data/sounds/silence.mp3';
+                audio.preload = 'auto';
+                audio.volume = 0.1;
+                audio.playbackRate = 1.0;
+                audio.loop = true; // Включаем зацикливание
+
+                appData.backgroundAudio = audio;
+            }
+
+            appData.backgroundAudio.play();
+        }
+    }
+
+    function stopBackgroundAudio() {
+
+        if (appData.backgroundAudio)
+            speechSynthesizer.stopAudio(appData.backgroundAudio);
+    }
+
     // Начать воспроизведение
     function startPlayback() {
         if (appData.currentPhraseList.length === 0) {
@@ -649,6 +674,7 @@ function Application() {
         });
         
         updateControls();
+        playBackgrounAudio();
         playCurrentPhrase();
 
         $(window).trigger("playback", 'start');
@@ -665,8 +691,12 @@ function Application() {
             clearTimeout(appData.timeoutId);
             $(window).trigger("playback", 'stop');
             stopRecognition();
+            stopBackgroundAudio();
+
         } else {
             appData.missOne  = state.repeatLength > 1;
+
+            playBackgrounAudio();
             playCurrentPhrase();
             $(window).trigger("playback", 'start');
         }
