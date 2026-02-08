@@ -488,8 +488,8 @@
 }
 
 @keyframes pulse-border {
-    0%, 100% { box-shadow: 0 0 0 0 #FFF3; }
-    50% { box-shadow: 0 0 0 10px #FFF0; }
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--play-border-color) 30%, transparent); }
+    50% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--play-border-color) 0%, transparent); }
 }
 
 .play-buttons.disabled {
@@ -568,6 +568,7 @@ footer {
 .list-view .item {
     padding: 0.2em 0.8em;
     margin: 0.2em 0.5em;
+    display: flex;
 }
 
 .list-view .header h6, .list-view .item a {

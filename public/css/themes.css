@@ -18,6 +18,7 @@
     --item-current-shadow: #00568975;
     --item-hover: #f8f9fa;
     --tv-color: rgba(0, 220, 255);
+    --play-border-color: #FFF;
 }
 
 [data-bs-theme="dark"] {
@@ -92,6 +93,7 @@
     --item-hover: var(--color1_dark_down);
     --bs-border-color: var(--color1_light);
     --tv-color: white;
+    --play-border-color: var(--color1_dark_down);
 }
 
 [data-bs-theme="light"] .btn-primary {

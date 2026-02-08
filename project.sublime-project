@@ -5,7 +5,10 @@
 			"path": ".",
 		},
 		{
-			"path": "D:\\Projects\\telegram\\eng_phrases_node"
+			"path": "D:\\Projects\\telegram\\eng_phrases_node",
+		},
+		{
+			"path": "D:\\Projects\\llm-text-generator"
 		},
 	],
 }
