@@ -530,7 +530,7 @@
     padding: 1em;
 }
 
-.vk_layout .modal-dialog .btn-close {
+.modal-dialog .btn-close {
     display: none;
 }
 
