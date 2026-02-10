@@ -283,7 +283,7 @@ if __name__ == '__main__':
     # ... ваш код инициализации ...
     
     # Проверяем, есть ли переменная окружения от systemd socket активации
-    listen_fds = os.environ.get('LISTEN_FDS', 0)
+    listen_fds = os.environ.get('LISTEN_FDS', 'False').lower() == 'true'
     
     if listen_fds:
         # Используем сокет от systemd
@@ -291,5 +291,6 @@ if __name__ == '__main__':
         sock = socket.fromfd(fd, socket.AF_INET, socket.SOCK_STREAM)
         run_simple('localhost', 0, app, threaded=True, ssl_context=None, fd=sock.fileno())
     else:
+        debug_mode = os.environ.get('DEBUG', 'False').lower() == 'true'
         # Запуск вручную (для отладки)
-        app.run(host='0.0.0.0', port=5002, debug=True)
+        app.run(host='0.0.0.0', port=5002, debug=debug_mode)
