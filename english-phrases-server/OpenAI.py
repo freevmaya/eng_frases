@@ -2,13 +2,15 @@
 from huggingface_hub import InferenceClient
 import os
 import json
-
-api_key = os.environ.get("HF_TOKEN")
+from dotenv import load_dotenv
 
 def generate_phrases(prompt_text):
     """
     Генерация фраз через Hugging Face API
     """
+    load_dotenv()
+
+    api_key = os.environ.get("HF_TOKEN")
     
     if not api_key:
         raise ValueError("HF_TOKEN environment variable is not set")
