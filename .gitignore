@@ -11,7 +11,7 @@ test.*
 .env
 logs/*
 config/*
-config.php
+config.*
 sessions/*
 audio_files*
 sessions
