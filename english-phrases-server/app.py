@@ -15,11 +15,13 @@ import os
 from datetime import datetime
 from OpenAI import generate_phrases
 import re
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 
 CORS(app, resources={r"/*": {"origins": ["https://eng-frases.com", "https://eng.vmaya.ru", "https://www.eng.vmaya.ru"]}})
 
+load_dotenv()
 # Конфигурация MySQL
 MYSQL_CONFIG = {
     'host': os.environ.get('DB_HOST', 'localhost'),
