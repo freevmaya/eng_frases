@@ -162,108 +162,108 @@ def parse_ai_response(response_text):
         print(f"No JSON found in response: {response_text[:500]}...")
         return None
 
-    def generate_phrases_from_ai(native_lang, target_lang, theme, count=10):
-        """Генерация фраз через ИИ"""
-        import sys
-        import traceback
+def generate_phrases_from_ai(native_lang, target_lang, theme, count=10):
+    """Генерация фраз через ИИ"""
+    import sys
+    import traceback
+    
+    try:
+        print(f"=== DEBUG generate_phrases_from_ai START ===", file=sys.stderr)
+        print(f"DEBUG: Params - native_lang: {native_lang}, target_lang: {target_lang}, theme: {theme}, count: {count}", file=sys.stderr)
         
-        try:
-            print(f"=== DEBUG generate_phrases_from_ai START ===", file=sys.stderr)
-            print(f"DEBUG: Params - native_lang: {native_lang}, target_lang: {target_lang}, theme: {theme}, count: {count}", file=sys.stderr)
-            
-            # Загружаем промт для языка
-            print(f"DEBUG: Loading prompt template for language: {native_lang}", file=sys.stderr)
-            prompt_template = load_prompt_template(native_lang)
-            print(f"DEBUG: Prompt template loaded. Length: {len(prompt_template)} chars", file=sys.stderr)
-            print(f"DEBUG: First 200 chars of template:\n{prompt_template[:200]}", file=sys.stderr)
-            
-            # Заменяем плейсхолдеры в промте
-            print(f"DEBUG: Formatting prompt with count={count}, theme={theme}", file=sys.stderr)
-            prompt = prompt_template.format(count=count, theme=theme)
-            print(f"DEBUG: Formatted prompt length: {len(prompt)} chars", file=sys.stderr)
-            print(f"DEBUG: First 300 chars of prompt:\n{prompt[:300]}", file=sys.stderr)
-            
-            # Вызываем ИИ
-            print(f"DEBUG: Calling generate_phrases()...", file=sys.stderr)
-            response = generate_phrases(prompt)
-            
-            if not response:
-                print(f"DEBUG: generate_phrases() returned None or empty", file=sys.stderr)
-                print(f"=== DEBUG generate_phrases_from_ai END (no response) ===", file=sys.stderr)
-                return None
-            
-            print(f"DEBUG: Response received. Type: {type(response)}, Length: {len(response)}", file=sys.stderr)
-            print(f"DEBUG: First 500 chars of response:\n{response[:500]}", file=sys.stderr)
-            
-            # Парсим ответ
-            print(f"DEBUG: Parsing AI response...", file=sys.stderr)
-            phrases = parse_ai_response(response)
-            
-            print(f"DEBUG: parse_ai_response returned: {type(phrases)}", file=sys.stderr)
-            if phrases is None:
-                print(f"DEBUG: parse_ai_response returned None", file=sys.stderr)
-            elif isinstance(phrases, list):
-                print(f"DEBUG: Parsed phrases count: {len(phrases)}", file=sys.stderr)
-                if phrases:
-                    print(f"DEBUG: First parsed phrase: {phrases[0]}", file=sys.stderr)
-            else:
-                print(f"DEBUG: Unexpected return type from parse_ai_response: {type(phrases)}", file=sys.stderr)
-            
-            # Преобразуем в нужный формат
-            if phrases:
-                print(f"DEBUG: Starting to format {len(phrases)} phrases", file=sys.stderr)
-                formatted_phrases = []
-                skipped_count = 0
-                
-                for i, phrase in enumerate(phrases):
-                    if isinstance(phrase, dict):
-                        formatted_phrase = {}
-                        
-                        # Английская фраза
-                        if 'en' in phrase:
-                            formatted_phrase['en'] = phrase['en']
-                        elif 'english' in phrase:
-                            formatted_phrase['en'] = phrase['english']
-                        else:
-                            print(f"DEBUG: Skipping phrase {i} - no English key (keys: {list(phrase.keys())})", file=sys.stderr)
-                            skipped_count += 1
-                            continue
-                        
-                        # Перевод на родной язык
-                        if native_lang in phrase:
-                            formatted_phrase['native'] = phrase[native_lang]
-                        elif 'russian' in phrase and native_lang == 'ru':
-                            formatted_phrase['native'] = phrase['russian']
-                        elif 'translation' in phrase:
-                            formatted_phrase['native'] = phrase['translation']
-                        else:
-                            print(f"DEBUG: Skipping phrase {i} - no translation key for '{native_lang}' (keys: {list(phrase.keys())})", file=sys.stderr)
-                            skipped_count += 1
-                            continue
-                        
-                        formatted_phrases.append(formatted_phrase)
-                        if len(formatted_phrases) <= 3:
-                            print(f"DEBUG: Added phrase {i}: {formatted_phrase}", file=sys.stderr)
-                    else:
-                        print(f"DEBUG: Skipping non-dict item {i}: type={type(phrase)}, value={str(phrase)[:100]}", file=sys.stderr)
-                        skipped_count += 1
-                
-                print(f"DEBUG: Formatting complete. Success: {len(formatted_phrases)}, Skipped: {skipped_count}", file=sys.stderr)
-                result = formatted_phrases[:50]
-                print(f"DEBUG: Returning {len(result)} phrases", file=sys.stderr)
-                print(f"=== DEBUG generate_phrases_from_ai END (success) ===", file=sys.stderr)
-                return result
-            else:
-                print(f"DEBUG: phrases is None or empty list", file=sys.stderr)
-                print(f"=== DEBUG generate_phrases_from_ai END (no phrases) ===", file=sys.stderr)
-                return None
-                
-        except Exception as e:
-            print(f"=== DEBUG generate_phrases_from_ai ERROR ===", file=sys.stderr)
-            print(f"DEBUG: Exception: {type(e).__name__}: {e}", file=sys.stderr)
-            traceback.print_exc(file=sys.stderr)
-            print(f"=== DEBUG generate_phrases_from_ai END (error) ===", file=sys.stderr)
+        # Загружаем промт для языка
+        print(f"DEBUG: Loading prompt template for language: {native_lang}", file=sys.stderr)
+        prompt_template = load_prompt_template(native_lang)
+        print(f"DEBUG: Prompt template loaded. Length: {len(prompt_template)} chars", file=sys.stderr)
+        print(f"DEBUG: First 200 chars of template:\n{prompt_template[:200]}", file=sys.stderr)
+        
+        # Заменяем плейсхолдеры в промте
+        print(f"DEBUG: Formatting prompt with count={count}, theme={theme}", file=sys.stderr)
+        prompt = prompt_template.format(count=count, theme=theme)
+        print(f"DEBUG: Formatted prompt length: {len(prompt)} chars", file=sys.stderr)
+        print(f"DEBUG: First 300 chars of prompt:\n{prompt[:300]}", file=sys.stderr)
+        
+        # Вызываем ИИ
+        print(f"DEBUG: Calling generate_phrases()...", file=sys.stderr)
+        response = generate_phrases(prompt)
+        
+        if not response:
+            print(f"DEBUG: generate_phrases() returned None or empty", file=sys.stderr)
+            print(f"=== DEBUG generate_phrases_from_ai END (no response) ===", file=sys.stderr)
             return None
+        
+        print(f"DEBUG: Response received. Type: {type(response)}, Length: {len(response)}", file=sys.stderr)
+        print(f"DEBUG: First 500 chars of response:\n{response[:500]}", file=sys.stderr)
+        
+        # Парсим ответ
+        print(f"DEBUG: Parsing AI response...", file=sys.stderr)
+        phrases = parse_ai_response(response)
+        
+        print(f"DEBUG: parse_ai_response returned: {type(phrases)}", file=sys.stderr)
+        if phrases is None:
+            print(f"DEBUG: parse_ai_response returned None", file=sys.stderr)
+        elif isinstance(phrases, list):
+            print(f"DEBUG: Parsed phrases count: {len(phrases)}", file=sys.stderr)
+            if phrases:
+                print(f"DEBUG: First parsed phrase: {phrases[0]}", file=sys.stderr)
+        else:
+            print(f"DEBUG: Unexpected return type from parse_ai_response: {type(phrases)}", file=sys.stderr)
+        
+        # Преобразуем в нужный формат
+        if phrases:
+            print(f"DEBUG: Starting to format {len(phrases)} phrases", file=sys.stderr)
+            formatted_phrases = []
+            skipped_count = 0
+            
+            for i, phrase in enumerate(phrases):
+                if isinstance(phrase, dict):
+                    formatted_phrase = {}
+                    
+                    # Английская фраза
+                    if 'en' in phrase:
+                        formatted_phrase['en'] = phrase['en']
+                    elif 'english' in phrase:
+                        formatted_phrase['en'] = phrase['english']
+                    else:
+                        print(f"DEBUG: Skipping phrase {i} - no English key (keys: {list(phrase.keys())})", file=sys.stderr)
+                        skipped_count += 1
+                        continue
+                    
+                    # Перевод на родной язык
+                    if native_lang in phrase:
+                        formatted_phrase['native'] = phrase[native_lang]
+                    elif 'russian' in phrase and native_lang == 'ru':
+                        formatted_phrase['native'] = phrase['russian']
+                    elif 'translation' in phrase:
+                        formatted_phrase['native'] = phrase['translation']
+                    else:
+                        print(f"DEBUG: Skipping phrase {i} - no translation key for '{native_lang}' (keys: {list(phrase.keys())})", file=sys.stderr)
+                        skipped_count += 1
+                        continue
+                    
+                    formatted_phrases.append(formatted_phrase)
+                    if len(formatted_phrases) <= 3:
+                        print(f"DEBUG: Added phrase {i}: {formatted_phrase}", file=sys.stderr)
+                else:
+                    print(f"DEBUG: Skipping non-dict item {i}: type={type(phrase)}, value={str(phrase)[:100]}", file=sys.stderr)
+                    skipped_count += 1
+            
+            print(f"DEBUG: Formatting complete. Success: {len(formatted_phrases)}, Skipped: {skipped_count}", file=sys.stderr)
+            result = formatted_phrases[:50]
+            print(f"DEBUG: Returning {len(result)} phrases", file=sys.stderr)
+            print(f"=== DEBUG generate_phrases_from_ai END (success) ===", file=sys.stderr)
+            return result
+        else:
+            print(f"DEBUG: phrases is None or empty list", file=sys.stderr)
+            print(f"=== DEBUG generate_phrases_from_ai END (no phrases) ===", file=sys.stderr)
+            return None
+            
+    except Exception as e:
+        print(f"=== DEBUG generate_phrases_from_ai ERROR ===", file=sys.stderr)
+        print(f"DEBUG: Exception: {type(e).__name__}: {e}", file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+        print(f"=== DEBUG generate_phrases_from_ai END (error) ===", file=sys.stderr)
+        return None
 
 @app.route('/generate-phrases', methods=['POST'])
 def generate_phrases_endpoint():
