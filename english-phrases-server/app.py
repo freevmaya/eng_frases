@@ -214,7 +214,7 @@ def generate_phrases_from_ai(native_lang, target_lang, theme, count=10):
     
     return None
 
-@app.route('/generate-phrases', methods=['POST'])
+@app.route('/phrases/generate-phrases', methods=['POST'])
 def generate_phrases_endpoint():
     """Эндпоинт генерации фраз"""
     # Получаем данные из запроса
@@ -269,7 +269,7 @@ def generate_phrases_endpoint():
         'count': len(phrases)
     })
 
-@app.route('/health', methods=['GET'])
+@app.route('/phrases/health', methods=['GET'])
 def health_check():
     """Эндпоинт проверки здоровья сервера"""
     return jsonify({
