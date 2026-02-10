@@ -276,7 +276,7 @@
 <script src="scripts/speech-synthesizer.js<?=$v?>"></script>
 <script src="scripts/state-manager.js<?=$v?>"></script>
 <script src="scripts/player-controls.js<?=$v?>"></script>
-<?if ($is_developer) {?>
+<?if (DEV) {?>
 <script src="scripts/phrases-list-view-dev.js<?=$v?>"></script>
 <script src="scripts/add-phrases-dialog.js<?=$v?>"></script>
 <?} else {?>
