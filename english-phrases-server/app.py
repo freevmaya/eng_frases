@@ -28,7 +28,21 @@ CORS(app, resources={r"/*": {"origins": [
 ]}})
 '''
 
-CORS(app, resources={r"/*": {"origins": "*"}})
+# Разрешаем все домены
+CORS(app, resources={r"/*": {
+    "origins": "*",
+    "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    "allow_headers": ["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],
+    "expose_headers": ["Content-Type", "Authorization"],
+    "supports_credentials": False,
+    "max_age": 86400
+}})
+
+# Добавьте обработчик OPTIONS
+@app.before_request
+def handle_options():
+    if request.method == 'OPTIONS':
+        return '', 200
 
 load_dotenv()
 
