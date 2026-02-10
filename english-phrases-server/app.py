@@ -20,6 +20,24 @@ from dotenv import load_dotenv
 
 app = Flask(__name__)
 
+'''
+CORS(app, resources={r"/*": {"origins": [
+    "https://eng-frases.com", 
+    "https://eng.vmaya.ru", 
+    "https://www.eng.vmaya.ru"
+]}})
+
+# Разрешаем все домены
+CORS(app, resources={r"/*": {
+    "origins": "*",
+    "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    "allow_headers": ["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],
+    "expose_headers": ["Content-Type", "Authorization"],
+    "supports_credentials": False,
+    "max_age": 86400
+}})
+'''
+
 # Добавьте обработчик OPTIONS
 @app.before_request
 def handle_options():
