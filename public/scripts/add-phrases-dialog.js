@@ -123,7 +123,10 @@ class AddPhrasesDialog {
         })
         .then((result)=>{
             if (result.success)
-                $(window).trigger('added_user_list', name);
+                $(window).trigger('added_user_list', {
+                    name: name,
+                    count: list.length
+                });
         })
     }
 

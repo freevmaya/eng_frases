@@ -15,9 +15,9 @@ class PhrasesListView {
 		this.refreshForCurrentList();
 	}
 
-	onAddedUserList(e, name) {
-		let abody = this.accordion.find(`[data-name]="${this.userGroupName}"`).find('.accordion-body');
-		abody.prepend(this.blockItem(name, name));
+	onAddedUserList(e, item) {
+		let abody = this.accordion.find(`[data-name="${this.userGroupName}"]`).find('.accordion-body');
+		abody.prepend(this.blockItem(item.name, `${item.name} (${item.count})`, true));
 	}
 
     typeClick(e) {
@@ -33,8 +33,9 @@ class PhrasesListView {
         });
     }
 
-    blockItem(key, text) {
+    blockItem(key, text, withTrash = false) {
         let item = $(`<div class="item"><a data-key="${key}">${text}</a></div>`);
+        if (withTrash) item.append(this.trashButton());
         item.click(this.typeClick.bind(this));
         return item;
     }
@@ -125,14 +126,11 @@ class PhrasesListView {
 				let item = null;
 
 				if (typeof list[key] == 'string')
-					item = this.blockItem(key, list[key]);
+					item = this.blockItem(key, list[key], isUserFolder);
 				else {
 		            let count = list[key].length;
-		            item = this.blockItem(key, key + ` (${count})`);
+		            item = this.blockItem(key, key + ` (${count})`, isUserFolder);
 		        }
-
-		        if (isUserFolder)
-		        	item.append(this.trashButton());
 		        
 		        body.append(item);
 	        });

@@ -1,4 +1,10 @@
 # app.py
+import sys
+
+project_path = '/home/vmaya/www/eng_frases/english-phrases-server'
+if project_path not in sys.path:
+    sys.path.append(project_path)
+    
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # Добавьте этот импорт
 import hashlib
@@ -12,7 +18,7 @@ import re
 
 app = Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins": ["https://eng-frases.com", "https://eng.vmaya.ru"]}})
+CORS(app, resources={r"/*": {"origins": ["https://eng-frases.com", "https://eng.vmaya.ru", "https://www.eng.vmaya.ru"]}})
 
 # Конфигурация MySQL
 MYSQL_CONFIG = {
