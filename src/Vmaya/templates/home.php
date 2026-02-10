@@ -1,6 +1,6 @@
 <?php
     $v = '?v='.SCRIPTS_VERSION;
-    $is_developer = in_array(Page::setSession('user_id', 0), DEVUSERS);
+    $is_developer = in_array(Page::getSession('user_id'), DEVUSERS);
 ?>
 <!-- Settings Modal -->
 <div class="modal fade fullscreen-modal" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
