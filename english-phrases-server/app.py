@@ -4,7 +4,7 @@ import sys
 project_path = '/home/vmaya/www/eng_frases/english-phrases-server'
 if project_path not in sys.path:
     sys.path.append(project_path)
-    
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # Добавьте этот импорт
 import hashlib
@@ -288,4 +288,4 @@ if __name__ == '__main__':
     init_database()
     
     # Запускаем сервер
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=5002, debug=True)
