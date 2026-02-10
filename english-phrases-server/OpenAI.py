@@ -39,7 +39,7 @@ def generate_phrases(prompt_text):
     except Exception as e:
         print(f"Error in HF API call: {e}")
         return None
-
+'''
 if __name__ == '__main__':
     generate_phrases("""
 Сгенерируй 50 фраз на английском языке (Написание программ на языке Python) в Past Simple времени с переводом на русский.
@@ -50,3 +50,4 @@ if __name__ == '__main__':
 ]
 Фразы должны быть полезными для изучения английского, разнообразными и охватывать тему: Написание программ на языке Python
 """);
+'''
