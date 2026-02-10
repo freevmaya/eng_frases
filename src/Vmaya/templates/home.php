@@ -1,5 +1,6 @@
 <?php
     $v = '?v='.SCRIPTS_VERSION;
+    $is_developer = in_array($user_id, DEVUSERS);
 ?>
 <!-- Settings Modal -->
 <div class="modal fade fullscreen-modal" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
@@ -275,7 +276,7 @@
 <script src="scripts/speech-synthesizer.js<?=$v?>"></script>
 <script src="scripts/state-manager.js<?=$v?>"></script>
 <script src="scripts/player-controls.js<?=$v?>"></script>
-<?if (DEV) {?>
+<?if ($is_developer) {?>
 <script src="scripts/phrases-list-view-dev.js<?=$v?>"></script>
 <script src="scripts/add-phrases-dialog.js<?=$v?>"></script>
 <?} else {?>
