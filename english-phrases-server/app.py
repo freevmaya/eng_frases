@@ -22,10 +22,11 @@ CORS(app, resources={r"/*": {"origins": ["https://eng-frases.com", "https://eng.
 
 # Конфигурация MySQL
 MYSQL_CONFIG = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': os.environ.get('MYSQL_PASSWORD', ''),
-    'database': 'eng_phrases'
+    'host': os.environ.get('DB_HOST', 'localhost'),
+    'user': os.environ.get('DB_USER', 'root'),
+    'port': os.environ.get('DB_PORT', 'root'),
+    'password': os.environ.get('DB_PASSWORD', ''),
+    'database': os.environ.get('DB_NAME', 'eng_phrases')
 }
 
 # Поддерживаемые языки
@@ -278,7 +279,7 @@ if __name__ == '__main__':
 
     print("""
     Example:
-     curl -X POST http://localhost:5000/generate-phrases   -H "Content-Type: application/json"   -d '{
+     curl -X POST http://localhost:port/generate-phrases   -H "Content-Type: application/json"   -d '{
         "native_lang": "ru",
         "target_lang": "en",
         "theme": "Term `Pasrt simple`"
