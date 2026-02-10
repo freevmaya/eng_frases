@@ -9,6 +9,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS  # Добавьте этот импорт
 import hashlib
 import json
+import socket
 import mysql.connector
 from mysql.connector import Error
 import os
