@@ -293,4 +293,4 @@ if __name__ == '__main__':
     else:
         debug_mode = os.environ.get('DEBUG', 'False').lower() == 'true'
         # Запуск вручную (для отладки)
-        app.run(host='0.0.0.0', port=5002, debug=debug_mode)
+        app.run(host='0.0.0.0', port=os.environ.get('PORT', 5002), debug=debug_mode)
