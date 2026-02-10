@@ -140,7 +140,6 @@ class AddPhrasesDialog {
             fetch(AI_URL, {
                 method: 'POST',
                 mode: 'cors',
-                credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
