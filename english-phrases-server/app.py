@@ -162,54 +162,72 @@ def parse_ai_response(response_text):
         print(f"No JSON found in response: {response_text[:500]}...")
         return None
 
-def generate_phrases_from_ai(native_lang, target_lang, theme, count=10):
+def generate_phrases_from_ai(native_lang, target_lang, theme):
     """Генерация фраз через ИИ"""
-    # Загружаем промт для языка
-    prompt_template = load_prompt_template(native_lang)
+    import traceback
     
-    # Заменяем плейсхолдеры в промте
-    prompt = prompt_template.format(count=count, theme=theme)
-    
-    # Вызываем ИИ
-    response = generate_phrases(prompt)
-    
-    if not response:
-        return None
-    
-    # Парсим ответ
-    phrases = parse_ai_response(response)
-    
-    # Преобразуем в нужный формат
-    if phrases:
-        formatted_phrases = []
-        for phrase in phrases:
-            if isinstance(phrase, dict):
-                # Стандартизируем ключи
-                formatted_phrase = {}
-                
-                # Английская фраза
-                if 'en' in phrase:
-                    formatted_phrase['en'] = phrase['en']
-                elif 'english' in phrase:
-                    formatted_phrase['en'] = phrase['english']
-                else:
-                    continue  # Пропускаем если нет английского
-                
-                # Перевод на родной язык
-                if native_lang in phrase:
-                    formatted_phrase['native'] = phrase[native_lang]
-                elif 'russian' in phrase and native_lang == 'ru':
-                    formatted_phrase['native'] = phrase['russian']
-                elif 'translation' in phrase:
-                    formatted_phrase['native'] = phrase['translation']
-                else:
-                    continue  # Пропускаем если нет перевода
-                
-                formatted_phrases.append(formatted_phrase)
+    try:
+        print(f"DEBUG generate_phrases_from_ai: Starting with theme='{theme}'", file=sys.stderr)
         
-        return formatted_phrases[:50]  # Ограничиваем 50 фразами
-    
-    return None
+        # Загружаем промт для языка
+        prompt_template = load_prompt_template(native_lang)
+        print(f"DEBUG: Prompt template loaded, length: {len(prompt_template)}", file=sys.stderr)
+        
+        # Заменяем плейсхолдеры в промте
+        prompt = prompt_template.format(theme=theme)
+        print(f"DEBUG: Prompt (first 500 chars): {prompt[:500]}", file=sys.stderr)
+        
+        # Вызываем ИИ
+        print("DEBUG: Calling generate_phrases()...", file=sys.stderr)
+        response = generate_phrases(prompt)
+        
+        if not response:
+            print("DEBUG: generate_phrases() returned None", file=sys.stderr)
+            return None
+        
+        print(f"DEBUG: Raw response (first 500 chars): {response[:500]}", file=sys.stderr)
+        
+        # Парсим ответ
+        phrases = parse_ai_response(response)
+        print(f"DEBUG: Parsed phrases: {phrases}", file=sys.stderr)
+        
+        # Преобразуем в нужный формат
+        if phrases:
+            formatted_phrases = []
+            for phrase in phrases:
+                if isinstance(phrase, dict):
+                    formatted_phrase = {}
+                    
+                    # Английская фраза
+                    if 'en' in phrase:
+                        formatted_phrase['en'] = phrase['en']
+                    elif 'english' in phrase:
+                        formatted_phrase['en'] = phrase['english']
+                    else:
+                        continue
+                    
+                    # Перевод на родной язык
+                    if native_lang in phrase:
+                        formatted_phrase['native'] = phrase[native_lang]
+                    elif 'russian' in phrase and native_lang == 'ru':
+                        formatted_phrase['native'] = phrase['russian']
+                    elif 'translation' in phrase:
+                        formatted_phrase['native'] = phrase['translation']
+                    else:
+                        continue
+                    
+                    formatted_phrases.append(formatted_phrase)
+            
+            print(f"DEBUG: Final formatted phrases count: {len(formatted_phrases)}", file=sys.stderr)
+            return formatted_phrases[:50]
+        
+        print("DEBUG: phrases is None or empty", file=sys.stderr)
+        return None
+        
+    except Exception as e:
+        print(f"DEBUG ERROR in generate_phrases_from_ai: {e}", file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+        return None
 
 @app.route('/generate-phrases', methods=['POST'])
 def generate_phrases_endpoint():
