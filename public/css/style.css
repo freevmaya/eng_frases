@@ -154,9 +154,16 @@
     .app-name {
         display: none;
     }
+
+    #addPhrasesModal .content {
+        flex-direction: row !important;
+        gap: 0.5em;
+    }
+
+    #addPhrasesModal .content > div {
+        width: 50%;
+    }
 }
-
-
 
 @media (max-height: 340px) {
 
@@ -763,7 +770,9 @@ footer {
 #af_list {
     flex: 1;
     max-width: 100%;
-    overflow: auto;
+    overflow-y: auto;
+    background-color: var(--bs-btn-hover-bg);
+    padding: 0.5em;
 }
 
 #af_list .item {
@@ -788,6 +797,13 @@ footer {
     color: var(--target);
 }
 
+#addPhrasesModal .content > div:last-child {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    overflow-y: auto;
+}
+
 #addPhrasesModal .content {
     display: flex;
     flex-direction: column;
@@ -796,4 +812,10 @@ footer {
 #addPhrasesModal .modal-dialog {
     width: 100%;
     max-width: var(--max-width);
+}
+
+@media (min-height: 700px) {
+    #addPhrasesModal .content {
+        max-height: 100%;
+    }
 }

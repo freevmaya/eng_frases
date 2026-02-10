@@ -3,3 +3,4 @@ mysql-connector-python
 huggingface-hub
 flask-cors
 gunicorn
+dotenv

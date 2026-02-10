@@ -102,7 +102,12 @@ class Ajax extends BaseAjax {
 
 			unset($data['items']);
 
-			if ($list_id = $list_model->Update($data)) {
+			$item = $list_model->getItem($data['name'], 'name');
+			if ($item)
+				$list_id = $item['id'];
+			else $list_id = $list_model->Update($data, 'name');
+
+			if ($list_id) {
 
 				foreach ($list as $item) {
 					$item['list_id'] = $list_id;

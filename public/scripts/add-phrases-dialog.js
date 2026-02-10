@@ -3,6 +3,9 @@ class AddPhrasesDialog {
     constructor() {
     	this.modal = $(this.html());
         $('.page').append(this.modal);
+
+        this.modal.find('.clearBtn').click(this.clear.bind(this));
+
         $(window).on('add_user_list', ()=>{
             this.show();
         });
@@ -24,10 +27,14 @@ class AddPhrasesDialog {
         this.refreshDialog();
     }
 
+    clear() {
+        this.af_list.empty();
+    }
+
     isFull() {
         return !isEmpty(this.af_name.val()) && 
                 !isEmpty(this.af_text.val()) && 
-                !isEmpty(this.getList());
+                (this.getList().length > 0);
     }
 
     initListeners() {
@@ -70,6 +77,7 @@ class AddPhrasesDialog {
         $(e.currentTarget)
             .closest('.item')
             .remove();
+        this.refreshDialog();
     }
 
     createPhraseItem(parent, rec) {
@@ -96,6 +104,7 @@ class AddPhrasesDialog {
         this.af_list.empty();
         for (let i=0; i<list.length; i++)
             this.createPhraseItem(this.af_list, list[i]);
+        this.refreshDialog();
     }
 
     getList() {
@@ -185,28 +194,36 @@ class AddPhrasesDialog {
             <div class="modal-dialog modal-dialog-centered modal-fullscreen">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="centeredModalLabel">Добавление фраз</h5>
+                        <h5 class="modal-title" id="centeredModalLabel">Добавление списка фраз</h5>
                     </div>
                     <div class="modal-body">
                         <div class="content">
-                            <div class="input-group input-group-sm mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="inputGroup-sizing-sm">Название списка</span>
+                            <div>
+                                <div class="input-group input-group-sm mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Название списка</span>
+                                    </div>
+                                    <input type="text" id="af_name" placeholder="Пример: Коты" class="form-control" aria-label="Small">
                                 </div>
-                                <input type="text" id="af_name" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                                <p class="text-justify">По вашему запросу AI генерирует список фраз.<br>
+                                    Напишите любой текст, на какую тему вы бы хотели сгенерировать фразы.
+                                </p>
+                                <div class="mb-3">
+                                    <textarea placeholder="Пример: Короткие фразы о котиках"  class="form-control" id="af_text" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3 text-end">
+                                    <button type="button" class="btn btn-primary" id="af_send">Отправить</button>
+                                </div>
                             </div>
-                            <p class="text-justify">По вашему запросу AI генерирует список фраз.<br>
-                                Напишите любой текст, на какую тему вы бы хотели сгенерировать фразы.
-                                Можете описать сложность, длину или слова которые вы хотели бы видеть.
-                            </p>
-                            <div class="mb-3">
-                                <label for="exampleFormControlTextarea1" class="form-label">Ваш запрос</label>
-                                <textarea class="form-control" id="af_text" rows="3"></textarea>
-                            </div>
-                            <div class="mb-3 text-end">
-                                <button type="button" class="btn btn-primary" id="af_send">Отправить</button>
-                            </div>
-                            <div id="af_list">
+                            <div>
+                                <div class="input-group-prepend justify-content-between input-group-text">
+                                    <span>Список фраз</span>
+                                    <button class="btn btn-sm clearBtn">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                                <div id="af_list">
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -276,12 +276,8 @@
 <script src="scripts/speech-synthesizer.js<?=$v?>"></script>
 <script src="scripts/state-manager.js<?=$v?>"></script>
 <script src="scripts/player-controls.js<?=$v?>"></script>
-<?if (DEV) {?>
-<script src="scripts/phrases-list-view-dev.js<?=$v?>"></script>
-<script src="scripts/add-phrases-dialog.js<?=$v?>"></script>
-<?} else {?>
 <script src="scripts/phrases-list-view.js<?=$v?>"></script>
-<?}?>
+<script src="scripts/add-phrases-dialog.js<?=$v?>"></script>
 <script src="scripts/app.js<?=$v?>" defer></script>
 <script src="scripts/sound.js<?=$v?>"></script>
 <script src="scripts/vrecognition.js<?=$v?>"></script>
