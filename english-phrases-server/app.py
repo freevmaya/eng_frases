@@ -293,3 +293,7 @@ if __name__ == '__main__':
     else:
         # Запуск вручную (для отладки)
         app.run(host='0.0.0.0', port=5002, debug=True)
+
+else:
+    # Если импортируется как модуль (например, через gunicorn)
+    init_database()
