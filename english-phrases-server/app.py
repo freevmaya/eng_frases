@@ -279,17 +279,17 @@ def health_check():
     })
 
 if __name__ == '__main__':
-
-    print("""
-    Example:
-     curl -X POST http://localhost:port/generate-phrases   -H "Content-Type: application/json"   -d '{
-        "native_lang": "ru",
-        "target_lang": "en",
-        "theme": "Term `Pasrt simple`"
-      }'
-    """)
-    # Инициализируем БД при запуске
-    init_database()
+    from werkzeug.serving import run_simple
+    # ... ваш код инициализации ...
     
-    # Запускаем сервер
-    app.run(host='0.0.0.0', port=5002, debug=True)
+    # Проверяем, есть ли переменная окружения от systemd socket активации
+    listen_fds = os.environ.get('LISTEN_FDS', 0)
+    
+    if listen_fds:
+        # Используем сокет от systemd
+        fd = 3  # Первый файловый дескриптор после stdin, stdout, stderr
+        sock = socket.fromfd(fd, socket.AF_INET, socket.SOCK_STREAM)
+        run_simple('localhost', 0, app, threaded=True, ssl_context=None, fd=sock.fileno())
+    else:
+        # Запуск вручную (для отладки)
+        app.run(host='0.0.0.0', port=5002, debug=True)
