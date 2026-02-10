@@ -82,6 +82,22 @@ function showAlert(message, type = 'info') {
     setTimeout(() => alert.alert('close'), 3000);
 }
 
+function Wrong(message=null) {
+    showAlert(isEmpty(message) ? "Что-то пошло не так!" : message);
+}
+
+function Confirm(message, title='Подтвердить') {
+    let modal = $('#сonfirm');
+    modal.find('.content').html(message);
+    modal.find('.modal-title').text(title);
+    modal.modal('show');
+    return new Promise((resolve, reject)=>{
+        modal.find('.btn-primary').click(()=>{
+            resolve(true);
+        });
+    });
+}
+
 class Phrase {
     constructor(data, type) {
         this.native     = data['native'];
@@ -1092,34 +1108,6 @@ $(document).ready(function() {
             e.preventDefault();
         }
     });
-
-
-    // 1. Подписка на событие VK Web App Close
-    /*
-    if (vkBridge)
-        vkBridge.subscribe((e) => {
-            if (e.detail.type === 'VKWebAppClose') {
-                handleVKBackButton();
-            }
-        });
-
-    // 4. Обработка аппаратной кнопки "Назад" в VK
-    function handleVKBackButton() {
-        if (isModalOpen) {
-            // Закрываем все модальные окна
-            $('.modal.show').modal('hide');
-            backButtonPressed = true;
-            
-            // Через 100ms сбрасываем флаг
-            setTimeout(() => {
-                backButtonPressed = false;
-            }, 100);
-            
-            return false; // Не закрываем приложение
-        }
-        return true; // Разрешаем закрытие приложения
-    }
-    */
 
     // 5. Перехват всех ссылок и кнопок, которые могут открыть модальные окна
     $(document).on('click', '[data-bs-toggle="modal"]', function() {

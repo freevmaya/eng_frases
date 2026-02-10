@@ -523,7 +523,7 @@ function isStr(s) {
 }
 
 function isEmpty(v) {
-    return (typeof(v) === 'undefined') || (v == null) || (v.length == 0);
+    return (typeof(v) === 'undefined') || (v == null) || ((typeof v == 'string') && (v.trim().length == 0));
 }
 
 function isNumeric(v) {
@@ -1225,3 +1225,87 @@ function assessPhrase(correctPhrase, userPhrase) {
     }
     return result;
 }
+
+$.fn.bootstrapDisable = function(state = true, options = {}) {
+  const settings = $.extend({
+    //loadingText: 'Загрузка...',
+    originalText: null,
+    showSpinner: true,
+    opacity: 0.6
+  }, options);
+  
+  return this.each(function() {
+    const $btn = $(this);
+    
+    if (state) {
+      // Сохраняем оригинальный текст если еще не сохранен
+      if (!$btn.data('original-text')) {
+        $btn.data('original-text', $btn.html());
+      }
+      
+      // Отключаем кнопку
+      $btn.prop('disabled', true)
+          .addClass('disabled')
+          .attr('aria-disabled', 'true')
+          .css('cursor', 'not-allowed')
+          .css('opacity', settings.opacity);
+      
+      // Меняем текст если нужно
+      if (settings.loadingText) {
+        let newText = settings.loadingText;
+        if (settings.showSpinner) {
+          newText = `<span class="spinner-border spinner-border-sm me-2" role="status"></span>${newText}`;
+        }
+        $btn.html(newText);
+      }
+    } else {
+      // Включаем кнопку
+      $btn.prop('disabled', false)
+          .removeClass('disabled')
+          .removeAttr('aria-disabled')
+          .css('cursor', '')
+          .css('opacity', '');
+      
+      // Восстанавливаем оригинальный текст
+      const originalText = $btn.data('original-text');
+      if (originalText) {
+        $btn.html(originalText);
+        $btn.removeData('original-text');
+      }
+    }
+  });
+};
+
+
+
+$.fn.getGap = function() {
+  if (!this.length) return 0;
+  
+  const $container = this.first();
+  const $children = $container.children();
+  
+  if ($children.length < 2) return 0;
+  
+  // Используем первый способ
+  $container.append(
+    '<div class="jquery-gap-helper" style="display: contents; pointer-events: none;">' +
+      '<div style="width: 1px; height: 1px; opacity: 0;"></div>' +
+      '<div style="width: 1px; height: 1px; opacity: 0;"></div>' +
+    '</div>'
+  );
+  
+  const $helper = $container.find('.jquery-gap-helper');
+  const rect1 = $helper.children()[0].getBoundingClientRect();
+  const rect2 = $helper.children()[1].getBoundingClientRect();
+  
+  let gap;
+  if ($container.css('flex-direction') === 'column') {
+    gap = rect2.top - rect1.bottom;
+  } else {
+    gap = rect2.left - rect1.right;
+  }
+  
+  $helper.remove();
+  
+  return Math.max(0, Math.round(gap));
+};

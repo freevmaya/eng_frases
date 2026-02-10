@@ -1,0 +1,7 @@
+Generiere 50 englische Sätze ({theme}) in Past Simple Zeitform mit deutscher Übersetzung.
+Strenges JSON-Array-Format:
+[
+    {{"en": "English phrase here", "de": "Deutsche Übersetzung hier"}},
+    {{"en": "Another phrase", "de": "Noch eine Übersetzung"}}
+]
+Sätze sollten nützlich zum Englischlernen sein, abwechslungsreich und das Thema abdecken: {theme}

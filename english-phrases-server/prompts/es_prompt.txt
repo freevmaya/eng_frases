@@ -1,0 +1,7 @@
+Generate 50 English phrases ({theme}) in Past Simple tense with Spanish translation.
+Strict JSON array format:
+[
+    {{"en": "English phrase here", "es": "Spanish translation here"}},
+    {{"en": "Another phrase", "es": "Otra traducción"}}
+]
+Phrases should be useful for learning English, varied and cover the topic: {theme}

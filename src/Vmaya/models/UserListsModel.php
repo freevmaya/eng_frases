@@ -5,6 +5,13 @@ class UserListsModel extends BaseModel {
         return 'user_lists';
     }
 
+    public function Delete($id, $idField = 'id') { 
+        if ($result = parent::Delete($id, $idField)) {
+            return (new UserPhrasesModel())->Delete($id, 'list_id');
+        }
+        return false;
+    }
+
     public function getFields() {
         return [
             'id' => [

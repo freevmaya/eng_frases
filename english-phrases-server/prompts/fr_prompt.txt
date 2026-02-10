@@ -1,0 +1,7 @@
+Génère 50 phrases anglaises ({theme}) au temps Past Simple avec traduction française.
+Format JSON strict :
+[
+    {{"en": "English phrase here", "fr": "Traduction française ici"}},
+    {{"en": "Another phrase", "fr": "Une autre traduction"}}
+]
+Les phrases doivent être utiles pour apprendre l'anglais, variées et couvrir le thème : {theme}

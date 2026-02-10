@@ -264,6 +264,7 @@
 
 <script type="text/javascript">
     var SPEECH_CONFIG = <?=SPEECH_CONFIG?>;
+    var AI_URL = '<?=AI_URL?>';
     <?if (isset(Page::$request['SPEECH_CONFIG'])) {?>
         Object.assign(SPEECH_CONFIG, <?=Page::$request['SPEECH_CONFIG']?>);
     <?}?>
@@ -274,8 +275,12 @@
 <script src="scripts/speech-synthesizer.js<?=$v?>"></script>
 <script src="scripts/state-manager.js<?=$v?>"></script>
 <script src="scripts/player-controls.js<?=$v?>"></script>
-<!--<script src="scripts/headphone-controls.js<?=$v?>"></script>-->
+<?if (DEV) {?>
+<script src="scripts/phrases-list-view-dev.js<?=$v?>"></script>
+<script src="scripts/add-phrases-dialog.js<?=$v?>"></script>
+<?} else {?>
 <script src="scripts/phrases-list-view.js<?=$v?>"></script>
+<?}?>
 <script src="scripts/app.js<?=$v?>" defer></script>
 <script src="scripts/sound.js<?=$v?>"></script>
 <script src="scripts/vrecognition.js<?=$v?>"></script>

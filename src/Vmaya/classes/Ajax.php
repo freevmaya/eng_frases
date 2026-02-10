@@ -92,17 +92,35 @@ class Ajax extends BaseAjax {
 		Page::Wrong();
 	}
 
-	protected function updatePhraseList($data) {
+	protected function addUserPhrases($data) {
 		if ($user_id = Page::getSession('user_id')) {
-			$model = new UserListsModel();
-			if (!$data['id'])
-				unset($data['id']);
+			$list_model = new UserListsModel();
+			$phrases_model = new UserPhrasesModel();
 
 			$data['user_id'] = $user_id;
+			$list = $data['items'];
 
-			return [
-				'success'=> $model->Update($data) ? true : false
-			];
+			unset($data['items']);
+
+			if ($list_id = $list_model->Update($data)) {
+
+				foreach ($list as $item) {
+					$item['list_id'] = $list_id;
+					if (!$phrases_model->Update($item)) {
+						return [
+							'error'=> 'Failed to add phrase'
+						];
+					}
+				}
+
+				return [
+					'success'=> $list_id
+				];
+			} else {
+				return [
+					'error'=> 'Failed to list'
+				];
+			}
 		}
 		Page::Wrong();
 	}
@@ -134,11 +152,22 @@ class Ajax extends BaseAjax {
 	}
 
 	protected function deleteList($data) {
-		if ($id = intval($data['id'])) {
+		GLOBAL $dbp;
+
+		if ($user_id = Page::getSession('user_id')) {
 			$model = new UserListsModel();
-			return [
-				'success'=> $model->Delete($id) ? true : false
-			];
+			if (isset($data['id']) && ($id = intval($data['id']))) {
+				return [
+					'success'=> $model->Delete($id) ? true : false
+				];
+			} else if (isset($data['name']) && ($name = $dbp->safeVal($data['name']))) {
+				$items = $model->getItems("user_id = {$user_id} AND `name` = '{$name}'");
+				if (count($items) > 0) {
+					return [
+						'success'=> $model->Delete($items[0]['id']) ? true : false
+					];
+				}
+			}
 		}
 		Page::Wrong();
 	}

@@ -29,14 +29,12 @@ class UserApp {
 					user_id: this.user_id
 				}
 			}).then((data)=>{
-				if (data) {
-					afterCondition(()=>{
-						return phrasesList != null;
-					}, ()=>{
-						phrasesList.setUserLists(data);
-						this.userPhrasesLoaded = 2;
-					})
-				}
+				afterCondition(()=>{
+					return phrasesList != null;
+				}, ()=>{
+					phrasesList.setUserLists(data);
+					this.userPhrasesLoaded = 2;
+				});
 			});
 		}
 	}

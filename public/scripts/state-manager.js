@@ -75,6 +75,12 @@ class StateManager {
         });
     }
 
+    get(name, defValue = null) {
+        if (typeof this.state[name] == 'undefined')
+            return defValue;
+        return this.state[name];
+    }
+
     getHash() {
         return CryptoJS.MD5(JSON.stringify(this.state)).toString();
     }
