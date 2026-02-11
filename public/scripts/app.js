@@ -501,6 +501,7 @@ function Application() {
             updateSizePlayerTexts();
         });
 
+        /*
         let delayFocus = debounce(()=>{
             if (!appData.selectTypeRecently) {
                 stateManager.loadState()
@@ -515,7 +516,8 @@ function Application() {
                     });
             }
         }, 100);
-        
+        */
+
         window.addEventListener('focus', delayFocus);
 
         $(window).on('play_autio_error', function(e, error) {
