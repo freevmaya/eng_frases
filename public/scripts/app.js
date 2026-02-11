@@ -532,9 +532,11 @@ function Application() {
 
 
         $(window).on('user_list_loaded', (e, data)=>{
-            Object.keys(data).forEach(key => {
-                appendUserList(key, data[key]);
-            });
+
+            if (data)
+                Object.keys(data).forEach(key => {
+                    appendUserList(key, data[key]);
+                });
 
             if (appData.currentPhraseList.length == 0)
                 initCurrentType();

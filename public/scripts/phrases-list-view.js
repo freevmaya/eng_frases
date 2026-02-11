@@ -199,8 +199,7 @@ class PhrasesListView {
     }
 
     setUserLists(list) {
-    	let keys = Object.keys(list);
-	    this.groups[this.userGroupName] = list;
+	    this.groups[this.userGroupName] = list ? list : [];
 		this.refreshItems();
     }
 

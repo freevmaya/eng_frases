@@ -32,7 +32,7 @@
     } else $user_id = Page::getSession('user_id');
     */
 
-	$is_developer = in_array($user_id, DEVUSERS);
+	$is_developer = Page::isDev();
 ?>
 <!DOCTYPE html>
 <html lang="ru" data-bs-theme="dark">

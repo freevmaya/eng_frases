@@ -3,7 +3,7 @@ class UserApp {
 		this.userPhrasesLoaded = 0;
 	}
 
-	init(source_id, source, data) {
+	init(source_id, source, data, phrases_list = null) {
 
 		Ajax({
 			action: 'initUser',
@@ -18,6 +18,16 @@ class UserApp {
 				this.loadUserPhrases();
 			}
 		});
+
+		if (phrases_list != null) {
+			this.userPhrasesLoaded = 2;
+			afterCondition(()=>{
+				return phrasesList != null;
+			}, ()=>{
+				$(window).trigger('user_list_loaded', phrases_list);
+				this.userPhrasesLoaded = 2;
+			});
+		}
 	}
 
 	loadUserPhrases() {

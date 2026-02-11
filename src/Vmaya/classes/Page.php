@@ -46,6 +46,13 @@ class Page {
 		}
 	}
 
+	public static function isDev() {
+		if (isset(Page::$request['dev'])) {
+			return intval(Page::$request['dev']) > 0;
+		}
+		return (DEV || in_array(Page::getSession('user_id'), DEVUSERS)) && (@Page::$request['dev'] != '0');
+	}
+
 	public static function Run($userModel, $request) {
 		/*
 		foreach ($request as $key=>$value) {

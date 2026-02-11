@@ -37,7 +37,8 @@
     	Page::setSession('user_id', $user_id);
     }
 
-	$is_developer = in_array($user_id, DEVUSERS); //93
+	$is_developer = Page::isDev();
+	$phrases = (new UserPhrasesModel())->getPhrasesAsJsonWithDifficulty($user_id);
 ?>
 <!DOCTYPE html>
 <html lang="ru" data-bs-theme="<?=isset(Page::$request['theme']) ? Page::$request['theme'] : 'dark' ?>">
@@ -134,7 +135,7 @@
 	?>
 		$(window).ready(()=>{
 			var user_data = <?=json_encode($user_data, JSON_FLAGS)?>;
-			userApp.init(user_data.id, '<?=$source?>', user_data);
+			userApp.init(user_data.id, '<?=$source?>', user_data, <?=json_encode($phrases)?>);
 		});
 	<?}?>
 	</script>
