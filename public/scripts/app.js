@@ -198,6 +198,7 @@ function Application() {
     var appData = {
         currentPhraseList: [],
         currentPhrase: null,
+        selectTypeRecently: false,
         timeoutId: null,
         pageScrollTimerId: null,
         playStart: false,
@@ -500,18 +501,22 @@ function Application() {
             updateSizePlayerTexts();
         });
 
-        window.addEventListener('focus', (e)=>{
-            stateManager.loadState()
-                .then(()=>{
-                    let server_state = stateManager.getState();
-                    if (server_state.currentListType != state.currentListType) {
-                        state = server_state;
-                        loadPhraseList();
-                        updateDisplay();
-                        $(window).trigger('selected_list_type', state.currentListType);
-                    } else state = server_state;
-                });
-        });
+        let delayFocus = debounce(()=>{
+            if (!appData.selectTypeRecently) {
+                stateManager.loadState()
+                    .then(()=>{
+                        let server_state = stateManager.getState();
+                        if (server_state.currentListType != state.currentListType) {
+                            state = server_state;
+                            loadPhraseList();
+                            updateDisplay();
+                            $(window).trigger('selected_list_type', state.currentListType);
+                        } else state = server_state;
+                    });
+            }
+        }, 100);
+        
+        window.addEventListener('focus', delayFocus);
 
         $(window).on('play_autio_error', function(e, error) {
             if (error.name == 'NotAllowedError') {
@@ -690,6 +695,11 @@ function Application() {
                         });
                 });
             }
+
+            appData.selectTypeRecently = true;
+            setTimeout(()=>{
+                appData.selectTypeRecently = false;
+            }, 1000);
         }
     }
 
