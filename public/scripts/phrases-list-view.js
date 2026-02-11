@@ -4,7 +4,7 @@ class PhrasesListView {
 		this.accordion = null;
 		this.groups = {};
 		this.current_list_index = null;
-		this.userGroupName = "Пользовательские";
+		this.userGroupName = "Мои фразы";
 		$(window).on('selected_list_type', this.onSelected.bind(this));
         $(window).on('resize', this.refreshAccordion.bind(this));
 		$(window).on('added_user_list', this.onAddedUserList.bind(this));
