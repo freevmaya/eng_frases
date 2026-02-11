@@ -1309,3 +1309,38 @@ $.fn.getGap = function() {
   
   return Math.max(0, Math.round(gap));
 };
+
+function mergePhrasesSimple(phrases) {
+    const seen = new Set();
+    const result = [];
+    
+    for (const phrase of phrases) {
+        if (!seen.has(phrase.target)) {
+            seen.add(phrase.target);
+            result.push(phrase);
+        }
+    }
+    
+    return result;
+}
+
+function filterPhrasesAdvanced(sourceArray, excludeArray, compareFields = ['target']) {
+    // Создаем "отпечаток" каждой фразы для сравнения
+    const excludeMap = new Map();
+    
+    excludeArray.forEach(excludePhrase => {
+        // Создаем ключ для сравнения на основе указанных полей
+        const key = compareFields
+            .map(field => excludePhrase[field])
+            .join('|');
+        excludeMap.set(key, true);
+    });
+    
+    // Фильтруем исходный массив
+    return sourceArray.filter(sourcePhrase => {
+        const sourceKey = compareFields
+            .map(field => sourcePhrase[field])
+            .join('|');
+        return !excludeMap.has(sourceKey);
+    });
+}

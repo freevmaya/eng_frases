@@ -32,7 +32,7 @@ class UserApp {
 				afterCondition(()=>{
 					return phrasesList != null;
 				}, ()=>{
-					phrasesList.setUserLists(data);
+					$(window).trigger('user_list_loaded', data);
 					this.userPhrasesLoaded = 2;
 				});
 			});

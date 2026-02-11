@@ -100,6 +100,11 @@ class Ajax extends BaseAjax {
 			$data['user_id'] = $user_id;
 			$list = $data['items'];
 
+			for ($i=0; $i<count($list); $i++) {
+				$list[$i]['target_text'] = $list[$i]['target'];
+				$list[$i]['native_text'] = $list[$i]['native'];
+			}
+
 			unset($data['items']);
 
 			$item = $list_model->getItem($data['name'], 'name');

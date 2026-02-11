@@ -112,16 +112,20 @@ class AddPhrasesDialog {
         this.af_list.find('.item').each((i, elem)=>{
             elem = $(elem);
             list.push({
-                target_text: elem.find('.target').text().trim(),
-                native_text: elem.find('.native').text().trim()
+                direction: stateManager.phraseDirection,
+                target: elem.find('.target').text().trim(),
+                native: elem.find('.native').text().trim()
             });
         });
         return list;
     }
 
     sendPhrases() {
-        let list = this.getList();
+        
         let name = this.af_name.val();
+        let list = this.getList();
+        if (typeof phrasesList != 'undefined')
+            list = phrasesList.filterPhrases(name, list);
         Ajax({
             action: 'addUserPhrases',
             data: {
@@ -134,7 +138,7 @@ class AddPhrasesDialog {
             if (result.success)
                 $(window).trigger('added_user_list', {
                     name: name,
-                    count: list.length
+                    list: list
                 });
         })
     }

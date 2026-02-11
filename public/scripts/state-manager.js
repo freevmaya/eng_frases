@@ -16,6 +16,7 @@ class StateManager {
             
             // Направление и порядок
             direction: 'native-target-both',
+            phraseDirection: 'en-ru',
             order: 'sequential',
             currentListType: 'Present simple',
             progress: {},

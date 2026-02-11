@@ -8,6 +8,11 @@ class PhrasesListView {
 		$(window).on('selected_list_type', this.onSelected.bind(this));
         $(window).on('resize', this.refreshAccordion.bind(this));
 		$(window).on('added_user_list', this.onAddedUserList.bind(this));
+		$(window).on('user_list_loaded', this.onUserListLoaded.bind(this));
+	}
+
+	onUserListLoaded(e, data) {
+		this.setUserLists(data);
 	}
 
 	onSelected(e, type) {
@@ -15,15 +20,35 @@ class PhrasesListView {
 		this.refreshForCurrentList();
 	}
 
+	filterPhrases(listName, list) {
+		if (typeof this.groups[this.userGroupName][listName] != 'undefined')
+			return filterPhrasesAdvanced(list, this.groups[this.userGroupName][listName]);
+		return list;
+	}
+
 	onAddedUserList(e, item) {
 		let abody = this.accordion.find(`[data-name="${this.userGroupName}"]`).find('.accordion-body');
 
+    	let groupName = 0;
+    	Object.keys(this.groups).forEach((group, i) => {
+    		if (typeof this.groups[group][item.name] != 'undefined')
+    			groupName = group;
+    	});
+
 		let elem_item = abody.find(`[data-key="${item.name}"]`);
-		if (elem_item.length > 0) {
-			const match = elem_item.text().match(/\((.*?)\)/);
-			let count = Number(item.count) + Number(match.length > 1 ? match[1] : 0);
-			elem_item.text(`${item.name} (${count})`);
-		} else abody.prepend(this.blockItem(item.name, `${item.name} (${item.count})`, true));
+		if (groupName && elem_item) {
+
+			let newList = item.list;
+			if (typeof this.groups[groupName][item.name] != 'undefined')
+				newList = mergePhrasesSimple([...this.groups[groupName][item.name], ...item.list]);
+
+			elem_item.text(`${item.name} (${newList.length})`);
+
+			this.groups[groupName][item.name] = newList;
+		} else {
+			abody.prepend(this.blockItem(item.name, `${item.name} (${item.list.length})`, true));
+			this.groups[item.name] = item.list;
+		}
 	}
 
     typeClick(e) {
@@ -68,9 +93,11 @@ class PhrasesListView {
     				}
     			})
     			.then((result)=>{
-    				if (result.success)
+    				if (result.success) {
+    					$(window).trigger('user_list_removed', itemName);
     					item.remove();
-    				else Wrong();
+    					delete(this.groups[this.userGroupName][itemName]);
+    				} else Wrong();
     			})
     		});
     }
@@ -98,26 +125,35 @@ class PhrasesListView {
     	this.elem.empty();
     	this.accordion = $('<div class="accordion" id="accordionItems">');
 
+    	let currentListTypeIdx = 0;
+    	Object.keys(this.groups).forEach((group, i) => {
+    		if (stateManager.state.currentListType)
+    			if (typeof this.groups[group][stateManager.state.currentListType] != 'undefined')
+    				currentListTypeIdx = i;
+    	});
+
     	Object.keys(this.groups).forEach((group, i) => {
 
     		let isUserFolder = group == this.userGroupName;
 
     		let name = 'collapse-' + i;
 
-    		let head = group;
+    		let isHaveCurrentType = i == currentListTypeIdx;
 
+    		let addButton = '';
 			if (isUserFolder)
-				head = `<span>${group}</span><button class="btn btn-sm add-list"><i class="bi">+</i></button>`;
+				addButton = `<button class="btn btn-sm add-list card bg-theme-gradient">+</button>`;
 
     		let list = this.groups[group];
-    		let classes = i == 0 ? 'collapse show': 'collapse';
-    		let expended = i == 0 ? 'aria-expanded="true"' : '';
+    		let classes = isHaveCurrentType ? 'collapse show': 'collapse';
+    		let expended = isHaveCurrentType ? 'aria-expanded="true"' : '';
     		let layer = $(`
     			<div class="accordion-item" data-name="${group}">
     				<div class="accordion-header">
     					<div class="card bg-theme-gradient head" data-bs-toggle="collapse" data-bs-target="#${name}" aria-controls="${name}">
-    						${head}
+    						${group}
     					</div>
+    					${addButton}
     				</div>
 	    			<div id="${name}" class="accordion-collapse ${classes}" data-bs-parent="#accordionItems">
 						<div class="accordion-body">
@@ -164,11 +200,7 @@ class PhrasesListView {
 
     setUserLists(list) {
     	let keys = Object.keys(list);
-
 	    this.groups[this.userGroupName] = list;
-	    keys.forEach(key => {
-	    	phrasesData[key] = list[key];
-	    });
 		this.refreshItems();
     }
 

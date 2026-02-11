@@ -45,17 +45,13 @@
     --slider-thumb: rgba(13, 110, 253, 0.5);
     --text-g1: #0067ff03;
     --bs-purple: #9479c5;
+    --box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    --gradient: linear-gradient(145deg, #2d3338, #1a1d20);
 }
 
 [data-bs-theme="dark"] .modal-content.bg-form {
     background: linear-gradient(145deg, #2d3338, #1a1d20);
-}
-
-[data-bs-theme="dark"] .bg-theme-gradient {
-    background: linear-gradient(145deg, #2d3338, #1a1d20);
-    border: none;
-    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 /*LIGHT*/
@@ -100,19 +96,15 @@
     --bs-border-color: var(--color1_light);
     --tv-color: white;
     --play-border-color: var(--color1_dark_down);
+    --box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    --gradient: linear-gradient(145deg, #dbdbdb, #d5d5d5);
 }
 
 [data-bs-theme="light"] .btn-primary {
     --bs-btn-bg: var(--color2_dark);
     --bs-btn-border-color: #7c7f00;
     --bs-btn-hover-bg: #747700;
-}
-
-[data-bs-theme="light"] .bg-theme-gradient {
-    background: linear-gradient(145deg, #dbdbdb, #d5d5d5);
-    border: none;
-    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 [data-bs-theme="light"] .bg-primary {

@@ -279,16 +279,28 @@ function Application() {
             setInitParams(app_init_params);
         
         initPhraseList();
-        loadPhraseList();
-
-        // Восстанавливаем отображение из сохранённого состояния
-        if (appData.currentPhrase) {
-            updateDisplay();
-        }
 
         $(window).trigger('phrases_loaded');
 
         $('.page').addClass('page-loaded');
+
+        if (typeof userApp == 'undefined') 
+            initCurrentType();
+    }
+
+    function initCurrentType() {
+
+        let type = state.currentListType;
+        if (typeof phrasesData[type] == 'undefined')
+            setCurrentType(Object.keys(phrasesData)[0]);
+        else {
+            loadPhraseList();
+
+            // Восстанавливаем отображение из сохранённого состояния
+            if (appData.currentPhrase) {
+                updateDisplay();
+            }
+        }
     }
 
     function randomTest() {
@@ -344,7 +356,11 @@ function Application() {
                 appData.currentPhraseList = appData.currentPhraseList.concat(Phrase.createList(phrasesData[key], key));
             });
         } else {
-            appData.currentPhraseList = Phrase.createList(phrasesData[state.currentListType], state.currentListType) || [];
+            let type = state.currentListType;
+            if (typeof phrasesData[state.currentListType] == 'undefined')
+                type = Object.keys(phrasesData)[0];
+
+            appData.currentPhraseList = Phrase.createList(phrasesData[type], type) || [];
         }
         
         // Применяем порядок с сохранением seed для воспроизводимости
@@ -509,7 +525,40 @@ function Application() {
                 stopPlayback();
             }
         });
-                        
+
+        $(window).on('added_user_list', (e, item)=> {
+            appendUserList(item.name, item.list);
+        });
+
+
+        $(window).on('user_list_loaded', (e, data)=>{
+            Object.keys(data).forEach(key => {
+                appendUserList(key, data[key]);
+            });
+
+            if (appData.currentPhraseList.length == 0)
+                initCurrentType();
+        });       
+
+        $(window).on('user_list_removed', (e, name)=>{
+            if (phrasesData[name]) {
+                delete(phrasesData[name]);
+                if (state.currentListType == name)
+                    setCurrentType();
+            }
+        });
+    }
+
+    function appendUserList(name, list) {
+
+        if (phrasesData[name])
+            list = mergePhrasesSimple([...phrasesData[name], ...list]);
+
+        phrasesData[name] = list;
+        if (state.currentListType == name) {
+            state.currentListType = null;
+            setCurrentType(name);
+        }
     }
 
     // Открытие модального окна настроек
@@ -597,12 +646,15 @@ function Application() {
         $(window).trigger('apply_settings');
     }
 
-    function setCurrentType(type) {
+    function setCurrentType(type = null) {
 
         let keys = Object.keys(phrasesData);
         keys.push('all');
-        if ((state.currentListType != type) && keys.includes(type)) {
 
+        if (!type || !keys.includes(type))
+            type = keys[0];
+
+        if (state.currentListType != type) {
 
             state.currentListType = type;
 
