@@ -109,7 +109,7 @@
 
 		<script type="text/javascript">
 			$(window).ready(()=>{
-				new VKApp(<?=VK_APP_ID?>, <?=$source_user_id?>, '<?=$source?>');
+				new VKApp(<?=VK_APP_ID?>, <?=$source_user_id?>, '<?=$source?>', <?=json_encode($phrases)?>);
 				<?if ($new_user) {?>
 				showAdvices();
 				<?}?>

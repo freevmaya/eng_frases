@@ -2,7 +2,7 @@
 class VKApp {
 
 	_haveAd = false;
-	constructor(app_id, source_user_id, source) {
+	constructor(app_id, source_user_id, source, user_phrases = null) {
 
 		this.app_id = app_id;
 		this.source = source;
@@ -13,7 +13,7 @@ class VKApp {
 		vkBridge.send('VKWebAppGetUserInfo', {})
 			.then(((user) => { 
 				if (user.id == this.source_user_id)
-					userApp.init(user.id, this.source, user);
+					userApp.init(user.id, this.source, user, user_phrases);
 				
 			}).bind(this));
 
