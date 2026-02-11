@@ -516,9 +516,9 @@ function Application() {
                     });
             }
         }, 100);
-        */
 
         window.addEventListener('focus', delayFocus);
+        */
 
         $(window).on('play_autio_error', function(e, error) {
             if (error.name == 'NotAllowedError') {
