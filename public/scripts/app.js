@@ -948,7 +948,7 @@ function Application() {
     function updateSizeText(elem, k = 1, maxSize = 36, minSize = 18) {
         let text = elem.text();
         let width = elem.closest('.phrase-container').innerWidth();
-        let wk = 5;
+        let wk = 3.5;
         let size = Math.max(Math.min(1 / text.length * width * wk, maxSize * k), minSize * k);
         elem.css('font-size', size);
     }
