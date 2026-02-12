@@ -1,8 +1,8 @@
 <?php
     $v = '?v='.SCRIPTS_VERSION;
+    $user_id = 0;
 
     /*
-    $user_id = 0;
     Page::setSession('user_id', 0);
     */
 
