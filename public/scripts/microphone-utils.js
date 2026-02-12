@@ -1,13 +1,9 @@
-// Утилитарная функция для быстрой проверки и запроса
 const MicrophoneUtils = {
-    // Основная функция проверки и запроса
     async checkAndRequestMicrophone(options = {}) {
         const manager = new MicrophoneManager();
         
-        // Проверяем текущий статус
         const currentStatus = await manager.checkPermissions();
         
-        // Если доступ уже разрешен
         if (currentStatus === 'granted') {
             const result = await manager.requestMicrophoneAccess(options);
             return {
@@ -16,35 +12,30 @@ const MicrophoneUtils = {
             };
         }
         
-        // Если доступ запрещен
         if (currentStatus === 'denied') {
             return {
                 success: false,
                 permission: 'denied',
-                message: 'Доступ к микрофону запрещен. Разрешите доступ в настройках браузера.',
+                message: Lang("microphone_access_denied_allow_in_settings"),
                 canAskAgain: false
             };
         }
         
-        // Во всех остальных случаях запрашиваем доступ
         return await manager.requestMicrophoneAccess(options);
     },
 
-    // Функция для отображения диалога с пользователем
     async showMicrophoneRequestDialog(options = {}) {
         return new Promise(async (resolve) => {
             const dialogOptions = {
-                title: options.title || 'Доступ к микрофону',
-                message: options.message || 'Для работы с голосовыми функциями необходим доступ к микрофону.',
-                allowText: options.allowText || 'Разрешить',
-                denyText: options.denyText || 'Запретить',
+                title: options.title || Lang("microphone_access"),
+                message: options.message || Lang("voice_functions_need_microphone"),
+                allowText: options.allowText || Lang("allow"),
+                denyText: options.denyText || Lang("deny"),
                 showRemember: options.showRemember !== false
             };
 
-            // Можно интегрировать с кастомным модальным окном
-            // В этом примере используем встроенный confirm
             if (options.useNativeUI !== false) {
-                const userResponse = confirm(dialogOptions.message + '\n\nНажмите ОК для разрешения доступа.');
+                const userResponse = confirm(dialogOptions.message + '\n\n' + Lang("press_ok_to_allow"));
                 
                 if (userResponse) {
                     const result = await this.checkAndRequestMicrophone(options);
@@ -57,7 +48,6 @@ const MicrophoneUtils = {
                     });
                 }
             } else {
-                // Для кастомного UI возвращаем информацию для отображения
                 resolve({
                     showCustomDialog: true,
                     dialogOptions: dialogOptions,
@@ -67,7 +57,6 @@ const MicrophoneUtils = {
         });
     },
 
-    // Проверка поддержки микрофона в браузере
     isMicrophoneSupported() {
         return !!(
             navigator.mediaDevices &&
@@ -76,7 +65,6 @@ const MicrophoneUtils = {
         );
     },
 
-    // Получение списка доступных микрофонов
     async getAvailableMicrophones() {
         if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
             return [];
@@ -88,63 +76,35 @@ const MicrophoneUtils = {
                 .filter(device => device.kind === 'audioinput')
                 .map(device => ({
                     deviceId: device.deviceId,
-                    label: device.label || `Микрофон ${device.deviceId.slice(0, 5)}`,
+                    label: device.label || Lang("microphone_with_id").replace('%1', device.deviceId.slice(0, 5)),
                     groupId: device.groupId
                 }));
         } catch (error) {
-            tracer.error('Ошибка получения списка микрофонов:', error);
+            tracer.error(Lang("error_getting_microphone_list"), error);
             return [];
         }
     },
 
-    // Проверка, был ли уже запрошен доступ ранее
     async getMicrophonePermissionState() {
         if (navigator.permissions && navigator.permissions.query) {
             try {
                 const status = await navigator.permissions.query({ name: 'microphone' });
                 return status.state;
             } catch (error) {
-                // Если Permissions API не поддерживает 'microphone'
                 return 'prompt';
             }
         }
         
-        // Fallback для браузеров без Permissions API
         const manager = new MicrophoneManager();
         return await manager.checkPermissions();
     },
 
-    // Инструкция по разблокировке микрофона (для пользователя)
     getUnlockInstructions() {
         const instructions = {
-            chrome: `
-                Чтобы разрешить доступ к микрофону в Chrome:
-                1. Нажмите на иконку замка 🔒 слева от адреса сайта
-                2. Найдите пункт "Микрофон"
-                3. Выберите "Разрешить"
-                4. Обновите страницу
-            `,
-            firefox: `
-                В Firefox:
-                1. Нажмите на иконку замка 🔒 в адресной строке
-                2. Нажмите на стрелку рядом с "Разрешения"
-                3. Для микрофона выберите "Разрешить"
-                4. Перезагрузите страницу
-            `,
-            safari: `
-                В Safari:
-                1. Зайдите в Настройки → Сайты
-                2. Выберите "Микрофон"
-                3. Найдите этот сайт и установите "Разрешить"
-                4. Перезагрузите страницу
-            `,
-            edge: `
-                В Microsoft Edge:
-                1. Нажмите на иконку замка 🔒 слева от адреса
-                2. Нажмите "Разрешения для этого сайта"
-                3. Для микрофона выберите "Разрешить"
-                4. Обновите страницу
-            `
+            chrome: Lang("chrome_microphone_instructions"),
+            firefox: Lang("firefox_microphone_instructions"),
+            safari: Lang("safari_microphone_instructions"),
+            edge: Lang("edge_microphone_instructions")
         };
         
         return instructions;
@@ -153,7 +113,7 @@ const MicrophoneUtils = {
 
 async function initializeMicrophone() {
     if (!MicrophoneUtils.isMicrophoneSupported()) {
-        tracer.error('Микрофон не поддерживается в этом браузере');
+        tracer.error(Lang("microphone_not_supported_in_browser"));
         return;
     }
 
@@ -163,15 +123,13 @@ async function initializeMicrophone() {
     });
 
     if (result.success) {
-        tracer.log('Микрофон доступен!', result.stream);
-        // Начинаем работу с микрофоном
+        tracer.log(Lang("microphone_available"), result.stream);
     } else {
-        tracer.error('Не удалось получить доступ к микрофону:', result);
+        tracer.error(Lang("failed_to_get_microphone_access"), result);
         
         if (result.permission === 'denied') {
-            // Показываем инструкции пользователю
             const instructions = MicrophoneUtils.getUnlockInstructions();
-            alert('Доступ к микрофону запрещен. ' + instructions.chrome);
+            alert(Lang("microphone_access_denied") + ' ' + instructions.chrome);
         }
     }
 }

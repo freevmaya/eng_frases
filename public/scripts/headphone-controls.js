@@ -1,4 +1,3 @@
-// Класс для управления через кнопки наушников и медиа-сессию
 class HeadphoneControls {
     constructor(playerController) {
         this.playerController = playerController;
@@ -7,21 +6,16 @@ class HeadphoneControls {
         this.init();
     }
     
-    // Инициализация
     init() {
         if (this.initialized) return;
         
-        // Настраиваем Media Session API
         this.setupMediaSession();
-        
-        // Обработка клавиатурных событий (для кнопок наушников)
         this.setupKeyboardEvents();
         
         this.initialized = true;
         tracer.log('HeadphoneControls initialized');
     }
     
-    // Настройка Media Session API
     setupMediaSession() {
         if (!('mediaSession' in navigator)) {
             console.warn('Media Session API not supported');
@@ -36,7 +30,6 @@ class HeadphoneControls {
             elem[0].dispatchEvent(machineEvent);
         }
         
-        // Устанавливаем действия
         navigator.mediaSession.setActionHandler('play', () => {
             tracer.log("Play");
             playerControls.show();
@@ -51,28 +44,21 @@ class HeadphoneControls {
         
         navigator.mediaSession.setActionHandler('previoustrack', () => {
             tracer.log("previoustrack");
-            //this.playerController.prevPhrase();
         });
         
         navigator.mediaSession.setActionHandler('nexttrack', () => {
             tracer.log("nexttrack");
-            //this.playerController.nextPhrase();
         });
         
-        // Обработка остановки
         navigator.mediaSession.setActionHandler('stop', () => {
             tracer.log("stop");
-            //this.playerController.stopPlayback();
         });
         
-        // Обновляем состояние медиа-сессии
         this.updateMediaMetadata();
     }
     
-    // Настройка обработки клавиатурных событий
     setupKeyboardEvents() {
         document.addEventListener('keydown', (event) => {
-            // Игнорируем события, если фокус в поле ввода
             if (event.target.tagName === 'INPUT' || 
                 event.target.tagName === 'TEXTAREA' ||
                 event.target.isContentEditable) {
@@ -106,7 +92,6 @@ class HeadphoneControls {
         });
     }
     
-    // Обновление метаданных медиа-сессии
     updateMediaMetadata(title = '', artist = '', album = '') {
         if (!('mediaSession' in navigator)) return;
         
@@ -121,7 +106,6 @@ class HeadphoneControls {
         });
     }
     
-    // Обновление состояния воспроизведения в медиа-сессии
     updatePlaybackState(isPlaying, isPaused = false) {
         if (!('mediaSession' in navigator)) return;
         
@@ -129,7 +113,6 @@ class HeadphoneControls {
             (isPaused ? 'paused' : 'playing') : 'none';
     }
     
-    // Обновление позиции (для прогресса)
     updatePositionState(duration, position) {
         if (!('mediaSession' in navigator) || 
             !navigator.mediaSession.setPositionState) return;
@@ -143,7 +126,6 @@ class HeadphoneControls {
         }
     }
     
-    // Обновление информации о текущей фразе
     updateCurrentPhraseInfo(phrase, index, total) {
         if (!phrase) return;
         
@@ -154,7 +136,6 @@ class HeadphoneControls {
         this.updateMediaMetadata(title, artist, album);
     }
     
-    // Очистка медиа-сессии
     clearMediaSession() {
         if (!('mediaSession' in navigator)) return;
         
@@ -164,7 +145,6 @@ class HeadphoneControls {
         }
     }
     
-    // Остановка
     destroy() {
         document.removeEventListener('keydown', this.handleKeydown);
         this.clearMediaSession();

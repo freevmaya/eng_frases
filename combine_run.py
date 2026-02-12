@@ -7,10 +7,10 @@ def combine_project_files():
     
     output_file = "combined.txt"
     exclude_files = ["combine_run.py", output_file]
-    exclude_paths = ["vendor"]
+    exclude_paths = ["vendor", "dev"]
     
     # Определяем расширения файлов для обработки
-    target_extensions = [".php", ".json", ".html", ".js"]
+    target_extensions = [".js"]#, ".json", ".js"]
     
     with open(output_file, "w", encoding="utf-8") as outfile:
         outfile.write("# COMBINED PROJECT FILES FOR DEEPSEEK\n")

@@ -25,16 +25,23 @@ class Page {
 			if ($user = $this->userModel->getItem(DEVUSER))
 				$this->setUser($user);
 		}
-		
-		if ($user) {
 
-			if ($userDB = $this->userModel->getItem($user['id']))
-				$user = array_merge($user, $userDB);
-		
-			include_once(LANGUAGE_PATH.$user['language_code'].'.php');
+		if (isset(Page::$request['lang']) && 
+			file_exists(LANGUAGE_PATH.Page::$request['lang'].'.php')) {
+			$language = Page::$request['lang'];
 		} else {
-			include_once(LANGUAGE_PATH.DEFAULT_LANGUAGE.'.php');
+			$language = DEFAULT_LANGUAGE;
+		
+			if ($user) {
+
+				if ($userDB = $this->userModel->getItem($user['id']))
+					$user = array_merge($user, $userDB);
+			
+				$language = $user['language_code'];
+			}
 		}
+
+		include_once(LANGUAGE_PATH.$language.'.php');
 
 		$this->model = $this->initModel();
 

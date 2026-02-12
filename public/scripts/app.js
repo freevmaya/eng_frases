@@ -6,7 +6,6 @@ let phrasesList = null;
 let playerControls = null;
 let recognition = null;
 
-
 const AppConst = {
     charTime: {
         target: 20,
@@ -29,25 +28,24 @@ async function enableWakeLock() {
         try {
             wakeLock = await navigator.wakeLock.request('screen');
         } catch (err) {
-            tracer.log('Wake Lock ошибка:', err);
+            tracer.log('Wake Lock error:', err);
         }
     } else tracer.log("navigator not have wakeLock");
 
     if (wakeLock)
-        tracer.log('Wake Lock активирован');
+        tracer.log('Wake Lock activated');
 }
 
 async function disableWakeLock() {
     if (wakeLock !== null) {
         await wakeLock.release();
         wakeLock = null;
-        tracer.log('Wake Lock деактивирован');
+        tracer.log('Wake Lock deactivated');
     }
 
     if (_vkWakeLockTimer != null) {
         clearInterval(_vkWakeLockTimer);
         _vkWakeLockTimer = null;
-        //tracer.log('Wake Lock деактивирован');
     }
 }
 
@@ -83,10 +81,10 @@ function showAlert(message, type = 'info') {
 }
 
 function Wrong(message=null) {
-    showAlert(isEmpty(message) ? "Что-то пошло не так!" : message);
+    showAlert(isEmpty(message) ? Lang("something_went_wrong") : message);
 }
 
-function Confirm(message, title='Подтвердить') {
+function Confirm(message, title=Lang("confirm")) {
     let modal = $('#сonfirm');
     modal.find('.content').html(message);
     modal.find('.modal-title').text(title);
@@ -138,44 +136,34 @@ Phrase.createList = (sourceList, type)=>{
 
 function showAdvices() {
     let list = [
-        `<p>Для эффективного запоминания и доведения речевых навыков до автоматизма рекомендуем чередовать последовательность воспроизведения русской и английской версий фраз.</p><p>Так вы будете тренировать не только автоматизм произношения, но и скоростное восприятие речи на слух.</p>`,
-
-        `<p>В настройках вы найдёте все необходимые для этого параметры: паузу между фразами, последовательность перевода, различные варианты озвучки, повторы и др.</p>
-        <p>Рекомендуем повторять английские фразы вслед за диктором — это важно! Так вы формируете речевую моторику.</p>`,
-
-        `<p>Выбирайте в настройках режим «Оба направления».</p>
-        <p>В этом режиме:
+        `<p>` + Lang("advice_3_1") + `</p><p>` + Lang("advice_3_2") + `
         <ul>
-            <li>Сначала прослушайте фразу на русском и попытайтесь вслух произнести её перевод на английский до того, как зазвучит голос диктора.</li>
-            <li>Затем прослушайте правильный перевод и снова повторите фразу за диктором.</li>
+            <li>` + Lang("advice_3_li_1") + `</li>
+            <li>` + Lang("advice_3_li_2") + `</li>
         </ul>
         </p>`,
-
-
-        `<p>Если не успеваете, увеличьте паузу между фразами в настройках приложения.</p>
-        <p>Можно также сменить направление на «Английский → Русский».</p><p>В этом случае:
+        `<p>` + Lang("advice_4_1") + `</p><p>` + Lang("advice_4_2") + `
         <ul>
-            <li>Прослушайте фразу на английском и попытайтесь перевести её на русский вслух до озвучки диктором.</li>
-            <li>Затем слушайте правильный перевод.</li>
+            <li>` + Lang("advice_4_li_1") + `</li>
+            <li>` + Lang("advice_4_li_2") + `</li>
         </ul>
-        </p><p>Так вы будете развивать навык понимания английской речи на слух.</p>`,
-
-        `<p>Включите в настройках режим "Распознавание речи".</p>
-        <p>Так вы сможете контролировать свое произношение, а также отслеживать свой прогресс обучения.
+        </p><p>` + Lang("advice_4_3") + `</p>`,
+        `<p>` + Lang("advice_1_1") + `</p><p>` + Lang("advice_1_2") + `</p>`,
+        `<p>` + Lang("advice_2_1") + `</p><p>` + Lang("advice_2_2") + `</p>`,
+        `<p>` + Lang("advice_5_1") + `</p>
+        <p>` + Lang("advice_5_2") + `
         </p>
-        <p>Делитесь своим опытом, пишите пожелания и предложения по работе тренажёра в нашей группе.</p>
+        <p>` + Lang("advice_5_3") + `</p>
         <hr>
-        <p><span class="bi bi-award me-2"><span> Успешного обучения!</p>`
+        <p><span class="bi bi-award me-2"><span> ` + Lang("happy_learning") + `</p>`
     ];
-    appAlert(list, 'Помощь, советы и рекомендации');
+    appAlert(list, Lang("help_tips_recommendations"));
 }
 
 function Application() {
     
-    // Инициализируем синтезатор речи
     speechSynthesizer = new SpeechSynthesizer(SPEECH_CONFIG);
 
-    // Инициализируем менеджер состояния
     var state;
     if (window.stateManager)
         stateManager = window.stateManager;
@@ -210,7 +198,6 @@ function Application() {
         backgroundAudio: null
     };
 
-    // DOM элементы
     const elements = {
         phraseText: $('#phraseText'),
         phraseHint: $('#phraseHint'),
@@ -238,18 +225,15 @@ function Application() {
         useSpeakPhrase: $('#useSpeakPhrase')
     };
             
-    // Создаем объект распознавания
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition)
         recognition = new VRecognition(new SpeechRecognition());
     else $('#recognizeToggleForm').css('display', 'none');
 
-    // Инициализация
     function init() {
         setupEventListeners();
         applyTvScreenState();
 
-        // Обработка события видимости страницы
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 if (!stateManager.isPaused && stateManager.isPlaying && !state.backgroundPlayback)
@@ -268,7 +252,7 @@ function Application() {
         state.currentListType = init_params.type;
         state.voiceType = init_params.voice;
         state.direction = init_params.translate_direct == 'en-ru' ? 'target-native-both' : 'native-target-both';
-        state.pauseBetweenPhrases =init_params.pause;
+        state.pauseBetweenPhrases = init_params.pause;
     }
 
     function afterLoadList(data) {
@@ -297,7 +281,6 @@ function Application() {
         else {
             loadPhraseList();
 
-            // Восстанавливаем отображение из сохранённого состояния
             if (appData.currentPhrase) {
                 updateDisplay();
             }
@@ -323,7 +306,7 @@ function Application() {
         return fetch(fileUrl)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error(`Failed to load ${fileUrl}`);
+                        throw new Error(Lang("failed_to_load").replace('%1', fileUrl));
                     }
                     return response.json();
                 });
@@ -332,7 +315,7 @@ function Application() {
     function fullPhraseList(select) {
 
         select.empty();
-        select.append($(`<option value="all">Все фразы (смешанные)</option>`));
+        select.append($(`<option value="all">` + Lang("all_phrases_mixed") + `</option>`));
         Object.keys(phrasesData).forEach(key => {
             let count = phrasesData[key].length;
             select.append($(`<option value="${key}">${key} (${count})</option>`));
@@ -340,18 +323,12 @@ function Application() {
     }
 
     function initPhraseList() {
-        /*
-        fullPhraseList(elements.phraseListSelect);
-        fullPhraseList(elements.phraseListPlayer);
-        */
-        phrasesList.setDefaultList(Object.assign({all: 'Все фразы (смешанные)'}, phrasesData), 
-            state.currentListType, 'Предустановленные типы фраз');
+        phrasesList.setDefaultList(Object.assign({all: Lang("all_phrases_mixed")}, phrasesData), 
+            state.currentListType, Lang("preset_phrase_types"));
     }
 
-    // Загрузка списка фраз
     function loadPhraseList(resetIndex = false) {
         if (state.currentListType === 'all') {
-            // Смешиваем все фразы
             appData.currentPhraseList = [];
             Object.keys(phrasesData).forEach(key => {
                 appData.currentPhraseList = appData.currentPhraseList.concat(Phrase.createList(phrasesData[key], key));
@@ -364,9 +341,7 @@ function Application() {
             appData.currentPhraseList = Phrase.createList(phrasesData[type], type) || [];
         }
         
-        // Применяем порядок с сохранением seed для воспроизводимости
         if (state.order === 'random') {
-            // Используем сохранённый seed или создаём новый
             const seed = state.randomSeed || Date.now();
             state.randomSeed = seed;
             shuffleArrayWithSeed(appData.currentPhraseList, seed);
@@ -375,7 +350,6 @@ function Application() {
             state.randomSeed = null;
         }
         
-        // Восстанавливаем индекс из сохранённого состояния
         setCurrentPhraseIndex(getProgressIndex());
     }
 
@@ -404,7 +378,6 @@ function Application() {
         return 0;
     }
 
-    // Функция перемешивания с seed
     function shuffleArrayWithSeed(array, seed) {
         let currentSeed = seed;
         const random = () => {
@@ -419,9 +392,7 @@ function Application() {
         return array;
     }
 
-    // Настройка обработчиков событий
     function setupEventListeners() {
-        // Кнопки управления
         elements.nextBtn.click(nextPhrase);
         elements.prevBtn.click(prevPhrase);
         elements.regenerateBtn.click(()=>{
@@ -439,12 +410,10 @@ function Application() {
             togglePlay();
         });
         
-        // Открытие настроек
         elements.settingsToggle.click(() => {
             openSettingsModal();
         });
         
-        // Применение настроек
         elements.applySettings.click(() => {
             applySettingsFromModal();
             $('#settingsModal').modal('hide');
@@ -452,16 +421,14 @@ function Application() {
         
         elements.pauseSlider.on('input', function() {
             const value = parseFloat($(this).val());
-            elements.pauseValue.text(value + ' сек');
+            elements.pauseValue.text(value + ' ' + Lang("sec"));
         });
         
-        // Выбор направления
         $('[data-direction]').click(function() {
             $('[data-direction]').removeClass('active');
             $(this).addClass('active');
         });
         
-        // Выбор порядка
         $('[data-order]').click(function() {
             $('[data-order]').removeClass('active');
             $(this).addClass('active');
@@ -501,34 +468,15 @@ function Application() {
             updateSizePlayerTexts();
         });
 
-        /*
-        let delayFocus = debounce(()=>{
-            if (!appData.selectTypeRecently) {
-                stateManager.loadState()
-                    .then(()=>{
-                        let server_state = stateManager.getState();
-                        if (server_state.currentListType != state.currentListType) {
-                            state = server_state;
-                            loadPhraseList();
-                            updateDisplay();
-                            $(window).trigger('selected_list_type', state.currentListType);
-                        } else state = server_state;
-                    });
-            }
-        }, 100);
-
-        window.addEventListener('focus', delayFocus);
-        */
-
         $(window).on('play_autio_error', function(e, error) {
             if (error.name == 'NotAllowedError') {
-                showAlert("Ваш браузер блокирует проигрывание звука. Нажмите 'Воспроизвести'");
+                showAlert(Lang("browser_blocks_audio_click_play"));
                 stopPlayback();
             } else if (error.name == 'AbortError') {
-                showAlert("Проигрывание прервано. Нажмите 'Воспроизвести'");
+                showAlert(Lang("playback_interrupted_click_play"));
                 stopPlayback();
             } else if (error.name == 'No speech synthesis') {
-                showAlert("Невозможно проиграть эту фразу");
+                showAlert(Lang("cannot_play_this_phrase"));
                 stopPlayback();
             }
         });
@@ -536,7 +484,6 @@ function Application() {
         $(window).on('added_user_list', (e, item)=> {
             appendUserList(item.name, item.list);
         });
-
 
         $(window).on('user_list_loaded', (e, data)=>{
 
@@ -570,19 +517,15 @@ function Application() {
         }
     }
 
-    // Открытие модального окна настроек
     function openSettingsModal() {
 
-        // Задача 1: Останавливаем воспроизведение при открытии настроек
         if (stateManager.isPlaying)
             stopPlayback();
-
-        // Устанавливаем текущие значения в элементы управления
 
         elements.speedValue.text(state.speed.toFixed(1) + 'x');
         
         elements.pauseSlider.val(state.pauseBetweenPhrases);
-        elements.pauseValue.text(state.pauseBetweenPhrases + ' сек');
+        elements.pauseValue.text(state.pauseBetweenPhrases + ' ' + Lang("sec"));
         elements.tvScreenToggle.prop('checked', state.showTvScreen);
         elements.recognizeToggle.prop('checked', state.recognize);
         elements.backgroundPlayback.prop('checked', state.backgroundPlayback);
@@ -592,16 +535,13 @@ function Application() {
         elements.repeatCount.val(state.repeatCount);
         elements.genderVoice.val(state.genderVoice);
         
-        // Устанавливаем активные кнопки направления и порядка
         $(`[data-direction="${state.direction}"]`).addClass('active').siblings().removeClass('active');
         $(`[data-order="${state.order}"]`).addClass('active').siblings().removeClass('active');
         
         $('#settingsModal').modal('show');
     }
 
-    // Применение настроек из модального окна
     function applySettingsFromModal() {
-        // Собираем новые настройки
         const newSettings = {
 
             pauseBetweenPhrases: parseFloat(elements.pauseSlider.val()),
@@ -619,22 +559,18 @@ function Application() {
         if (newSettings.repeatCount < getCurentRepeat())
             setProgress(0, getProgressIndex());
         
-        // Проверяем, изменился ли список фраз
         const listChanged = stateManager.hasListChanged(
             state.currentListType, 
             newSettings.order, 
             phrasesData
         );
         
-        // Обновляем состояние через менеджер
         const changes = stateManager.updateSettings(newSettings);
         Object.assign(state, stateManager.getState());
         
-        // Задача 2: Перезагружаем список только если изменился тип списка или порядок
         if (changes.listChanged || listChanged) {
             loadPhraseList();
             
-            // Сохраняем ключ текущего списка
             const listKey = stateManager.generateListKey(
                 state.currentListType, 
                 state.order, 
@@ -644,7 +580,6 @@ function Application() {
             $(window).trigger('selected_list_type', state.currentListType);
         }
         
-        // Сохраняем состояние
         stateManager.saveState();
         updateDisplay();
 
@@ -670,7 +605,6 @@ function Application() {
             speechSynthesizer.stop();
             stopRecognition();
 
-            // Сохраняем ключ текущего списка
             const listKey = stateManager.generateListKey(
                 state.currentListType, 
                 state.order, 
@@ -705,7 +639,6 @@ function Application() {
         }
     }
 
-    // Применить состояние TV-экрана
     function applyTvScreenState() {
         const tvScreen = $('.tv-screen');
         if (state.showTvScreen)
@@ -734,7 +667,7 @@ function Application() {
                 audio.preload = 'auto';
                 audio.volume = 0.1;
                 audio.playbackRate = 1.0;
-                audio.loop = true; // Включаем зацикливание
+                audio.loop = true;
 
                 appData.backgroundAudio = audio;
             }
@@ -749,10 +682,9 @@ function Application() {
             speechSynthesizer.stopAudio(appData.backgroundAudio);
     }
 
-    // Начать воспроизведение
     function startPlayback() {
         if (appData.currentPhraseList.length === 0) {
-            showAlert('Список фраз пуст!', 'warning');
+            showAlert(Lang("phrase_list_empty"), 'warning');
             return;
         }
         
@@ -761,7 +693,6 @@ function Application() {
         state.showingFirstLang  = true;
         appData.missOne         = state.repeatLength > 1;
         
-        // Сохраняем состояние
         stateManager.updatePlaybackState({
             showingFirstLang: true
         });
@@ -773,7 +704,6 @@ function Application() {
         $(window).trigger("playback", 'start');
     }
 
-    // Переключить паузу
     function togglePause() {
         if (!stateManager.isPlaying) return;
 
@@ -797,7 +727,6 @@ function Application() {
         updateControls();
     }
 
-    // Остановить воспроизведение
     function stopPlayback() {
         stateManager.isPlaying = false;
         stateManager.isPaused = false;
@@ -841,7 +770,6 @@ function Application() {
             updateDisplay();
             debouncePage(()=>{  
             
-                // Сохраняем состояние
                 stateManager.updatePlaybackState({
                     currentPhraseIndex: state.currentPhraseIndex
                 });
@@ -852,19 +780,16 @@ function Application() {
         }
     }
 
-    // Следующая фраза
     function nextPhrase() {
         setCurrentPhraseIndexNextOrPrev((state.currentPhraseIndex + 1) % appData.currentPhraseList.length);
     }
 
-    // Предыдущая фраза
     function prevPhrase() {
         setCurrentPhraseIndexNextOrPrev(state.currentPhraseIndex > 0 ? 
                 state.currentPhraseIndex - 1 : 
                 appData.currentPhraseList.length - 1);
     }
 
-    // Воспроизвести текущую фразу
     function playCurrentPhrase() {
         if (!stateManager.isPlaying || stateManager.isPaused) return;
         
@@ -875,7 +800,6 @@ function Application() {
         appData.currentPhrase = appData.currentPhraseList[state.currentPhraseIndex];
         updateDisplay();
         
-        // Определяем режим воспроизведения
         if (isBothDirectionsMode()) {
             playBothDirections();
         } else {
@@ -883,7 +807,6 @@ function Application() {
         }
     }
 
-    // Режим "оба направления"
     function isBothDirectionsMode() {
         return state.direction.includes('both');
     }
@@ -953,7 +876,6 @@ function Application() {
                 });
     }
 
-    // Воспроизведение в обоих направлениях
     function playBothDirections() {
 
         if (!isPlaying()) return;
@@ -963,7 +885,6 @@ function Application() {
         const secondLang = isEnFirst ? 'native' : 'target';
         
         if (state.showingFirstLang) {
-            // Показываем и озвучиваем первый язык
             stopRecognition();
 
             _speak(firstLang, firstLang, ()=>{
@@ -987,7 +908,6 @@ function Application() {
         }
     }
 
-    // Воспроизведение в одном направлении
     function playSingleDirection() {
 
         if (!isPlaying()) return;
@@ -1053,7 +973,6 @@ function Application() {
                 setText(elements.phraseHint, hint, 0.7);
     }
 
-    // Показать фразу
     function showPhrase(lang) {
         let updated = false;
 
@@ -1071,7 +990,6 @@ function Application() {
         
         if (updated) {
             updateSizePlayerTexts();
-            // Анимация
             elements.phraseScaleBlock.addClass('animate-text');
             setTimeout(() => {
                 elements.phraseScaleBlock.removeClass('animate-text');
@@ -1085,12 +1003,11 @@ function Application() {
         elements.progressBar.css('width', percent + '%');
     }
 
-    // Обновить отображение
     function updateDisplay() {
         if (appData.currentPhraseList.length === 0) {
-            updatePhrases('Список фраз пуст', 'Выберите список фраз ниже');
+            updatePhrases(Lang("phrase_list_empty"), Lang("select_list_below"));
             elements.phraseCounter.text('0 / 0');
-            elements.phraseType.text('Не выбран');
+            elements.phraseType.text(Lang("not_selected"));
             return;
         }
         
@@ -1111,20 +1028,18 @@ function Application() {
             elements.phraseCounter.text(`${state.currentPhraseIndex + 1} / ${appData.currentPhraseList.length}`);
             elements.phraseType.text(appData.currentPhrase.FormatType());
             elements.currentRepeat.html((state.repeatCount > 0) && (currentRepeat > 0) ? 
-                ('<i class="bi bi-repeat"></i> ' + currentRepeat + '-й раз') : '');
+                ('<i class="bi bi-repeat"></i> ' + strEnum(currentRepeat, Lang("time_format"), 'ru')) : '');
         }
 
         refreshProgressBar();
     }
 
-    // Обновить кнопки управления
     function updateControls() {
         let isPlay = isPlaying();
 
         if (isPlay) enableWakeLock();
         else disableWakeLock();
 
-        // Обновить контролы плеера
         if (playerControls)
             playerControls.updatePlayButton(isPlay);
 
@@ -1134,7 +1049,6 @@ function Application() {
             elements.progressBar.addClass('progress-bar-animated');
     }
 
-    // Вспомогательные функции
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -1148,34 +1062,26 @@ $(document).ready(function() {
     let isModalOpen = false;
     let backButtonPressed = false;
 
-    // 2. Отслеживание bootstrap модальных окон
     $(document).on('show.bs.modal', function() {
         isModalOpen = true;
-        // Добавляем состояние в историю
         history.pushState({ modalOpen: true }, '');
     });
 
     $(document).on('hidden.bs.modal', function() {
         isModalOpen = false;
-        // Удаляем состояние из истории
         if (history.state && history.state.modalOpen) {
             history.back();
         }
     });
 
-    // 3. Обработка браузерной кнопки "Назад"
     window.addEventListener('popstate', function(e) {
         if (isModalOpen) {
-            // Закрываем все модальные окна
             $('.modal.show').modal('hide');
-            
-            // Блокируем переход назад
             history.pushState(null, '', window.location.href);
             e.preventDefault();
         }
     });
 
-    // 5. Перехват всех ссылок и кнопок, которые могут открыть модальные окна
     $(document).on('click', '[data-bs-toggle="modal"]', function() {
         isModalOpen = true;
         history.pushState({ modalOpen: true }, '');

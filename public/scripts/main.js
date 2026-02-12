@@ -67,7 +67,6 @@ async function Ajax(params, after = null, userData = null) {
     let headers = {};
     let token = (typeof X_CSRF_Token === 'string') ? X_CSRF_Token : null;
 
-    // Добавляем токен если он есть
     if (token) {
         headers['X-CSRF-Token'] = token;
         formData.append('token', token);
@@ -100,8 +99,6 @@ async function Ajax(params, after = null, userData = null) {
         result = await response.json();
 
         if (result.error && (result.message == 'The token has expired') && (token != X_CSRF_Token)) {
-            //await sleep(400);
-            //result = Ajax(params, after, userData);
         }
     } catch (error) {
         tracer.error(error.message);
@@ -250,7 +247,7 @@ class DateTime {
             this.#datetime = this.Format(val);
 
             if (this.Format(Date.now()) == this.#datetime) {
-                this.view.text(toLang('Now')).click(this.onNowClick.bind(this));
+                this.view.text(Lang('Now')).click(this.onNowClick.bind(this));
             }
             else this.InitInputs();
         } else tracer.log("Unknown val format");
@@ -320,7 +317,7 @@ class DateTime {
 
 Number.prototype.toHHMMSS = function () {
 
-    var sec_num = isFinite(this) && (this > 0) ? Math.floor(this) : 0; // don't forget the second param
+    var sec_num = isFinite(this) && (this > 0) ? Math.floor(this) : 0;
     var hours   = Math.floor(sec_num / 3600);
     var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
     var seconds = sec_num - (hours * 3600) - (minutes * 60);
@@ -345,8 +342,7 @@ function pow(v) {
     return v * v;
 }
 
-
-function toLang(v, params=null) {
+function Lang(v, params=null) {
     if (isStr(v))
         v = lang[v] ? lang[v] : v;
 
@@ -505,7 +501,7 @@ function templateClone(tmpl, data) {
         if (!isEmpty(fg)) {
             eval('v = ' + field);
         } else {
-            v = toLang(!isEmpty(data[field]) ? data[field] : '');
+            v = Lang(!isEmpty(data[field]) ? data[field] : '');
             if (typeof(v) == 'object')
                 v = JSON.stringify(v).replaceAll('"', '&quot;');
         }
@@ -548,7 +544,6 @@ function toLatLngF(obj) {
     return {lat: ()=>{return r.lat;}, lng: ()=>{return r.lng;}};
 }
 
-
 function toLatLng(obj) {
     if (obj) {
         if (typeof obj == 'string') {
@@ -579,8 +574,7 @@ function toCoordinates(ll, accuracy=0, speed=0) {
     }
 }
 
-
-var EARTHRADIUS = 6378.137; // Radius of earth in KM
+var EARTHRADIUS = 6378.137;
 
 function LerpRad (A, B, w){
     let CS = (1-w)*Math.cos(A) + w*Math.cos(B);
@@ -664,7 +658,7 @@ function Equal(v1, v2) {
     return true;
 }
 
-function Distance(p1, p2) {  // generally used geo measurement function
+function Distance(p1, p2) {
 
     let lat1 = Lat(p1);
     let lng1 = Lng(p1);
@@ -681,13 +675,13 @@ function Distance(p1, p2) {  // generally used geo measurement function
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     var d = EARTHRADIUS * c;
 
-    return d * 1000; // meters
+    return d * 1000;
 }
 
 function DistanceToStr(v) {
     if (v > 1000)
-        return round(v / 1000, 1) + toLang('km.');
-    return round(v, 0) + toLang('m.');
+        return round(v / 1000, 1) + Lang('km');
+    return round(v, 0) + Lang('m');
 }
 
 function CalcCoordinate(center, angle, distanceMeters) {
@@ -739,9 +733,9 @@ function DepartureTime(time) {
     if (typeof(time) != 'undefined') {
         let delta = (Date.parse(time) - Date.now()) / 1000;
         if (delta < -SOONDELTASEC)
-            return toLang('Expired');
-        return delta <= NOWDELTASEC ? toLang('Now') : 
-                (delta <= SOONDELTASEC ? toLang('Soon') : $.format.date(time, dateTinyFormat));
+            return Lang('Expired');
+        return delta <= NOWDELTASEC ? Lang('Now') : 
+                (delta <= SOONDELTASEC ? Lang('Soon') : $.format.date(time, dateTinyFormat));
     }
     return "";
 }
@@ -750,13 +744,13 @@ function getOrderInfo(order, callback = null) {
     let start = isStr(order.start) ? JSON.parse(order.start) : order.start;
     let finish = isStr(order.finish) ? JSON.parse(order.finish) : order.finish;
     let result = PlaceName(start) + " > " + PlaceName(finish) + '. ' +
-            toLang("User") + ': ' + getUserName(order) + ". " + 
-            toLang("Departure time") + ': ' + DepartureTime(order.pickUpTime) + ". " + 
-            toLang("Length") + ": " + round(order.meters / 1000, 1) + toLang("km.");
+            Lang("User") + ': ' + getUserName(order) + ". " + 
+            Lang("Departure time") + ': ' + DepartureTime(order.pickUpTime) + ". " + 
+            Lang("Length") + ": " + round(order.meters / 1000, 1) + Lang("km");
 
     if (callback) {
         if (start.lat) {
-            result += ' ' + toLang('Distance to start') + ": " + DistanceToStr(Distance(start, user));
+            result += ' ' + Lang('Distance to start') + ": " + DistanceToStr(Distance(start, user));
             callback(result);
         } else {
             getPlaceDetails(start.placeId, ['location']);
@@ -978,7 +972,6 @@ $(window).ready(()=>{
 
 })( jQuery );
 
-
 const LanguageMap = {
   "en": "en-US",
   "ru": "ru-RU",
@@ -1065,13 +1058,9 @@ const LanguageNames = {
   "bn": "বাংলা"
 }
 
-
-//'голос[,а,ов]'
 function strEnum(number, pattern, lang = 'ru', show_number = true) {
-    // Парсим паттерн
     const match = pattern.match(/^([^\[]+)\[([^\]]+)\]$/);
     if (!match) {
-        // Если паттерн не соответствует формату, возвращаем как есть
         return `${number} ${pattern}`;
     }
     
@@ -1080,7 +1069,6 @@ function strEnum(number, pattern, lang = 'ru', show_number = true) {
 
     const leftpart = show_number ? `${number} `: '';
     
-    // Для русского языка
     if (lang === 'ru') {
         const num = Math.abs(Number(number));
         
@@ -1092,14 +1080,12 @@ function strEnum(number, pattern, lang = 'ru', show_number = true) {
             return `${leftpart}${base}${forms[2]}`;
         }
     }
-    // Для английского (простая форма - добавляем 's' для множественного числа)
     else if (lang === 'en') {
         const num = Math.abs(Number(number));
         return num === 1 
             ? `${leftpart}${base}${forms[0]}` 
             : `${leftpart}${base}${forms[2] || forms[0] + 's'}`;
     }
-    // Для других языков можно добавить свои правила
     else {
         return `${leftpart}${base}`;
     }
@@ -1109,7 +1095,6 @@ $.fn.numeral = function (show_number = true) {
 
     let captionCtrl = this.parent().find('.numeral-target');
     let pattern = captionCtrl.data('pattern');
-
 
     this.on('change', (val)=>{
         captionCtrl.text(strEnum(this.val(), pattern, 'ru', show_number));
@@ -1128,7 +1113,6 @@ function debounce(func, wait, start = null) {
     };
 }
 
-
 function afterCondition(checkFunc, resolve, count = -1, wait = 10) {
     let timerId = setInterval(()=>{
         if (checkFunc()) {
@@ -1145,22 +1129,19 @@ function afterCondition(checkFunc, resolve, count = -1, wait = 10) {
 }
 
 function assessPhrase(correctPhrase, userPhrase) {
-    // Нормализация фраз: к нижнему регистру, удаление лишних пробелов
     const normalizedCorrect = correctPhrase.toLowerCase().trim().replace(/\s+/g, ' ');
     const normalizedUser = userPhrase.toLowerCase().trim().replace(/\s+/g, ' ');
 
     let result = {
-        text: "Правильно", 
+        text: Lang("correct"), 
         class: 'success', 
         score: 1
     };
     
-    // 1. Проверка на точное совпадение (после нормализации)
     if (normalizedCorrect === normalizedUser) {
         return result;
     }
     
-    // 2. Удаление пунктуации для более гибкого сравнения
     const cleanCorrect = normalizedCorrect.replace(/[.,!?;:]/g, '');
     const cleanUser = normalizedUser.replace(/[.,!?;:]/g, '');
     
@@ -1168,15 +1149,12 @@ function assessPhrase(correctPhrase, userPhrase) {
         return result;
     }
     
-    // 3. Разделение на слова
     const correctWords = cleanCorrect.split(' ');
     const userWords = cleanUser.split(' ');
     
-    // 4. Расчет процентного совпадения слов
     const correctWordsSet = new Set(correctWords);
     const userWordsSet = new Set(userWords);
     
-    // Количество совпадающих слов
     let matchingWords = 0;
     for (const word of userWordsSet) {
         if (correctWordsSet.has(word)) {
@@ -1184,12 +1162,10 @@ function assessPhrase(correctPhrase, userPhrase) {
         }
     }
     
-    // Процент совпадения уникальных слов
     const uniqueWordMatch = correctWordsSet.size > 0 
         ? matchingWords / correctWordsSet.size 
         : 0;
     
-    // 5. Проверка порядка слов (последовательное совпадение)
     let sequenceMatch = 0;
     let userIndex = 0;
     
@@ -1204,21 +1180,19 @@ function assessPhrase(correctPhrase, userPhrase) {
         ? sequenceMatch / correctWords.length 
         : 0;
     
-    // 6. Комбинированный скоринг
     let totalScore = (uniqueWordMatch * 0.6) + (wordOrderMatch * 0.4);
 
-    // 7. Определение результата по пороговым значениям
     if (totalScore >= 0.9) {
         return result;
     } else if (totalScore >= 0.6) {
         result = {
-            text: "Частично верно", 
+            text: Lang("partially_correct"), 
             class: 'almost', 
             score: totalScore
         };
     } else {
         result = {
-            text: "Неправильно", 
+            text: Lang("incorrect"), 
             class: 'fail', 
             score: totalScore
         };
@@ -1228,7 +1202,7 @@ function assessPhrase(correctPhrase, userPhrase) {
 
 $.fn.bootstrapDisable = function(state = true, options = {}) {
   const settings = $.extend({
-    //loadingText: 'Загрузка...',
+    loadingText: Lang("please_wait"),
     originalText: null,
     showSpinner: true,
     opacity: 0.6
@@ -1238,19 +1212,16 @@ $.fn.bootstrapDisable = function(state = true, options = {}) {
     const $btn = $(this);
     
     if (state) {
-      // Сохраняем оригинальный текст если еще не сохранен
       if (!$btn.data('original-text')) {
         $btn.data('original-text', $btn.html());
       }
       
-      // Отключаем кнопку
       $btn.prop('disabled', true)
           .addClass('disabled')
           .attr('aria-disabled', 'true')
           .css('cursor', 'not-allowed')
           .css('opacity', settings.opacity);
       
-      // Меняем текст если нужно
       if (settings.loadingText) {
         let newText = settings.loadingText;
         if (settings.showSpinner) {
@@ -1259,14 +1230,12 @@ $.fn.bootstrapDisable = function(state = true, options = {}) {
         $btn.html(newText);
       }
     } else {
-      // Включаем кнопку
       $btn.prop('disabled', false)
           .removeClass('disabled')
           .removeAttr('aria-disabled')
           .css('cursor', '')
           .css('opacity', '');
       
-      // Восстанавливаем оригинальный текст
       const originalText = $btn.data('original-text');
       if (originalText) {
         $btn.html(originalText);
@@ -1276,8 +1245,6 @@ $.fn.bootstrapDisable = function(state = true, options = {}) {
   });
 };
 
-
-
 $.fn.getGap = function() {
   if (!this.length) return 0;
   
@@ -1286,7 +1253,6 @@ $.fn.getGap = function() {
   
   if ($children.length < 2) return 0;
   
-  // Используем первый способ
   $container.append(
     '<div class="jquery-gap-helper" style="display: contents; pointer-events: none;">' +
       '<div style="width: 1px; height: 1px; opacity: 0;"></div>' +
@@ -1325,18 +1291,15 @@ function mergePhrasesSimple(phrases) {
 }
 
 function filterPhrasesAdvanced(sourceArray, excludeArray, compareFields = ['target']) {
-    // Создаем "отпечаток" каждой фразы для сравнения
     const excludeMap = new Map();
     
     excludeArray.forEach(excludePhrase => {
-        // Создаем ключ для сравнения на основе указанных полей
         const key = compareFields
             .map(field => excludePhrase[field])
             .join('|');
         excludeMap.set(key, true);
     });
     
-    // Фильтруем исходный массив
     return sourceArray.filter(sourcePhrase => {
         const sourceKey = compareFields
             .map(field => sourcePhrase[field])

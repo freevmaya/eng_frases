@@ -4,7 +4,7 @@ class PhrasesListView {
 		this.accordion = null;
 		this.groups = {};
 		this.current_list_index = null;
-		this.userGroupName = "Мои фразы";
+		this.userGroupName = Lang("my_phrases");
 		$(window).on('selected_list_type', this.onSelected.bind(this));
         $(window).on('resize', this.refreshAccordion.bind(this));
 		$(window).on('added_user_list', this.onAddedUserList.bind(this));
@@ -72,7 +72,7 @@ class PhrasesListView {
     }
 
     blockItemAdd() {
-        return $(`<div class="item add-list"><a>+ Добавить</a></div>`);
+        return $(`<div class="item add-list"><a>+ ` + Lang("add") + `</a></div>`);
     }
 
     trashButton() {
@@ -84,7 +84,7 @@ class PhrasesListView {
     clickTrash(e) {
     	let item = $(e.currentTarget).closest('.item');
     	let itemName = item.find('a').data('key');
-    	Confirm(`Действительно хотите удалить "${itemName}"?`)
+    	Confirm(Lang("confirm_delete_list").replace('%1', itemName))
     		.then((result)=>{
     			Ajax({
     				action: 'deleteList',

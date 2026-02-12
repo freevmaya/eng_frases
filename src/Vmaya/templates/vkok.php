@@ -46,7 +46,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?include('noindex.php')?>
-    <title><?php echo APP_NAME; ?></title>
+    <title><?=Lang('app_name');?></title>
 
     <!-- PWA Support -->
     <link rel="manifest" href="manifest.json">
@@ -61,6 +61,7 @@
     <link rel="stylesheet" href="css/style-waves.css<?=$v?>" media="all">
     <?if ($is_developer) {?><script>var DEV = true</script><?}?>
 	<script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
+	<?include('lang_script.php')?>
 	<script src="scripts/error-tracker.js<?=$v?>"></script>
 	<script>
 		vkBridge.send("VKWebAppInit", {})

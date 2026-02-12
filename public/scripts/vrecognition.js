@@ -1,27 +1,26 @@
 class VRecognition {
-	constructor(recognition) {
-		this.isRecognize 	= false;
-		this.recognition 	= recognition;
+    constructor(recognition) {
+        this.isRecognize    = false;
+        this.recognition    = recognition;
         this.language       = 'en';
-		this.output			= '';
-		this.success		= false;
-		this.text  			= '';
+        this.output         = '';
+        this.success        = false;
+        this.text           = '';
         this.playerElem     = $('#payerMessage');
         this.currentError   = null;
-		this.setListeners();
-	}
+        this.setListeners();
+    }
 
-	onError(callback) {
-		this.recognition.onerror = callback;
-	}
+    onError(callback) {
+        this.recognition.onerror = callback;
+    }
 
     setListeners() {
 
-        // События распознавания
-        this.recognition.onstart 	= this.onStart.bind(this);
-        this.recognition.onresult 	= this.onResult.bind(this);
-        this.recognition.onend 		= this.onEnd.bind(this);
-        this.recognition.onerror 	= this.onError.bind(this);
+        this.recognition.onstart    = this.onStart.bind(this);
+        this.recognition.onresult   = this.onResult.bind(this);
+        this.recognition.onend      = this.onEnd.bind(this);
+        this.recognition.onerror    = this.onError.bind(this);
 
         if (typeof DEV != 'undefined') {
             this.playerElem.click(()=>{
@@ -34,10 +33,10 @@ class VRecognition {
     }
 
     clearListeners() {
-        this.recognition.onstart 	= null;
-        this.recognition.onresult 	= null;
-        this.recognition.onend 		= null;
-        this.recognition.onerror 	= null;
+        this.recognition.onstart    = null;
+        this.recognition.onresult   = null;
+        this.recognition.onend      = null;
+        this.recognition.onerror    = null;
     }
 
     playerMessage(text) {
@@ -49,11 +48,10 @@ class VRecognition {
             playerControls.hide();
     }
 
-
     onStart() {
         this.isRecognize = true;
-        tracer.log(`Запись начата "${this.text}"`);
-        this.playerMessage('Говорите на ' + LanguageNames[this.language]);
+        tracer.log(Lang("recording_started_for").replace('%1', this.text));
+        this.playerMessage(Lang("speak_in_language").replace('%1', LanguageNames[this.language]));
     }
 
     Stop() {
@@ -64,26 +62,26 @@ class VRecognition {
         }, 1000);
     }
 
-	SummingUp() {
+    SummingUp() {
 
         if (this.isRecognize)
             this.recognition.stop();
 
         if (isEmpty(this.output)) {
             if (!this.currentError)
-                this.playerMessage('Речь не обнаружена!');
+                this.playerMessage(Lang("no_speech_detected"));
         } else {
             let result = assessPhrase(this.text, this.output);
             $(window).trigger(result.class);
             this.playerMessage(`<span class="${result.class}">${result.text}</span>`);
         }
-	}
+    }
 
     showResult() {
-    	if (!this.success && this.output) {
+        if (!this.success && this.output) {
             let result = assessPhrase(this.text, this.output);
             this.playerMessage(`<span class="${result.class}">${this.output}</span>`);
-	    }
+        }
     }
 
     onResult(event) {
@@ -97,37 +95,37 @@ class VRecognition {
     }
 
     onEnd() {
-        tracer.log('Запись остановлена');
+        tracer.log(Lang("recording_stopped"));
         this.isRecognize = false;
     }
 
     onError() {
-        let errorMessage = 'Неопределенна';
+        let errorMessage = Lang("undefined_error");
 
         let list = [
             {
                 msg: 'service-not-allowed',
-                text: 'Распознавание речи не разрешено. Проверьте разрешения в настройках браузера.',
+                text: Lang("speech_recognition_not_allowed_check_permissions"),
                 level: 0
             },{
                 msg: 'not-allowed',
-                text: 'Доступ к микрофону и/или распознаванию речи не разрешен. Проверьте разрешения в настройках браузера.',
+                text: Lang("microphone_or_recognition_not_allowed"),
                 level: 0
             },{
                 msg: 'audio-capture',
-                text: 'Не удалось получить доступ к микрофону. Проверьте разрешения в настройках браузера.',
+                text: Lang("failed_to_access_microphone_check_permissions"),
                 level: 0
             },{
                 msg: 'network',
-                text: 'Проблемы с сетью.',
+                text: Lang("network_issues"),
                 level: 0
             },{
                 msg: 'no-speech',
-                text: 'Речь не обнаружена!',
+                text: Lang("no_speech_detected"),
                 level: 1
             },{
                 msg: 'aborted',
-                text: 'Пропущено...',
+                text: Lang("skipped"),
                 level: 1
             }
 
@@ -152,38 +150,36 @@ class VRecognition {
 
         this.playerMessage(null);
         
-        showAlert('Ошибка распознавания: ' + errorMessage);
+        showAlert(Lang("recognition_error").replace('%1', errorMessage));
         this.Stop();
     }
 
-	startRecognition(phraseObj, phraseType) {
+    startRecognition(phraseObj, phraseType) {
         let langIndex                   = phraseType == 'target' ? 0 : 1;
         let langs                       = phraseObj.direction.split('-');
-        this.text 						= phraseObj[phraseType];
+        this.text                       = phraseObj[phraseType];
         this.language                   = langs[langIndex];
-        this.output 					= '';
-        this.success					= false;
+        this.output                     = '';
+        this.success                    = false;
         this.currentError               = null;
-        this.recognition.continuous 	= true; 	// Продолжать слушать после паузы
-        this.recognition.interimResults = true; 	// Показывать промежуточные результаты
-        this.recognition.lang 			= LanguageMap[phraseObj.Language(phraseType)];
+        this.recognition.continuous     = true;
+        this.recognition.interimResults = true;
+        this.recognition.lang           = LanguageMap[phraseObj.Language(phraseType)];
         this.playerElem.toggleClass('blurred', isEmpty(this.text));
 
         try {
-        	if (!this.isRecognize) 
+            if (!this.isRecognize) 
                 this.recognition.start();
         } catch (e) {
-        	tracer.error(e);
+            tracer.error(e);
         }
     }
 }
 
 function compareStringsIgnoreCaseAndPunctuation(str1, str2) {
-    // Очищаем строки от знаков препинания и лишних пробелов
     const cleanStr1 = normalizeString(str1);
     const cleanStr2 = normalizeString(str2);
     
-    // Сравниваем без учета регистра
     return cleanStr1 === cleanStr2;
 }
 
@@ -191,10 +187,10 @@ function normalizeString(str) {
     if (typeof str !== 'string') return '';
     
     return str
-        .toLowerCase()                    // К нижнему регистру
-        .normalize('NFD')                 // Разделяем символы и диакритические знаки
-        .replace(/[\u0300-\u036f]/g, '')  // Удаляем диакритические знаки (акценты)
-        .replace(/[^\w\s]/g, '')          // Удаляем все знаки препинания
-        .replace(/\s+/g, ' ')             // Заменяем множественные пробелы одним
-        .trim();                          // Убираем пробелы по краям
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\w\s]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
 }

@@ -1,21 +1,19 @@
-// Класс для управления синтезом речи и воспроизведением MP3 файлов
 class SpeechSynthesizer {
     constructor(config = {}) {
         this.state = {
             hasSpeechSynthesis: 'speechSynthesis' in window,
             speechError: false,
-            isBusy: false, // Объединенная переменная состояния
-            busyType: null, // Тип текущей операции: 'speaking', 'playing', 'generating'
+            isBusy: false,
+            busyType: null,
             voices: [],
             voicesLoaded: false,
             useFallbackSound: false
         };
         
-        // Конфигурация
         this.config = {
             audioBaseUrl: config.audioBaseUrl || './audio_files/',
             apiBaseUrl: config.apiBaseUrl || 'http://localhost:5000/api/',
-            fallbackToSpeech: config.   fallbackToSpeech !== false,
+            fallbackToSpeech: config.fallbackToSpeech !== false,
             checkAudioBeforePlay: config.checkAudioBeforePlay !== false,
             autoGenerateAudio: config.autoGenerateAudio !== false,
             audioTimeout: config.audioTimeout || 2000,
@@ -29,7 +27,6 @@ class SpeechSynthesizer {
         this.init();
     }
 
-    // Добавляем вспомогательные методы для управления состоянием
     _setBusy(type) {
         this.state.isBusy = true;
         this.state.busyType = type;
@@ -50,7 +47,6 @@ class SpeechSynthesizer {
         return this.state.isBusy;
     }
 
-    // Инициализация синтезатора речи
     init() {
         if (this.state.hasSpeechSynthesis) {
             this.loadVoices();
@@ -59,11 +55,9 @@ class SpeechSynthesizer {
             this.state.speechError = true;
         }
         
-        // Предзагрузка аудио элементов
         this.loadedAudios = new Map();
     }
 
-    // Загрузка доступных голосов
     loadVoices() {
         if (!this.state.hasSpeechSynthesis) return;
 
@@ -86,7 +80,7 @@ class SpeechSynthesizer {
         if (!phrase) return '';
 
         const normalizedPhrase = phrase.trim()
-                                   .normalize('NFC')  // или 'NFC'
+                                   .normalize('NFC')
                                    .split(/\s+/)
                                    .join(' ')
                                    .toLowerCase();
@@ -97,7 +91,6 @@ class SpeechSynthesizer {
         return this.config.audioBaseUrl.replace(/<genderVoice>/, genderVoice);
     }
 
-    // Формирование URL к аудиофайлу
     async getAudioUrl(phrase, language, category = null, genderVoice = 'male') {
 
         const hash = await this.hash(phrase.trim());
@@ -115,7 +108,6 @@ class SpeechSynthesizer {
         };
     }
 
-    // Проверка аудиофайла на сервере через API
     async checkAudioOnServer(text, language, category = null, gender='male') {
         try {
             const response = await fetch(`${this.config.apiBaseUrl}check-audio`, {
@@ -150,22 +142,21 @@ class SpeechSynthesizer {
         }
     }
 
-    // Генерация аудиофайла на сервере
     async generateAudioOnServer(text, language = 'en', category = null, 
                             gender = 'male', voice_name = '', rewrite = false) {
         if (this._isBusyWith('generating')) {
             return {
                 status: 'error',
-                message: 'Already generating audio'
+                message: Lang("already_generating_audio")
             };
         }
         
         this._setBusy('generating');
 
-        showAlert('Звуковой файл фразы генерируется!');
+        showAlert(Lang("generating_audio_file"));
         
         try {
-            tracer.log(`Requesting audio generation for: "${text.substring(0, 50)}..."`);
+            tracer.log(Lang("requesting_audio_generation_for").replace('%1', text.substring(0, 50)));
             
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), this.config.generationTimeout);
@@ -227,21 +218,18 @@ class SpeechSynthesizer {
         }
     }
 
-    // Умное воспроизведение с проверкой и генерацией
     async smartSpeak(phraseObj, phraseType, category = null, speed = 1.0, genderVoice = 'male') {
         const cleanText = phraseObj.CleanText(phraseType);
         const language = phraseObj.Language(phraseType);
         
-        // Проверяем, занят ли плеер
         if (this.state.isBusy) {
             return {
                 success: false,
-                error: `Player is busy with ${this.state.busyType}`,
+                error: Lang("player_busy_with").replace('%1', this.state.busyType),
                 busyType: this.state.busyType
             };
         }
 
-        // Устанавливаем состояние занятости в начале операции
         this._setBusy('processing');
 
         try {
@@ -252,9 +240,8 @@ class SpeechSynthesizer {
                 return await this.playAudioFromUrl(localUrlInfo.url);
             } catch(e) {
 
-                if (e.name == 'Error') { // e.code = 20
+                if (e.name == 'Error') {
             
-                    // 3. Если не нашли, генерируем на сервере (если разрешено)
                     if (this.config.autoGenerateAudio) {
                         tracer.log('Audio not found, generating on server...');
                         const generationResult = await this.generateAudioOnServer(cleanText, language, category, genderVoice);
@@ -262,7 +249,6 @@ class SpeechSynthesizer {
                         if (generationResult.status === 'success' || generationResult.status === 'ok') {
                             tracer.log('Audio generated successfully:', generationResult.data.filename);
                             
-                            // Даем серверу время на сохранение файла
                             await new Promise(resolve => setTimeout(resolve, 500));
                             
                             try {
@@ -277,7 +263,6 @@ class SpeechSynthesizer {
                 }
             }
             
-            // 4. Fallback на локальный синтез речи
             if (this.config.fallbackToSpeech && this.state.hasSpeechSynthesis) {
                 tracer.log('Using fallback speech synthesis');
                 return this._speakWithSynthesis(phraseObj, phraseType, speed);
@@ -286,11 +271,9 @@ class SpeechSynthesizer {
                 $(window).trigger("play_autio_error", {
                     name: 'No speech synthesis'
                 });
-                //Задерживаем на время произношения фразы
                 return await new Promise(resolve => setTimeout(resolve, cleanText.length * AppConst.charTime[phraseType]));
             }
             
-            // Если ничего не сработало, очищаем состояние
             this._clearBusy();
             return {
                 success: false,
@@ -303,7 +286,6 @@ class SpeechSynthesizer {
 
             tracer.error('Error in smartSpeak:', error);
             
-            // Final fallback
             if (this.config.fallbackToSpeech && this.state.hasSpeechSynthesis) {
                 return this._speakWithSynthesis(phraseObj, phraseType, speed);
             } else {
@@ -311,11 +293,9 @@ class SpeechSynthesizer {
                 $(window).trigger("play_autio_error", {
                     name: 'No speech synthesis'
                 });
-                //Задерживаем на время произношения фразы
                 return await new Promise(resolve => setTimeout(resolve, cleanText.length * AppConst.charTime[phraseType]));
             }
             
-            // Очищаем состояние при ошибке
             this._clearBusy();
             return {
                 success: false,
@@ -333,10 +313,8 @@ class SpeechSynthesizer {
                  this.currentAudio.readyState >= 4);
     }
 
-    // Воспроизведение MP3 файла по URL
     async playAudioFromUrl(fileUrl) {
 
-        // Обновляем тип занятости с 'processing' на 'playing'
         this._setBusy('playing');
 
         try {
@@ -365,7 +343,6 @@ class SpeechSynthesizer {
 
                 const onLoaded = ()=>{
                     tracer.log(`Set loaded: ${fileUrl}`);
-                    //this.loadedAudios.set(fileUrl, audio);
                 }
                 
                 const onEnded = () => {
@@ -395,7 +372,7 @@ class SpeechSynthesizer {
                     if (this._isBusyWith('playing')) {
                         cleanup();
                         tracer.error('Audio playback error:', error, fileUrl);
-                        reject(new Error(`Audio playback failed: ${fileUrl}`));
+                        reject(new Error(Lang("audio_playback_failed").replace('%1', fileUrl)));
                     } else cleanup();
                 };
                 
@@ -407,18 +384,6 @@ class SpeechSynthesizer {
                     audio.removeEventListener('loadeddata', onLoaded);
                     this._afterFinishPlay();
                 };
-
-                /*
-                timeoutId = setTimeout(() => {
-                    if (this.currentAudio && !this.isPlayingAudio() &&
-                        (this.currentAudio.src == fileUrl)) {
-                        cleanup();
-                        this._afterFinishPlay();
-                        tracer.error(`Audio playback timeout: ${fileUrl}`);
-                        reject(new Error(`Audio playback timeout: ${fileUrl}`));
-                    }
-                }, this.config.audioTimeout);
-                */
                 
                 audio.addEventListener('ended', onEnded);
                 audio.addEventListener('error', onError);
@@ -455,13 +420,10 @@ class SpeechSynthesizer {
         this.currentUtterance = null;
     }
 
-
-    // Основной метод воспроизведения (обратная совместимость)
     async speak(phraseObj, phraseType = 'target', category = null, speed = 1.0, genderVoice = 'male') {
 
         if (this.state.isBusy) {
             return;
-            await this.waitForCompletion();
         }
 
         if ((phraseType == 'native') && phraseObj.isQuestion(phraseType))
@@ -470,7 +432,6 @@ class SpeechSynthesizer {
         return this.smartSpeak(phraseObj, phraseType, category, speed, genderVoice);
     }
 
-    // Внутренний метод для синтеза речи
     _speakWithSynthesis(phraseObj, phraseType = 'target', speed = 1.0) {
         if (!this.state.hasSpeechSynthesis) return false;
 
@@ -483,7 +444,7 @@ class SpeechSynthesizer {
             const utterance = new SpeechSynthesisUtterance(text);
             this.currentUtterance = utterance;
             
-            utterance.lang = LanguageMap[language];// phraseType === 'target' ? 'en-US' : 'ru-RU';
+            utterance.lang = LanguageMap[language];
             utterance.rate = speed;
             utterance.volume = 1;
             
@@ -524,7 +485,6 @@ class SpeechSynthesizer {
         }
     }
 
-    // Ожидание завершения текущего воспроизведения
     async waitForCompletion(timeout = 30000) {
         return new Promise((resolve) => {
             const startTime = Date.now();
@@ -542,7 +502,6 @@ class SpeechSynthesizer {
         });
     }
 
-    // Проверка состояния сервера
     async checkServerHealth() {
         try {
             const response = await fetch(`${this.config.apiBaseUrl}health`);
@@ -563,7 +522,6 @@ class SpeechSynthesizer {
         }
     }
 
-    // Очистка кэша предзагруженных аудио
     clearAudioCache() {
         this.loadedAudios.forEach(audio => {
             audio.pause();
@@ -583,7 +541,7 @@ class SpeechSynthesizer {
                 count++;
                 return audio.currentTime > 0;
             }, ()=>{
-                let msg = `Pause: ${filename}  ${audio.currentTime} ${count}`;
+                let msg = Lang("pause_with_filename_and_time").replace('%1', filename).replace('%2', audio.currentTime).replace('%3', count);
                 if (count > 1)
                     tracer.error(msg);
                 else tracer.log(msg);
@@ -606,13 +564,11 @@ class SpeechSynthesizer {
         }
     }
 
-    // Остановка текущего воспроизведения
     stop() {
         this._stopPlayback();
         this._clearBusy();
     }
 
-    // Получение статуса синтезатора
     getStatus() {
         return {
             available: this.isAvailable(),
@@ -631,7 +587,6 @@ class SpeechSynthesizer {
     }
 }
 
-// Экспорт для использования в других модулях
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { SpeechSynthesizer };
 }

@@ -1,9 +1,8 @@
-// Класс для управления элементами управления плеером
 class PlayerControls {
 
     constructor(options = {}) {
         this.options = {
-            autoHideDelay: 3000, // 5 секунд
+            autoHideDelay: 3000,
             showAnimationDuration: 300,
             clickHideSet: true,
             ...options
@@ -38,7 +37,6 @@ class PlayerControls {
         })
     }
     
-    // Инициализация
     init() {
         this.elements.container = $('#playButtonsContainer');
         this.elements.viewer = this.elements.container.closest('.app-display');
@@ -70,14 +68,12 @@ class PlayerControls {
         }
     }
     
-    // Настройка обработчиков событий
     setupEventListeners() {
         const self = this;
 
         if (this.options.clickHideSet)
             self.setupClickHide();
         
-        // Показ контролов по клику на контейнер
         this.elements.parent.click(function(e) {
             if (!isAnyInputElement(e.target) && self.state.controlsEnabled && !self.state.visible) {
                 e.stopPropagation();
@@ -87,7 +83,6 @@ class PlayerControls {
             }
         });
         
-        // Обработчики для кнопок
         this.elements.playButton.click(function(e) {
             e.stopPropagation();
             if (self.state.controlsEnabled) {
@@ -109,7 +104,6 @@ class PlayerControls {
             }
         });
         
-        // Предотвращаем скрытие при наведении на контролы
         this.elements.container.hover(
             function() {
                 if (self.state.autoHideTimeout) {
@@ -124,7 +118,6 @@ class PlayerControls {
         );
     }
     
-    // Показать контролы
     show(noAutoHide=false) {
         if (this.state.visible || !this.state.controlsEnabled) return;
         
@@ -138,7 +131,6 @@ class PlayerControls {
             this.resetAutoHide();
     }
     
-    // Скрыть контролы
     hide() {
         if (!this.state.visible) return;
         
@@ -146,7 +138,6 @@ class PlayerControls {
         this.hideProcess();
     }
     
-    // Сброс таймера автоскрытия
     resetAutoHide() {
         clearTimeout(this.state.autoHideTimeout);
         
@@ -156,7 +147,6 @@ class PlayerControls {
             }, this.options.autoHideDelay);
     }
     
-    // Обновить состояние кнопки воспроизведения
     updatePlayButton(isPlaying) {
         this.state.isPlaying = isPlaying;
         
@@ -171,7 +161,6 @@ class PlayerControls {
         }
     }
     
-    // Включить/выключить контролы
     setEnabled(enabled) {
         this.state.controlsEnabled = enabled;
         
@@ -188,7 +177,6 @@ class PlayerControls {
         }
     }
     
-    // Обновить состояние кнопок навигации
     updateNavigationButtons(hasPrev, hasNext) {
         this.elements.prevBtn.prop('disabled', !hasPrev);
         this.elements.nextBtn.prop('disabled', !hasNext);
@@ -206,7 +194,6 @@ class PlayerControls {
         }
     }
     
-    // Получить текущее состояние
     getState() {
         return {
             visible: this.state.visible,

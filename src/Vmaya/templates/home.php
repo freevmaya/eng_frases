@@ -8,96 +8,96 @@
         <div class="modal-content bg-form">
             <div class="modal-header border-secondary">
                 <h5 class="modal-title text-primary" id="settingsModalLabel">
-                    <i class="bi bi-gear me-2"></i>Настройки
+                    <i class="bi bi-gear me-2"></i><?=Lang('settings')?>
                 </h5>
             </div>
             <div class="modal-body">
 
                 <div class="mb-4">
                     <h6 class="text-info mb-3">
-                        <i class="bi bi-tv me-2"></i>Дополнения
+                        <i class="bi bi-tv me-2"></i><?=Lang('addons')?>
                     </h6>
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" id="tvScreenToggle" checked>
                         <label class="form-check-label" for="tvScreenToggle">
-                            Показывать TV-экран
+                            <?=Lang('show_tv_screen')?>
                         </label>
                     </div>
                     <div class="form-check form-switch" id="recognizeToggleForm">
                         <input class="form-check-input" type="checkbox" id="recognizeToggle" checked>
                         <label class="form-check-label" for="recognizeToggle">
-                            Распознавание речи
+                            <?=Lang('speech_recognition')?>
                         </label>
                     </div>
                     <div class="form-check form-switch" id="recognizeToggleForm">
                         <input class="form-check-input" type="checkbox" id="backgroundPlayback" checked>
                         <label class="form-check-label" for="backgroundPlayback">
-                            Фоновое воспроизведение
+                            <?=Lang('background_playback')?>
                         </label>
                     </div>
                 </div>
 
                 <div class="mb-4">
                     <h6 class="text-info mb-3">
-                        <i class="bi bi-pause-circle me-2"></i>Пауза между фразами
+                        <i class="bi bi-pause-circle me-2"></i><?=Lang('pause_between_phrases')?>
                     </h6>
                     <input type="range" class="form-range" id="pauseSlider" min="1" max="10" step="0.5" value="3">
                     <div class="text-center mt-2">
-                        <span class="badge bg-primary" id="pauseValue">3 сек</span>
+                        <span class="badge bg-primary" id="pauseValue">3 <?=Lang('sec')?></span>
                     </div>
                     <div class="form-check form-switch" id="recognizeToggleForm">
                         <input class="form-check-input" type="checkbox" id="useSpeakPhrase" checked>
                         <label class="form-check-label" for="useSpeakPhrase">
-                            Учитывать время озвучивания фразы
+                            <?=Lang('account_for_phrase_speaking_time')?>
                         </label>
                     </div>
                 </div>
 
                 <div class="mb-4">
                     <h6 class="text-info mb-3">
-                        <i class="bi bi-arrow-left-right me-2"></i>Режим "Перевод"
+                        <i class="bi bi-arrow-left-right me-2"></i><?=Lang('translation_mode')?>
                     </h6>
                     <div class="btn-group w-100" role="group">
                         <button type="button" class="btn btn-outline-primary" data-direction="native-target">
-                            Рус → Англ(звук)
+                            <?=Lang('ru_en_audio')?>
                         </button>
                         <button type="button" class="btn btn-outline-primary" data-direction="target-native">
-                            Англ → Рус(звук)
+                            <?=Lang('en_ru_audio')?>
                         </button>
                     </div>
                 </div>
 
                 <div class="mb-4">
                     <h6 class="text-info mb-3">
-                        <i class="bi bi-arrow-repeat me-2"></i>Режим "Оба направления"
+                        <i class="bi bi-arrow-repeat me-2"></i><?=Lang('both_directions_mode')?>
                     </h6>
                     <div class="btn-group w-100" role="group">
                         <button type="button" class="btn btn-outline-primary" data-direction="target-native-both">
-                            Англ(звук) → Рус(звук)
+                            <?=Lang('en_audio_ru_audio')?>
                         </button>
                         <button type="button" class="btn btn-outline-primary" data-direction="native-target-both">
-                            Рус(звук) → Англ(звук)
+                            <?=Lang('ru_audio_en_audio')?>
                         </button>
                     </div>
                 </div>
 
                 <div class="mb-4">
                     <h6 class="text-info mb-3">
-                        <i class="bi bi-shuffle me-2"></i>Порядок фраз
+                        <i class="bi bi-shuffle me-2"></i><?=Lang('phrase_order')?>
                     </h6>
                     <div class="btn-group w-100" role="group">
                         <button type="button" class="btn btn-outline-primary active" data-order="sequential">
-                            По порядку
+                            <?=Lang('sequential')?>
                         </button>
                         <button type="button" class="btn btn-outline-primary" data-order="random">
-                            Случайный
+                            <?=Lang('random')?>
                         </button>
                     </div>
                 </div>
 
                 <div class="mb-4">
                     <h6 class="text-info mb-3">
-                        <i class="bi bi-repeat me-2"></i>Повтор блока
+                        <i class="bi bi-repeat me-2"></i><?=Lang('block_repetition')?>
                     </h6>
                     <div class="btn-group repeat-block" role="group">
                         <select class="form-select bg-form border-secondary" id="repeatLength">
@@ -107,7 +107,7 @@
                             <option value="15">15</option>
                             <option value="20">20</option>
                         </select>
-                        <span>фраз по</span>
+                        <span><?=Lang('phrases_by')?></span>
                         <select class="form-select bg-form border-secondary numeral-source" id="repeatCount">
                             <option value="0">0</option>
                             <option value="1">1</option>
@@ -115,26 +115,26 @@
                             <option value="3">3</option>
                             <option value="4">4</option>
                         </select>
-                        <span data-pattern="раз[у,a,]" class="numeral-target">раз</span>
+                        <span data-pattern="<?=Lang('time_format')?>" class="numeral-target"><?=Lang('times')?></span>
                     </div>
                 </div>
 
                 <div class="mb-4">
                     <h6 class="text-info mb-3">
-                        <i class="bi bi-gender-ambiguous me-2"></i>Гендер голоса
+                        <i class="bi bi-gender-ambiguous me-2"></i><?=Lang('voice_gender')?>
                     </h6>
                     <div class="btn-group repeat-block" role="group">
                         <select class="form-select bg-form border-secondary" id="genderVoice">
-                            <option value="male">Мужской</option>
-                            <option value="female">Женский</option>
+                            <option value="male"><?=Lang('male')?></option>
+                            <option value="female"><?=Lang('female')?></option>
                         </select>
                     </div>
                 </div>
             </div>
             <div class="modal-footer border-secondary">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?=Lang('close')?></button>
                 <button type="button" class="btn btn-primary" id="applySettings">
-                    <i class="bi bi-check-circle me-1"></i>Применить
+                    <i class="bi bi-check-circle me-1"></i><?=Lang('apply')?>
                 </button>
             </div>
         </div>
@@ -145,7 +145,7 @@
 <header class="text-center mb-1">
     <h1 class="display-4 text-gradient app-name">
         <i class="bi bi-translate text-primary"></i>
-        <?php echo APP_NAME;?>
+        <?=Lang('app_name');?>
     </h1>
 </header>
 
@@ -194,7 +194,7 @@
 
                     <div class="phrase-type-container">
                         <span id="currentRepeat" class="text-muted small"></span>
-                        <span id="phraseType">Past Simple (активный)</span>
+                        <span id="phraseType"><?=Lang('past_simple_active')?></span>
                     </div>
 
                     <div class="progress mb-2 control" style="height: 6px;" id="progressControl">
@@ -204,7 +204,7 @@
 
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="text-start">
-                            <div class="text-muted small">Прогресс</div>
+                            <div class="text-muted small"><?=Lang('progress')?></div>
                             <div id="phraseCounter">0 / 0</div>
                         </div>
                         <div>
@@ -219,13 +219,13 @@
 
                     <div class="play-container">
                         <div class="play-buttons" id="playButtonsContainer">
-                            <button type="button" class="btn ext" id="prevBtn" title="Предыдущая фраза">
+                            <button type="button" class="btn ext" id="prevBtn" title="<?=Lang('previous_phrase')?>">
                                 <i class="bi bi-skip-backward-fill"></i>
                             </button>
-                            <button type="button" class="btn" id="playButton" title="Воспроизвести/Пауза">
+                            <button type="button" class="btn" id="playButton" title="<?=Lang('play_pause')?>">
                                 <i class="bi bi-play-fill"></i>
                             </button>
-                            <button type="button" class="btn ext" id="nextBtn" title="Следующая фраза">
+                            <button type="button" class="btn ext" id="nextBtn" title="<?=Lang('next_phrase')?>">
                                 <i class="bi bi-skip-forward-fill"></i>
                             </button>
                         </div>
@@ -234,8 +234,8 @@
             </div>
             <?if (Page::isDev()) {?>
             <div class="dev card bg-theme-gradient mt-2">
-                <div>Dev panel</div>
-                <button type="button" class="btn ext" id="regenerateBtn" title="Регенерировать">
+                <div><?=Lang('dev_panel')?></div>
+                <button type="button" class="btn ext" id="regenerateBtn" title="<?=Lang('regenerate')?>">
                     <i class="bi bi-soundwave"></i>
                 </button>
             </div>
@@ -259,7 +259,7 @@
 <!-- Footer -->
 <footer class="mt-2 pt-2 border-top border-secondary text-center text-muted">
     <p class="small">
-        English Phrases Trainer v<?php echo APP_VERSION; ?> | <a class="link" onclick="showAdvices()">Помощь</a>
+        English Phrases Trainer v<?php echo APP_VERSION; ?> | <a class="link" onclick="showAdvices()"><?=Lang('help')?></a>
     </p>
 </footer>
 

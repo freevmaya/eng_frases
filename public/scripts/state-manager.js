@@ -1,4 +1,3 @@
-// Класс для управления состоянием приложения и localStorage
 class StateManager {
     constructor(config) {
         this.isPlaying;
@@ -10,24 +9,20 @@ class StateManager {
 
         this.STORAGE_KEY = 'english_trainer_state';
         this.DEFAULT_STATE = {
-            // Настройки воспроизведения
             speed: 1.0,
             pauseBetweenPhrases: 2,
             
-            // Направление и порядок
             direction: 'native-target-both',
             phraseDirection: 'en-ru',
             order: 'sequential',
             currentListType: 'Present simple',
             progress: {},
             
-            // Состояние воспроизведения
             currentPhraseIndex: 0,
             showingFirstLang: true,
             
-            // Данные текущего списка
-            currentListKey: null, // Ключ для отслеживания изменений списка
-            randomSeed: null, // Для воссоздания случайного порядка
+            currentListKey: null,
+            randomSeed: null,
             showTvScreen: true,
             recognize: false,
 
@@ -47,8 +42,6 @@ class StateManager {
         }, 1000, ()=>{
             this.lastHash = this.getHash();
         });
-
-        //['beforeunload', 'unload', 'pagehide', 'visibilitychange', 'blur', 'popstate'];
 
         window.addEventListener('beforeunload', (e)=>{
             this.saveImmediately();
@@ -98,7 +91,6 @@ class StateManager {
         }
     }
     
-    // Сохранение состояния в localStorage
     saveState() {
         if (this.isChanges()) {
             if (this.config.use_server)
@@ -134,7 +126,6 @@ class StateManager {
         this.lastHash = this.getHash();
     }
     
-    // Загрузка состояния из localStorage
     loadState() {
         return new Promise((resolve, reject)=>{
 
@@ -146,7 +137,6 @@ class StateManager {
 
                 this.state = { ...this.DEFAULT_STATE, ...saved };
 
-                //Удаляем со старой версией
                 if (this.state.currentPhraseList)
                     delete(this.state.currentPhraseList);
 
@@ -171,35 +161,30 @@ class StateManager {
                         returnDefault();                    
                     });
                 } catch (error) {
-                    console.error('Ошибка загрузки состояния:', error);
+                    console.error(Lang("error_loading_state"), error);
                     reject(error);
                 }
             } else returnDefault();
         });
     }
     
-    // Обновление настроек
     updateSettings(settings) {
         const oldListType = this.state.currentListType;
         
-        // Обновляем состояние
         Object.assign(this.state, settings);
         
-        // Возвращаем информацию об изменениях
         return {
             listChanged: oldListType !== this.state.currentListType,
             settingsChanged: true
         };
     }
     
-    // Проверка, изменился ли список фраз
     hasListChanged(newListType, newOrder, phrasesData) {
         const oldKey = this.state.currentListKey;
         const newKey = this.generateListKey(newListType, newOrder, phrasesData);
         return oldKey !== newKey;
     }
     
-    // Обновление состояния воспроизведения
     updatePlaybackState(state) {
         const playbackKeys = ['currentPhraseIndex', 'showingFirstLang'];
         playbackKeys.forEach(key => {
@@ -210,42 +195,35 @@ class StateManager {
         this.saveState();
     }
     
-    // Сброс состояния воспроизведения
     resetPlayback() {
         this.state.currentPhraseIndex = 0;
         this.state.showingFirstLang = true;
         this.saveState();
     }
     
-    // Получение текущего состояния
     getState() {
         return { ...this.state };
     }
     
-    // Установка данных текущего списка
     setCurrentListData(listKey, randomSeed = null) {
         this.state.currentListKey = listKey;
         this.state.randomSeed = randomSeed;
         this.saveState();
     }
     
-    // Генерация ключа для списка
     generateListKey(listType, order, phrasesData) {
         if (listType === 'all') {
-            // Для "всех фраз" учитываем количество фраз в каждом списке
             let totalPhrases = 0;
             Object.keys(phrasesData).forEach(key => {
                 totalPhrases += phrasesData[key].length;
             });
             return `all_${order}_${totalPhrases}`;
         } else {
-            // Для конкретного списка учитываем его имя и количество фраз
             const count = phrasesData[listType] ? phrasesData[listType].length : 0;
             return `${listType}_${order}_${count}`;
         }
     }
     
-    // Сброс к состоянию по умолчанию
     resetToDefault() {
         this.state = { ...this.DEFAULT_STATE };
         localStorage.removeItem(this.STORAGE_KEY);

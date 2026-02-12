@@ -1,45 +1,17 @@
 <?php
-	$v = '?v='.SCRIPTS_VERSION;
+    $v = '?v='.SCRIPTS_VERSION;
 
-	/*
-	$source 		= 'site';
-	$source_user_id = 1;
-	*/
+    $user_id = 0;
+    Page::setSession('user_id', 0);
 
-	$user_id = 0;
-	Page::setSession('user_id', 0);
-	/*
-	$userModel 		= new UserModel();
-
-	if (!Page::getSession('source_user')) {
-
-    	$items = $userModel->getItems("source_id = {$source_user_id} AND source = '{$source}'");
-
-    	if (count($items) == 0) {
-    		$user_id = $userModel->Update([
-    			'source_id'=>$source_user_id,
-    			'source'=>$source,
-    			'language_code'=>'ru'
-    		]);
-    	} else $user_id = $items[0]['id'];
-
-		Page::setSession('source_user', [
-    		'id' => $source_user_id,
-    		'source' => $source
-    	]);
-
-    	Page::setSession('user_id', $user_id);
-    } else $user_id = Page::getSession('user_id');
-    */
-
-	$is_developer = Page::isDev();
+    $is_developer = Page::isDev();
 ?>
 <!DOCTYPE html>
-<html lang="ru" data-bs-theme="dark">
+<html lang="<?=Lang('html_lang')?>" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo APP_NAME; ?></title>
+    <title><?=Lang('app_name');?></title>
 
     <!-- PWA Support -->
     <link rel="manifest" href="manifest.json">
@@ -53,53 +25,53 @@
     <link rel="stylesheet" href="css/style.css<?=$v?>" media="all">
     <link rel="stylesheet" href="css/style-waves.css<?=$v?>" media="all">
     <?if ($is_developer) {?><script>var DEV = true</script><?}?>
-	<script src="scripts/error-tracker.js<?=$v?>"></script>
+    <script src="scripts/error-tracker.js<?=$v?>"></script>
 
-	<!-- Bootstrap & jQuery -->
-	<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <!-- Bootstrap & jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
-	<script src="scripts/component.js<?=$v?>"></script>
-	<script src="scripts/main.js<?=$v?>"></script>
-	<script src="scripts/user-app.js<?=$v?>" defer></script>
-	<script src="scripts/advice-modal.js<?=$v?>"></script>
-	<script type="text/javascript">
-		ErrorTracker.init({
-			version: <?=SCRIPTS_VERSION;?>,
-			user_id: <?=Page::getSession('user_id', 0);?>,
-			excludeDomains: [
-				'yandex.ru',
-		        'google.com',
-		        'example.org',
-		        'googleapis.com',
-		        'api/generate-audio',
-		        'api/check-audio'
-		    ]
-		});
+    <script src="scripts/component.js<?=$v?>"></script>
+    <script src="scripts/main.js<?=$v?>"></script>
+    <script src="scripts/user-app.js<?=$v?>" defer></script>
+    <script src="scripts/advice-modal.js<?=$v?>"></script>
+    <script type="text/javascript">
+        ErrorTracker.init({
+            version: <?=SCRIPTS_VERSION;?>,
+            user_id: <?=Page::getSession('user_id', 0);?>,
+            excludeDomains: [
+                'yandex.ru',
+                'google.com',
+                'example.org',
+                'googleapis.com',
+                'api/generate-audio',
+                'api/check-audio'
+            ]
+        });
 
-		var X_CSRF_Token = '<?=Page::LastToken();?>';
-	</script>
-	<?include('ya-mertika.php');?>
+        var X_CSRF_Token = '<?=Page::LastToken();?>';
+    </script>
+    <?include('ya-mertika.php');?>
 </head>
 <body class="theme site">
-	<div class="page">
-		<div class="wrap-content">
-			<?=$content?>
-		</div>
-	    <?include('message.php')?>
-	    <?include('confirm.php')?>
-		<script type="text/javascript">
-		    window.stateManager = new StateManager({
-		        use_server: <?=Page::getSession('user_id', false) ? 'true' : 'false'?>
-		    });
-		</script>
+    <div class="page">
+        <div class="wrap-content">
+            <?=$content?>
+        </div>
+        <?include('message.php')?>
+        <?include('confirm.php')?>
+        <script type="text/javascript">
+            window.stateManager = new StateManager({
+                use_server: <?=Page::getSession('user_id', false) ? 'true' : 'false'?>
+            });
+        </script>
 
-		<?if ($is_developer) {?>
-		<!-- Eruda is console for mobile browsers-->
-		<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-		<script>eruda.init();</script>
-		<?}?>
-	</div>
+        <?if ($is_developer) {?>
+        <!-- Eruda is console for mobile browsers-->
+        <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+        <script>eruda.init();</script>
+        <?}?>
+    </div>
 </body>
 </html>
