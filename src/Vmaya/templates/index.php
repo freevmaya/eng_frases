@@ -35,7 +35,9 @@
 
     <script src="scripts/component.js<?=$v?>"></script>
     <script src="scripts/main.js<?=$v?>"></script>
+    <?if ($user_id) {?>
     <script src="scripts/user-app.js<?=$v?>" defer></script>
+    <?}?>
     <script src="scripts/advice-modal.js<?=$v?>"></script>
     <script type="text/javascript">
         ErrorTracker.init({
