@@ -256,10 +256,8 @@ class Page {
 
 	}
 
-	public static function setSession($name, $value = null) {
+	public static function setSession($name, $value = null) {	
 		GLOBAL $_SESSION;
-		if ($name == 'user_id')
-			trace("Set session {$name}={$value}");
 		$_SESSION[$name] = $value;
 	}
 
