@@ -48,7 +48,7 @@ class AddPhrasesDialog {
         this.af_accept.click(this.sendPhrases.bind(this));
     }
 
-    refreshDialog() {
+    refreshDialog(waitLoad = false) {
         this.af_send.bootstrapDisable(isEmpty(this.af_text.val()));
         this.af_accept.bootstrapDisable(!this.isFull());
     }

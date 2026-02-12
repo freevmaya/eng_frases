@@ -1202,7 +1202,7 @@ function assessPhrase(correctPhrase, userPhrase) {
 
 $.fn.bootstrapDisable = function(state = true, options = {}) {
   const settings = $.extend({
-    loadingText: Lang("please_wait"),
+    loadingText: null,
     originalText: null,
     showSpinner: true,
     opacity: 0.6
