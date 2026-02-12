@@ -242,8 +242,8 @@ class PhraseDatabaseImporter:
                 raise
 
             # Пытаемся найти фразу
-            query = "SELECT id FROM phrases WHERE target_text = %s"
-            self.cursor.execute(query, (target_text,))
+            query = f"SELECT id FROM phrases WHERE target_text = %s AND direction = %s"
+            self.cursor.execute(query, (target_text, self.direction))
             result = self.cursor.fetchone()
 
             if result:
@@ -266,8 +266,8 @@ class PhraseDatabaseImporter:
             
         except Error as e:
             logger.error(f"Ошибка при добавлении фразы: {e}")
-            logger.error(f"Текст (EN): {target_text[:50]}...")
-            logger.error(f"Текст (RU): {native_text[:50]}...")
+            logger.error(f"Текст (TARGET): {target_text[:50]}...")
+            logger.error(f"Текст (NATIVE): {native_text[:50]}...")
             self.connection.rollback()
             return False
     
@@ -289,6 +289,7 @@ class PhraseDatabaseImporter:
             with open(json_file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
+            print(f"✓ Файл прочитан: {json_file_path}");
             logger.info(f"✓ Файл прочитан: {json_file_path}")
             logger.info(f"Количество категорий: {len(data)}")
             
@@ -323,8 +324,8 @@ class PhraseDatabaseImporter:
                             continue
                         
                         logger.debug(f"  Фраза #{i}:")
-                        logger.debug(f"    EN: {target_text[:60]}...")
-                        logger.debug(f"    RU: {native_text[:60]}...")
+                        logger.debug(f"    TARGET: {target_text[:60]}...")
+                        logger.debug(f"    NATIVE: {native_text[:60]}...")
                         
                         # Добавляем фразу в базу
                         success = self.insert_phrase(type_id, target_text, native_text)
@@ -387,7 +388,7 @@ class PhraseDatabaseImporter:
             logger.info(f"{'='*60}")
             
             # Получаем образцы данных
-            query = """
+            query = f"""
             SELECT 
                 pt.type_name,
                 p.target_text,
@@ -396,11 +397,12 @@ class PhraseDatabaseImporter:
                 p.created_at
             FROM phrases p
             JOIN phrase_types pt ON p.type_id = pt.id
+            WHERE p.direction = %s
             ORDER BY p.id DESC
             LIMIT %s
             """
             
-            self.cursor.execute(query, (limit,))
+            self.cursor.execute(query, (self.direction, limit))
             results = self.cursor.fetchall()
             
             if not results:
@@ -410,8 +412,8 @@ class PhraseDatabaseImporter:
             for i, row in enumerate(results, 1):
                 type_name, target_text, native_text, direction, created_at = row
                 logger.info(f"\n{i}. Тип: {type_name} (направление: {direction})")
-                logger.info(f"   EN: {target_text[:80]}...")
-                logger.info(f"   RU: {native_text[:80]}...")
+                logger.info(f"   TARGET: {target_text[:80]}...")
+                logger.info(f"   NATIVE: {native_text[:80]}...")
                 logger.info(f"   Дата: {created_at}")
             
             # Статистика базы данных
