@@ -9,7 +9,7 @@
 	define('TEMPLATES_PATH', BASEPATH.'/src/Vmaya/templates/');
 	define("CHARSET", "utf-8");
 	define("DEFAULTPAGE", "home");
-	define("SCRIPTS_VERSION", 225);
+	define("SCRIPTS_VERSION", 226);
 	
 	define("SOURCES", ['vk', 'ok', 'site', 'tg']);
 	define("LIVETOKEN", DEV ? 20 : 60 * 10); // Врямя жизни токена 10 мин.
