@@ -156,18 +156,15 @@ class Ajax extends BaseAjax {
 	}
 
 	protected function addError($data) {
-		if ($user_id = Page::getSession('user_id')) {
-			$model = new ErrorsModel();
-			if (isset($data['id']))
-				unset($data['id']);
+		$model = new ErrorsModel();
+		if (isset($data['id']))
+			unset($data['id']);
 
-			$data['col'] = isset($data['column']) ? intval($data['column']) : 0;
-			$data['user_id'] = $user_id;
-			return [
-				'success'=> $model->Update($data) ? true : false
-			];
-		}
-		Page::Wrong();	
+		$data['col'] = isset($data['column']) ? intval($data['column']) : 0;
+		$data['user_id'] = Page::getSession('user_id', 0);
+		return [
+			'success'=> $model->Update($data) ? true : false
+		];
 	}
 
 	protected function deleteList($data) {
