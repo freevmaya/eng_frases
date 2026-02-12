@@ -29,13 +29,15 @@ class Ajax extends BaseAjax {
 
 		if (in_array($source, SOURCES) && $source_id && $user_data) {
 
+			$language = isset($user_data['language_code']) ? $user_data['language_code'] : DEFAULT_LANGUAGE;
+
 			$values = [
 				'source_id'=>$source_id,
 				'source'=>$source,
 				'first_name'=>$user_data['first_name'],
 				'last_name'=>$user_data['last_name'],
 				'last_time'=>date('Y-m-d H:i:s'),
-				'language_code'=>'ru',
+				'language_code'=> $language,
 				'data'=>json_encode($user_data, JSON_FLAGS)
 			];
 
@@ -49,9 +51,16 @@ class Ajax extends BaseAjax {
 	    	$this->setUser($userModel->getItem($user_id));
 	    	Page::setSession('user_id', $user_id);
 
-			return [
+	    	$result = [
 				'user_id'=>intval($user_id)
 			];
+
+    		if (Page::getSession('language', $language) != $language) {
+    			Page::setSession('language', $language);
+    			$result['redirect'] = BASEURL.'?lang='.$language;
+    		}
+
+			return $result;
 		} else Page::Wrong();
 	}
 

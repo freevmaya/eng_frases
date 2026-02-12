@@ -13,7 +13,7 @@
             $user_id = $userModel->Update([
                 'source_id'=>$source_user_id,
                 'source'=>$source,
-                'language_code'=>'ru'
+                'language_code'=>DEFAULT_LANGUAGE
             ]);
         } else $user_id = $items[0]['id'];
 
@@ -23,7 +23,9 @@
         ]);
 
         Page::setSession('user_id', $user_id);
-    } else $user_id = Page::getSession('user_id');
+    } else {
+        $user_id = Page::getSession('user_id');
+    }
 
     $is_developer = Page::isDev();
 ?>

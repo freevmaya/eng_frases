@@ -15,7 +15,10 @@ class UserApp {
 		}).then((data)=>{
 			if (data) {
 				this.user_id = data.user_id;
-				this.loadUserPhrases();
+
+				if (data.redirect)
+					document.location.href = data.redirect;
+				else this.loadUserPhrases();
 			}
 		});
 
