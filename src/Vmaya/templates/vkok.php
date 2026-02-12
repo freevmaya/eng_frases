@@ -35,6 +35,31 @@
     	]);
 
     	Page::setSession('user_id', $user_id);
+    } else if (DEV) {
+
+		//Инициализация пользователя VK. Только при разработке!
+		$source 	= 'vk';
+		$user_data 	= json_decode(file_get_contents(BASEPATH.'/dev/vk-parameters.json'), true);
+
+		Page::setSession('source_user', [
+    		'id' => $source_user_id = $user_data['id'],
+    		'source' => $source
+    	]);
+
+    	$items = $userModel->getItems("source_id = {$user_data['id']} AND source = '{$source}'");
+
+    	if (count($items) > 0)
+    		$user_id = $items[0]['id'];
+    	else {
+    		$user_id = $userModel->Update([
+    			'source_id'=>$source_user_id,
+    			'source'=>$source,
+    			'language_code'=>'ru'
+    		]);
+    		$new_user = $user_id;
+    	}
+    	
+    	Page::setSession('user_id', $user_id = $items[0]['id']);
     }
 
 	$is_developer = Page::isDev();
@@ -118,22 +143,7 @@
 		</script>
     <?}?>
     <script type="text/javascript">
-	<?if (DEV) {
-
-		//Инициализация пользователя VK. Только при разработке!
-		$source = 'vk';
-		$user_data = json_decode(file_get_contents(BASEPATH.'/dev/vk-parameters.json'), true);
-		Page::setSession('source_user', [
-    		'id' => $user_data['id'],
-    		'source' => $source
-    	]);
-
-    	$items = $userModel->getItems("source_id = {$user_data['id']} AND source = '{$source}'");
-
-    	if (count($items) > 0)
-    		Page::setSession('user_id', $user_id = $items[0]['id']);
-
-	?>
+	<?if (DEV) {?>
 		$(window).ready(()=>{
 			var user_data = <?=json_encode($user_data, JSON_FLAGS)?>;
 			userApp.init(user_data.id, '<?=$source?>', user_data, <?=json_encode($phrases)?>);

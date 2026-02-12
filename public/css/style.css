@@ -186,7 +186,6 @@
     height: min(50vw, 8em);
 
     align-items: center; /* Центрирование групп по горизонтали */
-    gap: 5px;
     width: 100%;
     margin: 0 auto;
     box-sizing: border-box;
@@ -202,10 +201,10 @@
     text-align: center;
     width: 100%;
     box-sizing: border-box;
-    padding: 0.25em;
 
     min-width: 0; /* КРИТИЧЕСКИ ВАЖНО: разрешает сжатие */
     box-sizing: border-box;
+    line-height: 1em;
 }
 
 .phrase-text, .phrase-hint {
@@ -216,7 +215,6 @@
 
 .phrase-text {
     font-weight: 500;
-    line-height: 1.4;
     text-shadow: 0 2px 4px var(--text-shadow);
     color: var(--max-contrast);
 }
@@ -760,6 +758,7 @@ footer {
     display: flex;
     flex-direction: column;
     transition: var(--bs-accordion-transition) !important;
+    max-height: 100%;
 }
 
 .accordion-header {

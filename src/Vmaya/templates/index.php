@@ -44,7 +44,7 @@
             version: <?=SCRIPTS_VERSION;?>,
             user_id: <?=Page::getSession('user_id', 0);?>,
             excludeDomains: [
-                'yandex.ru',
+                'yandex',
                 'google.com',
                 'example.org',
                 'googleapis.com',

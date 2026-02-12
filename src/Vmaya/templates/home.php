@@ -265,11 +265,12 @@
 
 <script type="text/javascript">
     var SPEECH_CONFIG = <?=SPEECH_CONFIG?>;
+    var LANGUAGE = '<?=Page::language()?>';
     var AI_URL = '<?=AI_URL?>';
     <?if (isset(Page::$request['SPEECH_CONFIG'])) {?>
         Object.assign(SPEECH_CONFIG, <?=Page::$request['SPEECH_CONFIG']?>);
     <?}?>
-    var phrasesData = <?=json_encode(PhrasesModel::getPhrasesAsJsonWithDifficulty(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);?>;
+    var phrasesData = <?=json_encode(PhrasesModel::getPhrasesAsJsonWithDifficulty(Page::language()), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);?>;
 
     $('.numeral-source').numeral(false);
 </script>

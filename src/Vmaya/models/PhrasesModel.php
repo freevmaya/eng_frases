@@ -116,10 +116,11 @@ class PhrasesModel extends BaseModel {
 	 * @param int|null $maxDifficulty Максимальный уровень сложности (1-5)
 	 * @return string JSON строка
 	 */
-	public static function getPhrasesAsJsonWithDifficulty($maxDifficulty = null) {
+	public static function getPhrasesAsJsonWithDifficulty($language = 'ru', $maxDifficulty = null) {
 	    GLOBAL $dbp;
 	    
-	    $conditions = "p.is_active = 1 AND pt.is_active = 1";
+	    $direction = 'en-'.$language;
+	    $conditions = "p.is_active = 1 AND pt.is_active = 1 AND p.direction = '{$direction}'";
 	    
 	    if ($maxDifficulty !== null && $maxDifficulty >= 1 && $maxDifficulty <= 5) {
 	        $conditions .= " AND p.difficulty_level <= " . intval($maxDifficulty);
@@ -138,6 +139,8 @@ class PhrasesModel extends BaseModel {
 	        WHERE {$conditions}
 	        ORDER BY pt.`order`, p.difficulty_level, p.id
 	    ";
+
+	    trace($query);
 	    
 	    $rows = $dbp->asArray($query);
 	    

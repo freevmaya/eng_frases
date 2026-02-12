@@ -11,12 +11,13 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class PhraseDatabaseExporter:
-    def __init__(self, host: str, database: str, user: str, password: str, port: int = 3306):
+    def __init__(self, host: str, database: str, user: str, password: str, port: int = 3306, direction: str = 'en-ru'):
         self.host = host
         self.database = database
         self.user = user
         self.password = password
         self.port = port
+        self.direction = direction
         
         self.connection = None
         self.cursor = None
@@ -55,14 +56,16 @@ class PhraseDatabaseExporter:
             export_format: Формат экспорта ('grouped' или 'flat')
         """
         try:
-            query = """
+            query = f"""
             SELECT 
                 pt.type_name,
+                p.type_id,
+                p.direction,
                 p.target_text,
                 p.native_text
             FROM phrases p
             JOIN phrase_types pt ON p.type_id = pt.id
-            WHERE p.is_active = TRUE
+            WHERE p.is_active = TRUE AND direction = '{self.direction}'
             ORDER BY pt.type_name, p.id
             """
             
@@ -84,6 +87,8 @@ class PhraseDatabaseExporter:
                         data[type_name] = []
                     
                     data[type_name].append({
+                        'type_id': row['type_id'],
+                        'direction': row['direction'],
                         'target': row['target_text'],
                         'native': row['native_text']
                     })
@@ -137,6 +142,7 @@ def main():
     parser.add_argument('--user', default='root', help='Имя пользователя MySQL')
     parser.add_argument('--password', default='', help='Пароль MySQL')
     parser.add_argument('--port', type=int, default=3306, help='Порт MySQL')
+    parser.add_argument('--direction', default='en-ru', help='Направление перевода')
     parser.add_argument('--format', choices=['grouped', 'flat'], default='grouped', 
                        help='Формат экспорта (grouped или flat)')
     
@@ -147,7 +153,8 @@ def main():
         database=args.database,
         user=args.user,
         password=args.password,
-        port=args.port
+        port=args.port,
+        direction=args.direction
     )
     
     try:

@@ -17,7 +17,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class PhraseDatabaseImporter:
-    def __init__(self, host: str, database: str, user: str, password: str, port: int = 3306):
+    def __init__(self, host: str, database: str, user: str, password: str, port: int = 3306, direction: str = 'en-ru'):
         """
         Инициализация импортера базы данных
         
@@ -33,6 +33,7 @@ class PhraseDatabaseImporter:
         self.user = user
         self.password = password
         self.port = port
+        self.direction = direction
         
         # Подключение к базе данных
         self.connection = None
@@ -211,7 +212,7 @@ class PhraseDatabaseImporter:
             self.connection.rollback()
             raise
     
-    def insert_phrase(self, type_id: int, target_text: str, native_text: str, direction: str = 'en-ru') -> bool:
+    def insert_phrase(self, type_id: int, target_text: str, native_text: str) -> bool:
         """
         Вставка фразы в базу данных
         
@@ -219,7 +220,6 @@ class PhraseDatabaseImporter:
             type_id: ID типа фразы
             target_text: Текст на целевом языке (английский)
             native_text: Текст на родном языке (русский)
-            direction: Направление перевода (по умолчанию 'en-ru')
         
         Returns:
             True если успешно
@@ -256,7 +256,7 @@ class PhraseDatabaseImporter:
             VALUES (%s, %s, %s, %s)
             """
             
-            self.cursor.execute(query, (type_id, target_text, native_text, direction))
+            self.cursor.execute(query, (type_id, target_text, native_text, self.direction))
             self.connection.commit()
             
             phrase_id = self.cursor.lastrowid
@@ -327,7 +327,7 @@ class PhraseDatabaseImporter:
                         logger.debug(f"    RU: {native_text[:60]}...")
                         
                         # Добавляем фразу в базу
-                        success = self.insert_phrase(type_id, target_text, native_text, 'en-ru')
+                        success = self.insert_phrase(type_id, target_text, native_text)
                         
                         if success:
                             stats['total_phrases'] += 1
@@ -520,6 +520,7 @@ def main():
     parser.add_argument('--password', default='', help='Пароль MySQL')
     parser.add_argument('--port', type=int, default=3306, help='Порт MySQL (по умолчанию: 3306)')
     parser.add_argument('--create-db', action='store_true', help='Создать базу данных если не существует')
+    parser.add_argument('--direction', default='en-ru', help='Направление перевода')
     parser.add_argument('--clear', action='store_true', help='Очистить существующие данные перед импортом')
     
     args = parser.parse_args()
@@ -540,7 +541,8 @@ def main():
         database=args.database,
         user=args.user,
         password=args.password,
-        port=args.port
+        port=args.port,
+        direction=args.direction
     )
     
     try:

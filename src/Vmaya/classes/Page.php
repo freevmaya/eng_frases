@@ -11,6 +11,7 @@ class Page {
 	public static $page;
 	public static $request;
 	public static $subpage;
+	private static $language;
 
 	public function __construct($userModel = null) {
 		GLOBAL $lang, $dbp, $_GET, $user;
@@ -28,20 +29,21 @@ class Page {
 
 		if (isset(Page::$request['lang']) && 
 			file_exists(LANGUAGE_PATH.Page::$request['lang'].'.php')) {
-			$language = Page::$request['lang'];
+			Page::$language = Page::$request['lang'];
 		} else {
-			$language = DEFAULT_LANGUAGE;
+			Page::$language = Page::getSession('language', DEFAULT_LANGUAGE);
 		
 			if ($user) {
 
 				if ($userDB = $this->userModel->getItem($user['id']))
 					$user = array_merge($user, $userDB);
 			
-				$language = $user['language_code'];
+				Page::$language = $user['language_code'];
 			}
 		}
 
-		include_once(LANGUAGE_PATH.$language.'.php');
+		Page::setSession('language', Page::$language);
+		include_once(LANGUAGE_PATH.Page::$language.'.php');
 
 		$this->model = $this->initModel();
 
@@ -51,6 +53,10 @@ class Page {
 				$this->model->Update(Page::$request);
 			}
 		}
+	}
+
+	public static function language() {
+		return Page::$language;
 	}
 
 	public static function isDev() {
@@ -273,7 +279,10 @@ class Page {
 		header("Content-Type: text/html; charset=".CHARSET);
 		$content = $this->getContent($page);
 		$index = isset(Page::$request['index']) ? Page::$request['index'] : 'index';
-		include(TEMPLATES_PATH."/{$index}.php");
+		$filename = TEMPLATES_PATH."/{$index}.php";
+		if (file_exists($filename))
+			include($filename);
+		else Page::Wrong();
 	}
 
 	public function Close() {
