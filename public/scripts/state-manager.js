@@ -151,13 +151,15 @@ class StateManager {
                         if (data && data.hasOwnProperty('state')) {
                             this.config.use_server = true;
                             this.state = { ...this.DEFAULT_STATE, ...data.state };
+
                             resolve(this.state);
                         }
                         else {
                             this.config.use_server = data == 0;
                             returnDefault();
                         }
-                    }).catch(()=>{
+                    }).catch((error)=>{
+                        tracer.error(error);
                         returnDefault();                    
                     });
                 } catch (error) {
@@ -186,7 +188,7 @@ class StateManager {
     }
     
     updatePlaybackState(state) {
-        const playbackKeys = ['currentPhraseIndex', 'showingFirstLang'];
+        const playbackKeys = ['currentPhraseIndex', 'showingFirstLang', 'progress'];
         playbackKeys.forEach(key => {
             if (state[key] !== undefined) {
                 this.state[key] = state[key];

@@ -354,14 +354,19 @@ function Application() {
     }
 
     function setProgress(curentRepeat, a_index) {
-        let newParams = {
-            currentRepeat: curentRepeat,
-            index: a_index
-        }
+
+        let progress = {}
+        Object.keys(state.progress).forEach((key)=>{
+            if (key == state.currentListType)
+                progress[key] = {
+                    currentRepeat: curentRepeat,
+                    index: a_index
+                };
+            else progress[key] = state.progress[key];
+        })
         
-        state.progress[state.currentListType] = $.extend(state.progress[state.currentListType], newParams);
         stateManager.updatePlaybackState({
-            progress: state.progress
+            progress: progress
         });
         return 0;
     }
