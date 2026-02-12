@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="css/style-waves.css<?=$v?>" media="all">
     <?if ($is_developer) {?><script>var DEV = true</script><?}?>
     <script src="scripts/error-tracker.js<?=$v?>"></script>
+    <?include('lang_script.php')?>
 
     <!-- Bootstrap & jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
