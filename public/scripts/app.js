@@ -354,17 +354,15 @@ function Application() {
     }
 
     function setProgress(curentRepeat, a_index) {
+        let newParams = {
+            currentRepeat: curentRepeat,
+            index: a_index
+        }
 
         let progress = {}
-        Object.keys(state.progress).forEach((key)=>{
-            if (key == state.currentListType)
-                progress[key] = {
-                    currentRepeat: curentRepeat,
-                    index: a_index
-                };
-            else progress[key] = state.progress[key];
-        })
+        Object.keys(state.progress).forEach((key)=>{progress[key] = state.progress[key];});
         
+        progress[state.currentListType] = {...progress[state.currentListType], ...newParams};
         stateManager.updatePlaybackState({
             progress: progress
         });
