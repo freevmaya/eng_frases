@@ -11,10 +11,10 @@
 
     	if (isset(Page::$request['vk_client']) && (Page::$request['vk_client'] == 'ok')) {
     		$source = 'ok';
-    		$source_user_id = Page::$request['vk_ok_user_id'];
+    		$source_user_id = intval(Page::$request['vk_ok_user_id']);
     	} else {
     		$source = 'vk';
-    		$source_user_id = Page::$request['vk_user_id'];
+    		$source_user_id = intval(Page::$request['vk_user_id']);
     	}
 
     	$items = $userModel->getItems("source_id = {$source_user_id} AND source = '{$source}'");
