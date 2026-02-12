@@ -7,7 +7,7 @@
     $is_developer = Page::isDev();
 ?>
 <!DOCTYPE html>
-<html lang="<?=Lang('html_lang')?>" data-bs-theme="dark">
+<html lang="<?=Lang('html_lang')?>" data-bs-theme="<?=isset(Page::$request['theme']) ? Page::$request['theme'] : 'dark' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +22,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/themes.css<?=$v?>" media="all">
-    <link rel="stylesheet" href="css/style.css<?=$v?>" media="all">
+    <?
+    $file_style = 'style';
+    if (isset(Page::$request['style']))
+        $file_style = Page::$request['style'];
+    ?>
+    <link rel="stylesheet" href="css/<?=$file_style?>.css<?=$v?>" media="all">
     <link rel="stylesheet" href="css/style-waves.css<?=$v?>" media="all">
     <?if ($is_developer) {?><script>var DEV = true</script><?}?>
     <script src="scripts/error-tracker.js<?=$v?>"></script>

@@ -139,8 +139,6 @@ class PhrasesModel extends BaseModel {
 	        WHERE {$conditions}
 	        ORDER BY pt.`order`, p.difficulty_level, p.id
 	    ";
-
-	    trace($query);
 	    
 	    $rows = $dbp->asArray($query);
 	    
