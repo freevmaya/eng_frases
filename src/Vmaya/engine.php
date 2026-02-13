@@ -11,7 +11,7 @@
 	define("DEFAULTPAGE", "home");
 	define("SCRIPTS_VERSION", 233);
 	
-	define("SOURCES", ['vk', 'ok', 'site', 'tg', 'e-vk']);
+	define("SOURCES", ['vk', 'ok', 'site', 'tg', 'e-vk', 'e-ok', 'e-tg']);
 	define("LIVETOKEN", DEV ? 20 : 60 * 10); // Врямя жизни токена 10 мин.
 	
 	$lv = SCRIPTS_VERSION % 1000;
