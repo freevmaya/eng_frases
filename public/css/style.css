@@ -560,12 +560,23 @@ footer {
     display: flex;
 }
 
+.paid_use {
+    font-size: min(2.8vw, 1em);
+    text-size-adjust: auto;
+    -webkit-text-size-adjust: auto;
+    color: var(--info);
+    margin: 0px !important;
+}
+
+
+.list-view .header h6, .list-view .item a, .paid_use {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .list-view .header h6, .list-view .item a {
     width: 100%;
     display: inline-block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .list-view .item  a, .link {
