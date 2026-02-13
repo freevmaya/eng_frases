@@ -7,7 +7,9 @@ class AddPhrasesDialog {
         this.modal.find('.clearBtn').click(this.clear.bind(this));
 
         $(window).on('add_user_list', ()=>{
-            this.show();
+            if (isEmpty(AI_URL))
+                Alert("Временно недоступно. Надеемся на ваше понимание.");
+            else this.show();
         });
 
         this.af_name = this.modal.find('#af_name');

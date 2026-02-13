@@ -131,8 +131,30 @@ Phrases should be useful for learning English, varied and cover the topic: {them
         return f.read()
 
 def create_cache_key(native_lang, target_lang, theme):
-    """Создание MD5 ключа для кеша"""
+    """Создание MD5 ключа для кеша с нормализацией текста"""
+    import re
+    import unicodedata
+    
+    # Объединяем все параметры
     query_string = f"{native_lang}_{target_lang}_{theme}".lower()
+    
+    # Нормализуем Unicode (разделяем символы и диакритические знаки)
+    query_string = unicodedata.normalize('NFKD', query_string)
+    
+    # Удаляем все диакритические знаки
+    query_string = ''.join(c for c in query_string if not unicodedata.combining(c))
+    
+    # Заменяем все последовательности не-буквенно-цифровых символов на один подчеркивания
+    # И удаляем ведущие/замыкающие подчеркивания
+    query_string = re.sub(r'[^\w\s]', '', query_string)  # Удаляем знаки препинания
+    query_string = re.sub(r'[\s_]+', '_', query_string)  # Заменяем пробелы и множественные подчеркивания на одно
+    query_string = query_string.strip('_')  # Удаляем подчеркивания в начале и конце
+    
+    # Если после всех преобразований строка пустая, используем дефолтное значение
+    if not query_string:
+        query_string = "empty_theme"
+    
+    # Создаем MD5 хеш
     return hashlib.md5(query_string.encode()).hexdigest()
 
 def check_cache(cache_key):

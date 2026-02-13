@@ -85,9 +85,14 @@ function Wrong(message=null) {
 }
 
 function Confirm(message, title=Lang("confirm")) {
+    return Alert(message, title, true);
+}
+
+function Alert(message, title=Lang("info"), showCancel = false) {
     let modal = $('#сonfirm');
     modal.find('.content').html(message);
     modal.find('.modal-title').text(title);
+    modal.find('.btn.btn-secondary').css('display', showCancel ? 'block' : 'none');
     modal.modal('show');
     return new Promise((resolve, reject)=>{
         modal.find('.btn-primary').click(()=>{
