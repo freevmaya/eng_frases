@@ -5,6 +5,7 @@ project_path = '/home/vmaya/www/eng_frases/english-phrases-server'
 if project_path not in sys.path:
     sys.path.append(project_path)
 
+import logging
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # Добавьте этот импорт
 import hashlib
@@ -19,6 +20,16 @@ import re
 from dotenv import load_dotenv
 
 app = Flask(__name__)
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler('/var/log/english-phrases/app.log')
+    ]
+)
+logger = logging.getLogger(__name__)
 
 '''
 CORS(app, resources={r"/*": {"origins": [
@@ -248,6 +259,8 @@ def generate_phrases_endpoint():
     if not data:
         return jsonify({'error': 'No JSON data provided'}), 400
     
+    logger.debug("Отладочное сообщение")
+    
     native_lang = data.get('native_lang', 'ru').lower()
     target_lang = data.get('target_lang', 'en').lower()
     count = data.get('count', 10)
@@ -271,8 +284,6 @@ def generate_phrases_endpoint():
     # Проверяем кеш
     cached_data = check_cache(cache_key)
     
-    print("Before generate_phrases_from_ai")
-    
     if cached_data:
         return jsonify({
             'phrases': json.loads(cached_data),
@@ -283,7 +294,7 @@ def generate_phrases_endpoint():
     phrases = generate_phrases_from_ai(native_lang, target_lang, theme, count)
     
     if not phrases:
-        return jsonify({'error': 'Unknown reasone failed to generate phrases'}), 200
+        return jsonify({'error': 'Unknown reasone failed to generate phrases'}), 500
     
     # Сохраняем в кеш
     phrases_json = json.dumps(phrases, ensure_ascii=False)
