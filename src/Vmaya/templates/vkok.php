@@ -3,6 +3,7 @@
 	$userModel 	= new UserModel();
 	$user_id 	= 0;
 	$vkok		= isset(Page::$request['vk_app_id']);
+    $new_user 	= false;
 
 	if ($vkok) {
 
@@ -18,9 +19,10 @@
     	}
     	
     	$items = null;
+
     	try {
 
-	    	$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
+	    	$items = $userModel->getItems(['source_id' => $source_user_id, 'source A'=>$source]);
 	    	$new_user = false;
 
 	    	if (count($items) == 0) {
