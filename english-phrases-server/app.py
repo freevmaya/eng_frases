@@ -197,6 +197,7 @@ def generate_phrases_from_ai(native_lang, target_lang, theme, count=10):
     
     # Заменяем плейсхолдеры в промте
     prompt = prompt_template.format(count=count, theme=theme)
+    
     # Вызываем ИИ
     response = generate_phrases(prompt)
     
