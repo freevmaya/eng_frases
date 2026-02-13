@@ -1,7 +1,7 @@
 <?php
 	$v 			= '?v='.SCRIPTS_VERSION;
 	$userModel 	= new UserModel();
-	$user_id 	= Page::getSession('user_id', 0);
+	$user_id 	= 0;
 	$vkok		= isset(Page::$request['vk_app_id']);
 
 	if ($vkok) {
