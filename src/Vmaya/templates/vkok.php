@@ -24,9 +24,7 @@
 
     	try {
 
-			$items = $dbp->dbAsArray("SELECT * FROM users WHERE source_id={$source_user_id} AND source='{$source}'");
-
-			//$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
+			$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
 
 	    	if (count($items) == 0) {
 	    		$user_id = $userModel->Update([
@@ -42,16 +40,20 @@
     		$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
     		trace_error("Error initalize user".
     			"\nError: ".$e->getMessage().
-    			"\nItems: ".json_encode($items));
+    			"\nResearch result: ".json_encode($items));
 
-    		$source = 'e-'.$source;
-    		$user_id = 1;
-    		$userModel->Update([
-    			'id'=>$user_id,
-    			'source_id'=>$source_user_id,
-    			'source'=>$source,
-    			'language_code'=>DEFAULT_LANGUAGE
-    		]);
+    		if (count($items) > 0) {
+    			$user_id = $items[0]['id'];
+    		} else {
+	    		$source = 'e-'.$source;
+	    		$user_id = 1;
+	    		$userModel->Update([
+	    			'id'=>$user_id,
+	    			'source_id'=>$source_user_id,
+	    			'source'=>$source,
+	    			'language_code'=>DEFAULT_LANGUAGE
+	    		]);
+	    	}
 
     	}
 
@@ -72,9 +74,7 @@
     		'source' => $source
     	]);
 
-		$items = $dbp->dbAsArray("SELECT * FROM users WHERE source_id={$source_user_id} AND source='{$source}'");
-    	
-    	//$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
+		$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
 
     	if (count($items) > 0)
     		$user_id = $items[0]['id'];
