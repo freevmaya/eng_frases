@@ -16,23 +16,27 @@
     		$source = 'vk';
     		$source_user_id = intval(Page::$request['vk_user_id']);
     	}
-    		
+    	
+    	$items = null;
     	try {
 
 	    	$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
 	    	$new_user = false;
 
 	    	if (count($items) == 0) {
-		    		$user_id = $userModel->Update([
-		    			'source_id'=>$source_user_id,
-		    			'source'=>$source,
-		    			'language_code'=>DEFAULT_LANGUAGE
-		    		]);
-		    		$new_user = $user_id;
+	    		$user_id = $userModel->Update([
+	    			'source_id'=>$source_user_id,
+	    			'source'=>$source,
+	    			'language_code'=>DEFAULT_LANGUAGE
+	    		]);
+	    		$new_user = $user_id;
 	    	} else $user_id = $items[0]['id'];
 
     	} catch (Exception $e) {
-    		trace_error("Error initalize user\nError:".$e->getMessage()."\nRequest: ".json_encode(Page::$request));
+    		trace_error("Error initalize user".
+    			"\nError: ".$e->getMessage().
+    			"\nRequest: ".json_encode(Page::$request).
+    			"\nItems: ".json_encode($items));
 
     		$source = 'e-'.$source;
     		$user_id = 1;
@@ -191,4 +195,4 @@
 	</div>
 </body>
 </html>
-<?}?>
+<?} else Page::Wrong();?>
