@@ -236,6 +236,7 @@ def generate_phrases_from_ai(native_lang, target_lang, theme, count=10):
         
         return formatted_phrases[:50]  # Ограничиваем 50 фразами
     
+    print(f"No phrases for the query: {prompt}");
     return None
 
 @app.route('/phrases/generate-phrases', methods=['POST'])
