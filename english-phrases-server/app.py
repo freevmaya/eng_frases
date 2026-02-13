@@ -282,7 +282,7 @@ def generate_phrases_endpoint():
     phrases = generate_phrases_from_ai(native_lang, target_lang, theme, count)
     
     if not phrases:
-        return jsonify({'error': 'Failed to generate phrases'}), 500
+        return jsonify({'error': 'Unknown reasone failed to generate phrases'}), 500
     
     # Сохраняем в кеш
     phrases_json = json.dumps(phrases, ensure_ascii=False)
