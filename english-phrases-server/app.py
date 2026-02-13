@@ -191,8 +191,6 @@ def parse_ai_response(response_text):
 def generate_phrases_from_ai(native_lang, target_lang, theme, count=10):
     """Генерация фраз через ИИ"""
     # Загружаем промт для языка
-    
-    print(native_lang)
     prompt_template = load_prompt_template(native_lang)
     
     # Заменяем плейсхолдеры в промте
@@ -280,6 +278,7 @@ def generate_phrases_endpoint():
             'count': len(json.loads(cached_data))
         })
     
+    print("Before generate_phrases_from_ai")
     # Генерируем новые фразы
     phrases = generate_phrases_from_ai(native_lang, target_lang, theme, count)
     
