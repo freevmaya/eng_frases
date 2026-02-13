@@ -259,8 +259,6 @@ def generate_phrases_endpoint():
     if not data:
         return jsonify({'error': 'No JSON data provided'}), 400
     
-    logger.debug("Отладочное сообщение")
-    
     native_lang = data.get('native_lang', 'ru').lower()
     target_lang = data.get('target_lang', 'en').lower()
     count = data.get('count', 10)
