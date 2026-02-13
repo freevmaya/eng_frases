@@ -234,7 +234,7 @@ def generate_phrases_from_ai(native_lang, target_lang, theme, count=10):
                 
                 formatted_phrases.append(formatted_phrase)
         
-        return formatted_phrases[:50]  # Ограничиваем 50 фразами
+        return formatted_phrases  # Ограничиваем 50 фразами
     
     print(f"No phrases for the query: {prompt}");
     return None

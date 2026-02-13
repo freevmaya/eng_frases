@@ -27,6 +27,8 @@ def generate_phrases(prompt_text):
             ],
             max_tokens=1000
         )
+
+        print(response)
         
         # Извлекаем ответ из структуры Hugging Face
         if hasattr(response, 'choices') and len(response.choices) > 0:
