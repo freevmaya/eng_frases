@@ -189,7 +189,7 @@
 			}
 		}
 
-		protected function dbAsArray($query) {
+		public function dbAsArray($query) {
 			$ret = [];
 			if ($result = $this->query($query)) {
 				while ($row = $result->fetch_array($this->result_type)) 

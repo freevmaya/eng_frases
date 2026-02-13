@@ -119,8 +119,9 @@ class Page {
 	}
 
 	public static function Wrong() {
-		GLOBAL $_SESSION;
-		
+		GLOBAL $_SESSION, $dbp;
+		$dbp->Close();
+
 		trace_error("Wrong".
 			"\nSESSION: ".json_encode($_SESSION, JSON_FLAGS));
 		header('HTTP/1.1 403 Forbidden');

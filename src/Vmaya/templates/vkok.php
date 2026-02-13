@@ -1,4 +1,6 @@
 <?php
+	GLOBAL $dbp;
+
 	$v 			= '?v='.SCRIPTS_VERSION;
 	$userModel 	= new UserModel();
 	$user_id 	= 0;
@@ -22,7 +24,9 @@
 
     	try {
 
-	    	$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
+			$items = $dbp->dbAsArray("SELECT * FROM users WHERE source_id={$source_user_id} AND source='{$source}'");
+			
+			//$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
 
 	    	if (count($items) == 0) {
 	    		$user_id = $userModel->Update([
@@ -48,7 +52,7 @@
     			'source'=>$source,
     			'language_code'=>DEFAULT_LANGUAGE
     		]);
-    		
+
     	}
 
     	Page::setSession('source_user', [
@@ -68,7 +72,9 @@
     		'source' => $source
     	]);
 
-    	$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
+		$items = $dbp->dbAsArray("SELECT * FROM users WHERE source_id={$source_user_id} AND source='{$source}'");
+    	
+    	//$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
 
     	if (count($items) > 0)
     		$user_id = $items[0]['id'];
