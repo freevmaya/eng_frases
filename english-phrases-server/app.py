@@ -271,14 +271,14 @@ def generate_phrases_endpoint():
     # Проверяем кеш
     cached_data = check_cache(cache_key)
     
+    print("Before generate_phrases_from_ai")
+    
     if cached_data:
         return jsonify({
             'phrases': json.loads(cached_data),
             'cached': True,
             'count': len(json.loads(cached_data))
         })
-    
-    print("Before generate_phrases_from_ai")
     # Генерируем новые фразы
     phrases = generate_phrases_from_ai(native_lang, target_lang, theme, count)
     
