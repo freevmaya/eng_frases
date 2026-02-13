@@ -200,6 +200,7 @@ def generate_phrases_from_ai(native_lang, target_lang, theme, count=10):
     response = generate_phrases(prompt)
     
     if not response:
+        print(f"No response to request: {prompt}");
         return None
     
     # Парсим ответ
