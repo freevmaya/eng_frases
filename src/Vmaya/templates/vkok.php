@@ -23,7 +23,6 @@
     	try {
 
 	    	$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
-	    	$new_user = false;
 
 	    	if (count($items) == 0) {
 	    		$user_id = $userModel->Update([
@@ -35,6 +34,7 @@
 	    	} else $user_id = $items[0]['id'];
 
     	} catch (Exception $e) {
+
     		trace_error("Error initalize user".
     			"\nError: ".$e->getMessage().
     			"\nRequest: ".json_encode(Page::$request).
@@ -48,6 +48,7 @@
     			'source'=>$source,
     			'language_code'=>DEFAULT_LANGUAGE
     		]);
+    		
     	}
 
     	Page::setSession('source_user', [
@@ -67,7 +68,7 @@
     		'source' => $source
     	]);
 
-    	$items = $userModel->getItems("source_id = {$user_data['id']} AND source = '{$source}'");
+    	$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
 
     	if (count($items) > 0)
     		$user_id = $items[0]['id'];
