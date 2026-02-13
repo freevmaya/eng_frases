@@ -203,7 +203,8 @@ class PhrasesListView {
     	this.refreshAccordion();
 
 		this.accordion.on('hidden.bs.collapse', event => {
-			this.refreshAccordion($(event.target));
+			tracer.log($(event.currentTarget));
+			this.refreshAccordion($(event.currentTarget));
 		})
 		this.accordion.on('shown.bs.collapse', event => {
 			this.refreshAccordion();
