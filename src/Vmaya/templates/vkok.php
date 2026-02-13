@@ -16,18 +16,33 @@
     		$source = 'vk';
     		$source_user_id = intval(Page::$request['vk_user_id']);
     	}
+    		
+    	try {
 
-    	$items = $userModel->getItems("source_id = {$source_user_id} AND source = '{$source}'");
-    	$new_user = false;
+	    	$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
+	    	$new_user = false;
 
-    	if (count($items) == 0) {
-    		$user_id = $userModel->Update([
+	    	if (count($items) == 0) {
+		    		$user_id = $userModel->Update([
+		    			'source_id'=>$source_user_id,
+		    			'source'=>$source,
+		    			'language_code'=>DEFAULT_LANGUAGE
+		    		]);
+		    		$new_user = $user_id;
+	    	} else $user_id = $items[0]['id'];
+
+    	} catch (Exception $e) {
+    		trace_error("Error initalize user\nError:".$e->getMessage()."\nRequest: ".json_encode(Page::$request));
+
+    		$source = 'e-'.$source;
+    		$user_id = 1;
+    		$userModel->Update([
+    			'id'=>$user_id,
     			'source_id'=>$source_user_id,
     			'source'=>$source,
-    			'language_code'=>'ru'
+    			'language_code'=>DEFAULT_LANGUAGE
     		]);
-    		$new_user = $user_id;
-    	} else $user_id = $items[0]['id'];
+    	}
 
     	Page::setSession('source_user', [
     		'id' => $source_user_id,
@@ -54,7 +69,7 @@
     		$user_id = $userModel->Update([
     			'source_id'=>$source_user_id,
     			'source'=>$source,
-    			'language_code'=>'ru'
+    			'language_code'=>DEFAULT_LANGUAGE
     		]);
     		$new_user = $user_id;
     	}
@@ -62,8 +77,10 @@
     	Page::setSession('user_id', $user_id = $items[0]['id']);
     }
 
-	$is_developer = Page::isDev();
-	$phrases = (new UserPhrasesModel())->getPhrasesAsJsonWithDifficulty($user_id);
+    if ($user_id) {
+
+		$is_developer = Page::isDev();
+		$phrases = (new UserPhrasesModel())->getPhrasesAsJsonWithDifficulty($user_id);
 ?>
 <!DOCTYPE html>
 <html lang="ru" data-bs-theme="<?=isset(Page::$request['theme']) ? Page::$request['theme'] : 'dark' ?>">
@@ -144,7 +161,7 @@
 		</script>
     <?}?>
     <script type="text/javascript">
-	<?if (DEV) {?>
+	<?if (DEV && isset($user_data)) {?>
 		$(window).ready(()=>{
 			var user_data = <?=json_encode($user_data, JSON_FLAGS)?>;
 			userApp.init(user_data.id, '<?=$source?>', user_data, <?=json_encode($phrases)?>);
@@ -174,3 +191,4 @@
 	</div>
 </body>
 </html>
+<?}?>
