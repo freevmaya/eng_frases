@@ -25,7 +25,7 @@
     	try {
 
 			$items = $dbp->dbAsArray("SELECT * FROM users WHERE source_id={$source_user_id} AND source='{$source}'");
-			
+
 			//$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
 
 	    	if (count($items) == 0) {
@@ -39,9 +39,9 @@
 
     	} catch (Exception $e) {
 
+    		$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
     		trace_error("Error initalize user".
     			"\nError: ".$e->getMessage().
-    			"\nRequest: ".json_encode(Page::$request).
     			"\nItems: ".json_encode($items));
 
     		$source = 'e-'.$source;
