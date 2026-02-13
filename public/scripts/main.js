@@ -328,6 +328,11 @@ Number.prototype.toHHMMSS = function () {
     return Math.min(hours, 30)+':'+minutes+':'+seconds;
 }
 
+function days() {
+    // Количество дней от 1970-01-01 (с округлением вниз)
+    return Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+}
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -342,7 +347,7 @@ function pow(v) {
     return v * v;
 }
 
-function Lang(v, params=null) {
+function Lang(v, params = null) {
     if (isStr(v))
         v = lang[v] ? lang[v] : v;
 
@@ -1072,7 +1077,7 @@ function strEnum(number, pattern, lang = 'ru', show_number = true) {
     if (lang === 'ru') {
         const num = Math.abs(Number(number));
         
-        if (num % 10 === 1 && num % 100 !== 11) {
+        if ((num == 0) || (num % 10 === 1 && num % 100 !== 11)) {
             return `${leftpart}${base}${forms[0]}`;
         } else if (num % 10 >= 2 && num % 10 <= 4 && (num % 100 < 10 || num % 100 >= 20)) {
             return `${leftpart}${base}${forms[1]}`;

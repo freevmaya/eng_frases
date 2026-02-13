@@ -118,6 +118,7 @@
 			version: <?=SCRIPTS_VERSION;?>,
 			user_id: <?=$user_id;?>,
 			excludeDomains: [
+				'generate-phrases',
 				'yandex',
 		        'google.com',
 		        'example.org',

@@ -32,7 +32,8 @@ class StateManager {
             genderVoice: 'male',
 
             backgroundPlayback: true,
-            useSpeakPhrase: true
+            useSpeakPhrase: true,
+            paid_use: {}
         };
         
         this.state = { ...this.DEFAULT_STATE };
@@ -67,6 +68,19 @@ class StateManager {
         window.addEventListener('blur', (e)=>{
             this.saveImmediately();
         });
+    }
+
+    getPaidUse(service, defValue = null) {
+        let all = this.get('paid_use', {});
+
+        if (typeof all[service] == 'undefined')
+            return defValue;
+        return all[service];
+    }
+
+    setPaidUse(service, value) {
+        this.state.paid_use = {...this.state.paid_use, ...{[service]: value}};
+        this.saveState();
     }
 
     get(name, defValue = null) {
@@ -188,7 +202,7 @@ class StateManager {
     }
     
     updatePlaybackState(state) {
-        const playbackKeys = ['currentPhraseIndex', 'showingFirstLang', 'progress'];
+        const playbackKeys = ['currentPhraseIndex', 'showingFirstLang', 'progress', 'paid_use'];
         playbackKeys.forEach(key => {
             if (state[key] !== undefined) {
                 this.state[key] = state[key];

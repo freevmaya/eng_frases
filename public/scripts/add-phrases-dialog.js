@@ -8,7 +8,7 @@ class AddPhrasesDialog {
 
         $(window).on('add_user_list', ()=>{
             if (isEmpty(AI_URL))
-                Alert("Временно недоступно. Надеемся на ваше понимание.");
+                Alert(Lang('temp_unavailable'));
             else this.show();
         });
 
@@ -22,11 +22,31 @@ class AddPhrasesDialog {
     }
 
     show() {
+
+        this.used = stateManager.getPaidUse('phrases_service', this.defaultUseRec());
         this.af_name.val(stateManager.get('currentListName', ''));
         this.af_text.val(stateManager.get('currentPrompt', ''));
-
-        this.modal.modal('show');
+        this.refreshUsed();
         this.refreshDialog();
+        this.modal.modal('show');
+    }
+
+    refreshUsed() {
+
+        if (this.used.date < days()) {
+            this.used.date = days();
+            this.used.count = 0;
+            stateManager.setPaidUse('phrases_service', this.used);
+            this.refreshDialog();
+        }
+
+        this.modal.find('.paid_use').text(Lang("paid_use", [this.used.limit, strEnum(this.used.count, Lang("time_format"), 'ru')]));
+    }
+
+    increaseUsed() {
+        this.used.count++;
+        stateManager.setPaidUse('phrases_service', this.used);
+        this.refreshUsed();
     }
 
     clear() {
@@ -51,8 +71,13 @@ class AddPhrasesDialog {
     }
 
     refreshDialog(waitLoad = false) {
-        this.af_send.bootstrapDisable(isEmpty(this.af_text.val()));
-        this.af_accept.bootstrapDisable(!this.isFull());
+        let overLimit = this.used.count > this.used.limit
+
+        this.af_send.bootstrapDisable(overLimit || isEmpty(this.af_text.val()));
+        this.af_accept.bootstrapDisable(overLimit || !this.isFull());
+        
+        this.modal.find('textarea').bootstrapDisable(overLimit);
+        this.modal.find('input').bootstrapDisable(overLimit);
     }
 
     onInput() {
@@ -71,6 +96,7 @@ class AddPhrasesDialog {
     sendTextRequest() {
         this.sendToServer(this.af_text.val()).
             then((list)=>{
+                this.increaseUsed();
                 this.fillList(list);
             });
     }
@@ -195,7 +221,16 @@ class AddPhrasesDialog {
         });
     }
 
+    defaultUseRec() {
+        return {
+            count: 0,
+            limit: 5,
+            date: days()
+        }
+    }
+
     html() {
+
         return `<div class="modal fade fullscreen-modal" id="addPhrasesModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-fullscreen">
                 <div class="modal-content">
@@ -217,7 +252,8 @@ class AddPhrasesDialog {
                                 <div class="mb-3">
                                     <textarea placeholder="` + Lang("example_short_phrases_about_cats") + `"  class="form-control" id="af_text" rows="3"></textarea>
                                 </div>
-                                <div class="mb-3 text-end">
+                                <div class="mb-3 d-flex justify-content-between">
+                                    <p class="paid_use"></p>
                                     <button type="button" class="btn btn-primary" id="af_send">` + Lang("send") + `</button>
                                 </div>
                             </div>

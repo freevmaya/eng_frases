@@ -59,6 +59,8 @@ $lang = [
     
     // Settings
     'addons' => 'Дополнения',
+    'temp_unavailable' => 'Временно недоступно. Надеемся на ваше понимание.',
+    'paid_use' => 'Ограничение: %1-раз в день, использовано: %2',
     'show_tv_screen' => 'Показывать TV-экран',
     'speech_recognition' => 'Распознавание речи',
     'background_playback' => 'Фоновое воспроизведение',
@@ -76,7 +78,7 @@ $lang = [
     'block_repetition' => 'Повтор блока',
     'phrases_by' => 'фраз по',
     'times' => 'раз',
-    'time_format' => 'раз[у,a,ов]',
+    'time_format' => 'раз[,a,]',
     'voice_gender' => 'Гендер голоса',
     'male' => 'Мужской',
     'female' => 'Женский',
