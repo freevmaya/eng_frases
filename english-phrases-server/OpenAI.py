@@ -16,7 +16,7 @@ def generate_phrases(prompt_text):
         raise ValueError("HF_TOKEN environment variable is not set")
     
     client = InferenceClient(
-        model="moonshotai/Kimi-K2-Instruct-0905",
+        model="zai-org/GLM-5",
         token=api_key
     )
     
