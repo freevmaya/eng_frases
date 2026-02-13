@@ -22,7 +22,7 @@
 
     	try {
 
-	    	$items = $userModel->getItems(['source_id' => $source_user_id, 'source A'=>$source]);
+	    	$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
 	    	$new_user = false;
 
 	    	if (count($items) == 0) {
