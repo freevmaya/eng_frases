@@ -38,15 +38,21 @@
     	} catch (Exception $e) {
 
     		$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
-    		trace_error("Error initalize user".
-    			"\nError: ".$e->getMessage().
-    			"\nResearch result: ".json_encode($items));
 
     		if (count($items) > 0) {
+
     			$user_id = $items[0]['id'];
+
+    			trace("Warning initalize user {$user_id}".
+	    				"\nError: ".$e->getMessage());
     		} else {
+
+	    		trace_error("Error initalize user".
+	    				"\nError: ".$e->getMessage());
+
 	    		$source = 'e-'.$source;
 	    		$user_id = 1;
+	    		
 	    		$userModel->Update([
 	    			'id'=>$user_id,
 	    			'source_id'=>$source_user_id,
