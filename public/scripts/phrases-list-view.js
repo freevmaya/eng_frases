@@ -102,7 +102,7 @@ class PhrasesListView {
     		});
     }
 
-    refreshAccordion() {
+    refreshAccordion(except = null) {
     	let items = this.accordion.children();
 	    let count = items.length;
 
@@ -119,6 +119,18 @@ class PhrasesListView {
 	    		item.css('height', show ? hfree : item_h);
 	    	});
 	    }
+
+	    if (except) {
+			let exps = this.elem.find('[aria-expanded="true"]');
+			if (exps.length == 0) {
+				let list = this.elem.find('.accordion-collapse');
+				list.each((i, item) => {
+					if ($(item).attr('id') != except.attr('id')) {
+						$(item).collapse('show');
+					}
+				})
+			}
+		}
     }
 
     refreshItems() {
@@ -189,8 +201,9 @@ class PhrasesListView {
     	this.elem.append(this.accordion);
 
     	this.refreshAccordion();
+
 		this.accordion.on('hidden.bs.collapse', event => {
-			this.refreshAccordion();
+			this.refreshAccordion($(event.target));
 		})
 		this.accordion.on('shown.bs.collapse', event => {
 			this.refreshAccordion();
