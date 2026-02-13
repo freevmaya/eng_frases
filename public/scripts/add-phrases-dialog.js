@@ -78,6 +78,7 @@ class AddPhrasesDialog {
         
         this.modal.find('textarea').bootstrapDisable(overLimit);
         this.modal.find('input').bootstrapDisable(overLimit);
+        this.modal.find('.paid_use').toggleClass('warning', overLimit);
     }
 
     onInput() {

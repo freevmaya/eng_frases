@@ -568,6 +568,10 @@ footer {
     margin: 0px !important;
 }
 
+.warning {
+    color: var(--warning);
+}
+
 
 .list-view .header h6, .list-view .item a, .paid_use {
     overflow: hidden;
