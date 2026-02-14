@@ -29,7 +29,7 @@ class VRecognition {
                     this.showResult();
                 }
             });
-        }
+        } else this.playerElem.css('pointer-events', 'none');
     }
 
     clearListeners() {

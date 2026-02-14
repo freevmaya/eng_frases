@@ -19,7 +19,7 @@ class StateManager {
             progress: {},
             
             currentPhraseIndex: 0,
-            showingFirstLang: true,
+            indexInMode: 0,
             
             currentListKey: null,
             randomSeed: null,
@@ -202,7 +202,7 @@ class StateManager {
     }
     
     updatePlaybackState(state) {
-        const playbackKeys = ['currentPhraseIndex', 'showingFirstLang', 'progress', 'paid_use'];
+        const playbackKeys = ['currentPhraseIndex', 'indexInMode', 'progress', 'paid_use'];
         playbackKeys.forEach(key => {
             if (state[key] !== undefined) {
                 this.state[key] = state[key];
@@ -213,7 +213,7 @@ class StateManager {
     
     resetPlayback() {
         this.state.currentPhraseIndex = 0;
-        this.state.showingFirstLang = true;
+        this.state.indexInMode = 0;
         this.saveState();
     }
     

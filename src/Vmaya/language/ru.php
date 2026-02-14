@@ -218,5 +218,13 @@ $lang = [
     
     // VK/TG
     'vk_layout' => 'vk_layout',
+    'mode-direction' => 'Режим воспроизведения',
+    'native-target' => 'Рус → Англ(звук)',
+    'target-native' => 'Англ → Рус(звук)',
+    'native-target2' => 'Рус → Англ(звук) 2раза',
+    'native-target-both' => 'Рус(звук) → Англ(звук)',
+    'target-native-both' => 'Англ(звук) → Рус(звук)',
+    'native-target2-both' => 'Рус(звук) → Англ(звук) 2раза',
+    'target2-native-both' => 'Англ(звук) 2раза → Рус(звук)'
 ];
 ?>

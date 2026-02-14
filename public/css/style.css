@@ -204,7 +204,7 @@
 
     min-width: 0; /* КРИТИЧЕСКИ ВАЖНО: разрешает сжатие */
     box-sizing: border-box;
-    line-height: 1em;
+    line-height: 1.2em;
 }
 
 .phrase-text, .phrase-hint {

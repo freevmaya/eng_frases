@@ -55,29 +55,11 @@
 
                 <div class="mb-4">
                     <h6 class="text-info mb-3">
-                        <i class="bi bi-arrow-left-right me-2"></i><?=Lang('translation_mode')?>
+                        <i class="bi bi-arrow-left-right me-2"></i><?=Lang('mode-direction')?>
                     </h6>
                     <div class="btn-group w-100" role="group">
-                        <button type="button" class="btn btn-outline-primary" data-direction="native-target">
-                            <?=Lang('ru_en_audio')?>
-                        </button>
-                        <button type="button" class="btn btn-outline-primary" data-direction="target-native">
-                            <?=Lang('en_ru_audio')?>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <h6 class="text-info mb-3">
-                        <i class="bi bi-arrow-repeat me-2"></i><?=Lang('both_directions_mode')?>
-                    </h6>
-                    <div class="btn-group w-100" role="group">
-                        <button type="button" class="btn btn-outline-primary" data-direction="target-native-both">
-                            <?=Lang('en_audio_ru_audio')?>
-                        </button>
-                        <button type="button" class="btn btn-outline-primary" data-direction="native-target-both">
-                            <?=Lang('ru_audio_en_audio')?>
-                        </button>
+                        <select id="mode-direction" class="form-select bg-form border-secondary">
+                        </select>
                     </div>
                 </div>
 

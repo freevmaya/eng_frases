@@ -10,6 +10,83 @@ const AppConst = {
     charTime: {
         target: 20,
         native: 30
+    },
+    directions: {
+        'native-target': [
+            {
+                show: 'native', 
+                speak: 'target', 
+                listen: 'target'
+            }
+        ],
+        'target-native': [
+            {
+                show: 'target', 
+                speak: 'native', 
+                listen: 'target'
+            }
+        ],
+        'native-target2': [
+            {
+                show: 'native', 
+                speak: 'target', 
+                listen: 'target'
+            },{
+                show: 'native', 
+                speak: 'target', 
+                listen: 'target'
+            }
+        ],
+        'native-target-both': [
+            {
+                show: 'native', 
+                speak: 'native', 
+                listen: 'target'
+            },{
+                show: 'target', 
+                speak: 'target', 
+                listen: 'target'
+            }
+        ],
+        'target-native-both': [{
+                show: 'target', 
+                speak: 'target', 
+                listen: 'target'
+            },{
+                show: 'native', 
+                speak: 'native', 
+                listen: 'target'
+            }
+        ],
+        'native-target2-both': [
+            {
+                show: 'native', 
+                speak: 'native', 
+                listen: 'target'
+            },{
+                show: 'target', 
+                speak: 'target', 
+                listen: 'target'
+            },{
+                show: 'target', 
+                speak: 'target', 
+                listen: 'target'
+            }
+        ],
+        'target2-native-both': [{
+                show: 'target', 
+                speak: 'target', 
+                listen: 'target'
+            },{
+                show: 'target', 
+                speak: 'target', 
+                listen: 'target'
+            },{
+                show: 'native', 
+                speak: 'native', 
+                listen: 'target'
+            }
+        ]
     }
 }
 
@@ -204,6 +281,7 @@ function Application() {
     };
 
     const elements = {
+        mode_direction: $('#mode-direction'),
         phraseText: $('#phraseText'),
         phraseHint: $('#phraseHint'),
         phraseScaleBlock: $('.scale-block'),
@@ -236,6 +314,7 @@ function Application() {
     else $('#recognizeToggleForm').css('display', 'none');
 
     function init() {
+        initElements();
         setupEventListeners();
         applyTvScreenState();
 
@@ -249,6 +328,13 @@ function Application() {
         if (phrasesData)
             afterLoadList(phrasesData);
         else loadList();
+    }
+
+    function initElements() {
+        let keys = Object.keys(AppConst.directions);
+        keys.forEach(key=>{
+            elements.mode_direction.append(`<option value="${key}">` + Lang(key) + `</option>`);
+        });
     }
 
     function setInitParams(init_params) {
@@ -292,39 +378,10 @@ function Application() {
         }
     }
 
-    function randomTest() {
-        let keys = Object.keys(phrasesData);
-        setTimeout(()=>{
-            let index = Math.round(Math.random() * (keys.length - 1));
-            setCurrentType(keys[index]);
-            randomTest();
-        }, 10 + Math.round(Math.random() * 100));
-    }
-
     function loadList() {
         Ajax({
             action: 'getList'
         }).then(afterLoadList);
-    }
-
-    function loadPhrasesFromJson(fileUrl) {
-        return fetch(fileUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(Lang("failed_to_load").replace('%1', fileUrl));
-                    }
-                    return response.json();
-                });
-    }
-
-    function fullPhraseList(select) {
-
-        select.empty();
-        select.append($(`<option value="all">` + Lang("all_phrases_mixed") + `</option>`));
-        Object.keys(phrasesData).forEach(key => {
-            let count = phrasesData[key].length;
-            select.append($(`<option value="${key}">${key} (${count})</option>`));
-        });
     }
 
     function initPhraseList() {
@@ -432,11 +489,6 @@ function Application() {
             elements.pauseValue.text(value + ' ' + Lang("sec"));
         });
         
-        $('[data-direction]').click(function() {
-            $('[data-direction]').removeClass('active');
-            $(this).addClass('active');
-        });
-        
         $('[data-order]').click(function() {
             $('[data-order]').removeClass('active');
             $(this).addClass('active');
@@ -531,6 +583,8 @@ function Application() {
             stopPlayback();
 
         elements.speedValue.text(state.speed.toFixed(1) + 'x');
+
+        elements.mode_direction.val(state.direction);
         
         elements.pauseSlider.val(state.pauseBetweenPhrases);
         elements.pauseValue.text(state.pauseBetweenPhrases + ' ' + Lang("sec"));
@@ -542,18 +596,21 @@ function Application() {
         elements.repeatLength.val(state.repeatLength);
         elements.repeatCount.val(state.repeatCount);
         elements.genderVoice.val(state.genderVoice);
-        
-        $(`[data-direction="${state.direction}"]`).addClass('active').siblings().removeClass('active');
+
         $(`[data-order="${state.order}"]`).addClass('active').siblings().removeClass('active');
         
         $('#settingsModal').modal('show');
     }
 
     function applySettingsFromModal() {
+
+        let direction = elements.mode_direction.val();
+        state.indexInMode = Math.min(AppConst.directions[direction].length - 1, state.indexInMode);
+
         const newSettings = {
 
             pauseBetweenPhrases: parseFloat(elements.pauseSlider.val()),
-            direction: $('[data-direction].active').data('direction'),
+            direction: direction,
             order: $('[data-order].active').data('order'),
             showTvScreen: elements.tvScreenToggle.prop('checked'),
             recognize: elements.recognizeToggle.prop('checked'),
@@ -561,7 +618,8 @@ function Application() {
             repeatCount: elements.repeatCount.val(),
             genderVoice: elements.genderVoice.val(),
             backgroundPlayback: elements.backgroundPlayback.prop('checked'),
-            useSpeakPhrase: elements.useSpeakPhrase.prop('checked')
+            useSpeakPhrase: elements.useSpeakPhrase.prop('checked'),
+            indexInMode: state.indexInMode
         };
 
         if (newSettings.repeatCount < getCurentRepeat())
@@ -623,7 +681,7 @@ function Application() {
             stateManager.setCurrentListData(listKey);
             stateManager.updatePlaybackState({
                 currentPhraseIndex: state.currentPhraseIndex,
-                showingFirstLang: state.showingFirstLang,
+                indexInMode: state.indexInMode,
                 currentListType: state.currentListType,
                 order: state.order,
             });
@@ -698,11 +756,11 @@ function Application() {
         
         stateManager.isPlaying  = true;
         stateManager.isPaused   = false;
-        state.showingFirstLang  = true;
+        state.indexInMode       = 0;
         appData.missOne         = state.repeatLength > 1;
         
         stateManager.updatePlaybackState({
-            showingFirstLang: true
+            indexInMode: state.indexInMode
         });
         
         updateControls();
@@ -798,23 +856,6 @@ function Application() {
                 appData.currentPhraseList.length - 1);
     }
 
-    function playCurrentPhrase() {
-        if (!stateManager.isPlaying || stateManager.isPaused) return;
-        
-        if (state.currentPhraseIndex >= appData.currentPhraseList.length) {
-            setCurrentPhraseIndex(0);
-        }
-        
-        appData.currentPhrase = appData.currentPhraseList[state.currentPhraseIndex];
-        updateDisplay();
-        
-        if (isBothDirectionsMode()) {
-            playBothDirections();
-        } else {
-            playSingleDirection();
-        }
-    }
-
     function isBothDirectionsMode() {
         return state.direction.includes('both');
     }
@@ -847,9 +888,9 @@ function Application() {
     function setCurrentPhraseIndex(index) {
         let newIndex = Math.max(0, Math.min(index, appData.currentPhraseList.length - 1));
 
-        state.currentPhraseIndex = newIndex;
-        state.showingFirstLang = true;
-        appData.currentPhrase = appData.currentPhraseList[state.currentPhraseIndex];
+        state.currentPhraseIndex    = newIndex;
+        state.indexInMode           = 0;
+        appData.currentPhrase       = appData.currentPhraseList[state.currentPhraseIndex];
 
         stateManager.updatePlaybackState({
             currentPhraseIndex: state.currentPhraseIndex
@@ -884,63 +925,40 @@ function Application() {
                 });
     }
 
-    function playBothDirections() {
-
-        if (!isPlaying()) return;
-
-        const isEnFirst = state.direction === 'target-native-both';
-        const firstLang = isEnFirst ? 'target' : 'native';
-        const secondLang = isEnFirst ? 'native' : 'target';
+    function playCurrentPhrase() {
+        if (!stateManager.isPlaying || stateManager.isPaused) return;
         
-        if (state.showingFirstLang) {
-            stopRecognition();
-
-            _speak(firstLang, firstLang, ()=>{
-                startCurrentRecognition('target');
-
-                speakPause(() => {
-                    summingUpRecognition();
-                    state.showingFirstLang = false;
-                    playCurrentPhrase();
-                }, firstLang);
-            });
-        } else {
-            _speak(secondLang, secondLang, ()=>{
-                
-                speakPause(() => {
-                    summingUpRecognition();
-                    incCurrentPhraseIndex();
-                    playCurrentPhrase();
-                }, secondLang);
-            });
+        if (state.currentPhraseIndex >= appData.currentPhraseList.length) {
+            setCurrentPhraseIndex(0);
         }
-    }
+        
+        appData.currentPhrase = appData.currentPhraseList[state.currentPhraseIndex];
+        updateDisplay();
 
-    function playSingleDirection() {
 
-        if (!isPlaying()) return;
+        let modeSetting = AppConst.directions[state.direction][state.indexInMode];
+        _speak(modeSetting.show, modeSetting.speak, ()=>{
 
-        const showLang = state.direction === 'target-native' ? 'target' : 'native';
-        const speakLang = state.direction === 'target-native' ? 'native' : 'target';
-
-        _speak(showLang, speakLang, ()=>{
-
-            startCurrentRecognition('target');     
+            startCurrentRecognition(modeSetting.listen);
+                
             speakPause(() => {
                 summingUpRecognition();
-                incCurrentPhraseIndex();
+
+                if (state.indexInMode < AppConst.directions[state.direction].length - 1)
+                    state.indexInMode++;
+                else incCurrentPhraseIndex();
                 playCurrentPhrase();
-            }, speakLang);
+            }, modeSetting.speak);
         });
     }
 
-    function summingUpRecognition(phraseDirect) {
+    function summingUpRecognition() {
         if (recognition && stateManager.state.recognize) 
             recognition.SummingUp();
     }
 
     function startCurrentRecognition(phraseDirect) {
-        if (recognition && stateManager.state.recognize) 
+        if (phraseDirect && recognition && stateManager.state.recognize) 
             recognition.startRecognition(appData.currentPhrase, phraseDirect);
     }
 
@@ -1021,15 +1039,7 @@ function Application() {
         
         if (appData.currentPhrase) {
 
-            let showLang = state.direction === 'target-native' ? 'target' : 'native';
-
-            if (isBothDirectionsMode()) {
-                let tton = state.direction === 'target-native-both';
-                if (!state.showingFirstLang)
-                    showLang = tton ? 'native' : 'target';
-                else showLang = tton ? 'target' : 'native';
-            }
-
+            let showLang = AppConst.directions[state.direction][state.indexInMode].show;
             showPhrase(showLang);
             
             let currentRepeat = getCurentRepeat();
@@ -1055,14 +1065,6 @@ function Application() {
             elements.progressBar.removeClass('progress-bar-animated');
         else if (!elements.progressBar.hasClass('progress-bar-animated'))
             elements.progressBar.addClass('progress-bar-animated');
-    }
-
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
     }
 };
 
