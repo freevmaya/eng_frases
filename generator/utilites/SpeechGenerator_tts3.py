@@ -486,7 +486,7 @@ class EnhancedSpeechGenerator:
             
             # Обрабатываем каждую фразу в категории
             for i, phrase_item in enumerate(phrases_list, 1):
-                direction = phrase_item.get('direction', '')
+                direction = phrase_item.get('direction', 'en-ru')
                 target_text = phrase_item.get('target', '').strip()
                 native_text = phrase_item.get('native', '').strip()
                 
