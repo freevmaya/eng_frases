@@ -539,6 +539,13 @@ function Application() {
                 showAlert(Lang("cannot_play_this_phrase"));
                 stopPlayback();
             }
+
+            if (typeof ErrorTracker !== 'undefined')
+                ErrorTracker.handleError({
+                    type: 'play_autio_error',
+                    message: error.name,
+                    source: 'app.js'
+                });
         });
 
         $(window).on('added_user_list', (e, item)=> {

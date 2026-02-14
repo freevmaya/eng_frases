@@ -123,14 +123,6 @@
     </div>
 </div>
 
-<!-- Header -->
-<header class="text-center mb-1">
-    <h1 class="display-4 text-gradient app-name">
-        <i class="bi bi-translate text-primary"></i>
-        <?=Lang('app_name');?>
-    </h1>
-</header>
-
 <!-- Main Container -->
 <div class="container py-6">
 

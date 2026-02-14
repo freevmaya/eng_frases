@@ -20,7 +20,6 @@ class EnhancedSpeechGenerator:
     def __init__(self, json_file_path: Optional[str] = None, 
                  use_edge_tts: bool = True,
                  voice_name: Optional[str] = None,
-                 voice_type: Optional[str] = None,
                  output_dir: str = "../public/data/voises",
                  style: str = 'neutral'):
         """
@@ -51,9 +50,9 @@ class EnhancedSpeechGenerator:
             self.edge_tts_available = False
         
         self.voice_name = voice_name
-        self.voice_type = voice_type if voice_type else 'male'
 
-        logger.info(f"voice_type: {self.voice_type}")
+        # Типы голосов для генерации
+        self.voice_types = ['male', 'female']
         
         # Базовая директория для сохранения аудиофайлов
         self.base_output_dir = output_dir
@@ -270,13 +269,14 @@ class EnhancedSpeechGenerator:
         except json.JSONDecodeError as e:
             raise ValueError(f"Ошибка чтения JSON файла: {e}")
     
-    def _generate_filename(self, phrase: str, lang_code: str) -> str:
+    def _generate_filename(self, phrase: str, lang_code: str, voice_type: str) -> str:
         """
-        Генерация имени файла на основе текста и языка
+        Генерация имени файла на основе текста, языка и типа голоса
         
         Args:
             phrase: Текст фразы
             lang_code: Код языка (en, ru, hi)
+            voice_type: Тип голоса (male, female)
         
         Returns:
             str: Имя файла
@@ -287,8 +287,8 @@ class EnhancedSpeechGenerator:
         # Создаем MD5 хэш
         phrase_hash = hashlib.md5(normalized_phrase.encode('utf-8')).hexdigest()
         
-        # Формат: lang_hash.mp3
-        return f"{lang_code}_{phrase_hash}.mp3"
+        # Формат: voice_type_lang_hash.mp3
+        return f"{voice_type}_{lang_code}_{phrase_hash}.mp3"
     
     def _generate_with_gtts(self, text: str, lang: str, settings: Dict) -> Optional[bytes]:
         """Генерация аудио с помощью gTTS"""
@@ -320,17 +320,17 @@ class EnhancedSpeechGenerator:
             logger.error(f"Ошибка gTTS: {e}")
             return None
     
-    def _generate_with_edge_tts(self, text: str, lang: str, settings: Dict) -> Optional[bytes]:
+    def _generate_with_edge_tts(self, text: str, lang: str, voice_type: str, settings: Dict) -> Optional[bytes]:
         """Генерация аудио с помощью Edge-TTS (высокое качество)"""
         try:
             import edge_tts
             import asyncio
             
-            # Выбираем голос
+            # Выбираем голос на основе типа
             voice = settings.get('voice_name')
             
             if not voice:
-                voice = self.get_voice_by_preference(lang, self.voice_type, style=self.style)
+                voice = self.get_voice_by_preference(lang, voice_type, style=self.style)
 
             rate = settings.get('rate', '+0%')
             
@@ -352,13 +352,14 @@ class EnhancedSpeechGenerator:
             logger.error(f"Ошибка Edge-TTS: {e}")
             return None
     
-    def generate_audio(self, text: str, lang_code: str) -> Optional[Dict]:
+    def generate_audio(self, text: str, lang_code: str, voice_type: str) -> Optional[Dict]:
         """
-        Генерация аудиофайла для указанного текста и языка
+        Генерация аудиофайла для указанного текста, языка и типа голоса
         
         Args:
             text: Текст фразы
             lang_code: Код языка (en, ru, hi)
+            voice_type: Тип голоса (male, female)
         
         Returns:
             dict: Информация о сгенерированном файле
@@ -372,7 +373,7 @@ class EnhancedSpeechGenerator:
         clean_text = re.sub(r'\([^()]*\)|\[[^\[\]]*\]', '', ' '.join(text.strip().split())).strip()
         
         # Генерация имени файла
-        filename = self._generate_filename(clean_text, lang_code)
+        filename = self._generate_filename(clean_text, lang_code, voice_type)
         
         # Настройки
         settings = {
@@ -380,7 +381,7 @@ class EnhancedSpeechGenerator:
         }
         
         # Определение директории для сохранения
-        save_dir = Path(self.base_output_dir) / self.voice_type / lang_code
+        save_dir = Path(self.base_output_dir) / voice_type / lang_code
         save_dir.mkdir(parents=True, exist_ok=True)
         
         # Полный путь к файлу
@@ -392,6 +393,7 @@ class EnhancedSpeechGenerator:
             return {
                 'text': clean_text,
                 'lang_code': lang_code,
+                'voice_type': voice_type,
                 'filename': filename,
                 'filepath': str(filepath),
                 'file_size': filepath.stat().st_size,
@@ -399,13 +401,13 @@ class EnhancedSpeechGenerator:
                 'engine': 'edge_tts' if self.use_edge_tts else 'gtts'
             }
         
-        logger.info(f"Генерация [{lang_code}]: '{clean_text[:60]}...' ({'Edge-TTS' if self.use_edge_tts else 'gTTS'})")
+        logger.info(f"Генерация [{voice_type}/{lang_code}]: '{clean_text[:60]}...' ({'Edge-TTS' if self.use_edge_tts else 'gTTS'})")
         
         # Выбираем метод генерации
         audio_data = None
         
         if self.use_edge_tts and self.edge_tts_available:
-            audio_data = self._generate_with_edge_tts(clean_text, lang_code, settings)
+            audio_data = self._generate_with_edge_tts(clean_text, lang_code, voice_type, settings)
         else:
             # Настройки для gTTS
             gtts_settings = {
@@ -430,6 +432,7 @@ class EnhancedSpeechGenerator:
                 return {
                     'text': clean_text,
                     'lang_code': lang_code,
+                    'voice_type': voice_type,
                     'filename': filename,
                     'filepath': str(filepath),
                     'file_size': filepath.stat().st_size,
@@ -437,15 +440,12 @@ class EnhancedSpeechGenerator:
                     'engine': 'edge_tts' if self.use_edge_tts else 'gtts'
                 }
         
-        logger.error(f"Ошибка генерации для [{lang_code}]: '{clean_text[:30]}...'")
+        logger.error(f"Ошибка генерации для [{voice_type}/{lang_code}]: '{clean_text[:30]}...'")
         return None
     
-    def generate_all_from_json(self, voice_type: Optional[str] = None) -> Dict:
-        """Генерация всех аудиофайлов из JSON с определением языков по direction"""
+    def generate_all_from_json(self) -> Dict:
+        """Генерация всех аудиофайлов из JSON для всех типов голосов"""
         
-        if voice_type:
-            self.voice_type = voice_type
-
         data = self.load_json_data()
         
         if not data:
@@ -457,23 +457,35 @@ class EnhancedSpeechGenerator:
         
         results = {
             'engine': 'edge_tts' if self.use_edge_tts else 'gtts',
-            'voice_type': self.voice_type,
             'total_categories': 0,
             'total_phrases': 0,
+            'total_operations': 0,
             'generated_files': 0,
             'existing_files': 0,
             'errors': 0,
-            'languages': {
-                'en': {'files': 0, 'existing': 0, 'errors': 0},
-                'ru': {'files': 0, 'existing': 0, 'errors': 0},
-                'hi': {'files': 0, 'existing': 0, 'errors': 0}
-            },
-            'directions': {}
+            'voice_types': {
+                'male': {
+                    'languages': {
+                        'en': {'files': 0, 'existing': 0, 'errors': 0},
+                        'ru': {'files': 0, 'existing': 0, 'errors': 0},
+                        'hi': {'files': 0, 'existing': 0, 'errors': 0}
+                    },
+                    'directions': {}
+                },
+                'female': {
+                    'languages': {
+                        'en': {'files': 0, 'existing': 0, 'errors': 0},
+                        'ru': {'files': 0, 'existing': 0, 'errors': 0},
+                        'hi': {'files': 0, 'existing': 0, 'errors': 0}
+                    },
+                    'directions': {}
+                }
+            }
         }
         
         logger.info(f"\n{'='*60}")
-        logger.info(f"ГЕНЕРАЦИЯ АУДИОФАЙЛОВ ({'Edge-TTS' if self.use_edge_tts else 'gTTS'})")
-        logger.info(f"Голос: {self.voice_type}")
+        logger.info(f"ГЕНЕРАЦИЯ АУДИОФАЙЛОВ ДЛЯ ВСЕХ ТИПОВ ГОЛОСОВ ({'Edge-TTS' if self.use_edge_tts else 'gTTS'})")
+        logger.info(f"Стиль голоса: {self.style}")
         logger.info(f"{'='*60}")
         
         # Обрабатываем каждую категорию
@@ -499,106 +511,118 @@ class EnhancedSpeechGenerator:
                 source_lang = lang_mapping['source']
                 target_lang = lang_mapping['target']
                 
-                # Инициализируем статистику для направления если нужно
-                if direction not in results['directions']:
-                    results['directions'][direction] = {
-                        'files': 0,
-                        'existing': 0,
-                        'errors': 0
-                    }
-                
                 logger.info(f"  Фраза #{i} [{direction}]:")
                 
-                # Генерируем аудио для target (язык source)
-                if target_text:
-                    logger.info(f"    Target ({source_lang}): '{target_text[:50]}...'")
-                    target_result = self.generate_audio(target_text, source_lang)
+                # Для каждого типа голоса
+                for voice_type in self.voice_types:
+                    # Инициализируем статистику для направления если нужно
+                    if direction not in results['voice_types'][voice_type]['directions']:
+                        results['voice_types'][voice_type]['directions'][direction] = {
+                            'files': 0,
+                            'existing': 0,
+                            'errors': 0
+                        }
                     
-                    if target_result:
-                        if target_result.get('already_exists'):
-                            results['languages'][source_lang]['existing'] += 1
-                            results['directions'][direction]['existing'] += 1
-                            results['existing_files'] += 1
-                        else:
-                            results['languages'][source_lang]['files'] += 1
-                            results['directions'][direction]['files'] += 1
-                            results['generated_files'] += 1
-                            logger.info(f"      ✓ Файл создан")
-                    else:
-                        results['languages'][source_lang]['errors'] += 1
-                        results['directions'][direction]['errors'] += 1
-                        results['errors'] += 1
-                        logger.info(f"      ✗ Ошибка создания файла")
-                
-                # Генерируем аудио для native (язык target)
-                if native_text:
-                    logger.info(f"    Native ({target_lang}): '{native_text[:50]}...'")
-                    native_result = self.generate_audio(native_text, target_lang)
+                    logger.info(f"    Тип голоса: {voice_type}")
                     
-                    if native_result:
-                        if native_result.get('already_exists'):
-                            results['languages'][target_lang]['existing'] += 1
-                            results['directions'][direction]['existing'] += 1
-                            results['existing_files'] += 1
+                    # Генерируем аудио для target (язык source)
+                    if target_text:
+                        logger.info(f"      Target ({source_lang}): '{target_text[:50]}...'")
+                        target_result = self.generate_audio(target_text, source_lang, voice_type)
+                        
+                        if target_result:
+                            if target_result.get('already_exists'):
+                                results['voice_types'][voice_type]['languages'][source_lang]['existing'] += 1
+                                results['voice_types'][voice_type]['directions'][direction]['existing'] += 1
+                                results['existing_files'] += 1
+                            else:
+                                results['voice_types'][voice_type]['languages'][source_lang]['files'] += 1
+                                results['voice_types'][voice_type]['directions'][direction]['files'] += 1
+                                results['generated_files'] += 1
+                                logger.info(f"        ✓ Файл создан")
+                            results['total_operations'] += 1
                         else:
-                            results['languages'][target_lang]['files'] += 1
-                            results['directions'][direction]['files'] += 1
-                            results['generated_files'] += 1
-                            logger.info(f"      ✓ Файл создан")
-                    else:
-                        results['languages'][target_lang]['errors'] += 1
-                        results['directions'][direction]['errors'] += 1
-                        results['errors'] += 1
-                        logger.info(f"      ✗ Ошибка создания файла")
-                
-                results['total_phrases'] += 1
+                            results['voice_types'][voice_type]['languages'][source_lang]['errors'] += 1
+                            results['voice_types'][voice_type]['directions'][direction]['errors'] += 1
+                            results['errors'] += 1
+                            results['total_operations'] += 1
+                            logger.info(f"        ✗ Ошибка создания файла")
+                    
+                    # Генерируем аудио для native (язык target)
+                    if native_text:
+                        logger.info(f"      Native ({target_lang}): '{native_text[:50]}...'")
+                        native_result = self.generate_audio(native_text, target_lang, voice_type)
+                        
+                        if native_result:
+                            if native_result.get('already_exists'):
+                                results['voice_types'][voice_type]['languages'][target_lang]['existing'] += 1
+                                results['voice_types'][voice_type]['directions'][direction]['existing'] += 1
+                                results['existing_files'] += 1
+                            else:
+                                results['voice_types'][voice_type]['languages'][target_lang]['files'] += 1
+                                results['voice_types'][voice_type]['directions'][direction]['files'] += 1
+                                results['generated_files'] += 1
+                                logger.info(f"        ✓ Файл создан")
+                            results['total_operations'] += 1
+                        else:
+                            results['voice_types'][voice_type]['languages'][target_lang]['errors'] += 1
+                            results['voice_types'][voice_type]['directions'][direction]['errors'] += 1
+                            results['errors'] += 1
+                            results['total_operations'] += 1
+                            logger.info(f"        ✗ Ошибка создания файла")
+                    
+                    results['total_phrases'] += 1
         
         # Итоги
         logger.info(f"\n{'='*60}")
         logger.info("ИТОГИ:")
         logger.info(f"{'='*60}")
         logger.info(f"Движок: {results['engine']}")
-        logger.info(f"Голос: {results['voice_type']}")
+        logger.info(f"Стиль голоса: {self.style}")
         logger.info(f"Категорий: {results['total_categories']}")
         logger.info(f"Фраз: {results['total_phrases']}")
+        logger.info(f"Всего операций генерации: {results['total_operations']}")
         logger.info(f"Новых файлов: {results['generated_files']}")
         logger.info(f"Существовало: {results['existing_files']}")
         logger.info(f"Ошибок: {results['errors']}")
         logger.info(f"Файлы сохранены в: {self.base_output_dir}/")
         
-        # Показываем статистику по языкам
-        logger.info(f"\nСтатистика по языкам:")
-        for lang_code in ['en', 'ru', 'hi']:
-            stats = results['languages'][lang_code]
-            logger.info(f"  {lang_code}: создано {stats['files']}, существовало {stats['existing']}, ошибок {stats['errors']}")
+        # Показываем статистику по типам голосов и языкам
+        logger.info(f"\nСтатистика по типам голосов и языкам:")
+        for voice_type in self.voice_types:
+            logger.info(f"\n  {voice_type.upper()}:")
+            for lang_code in ['en', 'ru', 'hi']:
+                stats = results['voice_types'][voice_type]['languages'][lang_code]
+                logger.info(f"    {lang_code}: создано {stats['files']}, существовало {stats['existing']}, ошибок {stats['errors']}")
         
-        # Показываем статистику по направлениям
+        # Показываем статистику по направлениям для каждого типа голоса
         logger.info(f"\nСтатистика по направлениям:")
-        for direction, stats in results['directions'].items():
-            logger.info(f"  {direction}: создано {stats['files']}, существовало {stats['existing']}, ошибок {stats['errors']}")
+        for voice_type in self.voice_types:
+            logger.info(f"\n  {voice_type.upper()}:")
+            for direction, stats in results['voice_types'][voice_type]['directions'].items():
+                logger.info(f"    {direction}: создано {stats['files']}, существовало {stats['existing']}, ошибок {stats['errors']}")
         
         # Показываем структуру директорий
         logger.info(f"\nСтруктура директорий:")
-        for lang_code in ['en', 'ru', 'hi']:
-            lang_dir = Path(self.base_output_dir) / self.voice_type / lang_code
-            if lang_dir.exists():
-                mp3_files = list(lang_dir.glob("*.mp3"))
-                logger.info(f"  {lang_code}/ - {len(mp3_files)} файлов")
+        for voice_type in self.voice_types:
+            for lang_code in ['en', 'ru', 'hi']:
+                lang_dir = Path(self.base_output_dir) / voice_type / lang_code
+                if lang_dir.exists():
+                    mp3_files = list(lang_dir.glob("*.mp3"))
+                    logger.info(f"  {voice_type}/{lang_code}/ - {len(mp3_files)} файлов")
         
         return results
 
 def main():
     import argparse
     
-    parser = argparse.ArgumentParser(description='Генератор речи с поддержкой хинди и определением языков из direction')
+    parser = argparse.ArgumentParser(description='Генератор речи для всех типов голосов (male и female)')
     parser.add_argument('json_file', help='Путь к JSON файлу с фразами')
     parser.add_argument('--output-dir', default='../public/data/voises',
                        help='Директория для сохранения аудиофайлов')
     parser.add_argument('--use-gtts', action='store_true',
                        help='Использовать gTTS вместо Edge-TTS')
     parser.add_argument('--voice', help='Имя конкретного голоса для Edge-TTS')
-    parser.add_argument('--voice-type', choices=['male', 'female'], default='female',
-                       help='Тип голоса (male/female)')
     parser.add_argument('--style', choices=['neutral', 'friendly', 'professional', 'energetic', 'young', 'child'], default='neutral',
                        help='Стиль голоса (neutral/friendly/professional/energetic/young/child)')
     
@@ -609,8 +633,8 @@ def main():
         json_file_path=args.json_file,
         use_edge_tts=not args.use_gtts,
         voice_name=args.voice,
-        voice_type=args.voice_type,
-        output_dir=args.output_dir
+        output_dir=args.output_dir,
+        style=args.style
     )
     
     # Запускаем генерацию

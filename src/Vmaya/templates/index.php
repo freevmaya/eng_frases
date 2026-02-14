@@ -67,6 +67,13 @@
 <body class="theme site">
     <div class="page">
         <div class="wrap-content">
+            <!-- Header -->
+            <header class="text-center mb-1">
+                <h1 class="display-4 text-gradient app-name">
+                    <i class="bi bi-translate text-primary"></i>
+                    <?=Lang('app_name');?>
+                </h1>
+            </header>
             <?=$content?>
         </div>
         <?include('message.php')?>
