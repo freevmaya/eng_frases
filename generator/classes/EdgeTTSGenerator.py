@@ -64,7 +64,8 @@ class EdgeTTSGenerator:
         
         # Дополнительная обработка: разложение комбинированных символов
         # Например, символ "а́" может быть представлен как комбинация 'а' + U+0301
-        normalized_text = result;#unicodedata.normalize('NFD', result)
+        normalized_text = result
+        #normalized_text = unicodedata.normalize('NFD', result)
         
         # Заменяем комбинированные диакритические знаки на дополнительные буквы
         output_chars = []

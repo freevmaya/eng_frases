@@ -462,9 +462,7 @@ function Application() {
         elements.prevBtn.click(prevPhrase);
         elements.regenerateBtn.click(()=>{
 
-            let directLang = state.direction === 'target-native' ? 'target' : (
-                    state.direction === 'native-target' ? 'native' :
-                        (state.direction === 'target-native-both' ? 'target' : 'native'));
+            let directLang = AppConst.directions[state.direction][state.indexInMode].speak;
 
             let phrase = appData.currentPhrase[directLang];
             tracer.log(`Attempt regenerate ${phrase}, ${state.genderVoice}`);
