@@ -69,6 +69,21 @@
     	]);
 
     	Page::setSession('user_id', $user_id);
+
+		$requestNotification = false;
+
+    	if (!$new_user && ($user = $userModel->getItem($user_id))) {
+
+	    	try {
+	    		$user_period = HoursDiffDate($user['create_date'], $user['last_time']);
+
+		    	if ($user['data'] && ($data = json_decode($user['data'], true)) && ($user_period >= 1)) {
+			    	$requestNotification = !(isset($data['allowedMessage']) && ($data['allowedMessage'] == 1));
+			    }
+			} catch (Exception $e) {
+				trace_error($e->getMessage());
+			}
+	    }
     } else if (DEV) {
 
 		//Инициализация пользователя VK. Только при разработке!
@@ -125,6 +140,7 @@
 	<?include('lang_script.php')?>
 	<script src="scripts/error-tracker.js<?=$v?>"></script>
 	<script>
+		let VK_GROUP_ID = <?=VK_GROUP_ID?>;
 		vkBridge.send("VKWebAppInit", {})
 			.then((response)=>{
 				tracer.log(response);
@@ -171,10 +187,14 @@
 		<script src="scripts/vkapp.js<?=$v?>" defer></script>
 
 		<script type="text/javascript">
+			var vkApp;
 			$(window).ready(()=>{
-				new VKApp(<?=VK_APP_ID?>, <?=$source_user_id?>, '<?=$source?>', <?=json_encode($phrases)?>);
+				vkApp = new VKApp(<?=VK_APP_ID?>, <?=$source_user_id?>, '<?=$source?>', <?=json_encode($phrases)?>);
 				<?if ($new_user) {?>
 				showAdvices();
+				<?}?>
+				<?if ($requestNotification) {?>
+					vkApp.requestNotification();
 				<?}?>
 			});
 		</script>

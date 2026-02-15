@@ -8,7 +8,7 @@
 
 require_once '../src/Vmaya/engine.php';
 
-define('VK_API_VERSION', '5.131');
+define('VK_API_VERSION', '5.199');
 define('BATCH_SIZE', 25); // Количество пользователей за один проход
 define('SLEEP_TIME', 100000); // Микросекунды между батчами (0.1 сек)
 
@@ -161,6 +161,8 @@ class VKNotificationService
     {
         $params['access_token'] = $this->token;
         $params['v'] = $this->apiVersion;
+
+        trace($params);
         
         $url = "https://api.vk.com/method/{$method}?" . http_build_query($params);
         
@@ -252,7 +254,7 @@ try {
     // Запуск сервиса
     $service = new VKNotificationService(
         $pdo,
-        VK_APP_CLIENT_SECRET,
+        VK_API_TOKEN,
         VK_API_VERSION,
         BATCH_SIZE,
         SLEEP_TIME

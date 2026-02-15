@@ -100,7 +100,7 @@ class BaseAjax extends Page {
 
 		if (DEV)
 			return [
-				'error' => 1,
+				'error' => 'Action not found',
 				'request' => Page::$request
 			];
 		else Page::Wrong();

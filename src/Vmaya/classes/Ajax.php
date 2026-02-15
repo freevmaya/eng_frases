@@ -37,16 +37,22 @@ class Ajax extends BaseAjax {
 				'first_name'=>$user_data['first_name'],
 				'last_name'=>$user_data['last_name'],
 				'last_time'=>date('Y-m-d H:i:s'),
-				'language_code'=> $language,
-				'data'=>json_encode($user_data, JSON_FLAGS)
+				'language_code'=> $language
 			];
 
 	    	$items = $userModel->getItems("source_id = {$source_id} AND source = '{$source}'");
 
 	    	if (count($items) > 0) {
 	    		$values['id'] = $user_id = $items[0]['id'];
+
+	    		if (!$items[0]['data'])
+	    			$values['data'] = json_encode($user_data, JSON_FLAGS);
+
 	    		$userModel->Update($values);
-	    	} else $user_id = $userModel->Update($values);
+	    	} else {
+	    		$values['data'] = json_encode($user_data, JSON_FLAGS);
+	    		$user_id = $userModel->Update($values);
+	    	}
 
 	    	$this->setUser($userModel->getItem($user_id));
 	    	Page::setSession('user_id', $user_id);
@@ -165,6 +171,22 @@ class Ajax extends BaseAjax {
 		return [
 			'success'=> $model->Update($data) ? true : false
 		];
+	}
+
+	protected function allowedMessage($data) {
+		if ($user_id = Page::getSession('user_id')) {
+			$model = new UserModel();
+			if ($user = $model->getItem($user_id)) {
+				$data = json_decode($user['data'], true);
+				$data['allowedMessage'] = 1;
+
+				$user['data'] = json_encode($data, JSON_FLAGS);
+				return [
+					'success'=> $model->Update($user)
+				];
+			}
+		}
+		Page::Wrong();
 	}
 
 	protected function deleteList($data) {

@@ -30,6 +30,16 @@ class VKApp {
 	  	this.initListeners();
 	}
 
+	requestNotification() {
+		vkBridge.send("VKWebAppAllowMessagesFromGroup", { "group_id": VK_GROUP_ID })
+			.then((data) => {
+				if (data.result)
+					Ajax({
+						action: 'allowedMessage'
+					});
+			});
+	}
+
 	initListeners() {
 		$(window).on('apply_settings', this.onApplySettings.bind(this));
 		$(window).on('playback', this.onPlayback.bind(this));
