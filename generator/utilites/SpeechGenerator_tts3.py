@@ -288,7 +288,7 @@ class EnhancedSpeechGenerator:
         phrase_hash = hashlib.md5(normalized_phrase.encode('utf-8')).hexdigest()
         
         # Формат: voice_type_lang_hash.mp3
-        return f"{voice_type}_{lang_code}_{phrase_hash}.mp3"
+        return f"{lang_code}_{phrase_hash}.mp3"
     
     def _generate_with_gtts(self, text: str, lang: str, settings: Dict) -> Optional[bytes]:
         """Генерация аудио с помощью gTTS"""

@@ -233,7 +233,7 @@
 <!-- Footer -->
 <footer class="mt-2 pt-2 border-top border-secondary text-center text-muted">
     <p class="small">
-        English Phrases Trainer v<?php echo APP_VERSION; ?> | <a class="link" onclick="showAdvices()"><?=Lang('help')?></a>
+        English Phrases Trainer v<?php echo APP_VERSION; ?> | <a class="link" onclick="showAdvices()"><?=Lang('help')?></a> | <a class="link" href="https://vk.com/club235452440"><?=Lang('group')?></a>
     </p>
 </footer>
 
