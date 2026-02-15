@@ -542,7 +542,7 @@ function Application() {
 
             if (typeof ErrorTracker !== 'undefined')
                 ErrorTracker.handleError({
-                    type: 'play_autio_error',
+                    error: 'play_autio_error',
                     message: error.name,
                     source: 'app.js'
                 });

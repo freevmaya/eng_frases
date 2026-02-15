@@ -75,7 +75,7 @@ class BaseAjax extends Page {
 
 		if (isset(Page::$request['action'])) {
 			$action = Page::$request['action'];
-
+			/*
 			if (!in_array($action, $action_without_token)) {
 				$token = isset($_SERVER['HTTP_X_CSRF_TOKEN']) ? $_SERVER['HTTP_X_CSRF_TOKEN'] : null;
 				if (!$token) $token = isset(Page::$request['token']) ? Page::$request['token'] : null;
@@ -85,7 +85,7 @@ class BaseAjax extends Page {
 						'error' => 1,
 						'message' => 'The token has expired'
 					];
-			}
+			}*/
 
 			if (method_exists($this, $action)) {
 
