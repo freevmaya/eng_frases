@@ -40,7 +40,9 @@ class AddPhrasesDialog {
             this.refreshDialog();
         }
 
-        this.modal.find('.paid_use').text(Lang("paid_use", [this.used.limit, strEnum(this.used.count, Lang("time_format"), 'ru')]));
+        let warnText = (this.used.count > 1) ? Lang("paid_use", [this.used.limit, strEnum(this.used.count, Lang("time_format"), 'ru')]) : '';
+
+        this.modal.find('.paid_use').text(warnText);
     }
 
     increaseUsed() {
