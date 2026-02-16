@@ -323,7 +323,8 @@ function Application() {
         genderVoice: $('#genderVoice'),
         recognizeToggle: $('#recognizeToggle'),
         backgroundPlayback: $('#backgroundPlayback'),
-        useSpeakPhrase: $('#useSpeakPhrase')
+        useSpeakPhrase: $('#useSpeakPhrase'),
+        descBlock: $('#description-block')
     };
             
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -588,6 +589,13 @@ function Application() {
                     setCurrentType();
             }
         });
+
+        elements.descBlock.click(()=>{
+            elements.descBlock.toggleClass('expanded');
+            setTimeout(()=>{
+                phrasesList.refreshAccordion();
+            }, 500);
+        });
     }
 
     function appendUserList(name, list) {
@@ -736,11 +744,12 @@ function Application() {
 
         let item = typeDescriptions.hasOwnProperty(state.currentListType) ? 
                             typeDescriptions[state.currentListType] : false;
-        let dblock = $('#description-block');
-        dblock.toggleClass('hide', !item);
-        if (item) {
-            dblock.find('.description').html(`<h4>${item.name}</h4>${item.description}`);
-        }
+
+        elements.descBlock.toggleClass('hide', !item);
+        if (item)
+            elements.descBlock.find('.description').html(`<h4>${item.name}</h4>${item.description}`);
+
+        phrasesList.refreshAccordion();
     }
 
     function applyTvScreenState() {
@@ -802,7 +811,7 @@ function Application() {
         });
         
         updateControls();
-        playBackgrounAudio();
+        //playBackgrounAudio();
         playCurrentPhrase();
 
         $(window).trigger("playback", 'start');
@@ -818,12 +827,12 @@ function Application() {
             clearTimeout(appData.timeoutId);
             $(window).trigger("playback", 'stop');
             stopRecognition();
-            stopBackgroundAudio();
+            //stopBackgroundAudio();
 
         } else {
             appData.missOne  = state.repeatLength > 1;
 
-            playBackgrounAudio();
+            //playBackgrounAudio();
             playCurrentPhrase();
             $(window).trigger("playback", 'start');
         }

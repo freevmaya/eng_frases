@@ -217,12 +217,14 @@
             </div>
         </div>
         <div id="description-block">
-            <div class="accordion-header">
-                <div class="card bg-theme-gradient head">
-                    <?=Lang('description-title')?>
+            <div>
+                <div class="accordion-header">
+                    <div class="card bg-theme-gradient head">
+                        <?=Lang('description-title')?>
+                    </div>
                 </div>
-            </div>
-            <div class="description">
+                <div class="description">
+                </div>
             </div>
         </div>
     </div>
