@@ -393,6 +393,8 @@ function Application() {
             if (appData.currentPhrase) {
                 updateDisplay();
             }
+
+            refreshDescription();
         }
     }
 
@@ -725,6 +727,19 @@ function Application() {
             setTimeout(()=>{
                 appData.selectTypeRecently = false;
             }, 1000);
+
+            refreshDescription();
+        }
+    }
+
+    function refreshDescription() {
+
+        let item = typeDescriptions.hasOwnProperty(state.currentListType) ? 
+                            typeDescriptions[state.currentListType] : false;
+        let dblock = $('#description-block');
+        dblock.toggleClass('hide', !item);
+        if (item) {
+            dblock.find('.description').html(`<h4>${item.name}</h4>${item.description}`);
         }
     }
 

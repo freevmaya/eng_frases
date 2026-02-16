@@ -216,6 +216,15 @@
                 <?}?>
             </div>
         </div>
+        <div id="description-block">
+            <div class="accordion-header">
+                <div class="card bg-theme-gradient head">
+                    <?=Lang('description-title')?>
+                </div>
+            </div>
+            <div class="description">
+            </div>
+        </div>
     </div>
     <div class="row" id="other-content">
         <?if (DEV) {?>
@@ -246,7 +255,7 @@
         Object.assign(SPEECH_CONFIG, <?=Page::$request['SPEECH_CONFIG']?>);
     <?}?>
     var phrasesData = <?=json_encode(PhrasesModel::getPhrasesAsJsonWithDifficulty(Page::language()), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);?>;
-
+    var typeDescriptions = <?=json_encode((new TypeDescriptionModel())->getAllItems())?>;
     $('.numeral-source').numeral(false);
 </script>
 <script src="scripts/speech-synthesizer.js<?=$v?>"></script>
