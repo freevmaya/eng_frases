@@ -255,7 +255,7 @@
         Object.assign(SPEECH_CONFIG, <?=Page::$request['SPEECH_CONFIG']?>);
     <?}?>
     var phrasesData = <?=json_encode(PhrasesModel::getPhrasesAsJsonWithDifficulty(Page::language()), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);?>;
-    var typeDescriptions = <?=json_encode((new TypeDescriptionModel())->getAllItems())?>;
+    var typeDescriptions = <?=json_encode((new TypeDescriptionModel())->getAllItems(Page::language()))?>;
     $('.numeral-source').numeral(false);
 </script>
 <script src="scripts/speech-synthesizer.js<?=$v?>"></script>

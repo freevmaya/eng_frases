@@ -31,9 +31,9 @@ class Page {
 			file_exists(LANGUAGE_PATH.Page::$request['lang'].'.php')) {
 			Page::$language = Page::$request['lang'];
 		} else {
-			Page::$language = Page::getSession('language', DEFAULT_LANGUAGE);
+			Page::$language = Page::getSession('language');
 		
-			if ($user) {
+			if ($user && !Page::$language) {
 
 				if ($userDB = $this->userModel->getItem($user['id']))
 					$user = array_merge($user, $userDB);

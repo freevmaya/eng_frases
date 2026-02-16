@@ -30,7 +30,7 @@ class TypeDescriptionModel extends BaseModel {
         ];
     }
 
-    public function getAllItems() {
+    public function getAllItems($a_lang) {
     	GLOBAL $dbp;
 	    
 	    // Выполняем JOIN запрос для получения всех данных за один раз
@@ -41,7 +41,7 @@ class TypeDescriptionModel extends BaseModel {
 	            d.description
 	        FROM {$this->getTable()} d
 	        INNER JOIN phrase_types pt ON d.list_id = pt.id
-	        WHERE pt.is_active = 1
+	        WHERE pt.is_active = 1 AND d.lang = '{$a_lang}'
 	        ORDER BY pt.`order`
 	    ";
 	    

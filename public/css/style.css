@@ -19,6 +19,16 @@
     opacity: 1;
 }
 
+.site-header {
+    display: flex;
+    padding: 0 0.8em;
+    justify-content: space-between;
+}
+
+.user-block {
+    display: flex;
+}
+
 .text-muted, .text-start {
     color: var(--info) !important;
 }

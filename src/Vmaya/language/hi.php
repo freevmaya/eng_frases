@@ -216,5 +216,18 @@ $lang = [
     
     // VK/TG
     'vk_layout' => 'vk_layout',
+    'mode-direction' => 'प्लेबैक मोड',
+    'native-target' => 'हिंदी > अंग्रेज़ी (ऑडियो)',
+    'target-native' => 'अंग्रेज़ी > हिंदी (ऑडियो)',
+    'native-target2' => 'हिंदी > अंग्रेज़ी (ऑडियो) 2 बार',
+    'native-target-both' => 'हिंदी (ऑडियो) > अंग्रेज़ी (ऑडियो)',
+    'target-native-both' => 'अंग्रेज़ी (ऑडियो) > हिंदी (ऑडियो)',
+    'native-target2-both' => 'हिंदी (ऑडियो) > अंग्रेज़ी (ऑडियो) 2 बार',
+    'target2-native-both' => 'अंग्रेज़ी (ऑडियो) 2 बार > हिंदी (ऑडियो)',
+    'target2-native-target-both' => 'अंग्रेज़ी (ऑ) 2 बार > हिंदी (ऑ) > अंग्रेज़ी (ऑ)',
+
+    'description-title' => 'विवरण',
+    'ru' => 'Русский',
+    'hi' => 'हिंदी'
 ];
 ?>

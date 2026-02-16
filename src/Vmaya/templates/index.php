@@ -68,11 +68,33 @@
     <div class="page">
         <div class="wrap-content">
             <!-- Header -->
-            <header class="text-center mb-1">
+            <header class="text-center mb-1 site-header">
                 <h1 class="display-4 text-gradient app-name">
                     <i class="bi bi-translate text-primary"></i>
                     <?=Lang('app_name');?>
                 </h1>
+                <div class="user-block">
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <span class="fi fi-gb me-1"></span><?=Lang(Page::language())?>
+                        </button>
+
+                        <ul class="dropdown-menu">
+                            <?foreach (LANGUAGES as $litem) {?>
+                            <li>
+                                <a class="dropdown-item" href="?lang=<?=$litem?>"><span class="fi fi-ru me-2"></span>
+                                    <?=Lang($litem)?>
+                                </a>
+                            </li>
+                            <?}?>
+                        </ul>
+                    </div>
+                    <!--
+                    <button type="button" class="btn">
+                        <i class="bi bi-person"></i>
+                    </button>
+                    -->
+                </div>
             </header>
             <?=$content?>
         </div>

@@ -228,6 +228,8 @@ $lang = [
     'target2-native-both' => 'Англ(звук) 2раза > Рус(звук)',
     'target2-native-target-both' => 'Англ(з) 2раза > Рус(з) > Англ(з)',
 
-    'description-title' => 'Описание'
+    'description-title' => 'Описание',
+    'ru' => 'Русский',
+    'hi' => 'हिंदी'
 ];
 ?>
