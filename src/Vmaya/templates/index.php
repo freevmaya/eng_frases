@@ -63,6 +63,7 @@
         var X_CSRF_Token = '<?=Page::LastToken();?>';
     </script>
     <?include('ya-mertika.php');?>
+    <?include('gtag.php')?>;
 </head>
 <body class="theme site">
     <div class="page">
