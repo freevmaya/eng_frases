@@ -918,15 +918,11 @@ function Application() {
 
     function incCurrentPhraseIndex() {
 
-        let newIndex = (state.currentPhraseIndex + 1) % appData.currentPhraseList.length;
-        
-        if (typeof DEV != 'undefined') {
-            newIndex = state.currentPhraseIndex + 1;
+        newIndex = state.currentPhraseIndex + 1;
 
-            if (newIndex >= appData.currentPhraseList.length) {
-                setNextType();
-                return;
-            }
+        if (newIndex >= appData.currentPhraseList.length) {
+            setNextType();
+            return;
         }
 
         let newRepeat = getCurentRepeat();
