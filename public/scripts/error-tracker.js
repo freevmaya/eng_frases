@@ -268,6 +268,9 @@ const ErrorTracker = {
             scriptType: details.source === window.location.href ? 'inline' : 'external'
         };
 
+        if (typeof YANDEX_METRIKA_ID != 'undefined')
+            ym(YANDEX_METRIKA_ID, 'reachGoal', 'js_error');
+
         // Отправляем на сервер
         this.sendToServer(errorInfo);
     },
