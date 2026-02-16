@@ -163,10 +163,12 @@
 
     .container > div:first-child {
         width: 60%;
+        overflow: hidden;
     }
 
     .container > div:last-child {
         width: 40%;
+        overflow: hidden;
     }
 
     .app-name {
