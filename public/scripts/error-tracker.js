@@ -321,5 +321,10 @@ if (typeof DEV != 'undefined') {
         }
     }
 } else {
-    var tracer = {log(...arguments) {},error(...arguments) {}}
+    var tracer = {log(...arguments) {},error(...arguments) {
+        ErrorTracker.handleError({
+            message: JSON.stringify(arguments),
+            source: 'inline-script'
+        });
+    }}
 }
