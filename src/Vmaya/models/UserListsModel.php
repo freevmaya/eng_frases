@@ -32,7 +32,7 @@ class UserListsModel extends BaseModel {
             ],
             'description' => [
                 'label' => 'description',
-                'dbtype' => 'i'
+                'dbtype' => 's'
             ]
         ];
     }

@@ -86,6 +86,24 @@ const AppConst = {
                 speak: 'native', 
                 listen: 'target'
             }
+        ],
+        'target2-native-target-both': [{
+                show: 'target', 
+                speak: 'target', 
+                listen: 'target'
+            },{
+                show: 'target', 
+                speak: 'target', 
+                listen: 'target'
+            },{
+                show: 'native', 
+                speak: 'native', 
+                listen: 'target'
+            },{
+                show: 'target', 
+                speak: 'target', 
+                listen: 'target'
+            }
         ]
     }
 }
@@ -869,8 +887,32 @@ function Application() {
         return Math.round(Math.max(state.pauseBetweenPhrases - 1, 0) * 1000 + (state.useSpeakPhrase ? appData.currentPhrase[lang].length * AppConst.charTime[lang] : 0));
     }
 
+    function setNextType() {
+        let keys = Object.keys(phrasesData);
+        for (let i=0; i<keys.length; i++)
+            if (keys[i] == state.currentListType) {
+                let nextType = keys[(i + 1) % keys.length];
+                state.progress[nextType] = {
+                    currentRepeat: 0,
+                    index: 0
+                };
+                setCurrentType(nextType);
+                return;
+            }
+    }
+
     function incCurrentPhraseIndex() {
+
         let newIndex = (state.currentPhraseIndex + 1) % appData.currentPhraseList.length;
+        
+        if (DEV) {
+            newIndex = state.currentPhraseIndex + 1;
+
+            if (newIndex >= appData.currentPhraseList.length) {
+                setNextType();
+                return;
+            }
+        }
 
         let newRepeat = getCurentRepeat();
         if ((state.repeatCount > 0) && (newIndex % state.repeatLength == 0)) {

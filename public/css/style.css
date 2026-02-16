@@ -152,7 +152,6 @@
     }
 
     .app-name {
-        display: none;
     }
 
     #addPhrasesModal .content {
@@ -625,9 +624,9 @@ footer {
 }
 
 .app-name {
-    margin-bottom: 0px;
+    margin: 0px;
 
-    font-size: clamp(1em, 6vw, 3em);
+    font-size: clamp(1em, 6vw, 2em);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

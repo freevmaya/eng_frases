@@ -4,6 +4,46 @@
 		"selected_items":
 		[
 			[
+				"cu",
+				"currentListType"
+			],
+			[
+				"tr",
+				"trace"
+			],
+			[
+				"tra",
+				"trace_error"
+			],
+			[
+				"js",
+				"json_decode"
+			],
+			[
+				"json",
+				"json_decode"
+			],
+			[
+				"get",
+				"getItem"
+			],
+			[
+				"me",
+				"method"
+			],
+			[
+				"def",
+				"define"
+			],
+			[
+				"requ",
+				"requestNotification"
+			],
+			[
+				"ta",
+				"target"
+			],
+			[
 				"le",
 				"length"
 			],
@@ -20,16 +60,8 @@
 				"native-target-both"
 			],
 			[
-				"ta",
-				"target-native"
-			],
-			[
 				"W",
 				"Wrong"
-			],
-			[
-				"js",
-				"json_encode()"
 			],
 			[
 				"pai",
@@ -80,16 +112,8 @@
 				"function"
 			],
 			[
-				"json",
-				"json_encode()"
-			],
-			[
 				"na",
 				"native"
-			],
-			[
-				"cu",
-				"currentPhraseList"
 			],
 			[
 				"set",
@@ -260,10 +284,6 @@
 				"resolve"
 			],
 			[
-				"tra",
-				"trace"
-			],
-			[
 				"te",
 				"text/javascript"
 			],
@@ -276,16 +296,8 @@
 				"language"
 			],
 			[
-				"def",
-				"define"
-			],
-			[
 				"file",
 				"filemtime()"
-			],
-			[
-				"tr",
-				"try\tWrap in try { … } catch (…) { … }"
 			],
 			[
 				"del",
@@ -432,10 +444,6 @@
 				"phrasesList"
 			],
 			[
-				"get",
-				"getItems"
-			],
-			[
 				"co",
 				"container"
 			],
@@ -506,965 +514,112 @@
 			[
 				"prom",
 				"prompt"
-			],
-			[
-				"text",
-				"textToImage"
-			],
-			[
-				"en",
-				"endpoint"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "dev/Дополнение.txt",
+			"file": "src/Vmaya/templates/index.php",
 			"settings":
 			{
-				"buffer_size": 9123,
-				"encoding": "UTF-8",
-				"line_ending": "Windows",
-				"name": "INSERT INTO `phrase_types` (`type_name`) VALUES"
+				"buffer_size": 3245,
+				"line_ending": "Windows"
 			},
 			"undo_stack":
 			[
-				[
-					1,
-					1,
-					"paste",
-					null,
-					"AQAAAAAAAAAAAAAARgMAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					4,
-					1,
-					"insert",
-					{
-						"characters": "\n\n------------------------"
-					},
-					"GgAAAEYDAAAAAAAARwMAAAAAAAAAAAAARwMAAAAAAABIAwAAAAAAAAAAAABIAwAAAAAAAEkDAAAAAAAAAAAAAEkDAAAAAAAASgMAAAAAAAAAAAAASgMAAAAAAABLAwAAAAAAAAAAAABLAwAAAAAAAEwDAAAAAAAAAAAAAEwDAAAAAAAATQMAAAAAAAAAAAAATQMAAAAAAABOAwAAAAAAAAAAAABOAwAAAAAAAE8DAAAAAAAAAAAAAE8DAAAAAAAAUAMAAAAAAAAAAAAAUAMAAAAAAABRAwAAAAAAAAAAAABRAwAAAAAAAFIDAAAAAAAAAAAAAFIDAAAAAAAAUwMAAAAAAAAAAAAAUwMAAAAAAABUAwAAAAAAAAAAAABUAwAAAAAAAFUDAAAAAAAAAAAAAFUDAAAAAAAAVgMAAAAAAAAAAAAAVgMAAAAAAABXAwAAAAAAAAAAAABXAwAAAAAAAFgDAAAAAAAAAAAAAFgDAAAAAAAAWQMAAAAAAAAAAAAAWQMAAAAAAABaAwAAAAAAAAAAAABaAwAAAAAAAFsDAAAAAAAAAAAAAFsDAAAAAAAAXAMAAAAAAAAAAAAAXAMAAAAAAABdAwAAAAAAAAAAAABdAwAAAAAAAF4DAAAAAAAAAAAAAF4DAAAAAAAAXwMAAAAAAAAAAAAAXwMAAAAAAABgAwAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAARgMAAAAAAABGAwAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					5,
-					1,
-					"insert",
-					{
-						"characters": "---------------"
-					},
-					"DwAAAGADAAAAAAAAYQMAAAAAAAAAAAAAYQMAAAAAAABiAwAAAAAAAAAAAABiAwAAAAAAAGMDAAAAAAAAAAAAAGMDAAAAAAAAZAMAAAAAAAAAAAAAZAMAAAAAAABlAwAAAAAAAAAAAABlAwAAAAAAAGYDAAAAAAAAAAAAAGYDAAAAAAAAZwMAAAAAAAAAAAAAZwMAAAAAAABoAwAAAAAAAAAAAABoAwAAAAAAAGkDAAAAAAAAAAAAAGkDAAAAAAAAagMAAAAAAAAAAAAAagMAAAAAAABrAwAAAAAAAAAAAABrAwAAAAAAAGwDAAAAAAAAAAAAAGwDAAAAAAAAbQMAAAAAAAAAAAAAbQMAAAAAAABuAwAAAAAAAAAAAABuAwAAAAAAAG8DAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAYAMAAAAAAABgAwAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					6,
-					1,
-					"insert",
-					{
-						"characters": "\n\n"
-					},
-					"AgAAAG8DAAAAAAAAcAMAAAAAAAAAAAAAcAMAAAAAAABxAwAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAbwMAAAAAAABvAwAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					7,
-					1,
-					"paste",
-					null,
-					"AQAAAHEDAAAAAAAAvQ4AAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAcQMAAAAAAABxAwAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					10,
-					1,
-					"insert",
-					{
-						"characters": "\n\nВсе"
-					},
-					"BQAAAG8DAAAAAAAAcAMAAAAAAAAAAAAAcAMAAAAAAABxAwAAAAAAAAAAAABxAwAAAAAAAHIDAAAAAAAAAAAAAHIDAAAAAAAAcwMAAAAAAAAAAAAAcwMAAAAAAAB0AwAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAbwMAAAAAAABvAwAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					11,
-					1,
-					"insert",
-					{
-						"characters": " тип"
-					},
-					"BAAAAHQDAAAAAAAAdQMAAAAAAAAAAAAAdQMAAAAAAAB2AwAAAAAAAAAAAAB2AwAAAAAAAHcDAAAAAAAAAAAAAHcDAAAAAAAAeAMAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAdAMAAAAAAAB0AwAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					12,
-					1,
-					"insert",
-					{
-						"characters": "ы"
-					},
-					"AQAAAHgDAAAAAAAAeQMAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAeAMAAAAAAAB4AwAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					13,
-					1,
-					"insert",
-					{
-						"characters": " предложе"
-					},
-					"CQAAAHkDAAAAAAAAegMAAAAAAAAAAAAAegMAAAAAAAB7AwAAAAAAAAAAAAB7AwAAAAAAAHwDAAAAAAAAAAAAAHwDAAAAAAAAfQMAAAAAAAAAAAAAfQMAAAAAAAB+AwAAAAAAAAAAAAB+AwAAAAAAAH8DAAAAAAAAAAAAAH8DAAAAAAAAgAMAAAAAAAAAAAAAgAMAAAAAAACBAwAAAAAAAAAAAACBAwAAAAAAAIIDAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAeQMAAAAAAAB5AwAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					14,
-					1,
-					"insert",
-					{
-						"characters": "ний"
-					},
-					"AwAAAIIDAAAAAAAAgwMAAAAAAAAAAAAAgwMAAAAAAACEAwAAAAAAAAAAAACEAwAAAAAAAIUDAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAggMAAAAAAACCAwAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					15,
-					1,
-					"insert",
-					{
-						"characters": " в"
-					},
-					"AgAAAIUDAAAAAAAAhgMAAAAAAAAAAAAAhgMAAAAAAACHAwAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAhQMAAAAAAACFAwAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					16,
-					1,
-					"insert",
-					{
-						"characters": " англий"
-					},
-					"BwAAAIcDAAAAAAAAiAMAAAAAAAAAAAAAiAMAAAAAAACJAwAAAAAAAAAAAACJAwAAAAAAAIoDAAAAAAAAAAAAAIoDAAAAAAAAiwMAAAAAAAAAAAAAiwMAAAAAAACMAwAAAAAAAAAAAACMAwAAAAAAAI0DAAAAAAAAAAAAAI0DAAAAAAAAjgMAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAhwMAAAAAAACHAwAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					17,
-					1,
-					"insert",
-					{
-						"characters": "скт"
-					},
-					"AwAAAI4DAAAAAAAAjwMAAAAAAAAAAAAAjwMAAAAAAACQAwAAAAAAAAAAAACQAwAAAAAAAJEDAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAjgMAAAAAAACOAwAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					18,
-					1,
-					"left_delete",
-					null,
-					"AQAAAJADAAAAAAAAkAMAAAAAAAACAAAA0YI",
-					"AQAAAAAAAAABAAAAkQMAAAAAAACRAwAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					19,
-					1,
-					"insert",
-					{
-						"characters": "ом"
-					},
-					"AgAAAJADAAAAAAAAkQMAAAAAAAAAAAAAkQMAAAAAAACSAwAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAkAMAAAAAAACQAwAAAAAAAAAAAAAAAPC/"
-				],
+			]
+		},
+		{
+			"file": "public/css/style.css",
+			"settings":
+			{
+				"buffer_size": 14684,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			},
+			"undo_stack":
+			[
 				[
 					22,
 					1,
 					"insert",
 					{
-						"characters": "\n\nРас"
+						"characters": "\n"
 					},
-					"BQAAAOAOAAAAAAAA4Q4AAAAAAAAAAAAA4Q4AAAAAAADiDgAAAAAAAAAAAADiDgAAAAAAAOMOAAAAAAAAAAAAAOMOAAAAAAAA5A4AAAAAAAAAAAAA5A4AAAAAAADlDgAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAA4A4AAAAAAADgDgAAAAAAAAAAAAAAAPC/"
+					"AgAAAFsJAAAAAAAAWwkAAAAAAAAXAAAACiAgICAgICAgZGlzcGxheTogbm9uZTtbCQAAAAAAAGQJAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAWwkAAAAAAAByCQAAAAAAAAAAAAAAAPC/"
 				],
 				[
 					23,
 					1,
 					"insert",
 					{
-						"characters": "шифро"
+						"characters": "font"
 					},
-					"BQAAAOUOAAAAAAAA5g4AAAAAAAAAAAAA5g4AAAAAAADnDgAAAAAAAAAAAADnDgAAAAAAAOgOAAAAAAAAAAAAAOgOAAAAAAAA6Q4AAAAAAAAAAAAA6Q4AAAAAAADqDgAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAA5Q4AAAAAAADlDgAAAAAAAAAAAAAAAPC/"
+					"BAAAAGQJAAAAAAAAZQkAAAAAAAAAAAAAZQkAAAAAAABmCQAAAAAAAAAAAABmCQAAAAAAAGcJAAAAAAAAAAAAAGcJAAAAAAAAaAkAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAZAkAAAAAAABkCQAAAAAAAAAAAAAAAPC/"
 				],
 				[
 					24,
 					1,
-					"insert",
+					"insert_completion",
 					{
-						"characters": "вка"
+						"completion": "font-size: $0;",
+						"format": "snippet",
+						"keep_prefix": false,
+						"must_insert": false,
+						"trigger": "font-size"
 					},
-					"AwAAAOoOAAAAAAAA6w4AAAAAAAAAAAAA6w4AAAAAAADsDgAAAAAAAAAAAADsDgAAAAAAAO0OAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAA6g4AAAAAAADqDgAAAAAAAAAAAAAAAPC/"
+					"AgAAAGQJAAAAAAAAZAkAAAAAAAAEAAAAZm9udGQJAAAAAAAAcAkAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAaAkAAAAAAABoCQAAAAAAAAAAAAAAAPC/"
 				],
 				[
 					25,
 					1,
 					"insert",
 					{
-						"characters": "\n\n"
+						"characters": "1em"
 					},
-					"AgAAAO0OAAAAAAAA7g4AAAAAAAAAAAAA7g4AAAAAAADvDgAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAA7Q4AAAAAAADtDgAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					26,
-					1,
-					"paste",
-					null,
-					"AQAAAO8OAAAAAAAAQhUAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAA7w4AAAAAAADvDgAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					27,
-					1,
-					"insert",
-					{
-						"characters": "\n\nРасши"
-					},
-					"BwAAAEIVAAAAAAAAQxUAAAAAAAAAAAAAQxUAAAAAAABEFQAAAAAAAAAAAABEFQAAAAAAAEUVAAAAAAAAAAAAAEUVAAAAAAAARhUAAAAAAAAAAAAARhUAAAAAAABHFQAAAAAAAAAAAABHFQAAAAAAAEgVAAAAAAAAAAAAAEgVAAAAAAAASRUAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAQhUAAAAAAABCFQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					28,
-					1,
-					"insert",
-					{
-						"characters": "фровка"
-					},
-					"BgAAAEkVAAAAAAAAShUAAAAAAAAAAAAAShUAAAAAAABLFQAAAAAAAAAAAABLFQAAAAAAAEwVAAAAAAAAAAAAAEwVAAAAAAAATRUAAAAAAAAAAAAATRUAAAAAAABOFQAAAAAAAAAAAABOFQAAAAAAAE8VAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAASRUAAAAAAABJFQAAAAAAAAAAAAAAAPC/"
+					"AwAAAG8JAAAAAAAAcAkAAAAAAAAAAAAAcAkAAAAAAABxCQAAAAAAAAAAAABxCQAAAAAAAHIJAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAbwkAAAAAAABvCQAAAAAAAAAAAAAAAPC/"
 				],
 				[
 					29,
 					1,
 					"insert",
 					{
-						"characters": " тип"
+						"characters": "0.5"
 					},
-					"BAAAAE8VAAAAAAAAUBUAAAAAAAAAAAAAUBUAAAAAAABRFQAAAAAAAAAAAABRFQAAAAAAAFIVAAAAAAAAAAAAAFIVAAAAAAAAUxUAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAATxUAAAAAAABPFQAAAAAAAAAAAAAAAPC/"
+					"AwAAAG8JAAAAAAAAcAkAAAAAAAABAAAAMXAJAAAAAAAAcQkAAAAAAAAAAAAAcQkAAAAAAAByCQAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAbwkAAAAAAABwCQAAAAAAAAAAAAAAAPC/"
 				],
 				[
-					30,
+					38,
 					1,
-					"insert",
-					{
-						"characters": "лв"
-					},
-					"AgAAAFMVAAAAAAAAVBUAAAAAAAAAAAAAVBUAAAAAAABVFQAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAUxUAAAAAAABTFQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					31,
-					2,
 					"left_delete",
 					null,
-					"AgAAAFQVAAAAAAAAVBUAAAAAAAACAAAA0LJTFQAAAAAAAFMVAAAAAAAAAgAAANC7",
-					"AQAAAAAAAAABAAAAVRUAAAAAAABVFQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					32,
-					1,
-					"insert",
-					{
-						"characters": "оа"
-					},
-					"AgAAAFMVAAAAAAAAVBUAAAAAAAAAAAAAVBUAAAAAAABVFQAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAUxUAAAAAAABTFQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					33,
-					1,
-					"insert",
-					{
-						"characters": "\n"
-					},
-					"AQAAAFUVAAAAAAAAVhUAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAVRUAAAAAAABVFQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					34,
-					2,
-					"left_delete",
-					null,
-					"AgAAAFUVAAAAAAAAVRUAAAAAAAABAAAAClQVAAAAAAAAVBUAAAAAAAACAAAA0LA",
-					"AQAAAAAAAAABAAAAVhUAAAAAAABWFQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					35,
-					1,
-					"insert",
-					{
-						"characters": "в"
-					},
-					"AQAAAFQVAAAAAAAAVRUAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAVBUAAAAAAABUFQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					36,
-					1,
-					"insert",
-					{
-						"characters": "\n\n"
-					},
-					"AgAAAFUVAAAAAAAAVhUAAAAAAAAAAAAAVhUAAAAAAABXFQAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAVRUAAAAAAABVFQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					37,
-					1,
-					"paste",
-					null,
-					"AQAAAFcVAAAAAAAAJyMAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAVxUAAAAAAABXFQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					40,
-					1,
-					"insert",
-					{
-						"characters": "\n\n------------------"
-					},
-					"FAAAAEIVAAAAAAAAQxUAAAAAAAAAAAAAQxUAAAAAAABEFQAAAAAAAAAAAABEFQAAAAAAAEUVAAAAAAAAAAAAAEUVAAAAAAAARhUAAAAAAAAAAAAARhUAAAAAAABHFQAAAAAAAAAAAABHFQAAAAAAAEgVAAAAAAAAAAAAAEgVAAAAAAAASRUAAAAAAAAAAAAASRUAAAAAAABKFQAAAAAAAAAAAABKFQAAAAAAAEsVAAAAAAAAAAAAAEsVAAAAAAAATBUAAAAAAAAAAAAATBUAAAAAAABNFQAAAAAAAAAAAABNFQAAAAAAAE4VAAAAAAAAAAAAAE4VAAAAAAAATxUAAAAAAAAAAAAATxUAAAAAAABQFQAAAAAAAAAAAABQFQAAAAAAAFEVAAAAAAAAAAAAAFEVAAAAAAAAUhUAAAAAAAAAAAAAUhUAAAAAAABTFQAAAAAAAAAAAABTFQAAAAAAAFQVAAAAAAAAAAAAAFQVAAAAAAAAVRUAAAAAAAAAAAAAVRUAAAAAAABWFQAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAQhUAAAAAAABCFQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					41,
-					1,
-					"insert",
-					{
-						"characters": "-------------------------------------"
-					},
-					"JQAAAFYVAAAAAAAAVxUAAAAAAAAAAAAAVxUAAAAAAABYFQAAAAAAAAAAAABYFQAAAAAAAFkVAAAAAAAAAAAAAFkVAAAAAAAAWhUAAAAAAAAAAAAAWhUAAAAAAABbFQAAAAAAAAAAAABbFQAAAAAAAFwVAAAAAAAAAAAAAFwVAAAAAAAAXRUAAAAAAAAAAAAAXRUAAAAAAABeFQAAAAAAAAAAAABeFQAAAAAAAF8VAAAAAAAAAAAAAF8VAAAAAAAAYBUAAAAAAAAAAAAAYBUAAAAAAABhFQAAAAAAAAAAAABhFQAAAAAAAGIVAAAAAAAAAAAAAGIVAAAAAAAAYxUAAAAAAAAAAAAAYxUAAAAAAABkFQAAAAAAAAAAAABkFQAAAAAAAGUVAAAAAAAAAAAAAGUVAAAAAAAAZhUAAAAAAAAAAAAAZhUAAAAAAABnFQAAAAAAAAAAAABnFQAAAAAAAGgVAAAAAAAAAAAAAGgVAAAAAAAAaRUAAAAAAAAAAAAAaRUAAAAAAABqFQAAAAAAAAAAAABqFQAAAAAAAGsVAAAAAAAAAAAAAGsVAAAAAAAAbBUAAAAAAAAAAAAAbBUAAAAAAABtFQAAAAAAAAAAAABtFQAAAAAAAG4VAAAAAAAAAAAAAG4VAAAAAAAAbxUAAAAAAAAAAAAAbxUAAAAAAABwFQAAAAAAAAAAAABwFQAAAAAAAHEVAAAAAAAAAAAAAHEVAAAAAAAAchUAAAAAAAAAAAAAchUAAAAAAABzFQAAAAAAAAAAAABzFQAAAAAAAHQVAAAAAAAAAAAAAHQVAAAAAAAAdRUAAAAAAAAAAAAAdRUAAAAAAAB2FQAAAAAAAAAAAAB2FQAAAAAAAHcVAAAAAAAAAAAAAHcVAAAAAAAAeBUAAAAAAAAAAAAAeBUAAAAAAAB5FQAAAAAAAAAAAAB5FQAAAAAAAHoVAAAAAAAAAAAAAHoVAAAAAAAAexUAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAVhUAAAAAAABWFQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					44,
-					1,
-					"insert",
-					{
-						"characters": "\n\n------------------------------"
-					},
-					"IAAAAOAOAAAAAAAA4Q4AAAAAAAAAAAAA4Q4AAAAAAADiDgAAAAAAAAAAAADiDgAAAAAAAOMOAAAAAAAAAAAAAOMOAAAAAAAA5A4AAAAAAAAAAAAA5A4AAAAAAADlDgAAAAAAAAAAAADlDgAAAAAAAOYOAAAAAAAAAAAAAOYOAAAAAAAA5w4AAAAAAAAAAAAA5w4AAAAAAADoDgAAAAAAAAAAAADoDgAAAAAAAOkOAAAAAAAAAAAAAOkOAAAAAAAA6g4AAAAAAAAAAAAA6g4AAAAAAADrDgAAAAAAAAAAAADrDgAAAAAAAOwOAAAAAAAAAAAAAOwOAAAAAAAA7Q4AAAAAAAAAAAAA7Q4AAAAAAADuDgAAAAAAAAAAAADuDgAAAAAAAO8OAAAAAAAAAAAAAO8OAAAAAAAA8A4AAAAAAAAAAAAA8A4AAAAAAADxDgAAAAAAAAAAAADxDgAAAAAAAPIOAAAAAAAAAAAAAPIOAAAAAAAA8w4AAAAAAAAAAAAA8w4AAAAAAAD0DgAAAAAAAAAAAAD0DgAAAAAAAPUOAAAAAAAAAAAAAPUOAAAAAAAA9g4AAAAAAAAAAAAA9g4AAAAAAAD3DgAAAAAAAAAAAAD3DgAAAAAAAPgOAAAAAAAAAAAAAPgOAAAAAAAA+Q4AAAAAAAAAAAAA+Q4AAAAAAAD6DgAAAAAAAAAAAAD6DgAAAAAAAPsOAAAAAAAAAAAAAPsOAAAAAAAA/A4AAAAAAAAAAAAA/A4AAAAAAAD9DgAAAAAAAAAAAAD9DgAAAAAAAP4OAAAAAAAAAAAAAP4OAAAAAAAA/w4AAAAAAAAAAAAA/w4AAAAAAAAADwAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAA4A4AAAAAAADgDgAAAAAAAAAAAAAAAPC/"
+					"AQAAAFsJAAAAAAAAWwkAAAAAAAAaAAAACiAgICAgICAgZm9udC1zaXplOiAwLjVlbTs",
+					"AQAAAAAAAAABAAAAWwkAAAAAAAB1CQAAAAAAAAAAAAAAAPC/"
 				],
 				[
 					45,
 					1,
 					"insert",
 					{
-						"characters": "-----------------------------------"
+						"characters": "2"
 					},
-					"IwAAAAAPAAAAAAAAAQ8AAAAAAAAAAAAAAQ8AAAAAAAACDwAAAAAAAAAAAAACDwAAAAAAAAMPAAAAAAAAAAAAAAMPAAAAAAAABA8AAAAAAAAAAAAABA8AAAAAAAAFDwAAAAAAAAAAAAAFDwAAAAAAAAYPAAAAAAAAAAAAAAYPAAAAAAAABw8AAAAAAAAAAAAABw8AAAAAAAAIDwAAAAAAAAAAAAAIDwAAAAAAAAkPAAAAAAAAAAAAAAkPAAAAAAAACg8AAAAAAAAAAAAACg8AAAAAAAALDwAAAAAAAAAAAAALDwAAAAAAAAwPAAAAAAAAAAAAAAwPAAAAAAAADQ8AAAAAAAAAAAAADQ8AAAAAAAAODwAAAAAAAAAAAAAODwAAAAAAAA8PAAAAAAAAAAAAAA8PAAAAAAAAEA8AAAAAAAAAAAAAEA8AAAAAAAARDwAAAAAAAAAAAAARDwAAAAAAABIPAAAAAAAAAAAAABIPAAAAAAAAEw8AAAAAAAAAAAAAEw8AAAAAAAAUDwAAAAAAAAAAAAAUDwAAAAAAABUPAAAAAAAAAAAAABUPAAAAAAAAFg8AAAAAAAAAAAAAFg8AAAAAAAAXDwAAAAAAAAAAAAAXDwAAAAAAABgPAAAAAAAAAAAAABgPAAAAAAAAGQ8AAAAAAAAAAAAAGQ8AAAAAAAAaDwAAAAAAAAAAAAAaDwAAAAAAABsPAAAAAAAAAAAAABsPAAAAAAAAHA8AAAAAAAAAAAAAHA8AAAAAAAAdDwAAAAAAAAAAAAAdDwAAAAAAAB4PAAAAAAAAAAAAAB4PAAAAAAAAHw8AAAAAAAAAAAAAHw8AAAAAAAAgDwAAAAAAAAAAAAAgDwAAAAAAACEPAAAAAAAAAAAAACEPAAAAAAAAIg8AAAAAAAAAAAAAIg8AAAAAAAAjDwAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAAA8AAAAAAAAADwAAAAAAAAAAAAAAAPC/"
-				]
-			]
-		},
-		{
-			"file": "generator/utilites/output/import.txt",
-			"settings":
-			{
-				"buffer_size": 320,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			},
-			"undo_stack":
-			[
-				[
-					3,
-					1,
-					"insert",
-					{
-						"characters": "\n\n\n"
-					},
-					"AwAAAKsAAAAAAAAArAAAAAAAAAAAAAAArAAAAAAAAACtAAAAAAAAAAAAAACtAAAAAAAAAK4AAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAqwAAAAAAAACrAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					4,
-					1,
-					"paste",
-					null,
-					"AQAAAK4AAAAAAAAAygAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAArgAAAAAAAACuAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					8,
-					1,
-					"insert",
-					{
-						"characters": "v"
-					},
-					"AQAAAK4AAAAAAAAArwAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAArgAAAAAAAACuAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					9,
-					1,
-					"insert",
-					{
-						"characters": " "
-					},
-					"AQAAAK8AAAAAAAAAsAAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAArwAAAAAAAACvAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					13,
-					1,
-					"paste",
-					null,
-					"AQAAAK0AAAAAAAAAvwAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAArQAAAAAAAACtAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					16,
-					1,
-					"insert",
-					{
-						"characters": "v"
-					},
-					"AQAAAK0AAAAAAAAArgAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAArQAAAAAAAACtAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					17,
-					1,
-					"insert",
-					{
-						"characters": " "
-					},
-					"AQAAAK4AAAAAAAAArwAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAArgAAAAAAAACuAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					24,
-					1,
-					"insert",
-					{
-						"characters": "\n\n"
-					},
-					"AgAAAOAAAAAAAAAA4QAAAAAAAAAAAAAA4QAAAAAAAADiAAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAA4AAAAAAAAADgAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					25,
-					1,
-					"paste",
-					null,
-					"AQAAAOIAAAAAAAAA+wAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAA4gAAAAAAAADiAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					26,
-					1,
-					"insert",
-					{
-						"characters": "\n"
-					},
-					"AQAAAPsAAAAAAAAA/AAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAA+wAAAAAAAAD7AAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					27,
-					1,
-					"paste",
-					null,
-					"AQAAAPwAAAAAAAAAFgEAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAA/AAAAAAAAAD8AAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					30,
-					1,
-					"insert",
-					{
-						"characters": "\n"
-					},
-					"AQAAABYBAAAAAAAAFwEAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAFgEAAAAAAAAWAQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					31,
-					1,
-					"paste",
-					null,
-					"AQAAABcBAAAAAAAAMAEAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAFwEAAAAAAAAXAQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					34,
-					1,
-					"right_delete",
-					null,
-					"AQAAAOAAAAAAAAAA4AAAAAAAAAABAAAACg",
-					"AQAAAAAAAAABAAAA4AAAAAAAAADgAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					42,
-					1,
-					"insert",
-					{
-						"characters": "d"
-					},
-					"AQAAAK8AAAAAAAAAsAAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAArwAAAAAAAACvAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					43,
-					1,
-					"insert",
-					{
-						"characters": " "
-					},
-					"AQAAALAAAAAAAAAAsQAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAsAAAAAAAAACwAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					51,
-					1,
-					"insert",
-					{
-						"characters": "d"
-					},
-					"AQAAAMYAAAAAAAAAxwAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAxgAAAAAAAADGAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					52,
-					1,
-					"insert",
-					{
-						"characters": " "
-					},
-					"AQAAAMcAAAAAAAAAyAAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAxwAAAAAAAADHAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					64,
-					1,
-					"insert",
-					{
-						"characters": "v"
-					},
-					"AQAAAOUAAAAAAAAA5gAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAA5QAAAAAAAADlAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					65,
-					1,
-					"insert",
-					{
-						"characters": " "
-					},
-					"AQAAAOYAAAAAAAAA5wAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAA5gAAAAAAAADmAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					70,
-					1,
-					"insert",
-					{
-						"characters": "d"
-					},
-					"AQAAAOcAAAAAAAAA6AAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAA5wAAAAAAAADnAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					71,
-					1,
-					"insert",
-					{
-						"characters": " "
-					},
-					"AQAAAOgAAAAAAAAA6QAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAA6AAAAAAAAADoAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					93,
-					1,
-					"insert",
-					{
-						"characters": "d"
-					},
-					"AQAAAAMBAAAAAAAABAEAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAAwEAAAAAAAADAQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					94,
-					1,
-					"insert",
-					{
-						"characters": " "
-					},
-					"AQAAAAQBAAAAAAAABQEAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAABAEAAAAAAAAEAQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					99,
-					1,
-					"insert",
-					{
-						"characters": "d"
-					},
-					"AQAAACABAAAAAAAAIQEAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAIAEAAAAAAAAgAQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					100,
-					1,
-					"insert",
-					{
-						"characters": " "
-					},
-					"AQAAACEBAAAAAAAAIgEAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAIQEAAAAAAAAhAQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					117,
-					1,
-					"insert",
-					{
-						"characters": "v"
-					},
-					"AQAAAAMBAAAAAAAABAEAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAAwEAAAAAAAADAQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					118,
-					1,
-					"insert",
-					{
-						"characters": " "
-					},
-					"AQAAAAQBAAAAAAAABQEAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAABAEAAAAAAAAEAQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					132,
-					1,
-					"insert",
-					{
-						"characters": "v"
-					},
-					"AQAAACIBAAAAAAAAIwEAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAIgEAAAAAAAAiAQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					133,
-					1,
-					"insert",
-					{
-						"characters": " "
-					},
-					"AQAAACMBAAAAAAAAJAEAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAIwEAAAAAAAAjAQAAAAAAAAAAAAAAAPC/"
-				]
-			]
-		},
-		{
-			"file": "public/scripts/app.js",
-			"settings":
-			{
-				"buffer_size": 34676,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			},
-			"undo_stack":
-			[
-				[
-					6,
-					1,
-					"insert",
-					{
-						"characters": "\n\n"
-					},
-					"AwAAAIxAAAAAAAAAmUAAAAAAAAAAAAAAmUAAAAAAAACmQAAAAAAAAAAAAACNQAAAAAAAAI1AAAAAAAAADAAAACAgICAgICAgICAgIA",
-					"AQAAAAAAAAABAAAAjEAAAAAAAACMQAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					7,
-					1,
-					"insert",
-					{
-						"characters": "екф"
-					},
-					"AwAAAJpAAAAAAAAAm0AAAAAAAAAAAAAAm0AAAAAAAACcQAAAAAAAAAAAAACcQAAAAAAAAJ1AAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAmkAAAAAAAACaQAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					8,
-					3,
-					"left_delete",
-					null,
-					"AwAAAJxAAAAAAAAAnEAAAAAAAAACAAAA0YSbQAAAAAAAAJtAAAAAAAAAAgAAANC6mkAAAAAAAACaQAAAAAAAAAIAAADQtQ",
-					"AQAAAAAAAAABAAAAnUAAAAAAAACdQAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					12,
-					1,
-					"paste",
-					null,
-					"AQAAAJpAAAAAAAAADUEAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAmkAAAAAAAACaQAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					15,
-					10,
-					"left_delete",
-					null,
-					"CgAAAN1AAAAAAAAA3UAAAAAAAAABAAAAINxAAAAAAAAA3EAAAAAAAAABAAAAINtAAAAAAAAA20AAAAAAAAABAAAAINpAAAAAAAAA2kAAAAAAAAABAAAAINlAAAAAAAAA2UAAAAAAAAABAAAAINhAAAAAAAAA2EAAAAAAAAABAAAAINdAAAAAAAAA10AAAAAAAAABAAAAINZAAAAAAAAA1kAAAAAAAAABAAAAINVAAAAAAAAA1UAAAAAAAAABAAAAINRAAAAAAAAA1EAAAAAAAAABAAAAIA",
-					"AQAAAAAAAAABAAAA3kAAAAAAAADeQAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					18,
-					1,
-					"insert",
-					{
-						"characters": "\n"
-					},
-					"BAAAAMJAAAAAAAAAwkAAAAAAAAASAAAACiAgMzMyOiAgICAgICAgICAgwkAAAAAAAADPQAAAAAAAAAAAAADDQAAAAAAAAMNAAAAAAAAADAAAACAgICAgICAgICAgIMNAAAAAAAAA00AAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAwkAAAAAAAADUQAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					26,
-					1,
-					"paste",
-					null,
-					"AQAAAN9AAAAAAAAA20EAAAAAAAAjAAAALmF0dGFjaFJlc291cmNlRXJyb3JIYW5kbGVyKGF1ZGlvKTs",
-					"AQAAAAAAAAABAAAA30AAAAAAAAACQQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					29,
-					1,
-					"indent",
-					null,
-					"BwAAAO5AAAAAAAAA8kAAAAAAAAAAAAAAFEEAAAAAAAAYQQAAAAAAAAAAAABAQQAAAAAAAERBAAAAAAAAAAAAAGxBAAAAAAAAcEEAAAAAAAAAAAAAlEEAAAAAAACYQQAAAAAAAAAAAAC9QQAAAAAAAMFBAAAAAAAAAAAAAORBAAAAAAAA6EEAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAA/kAAAAAAAADbQQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					44,
-					1,
-					"paste",
-					null,
-					"AQAAADFBAAAAAAAANkEAAAAAAAAFAAAAZXZlbnQ",
-					"AQAAAAAAAAABAAAAMUEAAAAAAAA2QQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					47,
-					1,
-					"left_delete",
-					null,
-					"AQAAAFxBAAAAAAAAXEEAAAAAAAAOAAAAZXZlbnQuZmlsZW5hbWU",
-					"AQAAAAAAAAABAAAAXEEAAAAAAABqQQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					48,
-					1,
-					"insert",
-					{
-						"characters": "''"
-					},
-					"AgAAAFxBAAAAAAAAXUEAAAAAAAAAAAAAXUEAAAAAAABeQQAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAXEEAAAAAAABcQQAAAAAAAAAAAAAAAPC/"
+					"AQAAAMQrAAAAAAAAxSsAAAAAAAABAAAAMw",
+					"AQAAAAAAAAABAAAAxCsAAAAAAADFKwAAAAAAAAAAAAAAAPC/"
 				],
 				[
 					50,
 					1,
-					"insert",
-					{
-						"characters": "app.js"
-					},
-					"BgAAAF1BAAAAAAAAXkEAAAAAAAAAAAAAXkEAAAAAAABfQQAAAAAAAAAAAABfQQAAAAAAAGBBAAAAAAAAAAAAAGBBAAAAAAAAYUEAAAAAAAAAAAAAYUEAAAAAAABiQQAAAAAAAAAAAABiQQAAAAAAAGNBAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAXUEAAAAAAABdQQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					53,
-					1,
-					"insert",
-					{
-						"characters": "531"
-					},
-					"AwAAAIBBAAAAAAAAgUEAAAAAAAAMAAAAZXZlbnQubGluZW5vgUEAAAAAAACCQQAAAAAAAAAAAACCQQAAAAAAAINBAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAAgEEAAAAAAACMQQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					56,
-					1,
-					"insert",
-					{
-						"characters": "0"
-					},
-					"AQAAAKFBAAAAAAAAokEAAAAAAAALAAAAZXZlbnQuY29sbm8",
-					"AQAAAAAAAAABAAAAoUEAAAAAAACsQQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					64,
-					1,
-					"paste",
-					null,
-					"AQAAADFBAAAAAAAAO0EAAAAAAAANAAAAZXJyb3IubWVzc2FnZQ",
-					"AQAAAAAAAAABAAAAMUEAAAAAAAA+QQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					67,
-					1,
 					"left_delete",
 					null,
-					"AQAAAJ9BAAAAAAAAn0EAAAAAAAAoAAAALAogICAgICAgICAgICAgICAgICAgIGVycm9yOiBldmVudC5lcnJvcg",
-					"AQAAAAAAAAABAAAAn0EAAAAAAADHQQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					89,
-					1,
-					"paste",
-					null,
-					"AQAAAAlBAAAAAAAAGUEAAAAAAAAIAAAAanNfZXJyb3I",
-					"AQAAAAAAAAABAAAACUEAAAAAAAARQQAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					94,
-					1,
-					"left_delete",
-					null,
-					"AQAAAGlBAAAAAAAAaUEAAAAAAAA+AAAALAogICAgICAgICAgICAgICAgICAgIGxpbmU6IDUzMSwKICAgICAgICAgICAgICAgICAgICBjb2x1bW46IDA",
-					"AQAAAAAAAAABAAAAaUEAAAAAAACnQQAAAAAAAAAAAAAAAPC/"
+					"AQAAAJYrAAAAAAAAlisAAAAAAAAHAAAALWJvdHRvbQ",
+					"AQAAAAAAAAABAAAAlisAAAAAAACdKwAAAAAAAAAAAAAAAPC/"
 				]
-			]
-		},
-		{
-			"file": "src/Vmaya/engine.php",
-			"settings":
-			{
-				"buffer_size": 2078,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			},
-			"undo_stack":
-			[
-				[
-					3,
-					1,
-					"insert",
-					{
-						"characters": "6"
-					},
-					"AQAAANQBAAAAAAAA1QEAAAAAAAABAAAANQ",
-					"AQAAAAAAAAABAAAA1AEAAAAAAADVAQAAAAAAAAAAAAAAAPC/"
-				]
-			]
-		},
-		{
-			"file": "generator/utilites/generate.bat",
-			"settings":
-			{
-				"buffer_size": 164,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			},
-			"undo_stack":
-			[
-				[
-					9,
-					1,
-					"paste",
-					null,
-					"AQAAAEIAAAAAAAAAWQAAAAAAAAANAAAAaW5wdXQtaGkuanNvbg",
-					"AQAAAAAAAAABAAAAQgAAAAAAAABPAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					18,
-					1,
-					"insert",
-					{
-						"characters": "fe"
-					},
-					"AgAAAKwAAAAAAAAArQAAAAAAAAAAAAAArQAAAAAAAACuAAAAAAAAAAAAAAA",
-					"AQAAAAAAAAABAAAArAAAAAAAAACsAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					21,
-					1,
-					"paste",
-					null,
-					"AQAAAEIAAAAAAAAAXQAAAAAAAAAXAAAAUHJlc2VudCBjb250aW51b3VzLmpzb24",
-					"AQAAAAAAAAABAAAAQgAAAAAAAABZAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					24,
-					1,
-					"paste",
-					null,
-					"AQAAAEIAAAAAAAAAXgAAAAAAAAAbAAAAUGFzdCBwZXJmZWN0IChwYXNzaXZlKS5qc29u",
-					"AQAAAAAAAAABAAAAQgAAAAAAAABdAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					32,
-					1,
-					"paste",
-					null,
-					"AQAAAEIAAAAAAAAAXgAAAAAAAAAXAAAAUGFzdCBwZXJmZWN0IGNvbnRpbnVvdXM",
-					"AQAAAAAAAAABAAAAQgAAAAAAAABZAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					43,
-					1,
-					"left_delete",
-					null,
-					"AQAAALYAAAAAAAAAtgAAAAAAAAACAAAAZmU",
-					"AQAAAAAAAAABAAAAtgAAAAAAAAC4AAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					46,
-					1,
-					"left_delete",
-					null,
-					"AQAAAKcAAAAAAAAApwAAAAAAAAAUAAAAIC0tdm9pY2UtdHlwZT0ibWFsZSI",
-					"AQAAAAAAAAABAAAApwAAAAAAAAC7AAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					51,
-					1,
-					"paste",
-					null,
-					"AQAAAEIAAAAAAAAAWwAAAAAAAAAcAAAAUHJlc2VudCBjb250aW51b3VzIChwYXNzaXZlKQ",
-					"AQAAAAAAAAABAAAAQgAAAAAAAABeAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					59,
-					1,
-					"paste",
-					null,
-					"AQAAAEIAAAAAAAAAXAAAAAAAAAAZAAAAUHJlc2VudCBwZXJmZWN0IChwYXNzaXZlKQ",
-					"AQAAAAAAAAABAAAAQgAAAAAAAABbAAAAAAAAAAAAAAAAAPC/"
-				],
-				[
-					62,
-					1,
-					"paste",
-					null,
-					"AQAAAEIAAAAAAAAAWwAAAAAAAAAaAAAAUHJlc2VudCBwZXJmZWN0IGNvbnRpbnVvdXM",
-					"AQAAAAAAAAABAAAAQgAAAAAAAABcAAAAAAAAAAAAAAAAAPC/"
-				]
-			]
-		},
-		{
-			"contents": "Searching 24 files for \"browser_blocks_audio_click_play\" (case sensitive)\n\nC:\\OpenServer\\domains\\eng_frases\\public\\scripts\\app.js:\n  533:                 showAlert(Lang(\"browser_blocks_audio_click_play\"));\n\n1 match in 1 file\n",
-			"settings":
-			{
-				"buffer_size": 225,
-				"line_ending": "Windows",
-				"name": "Find Results",
-				"scratch": true
-			},
-			"undo_stack":
-			[
 			]
 		}
 	],
@@ -1534,33 +689,50 @@
 	[
 		"/C/OpenServer/domains/eng_frases",
 		"/C/OpenServer/domains/eng_frases/public",
-		"/C/OpenServer/domains/eng_frases/public/scripts",
+		"/C/OpenServer/domains/eng_frases/public/css",
 		"/C/OpenServer/domains/eng_frases/src",
 		"/C/OpenServer/domains/eng_frases/src/Vmaya",
-		"/C/OpenServer/domains/eng_frases/src/Vmaya/language",
 		"/C/OpenServer/domains/eng_frases/src/Vmaya/templates"
 	],
 	"file_history":
 	[
+		"/C/OpenServer/domains/eng_frases/generator/classes/EdgeTTSGenerator.py",
+		"/C/OpenServer/domains/eng_frases/public/scripts/add-phrases-dialog.js",
+		"/C/OpenServer/domains/eng_frases/src/Vmaya/engine.php",
+		"/C/OpenServer/domains/eng_frases/public/scripts/vkapp.js",
+		"/C/OpenServer/domains/eng_frases/src/Vmaya/classes/Ajax.php",
+		"/C/OpenServer/domains/eng_frases/src/Vmaya/classes/BaseAjax.php",
+		"/C/OpenServer/domains/eng_frases/logs/errors.log",
 		"/C/OpenServer/domains/eng_frases/src/Vmaya/templates/vkok.php",
+		"/C/OpenServer/domains/eng_frases/public/scripts/app.js",
+		"/C/OpenServer/domains/eng_frases/logs/vk_notification_errors.log",
+		"/C/OpenServer/domains/eng_frases/notification/send_notifications.php",
+		"/C/OpenServer/domains/eng_frases/public/scripts/tg.js",
+		"/C/Users/fwadi/AppData/Local/Temp/fz3temp-2/errors.log",
+		"/C/Users/fwadi/AppData/Local/Temp/fz3temp-2/config.php",
+		"/C/OpenServer/domains/eng_frases/config.php",
+		"/C/OpenServer/domains/eng_frases/logs/fdbg.log",
+		"/C/OpenServer/domains/eng_frases/generator/utilites/SpeechGenerator_tts3.py",
+		"/C/OpenServer/domains/eng_frases/generator/utilites/output/import.txt",
+		"/C/OpenServer/domains/eng_frases/public/scripts/speech-synthesizer.js",
+		"/C/OpenServer/domains/eng_frases/public/scripts/error-tracker.js",
+		"/C/OpenServer/domains/eng_frases/generator/utilites/generate.bat",
+		"/C/OpenServer/domains/eng_frases/generator/rename.py",
+		"/C/OpenServer/domains/eng_frases/src/Vmaya/templates/home.php",
+		"/C/OpenServer/domains/eng_frases/dev/Дополнение.txt",
+		"/C/OpenServer/domains/eng_frases/src/Vmaya/language/ru.php",
+		"/C/OpenServer/domains/eng_frases/public/data/voices/rename.bat",
 		"/C/OpenServer/domains/eng_frases/src/Vmaya/templates/tg.php",
 		"/C/OpenServer/domains/eng_frases/src/Vmaya/templates/index.php",
-		"/C/OpenServer/domains/eng_frases/src/Vmaya/templates/home.php",
-		"/C/OpenServer/domains/eng_frases/generator/utilites/SpeechGenerator_tts3.py",
 		"/C/OpenServer/domains/eng_frases/generator/utilites/output/Present perfect continuous.json",
 		"/C/OpenServer/domains/eng_frases/generator/utilites/output/data/Future in the Past simple.json",
 		"/C/OpenServer/domains/eng_frases/generator/classes/SpeechGenerator.py",
-		"/C/OpenServer/domains/eng_frases/generator/classes/EdgeTTSGenerator.py",
-		"/C/Users/fwadi/AppData/Local/Temp/fz3temp-2/errors.log",
 		"/C/OpenServer/domains/eng_frases/generator/utilites/output/data/Present perfect (passive).json",
 		"/C/Users/fwadi/AppData/Local/Temp/fz3temp-2/fdbg.log",
 		"/C/OpenServer/domains/eng_frases/generator/utilites/output/data/Present perfect.json",
-		"/C/OpenServer/domains/eng_frases/src/Vmaya/language/ru.php",
 		"/C/OpenServer/domains/eng_frases/generator/utilites/output/data/Present continuous (passive).json",
 		"/C/OpenServer/domains/eng_frases/public/scripts/phrases-list-view.js",
-		"/C/OpenServer/domains/eng_frases/public/scripts/app.js",
 		"/C/OpenServer/domains/eng_frases/public/css/style.css",
-		"/C/OpenServer/domains/eng_frases/src/Vmaya/engine.php",
 		"/C/OpenServer/domains/eng_frases/generator/utilites/output/phrases.json",
 		"/C/OpenServer/domains/eng_frases/generator/utilites/output/Present continuous.json",
 		"/C/OpenServer/domains/eng_frases/public/scripts/vrecognition.js",
@@ -1569,18 +741,12 @@
 		"/C/Users/fwadi/AppData/Local/Temp/fz3temp-3/fdbg.log",
 		"/C/Users/fwadi/AppData/Local/Temp/fz3temp-3/errors.log",
 		"/C/OpenServer/domains/eng_frases/src/Vmaya/classes/Page.php",
-		"/C/OpenServer/domains/eng_frases/logs/errors.log",
 		"/C/OpenServer/domains/eng_frases/src/Vmaya/include/db/mySQLProvider.php",
 		"/C/OpenServer/domains/eng_frases/src/Vmaya/include/db/dataBaseProvider.php",
 		"/C/OpenServer/domains/eng_frases/src/Vmaya/models/BaseModel.php",
 		"/C/OpenServer/domains/eng_frases/src/Vmaya/include/_edbu2.php",
 		"/C/OpenServer/domains/eng_frases/src/Vmaya/include/fdbg.php",
-		"/C/OpenServer/domains/eng_frases/logs/fdbg.log",
-		"/C/OpenServer/domains/eng_frases/notification/send_notifications.php",
-		"/C/OpenServer/domains/eng_frases/logs/vk_notification_errors.log",
-		"/C/OpenServer/domains/eng_frases/public/scripts/add-phrases-dialog.js",
 		"/C/OpenServer/domains/eng_frases/public/scripts/user-app.js",
-		"/C/OpenServer/domains/eng_frases/config.php",
 		"/C/OpenServer/domains/eng_frases/public/scripts/main.js",
 		"/C/Users/fwadi/AppData/Local/Temp/fz3temp-3/audio-generator.service",
 		"/C/OpenServer/domains/eng_frases/generator/dev/Развертывание сервера генерации речи.txt",
@@ -1589,22 +755,17 @@
 		"/C/OpenServer/domains/eng_frases/english-phrases-server/OpenAI.py",
 		"/C/Users/fwadi/AppData/Local/Temp/fz3temp-3/english-phrases.service",
 		"/C/OpenServer/domains/eng_frases/english-phrases-server/dev/памятка.txt",
-		"/C/OpenServer/domains/eng_frases/src/Vmaya/classes/Ajax.php",
 		"/C/OpenServer/domains/eng_frases/public/css/video.css",
 		"/C/OpenServer/domains/eng_frases/generator/utilites/PhraseDatabaseImporter.py",
 		"/C/OpenServer/domains/eng_frases/src/Vmaya/models/PhrasesModel.php",
 		"/C/OpenServer/domains/eng_frases/generator/utilites/output/input-hi.json",
 		"/C/OpenServer/domains/eng_frases/src/Vmaya/language/hi.php",
 		"/C/OpenServer/domains/eng_frases/generator/utilites/output/input-hi-next.json",
-		"/C/OpenServer/domains/eng_frases/generator/utilites/generate.bat",
 		"/C/Users/fwadi/Downloads/phrases (3).sql",
 		"/C/Users/fwadi/Downloads/eng_phrases (5).sql",
 		"/C/Users/fwadi/Downloads/eng_phrases (6).sql",
 		"/C/OpenServer/domains/eng_frases/generator/utilites/PhraseDatabaseExporter.py",
-		"/C/OpenServer/domains/eng_frases/public/scripts/vkapp.js",
 		"/C/OpenServer/domains/eng_frases/dev/Локализация.txt",
-		"/C/OpenServer/domains/eng_frases/public/scripts/tg.js",
-		"/C/OpenServer/domains/eng_frases/public/scripts/speech-synthesizer.js",
 		"/C/OpenServer/domains/eng_frases/public/scripts/error-logger.js",
 		"/C/OpenServer/domains/eng_frases/public/scripts/enumerators.js",
 		"/C/OpenServer/domains/eng_frases/public/scripts/microphone-utils.js",
@@ -1632,7 +793,6 @@
 		"/C/OpenServer/domains/eng_frases/src/Vmaya/models/UserListsModel.php",
 		"/C/OpenServer/domains/eng_frases/public/scripts/phrases-list-view-dev.js",
 		"/C/OpenServer/domains/eng_frases/english-phrases-server/deploy/памятка.txt",
-		"/C/OpenServer/domains/eng_frases/src/Vmaya/classes/BaseAjax.php",
 		"/D/Projects/english-phrases-server/app.py",
 		"/D/Projects/english-phrases-server/requirements.txt",
 		"/C/OpenServer/domains/eng_frases/dev/accordion.html",
@@ -1663,13 +823,7 @@
 		"/D/Projects/llm-text-generator/py/.env",
 		"/D/Projects/llm-text-generator/config/models.json",
 		"/D/Projects/llm-text-generator/config/settings.json",
-		"/D/Projects/llm-text-generator/src/ConfigManager.js",
-		"/D/Projects/llm-text-generator/src/MultiModelGenerator.js",
-		"/D/Projects/llm-text-generator/src/index.js",
-		"/D/Projects/llm-text-generator/src/utils/Logger.js",
-		"/C/OpenServer/domains/eng_frases/public/css/style-waves.css",
-		"/C/OpenServer/domains/eng_frases/generator/text/multi-model-generator.js",
-		"/C/OpenServer/domains/eng_frases/generator/text/.env"
+		"/D/Projects/llm-text-generator/src/ConfigManager.js"
 	],
 	"find":
 	{
@@ -1680,6 +834,8 @@
 		"height": 145.0,
 		"where_history":
 		[
+			"C:\\OpenServer\\domains\\eng_frases\\public\\scripts,<project filters>",
+			"C:\\OpenServer\\domains\\eng_frases\\src\\Vmaya\\templates,<project filters>",
 			"C:\\OpenServer\\domains\\eng_frases\\public\\scripts,<project filters>",
 			"C:\\OpenServer\\domains\\eng_frases\\src\\Vmaya\\templates,<project filters>",
 			"C:\\OpenServer\\domains\\eng_frases\\public\\scripts,<project filters>",
@@ -1783,9 +939,33 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": true,
+		"case_sensitive": false,
 		"find_history":
 		[
+			".app-name",
+			"header\n",
+			"currentPhrase",
+			"play",
+			"telegram",
+			"data",
+			"error",
+			"user",
+			"user_id",
+			"sendMessages",
+			"callVkApi",
+			"paid_use",
+			"regenerateBtn",
+			"The token has expired",
+			"NotSupportedError",
+			"playBu",
+			"playButton",
+			"play",
+			"NotSupportedError",
+			"Future continuous",
+			"group",
+			"voises",
+			"voice_type",
+			"{voice_type}_",
 			"handleError",
 			"browser_blocks_audio_click_play",
 			"ErrorTracker",
@@ -1889,31 +1069,7 @@
 			"logging",
 			"Stopped",
 			"generate_phrases",
-			"parse_ai_response",
-			"generate_phrases",
-			"500",
-			"print",
-			"500",
-			"getProgressIndex",
-			"loadPhraseList",
-			"appData.currentPhrase",
-			"updateDisplay",
-			"loadPhraseList",
-			"keys",
-			"Keys",
-			"progress",
-			"Array",
-			"Ajax",
-			"state.progress",
-			"progress",
-			"Duplicate entry",
-			"user_id",
-			"setSession('user_id'",
-			"setSession",
-			"card",
-			"bg-theme-gradient",
-			".phrase-text",
-			"--target"
+			"parse_ai_response"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -2011,57 +1167,29 @@
 			[
 				{
 					"buffer": 0,
-					"file": "dev/Дополнение.txt",
+					"file": "src/Vmaya/templates/index.php",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9123,
+						"buffer_size": 3245,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								248,
-								273
+								2524,
+								2532
 							]
 						],
 						"settings":
 						{
-							"auto_name": "INSERT INTO `phrase_types` (`type_name`) VALUES",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
+							"syntax": "Packages/PHP/PHP.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"stack_multiselect": false,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "generator/utilites/output/import.txt",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 320,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								292,
-								292
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1060.8,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
@@ -2069,141 +1197,34 @@
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "public/scripts/app.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 34676,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								16777,
-								16777
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 9372.8,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"stack_multiselect": false,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "src/Vmaya/engine.php",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2078,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								512,
-								512
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"stack_multiselect": false,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "generator/utilites/generate.bat",
+					"buffer": 1,
+					"file": "public/css/style.css",
 					"selected": true,
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 164,
+						"buffer_size": 14684,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								91,
-								91
+								11147,
+								11147
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Batch File/Batch File.sublime-syntax"
+							"syntax": "Packages/CSS/CSS.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
-						"translation.x": 55.2,
-						"translation.y": 0.0,
+						"translation.x": 0.0,
+						"translation.y": 10896.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
-					"stack_multiselect": false,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 225,
-						"regions":
-						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										170,
-										201
-									]
-								],
-								"scope": ""
-							}
-						},
-						"selection":
-						[
-							[
-								166,
-								166
-							]
-						],
-						"settings":
-						{
-							"detect_indentation": false,
-							"line_numbers": false,
-							"output_tag": 1,
-							"result_base_dir": "",
-							"result_file_regex": "^([^ \t].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
 					"stack_multiselect": false,
 					"type": "text"
 				}
@@ -2259,7 +1280,7 @@
 	"project": "project.sublime-project",
 	"replace":
 	{
-		"height": 71.2
+		"height": 51.2
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -2297,7 +1318,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 285.0,
+	"side_bar_width": 297.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

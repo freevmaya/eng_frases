@@ -10,9 +10,9 @@ class StateManager {
         this.STORAGE_KEY = 'english_trainer_state';
         this.DEFAULT_STATE = {
             speed: 1.0,
-            pauseBetweenPhrases: 2,
+            pauseBetweenPhrases: 3,
             
-            direction: 'native-target-both',
+            direction: 'target2-native-target-both',
             phraseDirection: 'en-ru',
             order: 'sequential',
             currentListType: 'Present simple',
