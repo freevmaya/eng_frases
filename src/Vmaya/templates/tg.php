@@ -1,7 +1,7 @@
 <?php
     $v = '?v='.SCRIPTS_VERSION.'_'.filemtime(BASEPATH.'/public/scripts/tg.js');
 
-    $source         = 'site';
+    $source         = 'tg';
     $source_user_id = 1;
     $userModel      = new UserModel();
 

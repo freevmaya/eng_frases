@@ -127,96 +127,97 @@
 <div class="container py-6">
 
     <!-- Main Content -->
-    <div class="row app-display">
-        <!-- Left Column - Phrase Card -->
-        <div class="col-lg-12">
-            <div class="card bg-theme-gradient border-primary border-3 animate-card">
+    <div class="row">
+        <div class="app-display">
+            <div class="col-lg-12">
+                <div class="card bg-theme-gradient border-primary border-3 animate-card">
 
-                <div class="tv-screen">
-                    <div class="water-effect">
-                        <div class="water-drops">
-                            <div class="drop"></div>
-                            <div class="drop"></div>
-                            <div class="drop"></div>
-                            <div class="drop"></div>
-                            <div class="drop"></div>
-                            <div class="drop"></div>
-                            <div class="drop"></div>
-                            <div class="drop"></div>
+                    <div class="tv-screen">
+                        <div class="water-effect">
+                            <div class="water-drops">
+                                <div class="drop"></div>
+                                <div class="drop"></div>
+                                <div class="drop"></div>
+                                <div class="drop"></div>
+                                <div class="drop"></div>
+                                <div class="drop"></div>
+                                <div class="drop"></div>
+                                <div class="drop"></div>
+                            </div>
+                            
+                            <div class="water-highlights">
+                                <div class="highlight highlight-1"></div>
+                                <div class="highlight highlight-2"></div>
+                            </div>
                         </div>
-                        
-                        <div class="water-highlights">
-                            <div class="highlight highlight-1"></div>
-                            <div class="highlight highlight-2"></div>
-                        </div>
+                        <div class="scan-line"></div>
                     </div>
-                    <div class="scan-line"></div>
-                </div>
 
-                <div class="card-body text-center p-4">
+                    <div class="card-body text-center p-4">
 
-                    <div>
-                        <div class="phrase-container animate-text">
-                            <div class="scale-block">
-                                <div class="phrase-text mb-2 animate-text phrase" id="phraseText">
-                                </div>
-                                <div class="phrase-hint text-muted animate-hint phrase" id="phraseHint">
+                        <div>
+                            <div class="phrase-container animate-text">
+                                <div class="scale-block">
+                                    <div class="phrase-text mb-2 animate-text phrase" id="phraseText">
+                                    </div>
+                                    <div class="phrase-hint text-muted animate-hint phrase" id="phraseHint">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="phrase-type-container">
-                        <span id="currentRepeat" class="text-muted small"></span>
-                        <span id="phraseType"><?=Lang('past_simple_active')?></span>
-                    </div>
-
-                    <div class="progress mb-2 control" style="height: 6px;" id="progressControl">
-                        <div class="progress-bar bg-primary progress-bar-striped" 
-                             id="progressBar" style="width: 0%"></div>
-                    </div>
-
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="text-start">
-                            <div class="text-muted small"><?=Lang('progress')?></div>
-                            <div id="phraseCounter">0 / 0</div>
+                        <div class="phrase-type-container">
+                            <span id="currentRepeat" class="text-muted small"></span>
+                            <span id="phraseType"><?=Lang('past_simple_active')?></span>
                         </div>
-                        <div>
-                            <span id="payerMessage"<?if (DEV) {?>class="control"<?}?>></span>
-                        </div>
-                        <div class="text-end">
-                            <button class="btn btn-outline-secondary control" id="settingsToggle">
-                                <i class="bi bi-sliders"></i>
-                            </button>
-                        </div>
-                    </div>
 
-                    <div class="play-container">
-                        <div class="play-buttons" id="playButtonsContainer">
-                            <button type="button" class="btn ext" id="prevBtn" title="<?=Lang('previous_phrase')?>">
-                                <i class="bi bi-skip-backward-fill"></i>
-                            </button>
-                            <button type="button" class="btn" id="playButton" title="<?=Lang('play_pause')?>">
-                                <i class="bi bi-play-fill"></i>
-                            </button>
-                            <button type="button" class="btn ext" id="nextBtn" title="<?=Lang('next_phrase')?>">
-                                <i class="bi bi-skip-forward-fill"></i>
-                            </button>
+                        <div class="progress mb-2 control" style="height: 6px;" id="progressControl">
+                            <div class="progress-bar bg-primary progress-bar-striped" 
+                                 id="progressBar" style="width: 0%"></div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="text-start">
+                                <div class="text-muted small"><?=Lang('progress')?></div>
+                                <div id="phraseCounter">0 / 0</div>
+                            </div>
+                            <div>
+                                <span id="payerMessage"<?if (DEV) {?>class="control"<?}?>></span>
+                            </div>
+                            <div class="text-end">
+                                <button class="btn btn-outline-secondary control" id="settingsToggle">
+                                    <i class="bi bi-sliders"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="play-container">
+                            <div class="play-buttons" id="playButtonsContainer">
+                                <button type="button" class="btn ext" id="prevBtn" title="<?=Lang('previous_phrase')?>">
+                                    <i class="bi bi-skip-backward-fill"></i>
+                                </button>
+                                <button type="button" class="btn" id="playButton" title="<?=Lang('play_pause')?>">
+                                    <i class="bi bi-play-fill"></i>
+                                </button>
+                                <button type="button" class="btn ext" id="nextBtn" title="<?=Lang('next_phrase')?>">
+                                    <i class="bi bi-skip-forward-fill"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <?if (Page::isDev()) {?>
+                <div class="dev card bg-theme-gradient mt-2">
+                    <div><?=Lang('dev_panel')?></div>
+                    <button type="button" class="btn ext" id="regenerateBtn" title="<?=Lang('regenerate')?>">
+                        <i class="bi bi-soundwave"></i>
+                    </button>
+                </div>
+                <?}?>
             </div>
-            <?if (Page::isDev()) {?>
-            <div class="dev card bg-theme-gradient mt-2">
-                <div><?=Lang('dev_panel')?></div>
-                <button type="button" class="btn ext" id="regenerateBtn" title="<?=Lang('regenerate')?>">
-                    <i class="bi bi-soundwave"></i>
-                </button>
-            </div>
-            <?}?>
         </div>
     </div>
-    <div id="other-content">
+    <div class="row" id="other-content">
         <?if (DEV) {?>
         <!--
         <a href="?page=userlists" class="btn btn-sm btn-outline-secondary floating-button" style="background-color: #001e35;">

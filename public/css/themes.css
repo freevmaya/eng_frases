@@ -25,6 +25,7 @@
     --bs-accordion-bg: none;
     --bs-accordion-border-color: none;
     --bs-accordion-transition: height 0.35s ease, opacity 0.3s ease;
+    --bs-accordion-body-padding-x: 0px;
 }
 
 [data-bs-theme="dark"] {
