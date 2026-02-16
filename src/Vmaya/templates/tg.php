@@ -88,7 +88,7 @@
         });
     </script>
     <?include('ya-mertika.php');?>
-    <?include('gtag.php')?>;
+    <?include('gtag.php');?>
 </head>
 <body class="theme tg">
     <div class="page">
