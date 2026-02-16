@@ -31,16 +31,20 @@ class Page {
 			file_exists(LANGUAGE_PATH.Page::$request['lang'].'.php')) {
 			Page::$language = Page::$request['lang'];
 		} else {
-			Page::$language = Page::getSession('language', DEFAULT_LANGUAGE);
+			Page::$language = Page::getSession('language');
 		
 			if ($user) {
 
 				if ($userDB = $this->userModel->getItem($user['id']))
 					$user = array_merge($user, $userDB);
-			
-				Page::$language = $user['language_code'];
+				
+				if (!Page::checkLanguage(Page::$language))
+					Page::$language = $user['language_code'];
 			}
 		}
+
+		if (!Page::checkLanguage(Page::$language))
+			Page::$language = DEFAULT_LANGUAGE;
 
 		Page::setSession('language', Page::$language);
 		include_once(LANGUAGE_PATH.Page::$language.'.php');
@@ -53,6 +57,10 @@ class Page {
 				$this->model->Update(Page::$request);
 			}
 		}
+	}
+
+	public static function checkLanguage($language) {
+		return file_exists(LANGUAGE_PATH.$language.'.php');
 	}
 
 	public static function language() {
