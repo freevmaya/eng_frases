@@ -920,7 +920,7 @@ function Application() {
 
         let newIndex = (state.currentPhraseIndex + 1) % appData.currentPhraseList.length;
         
-        if (DEV) {
+        if (typeof DEV != 'undefined') {
             newIndex = state.currentPhraseIndex + 1;
 
             if (newIndex >= appData.currentPhraseList.length) {
