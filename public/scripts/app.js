@@ -324,7 +324,7 @@ function Application() {
         recognizeToggle: $('#recognizeToggle'),
         backgroundPlayback: $('#backgroundPlayback'),
         useSpeakPhrase: $('#useSpeakPhrase'),
-        descBlock: $('#description-block')
+        deskBlock: $('#desk-block')
     };
             
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -590,12 +590,26 @@ function Application() {
             }
         });
 
-        elements.descBlock.click(()=>{
-            elements.descBlock.toggleClass('expanded');
+        elements.deskBlock.click(()=>{
+            toggleDeskBlock();
+        });
+    }
+
+    function toggleDeskBlock() {
+        
+        if (elements.deskBlock.find('.dropdown').css('display') != 'none') {
+            elements.deskBlock.toggleClass('expanded', ...arguments);
             setTimeout(()=>{
                 phrasesList.refreshAccordion();
+                let btn = elements.deskBlock.find('.btn');
+                btn.removeClass('bi-caret-down-fill bi-caret-up-fill');
+                btn.addClass(elements.deskBlock.hasClass('expanded') ? 'bi-caret-up-fill' : 'bi-caret-down-fill');
             }, 500);
-        });
+        }
+    }
+
+    function visibleDeskBlock(visible) {
+        elements.deskBlock.toggleClass('hide', visible);
     }
 
     function appendUserList(name, list) {
@@ -745,9 +759,9 @@ function Application() {
         let item = typeDescriptions.hasOwnProperty(state.currentListType) ? 
                             typeDescriptions[state.currentListType] : false;
 
-        elements.descBlock.toggleClass('hide', !item);
+        visibleDeskBlock(!item);
         if (item)
-            elements.descBlock.find('.description').html(`<h4>${item.name}</h4>${item.description}`);
+            elements.deskBlock.find('.description').html(`<h4>${item.name}</h4>${item.description}`);
 
         phrasesList.refreshAccordion();
     }

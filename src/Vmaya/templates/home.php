@@ -216,14 +216,20 @@
                 <?}?>
             </div>
         </div>
-        <div id="description-block">
+        <div id="desk-block">
             <div>
-                <div class="accordion-header">
-                    <div class="card bg-theme-gradient head">
-                        <?=Lang('description-title')?>
-                    </div>
+                <div class="dropdown">
+                    <button class="btn btn-sm bi-caret-down-fill" type="button">
+                    </button>
                 </div>
-                <div class="description">
+                <div class="desk-container">
+                    <div class="accordion-header">
+                        <div class="card bg-theme-gradient head">
+                            <?=Lang('description-title')?>
+                        </div>
+                    </div>
+                    <div class="description">
+                    </div>
                 </div>
             </div>
         </div>
