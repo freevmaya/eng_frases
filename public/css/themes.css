@@ -19,6 +19,8 @@
     --item-hover: #f8f9fa;
     --tv-color: rgba(0, 220, 255);
     --play-border-color: #FFF;
+    --success-color: green;
+    --loss-color: red;
 }
 
 .accordion {

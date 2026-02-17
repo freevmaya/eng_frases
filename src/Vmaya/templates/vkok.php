@@ -30,7 +30,8 @@
 	    		$user_id = $userModel->Update([
 	    			'source_id'=>$source_user_id,
 	    			'source'=>$source,
-	    			'language_code'=>DEFAULT_LANGUAGE
+	    			'language_code'=>DEFAULT_LANGUAGE,
+	    			'last_time'=>date('Y-m-d H:i:s')
 	    		]);
 	    		$new_user = $user_id;
 	    	} else $user_id = $items[0]['id'];
@@ -73,9 +74,9 @@
 		$requestNotification = false;
 
     	if (!$new_user && ($user = $userModel->getItem($user_id))) {
-
 	    	try {
-	    		$user_period = HoursDiffDate($user['create_date'], $user['last_time']);
+	    		$last_time = $user['last_time'] ? $user['last_time'] : 'now';
+	    		$user_period = HoursDiffDate($user['create_date'], $last_time);
 
 		    	if ($user['data'] && ($data = json_decode($user['data'], true)) && ($user_period >= 1)) {
 			    	$requestNotification = !(isset($data['allowedMessage']) && ($data['allowedMessage'] == 1));
@@ -103,12 +104,13 @@
     		$user_id = $userModel->Update([
     			'source_id'=>$source_user_id,
     			'source'=>$source,
-    			'language_code'=>DEFAULT_LANGUAGE
+    			'language_code'=>DEFAULT_LANGUAGE,
+	    		'last_time'=>date('Y-m-d H:i:s')
     		]);
     		$new_user = $user_id;
     	}
     	
-    	Page::setSession('user_id', $user_id = $items[0]['id']);
+    	Page::setSession('user_id', $user_id);
     }
 
     if ($user_id) {

@@ -129,6 +129,7 @@ class PhrasesModel extends BaseModel {
 	    $query = "
 	        SELECT 
 	            pt.type_name,
+	            p.id,
 	            p.target_text,
 	            p.native_text,
 	            p.direction,
@@ -151,7 +152,8 @@ class PhrasesModel extends BaseModel {
 	        }
 	        
 	        $phraseObj = [
-	            'target' => $row['target_text'] ?? '',
+	            'target' => $row['target_text'],
+	            'id' => $row['id'],
 	            'native' => $row['native_text'] ?? '',
 	            'direction' => $row['direction'] ?? ''
 	        ];

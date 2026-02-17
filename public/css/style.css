@@ -146,13 +146,84 @@
     max-width: 100% !important;
 }
 
-#desk-block > div {
+@keyframes shake-horizontal {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes shake-vertical {
+  0%, 100% { transform: translateY(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateY(-2px); }
+  20%, 40%, 60%, 80% { transform: translateY(2px); }
+}
+
+.quiz-block .btn-outline-success {
+    animation: shake-vertical 1s ease-in-out;
+}
+
+.quiz-block .btn-outline-danger {
+    animation: shake-horizontal 0.3s ease-in-out;
+}
+
+.quiz-block .success {
+    color: var(--success-color);
+}
+
+.quiz-block .loss {
+    color: var(--loss-color);
+}
+
+.quiz-block {
+    display: none;
+}
+
+.quiz-block .head {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+.quiz-block .score {
+    cursor: pointer;
+}
+
+.stop .btn {
+    pointer-events: none;
+}
+
+.keep .btn {
+    filter: blur(3px);
+}
+
+.quiz .description-block {
+    display: none !important;
+}
+
+.quiz .quiz-block {
+    display: block !important;
+}
+
+.quiz-block .content {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 10px;
+}
+
+.quiz-block .content .btn {
+    width: calc(50% - 4px);
+    display: block;
+    min-height: 4em;
+}
+
+#desk-block .description-block {
     transition: max-height 0.5s ease;
     display: flex;
 }
 
-#desk-block.expanded > div {
-    max-height: 100vw;
+#desk-block .expanded {
+    max-height: 100vw !important;
 }
 
 .desk-container {
@@ -212,7 +283,7 @@
         overflow-y: auto;
     }
 
-    #desk-block > div {
+    #desk-block .description-block {
         max-height: 2.5em;
     }
 
@@ -283,6 +354,7 @@
     text-align: center; 
     hyphens: auto;
     word-break: break-word;
+    transition: filter 0.3s ease;
 }
 
 .phrase-text {
@@ -647,6 +719,7 @@ footer {
 .head {
     padding: 0.6em 1em;
     height: 2.8em;
+    nowrap
 }
 
 .row {
@@ -741,7 +814,8 @@ footer {
 #settingsModal .modal-body .text-info,
 #settingsModal label,
 #phraseType,
-#currentRepeat {
+#currentRepeat,
+.head {
 
     white-space: nowrap;
     overflow: hidden;
@@ -774,6 +848,10 @@ footer {
 
 #payerMessage .fail {
     color: gray;
+}
+
+.blur {
+    filter: blur(0.15em) !important;
 }
 
 .blurred {

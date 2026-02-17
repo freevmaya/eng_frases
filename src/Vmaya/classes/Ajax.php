@@ -223,5 +223,20 @@ class Ajax extends BaseAjax {
 	protected function getList() {
 		return PhrasesModel::getPhrasesAsJsonWithDifficulty();
 	}
+
+	protected function getIncorrect($data)
+	{
+		if ($phrase_id = intval($data['phrase_id'])) {
+			if ($list = (new IncorrectTranslationsModel())->getItems(['phrase_id' => $phrase_id])) {
+				return [
+					'success'=> true,
+					'list' => $list
+				];
+			} else return [
+					'success'=> false
+				];
+		}
+		Page::Wrong();
+	}
 }
 ?>

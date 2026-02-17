@@ -218,17 +218,31 @@
         </div>
         <div id="desk-block">
             <div>
-                <div class="dropdown">
-                    <button class="btn btn-sm bi-caret-down-fill" type="button">
-                    </button>
-                </div>
-                <div class="desk-container">
-                    <div class="accordion-header">
-                        <div class="card bg-theme-gradient head">
-                            <?=Lang('description-title')?>
+                <div class="description-block">
+                    <div class="dropdown">
+                        <button class="btn btn-sm bi-caret-down-fill" type="button">
+                        </button>
+                    </div>
+                    <div class="desk-container">
+                        <div class="accordion-header">
+                            <div class="card bg-theme-gradient head">
+                                <?=Lang('description-title')?>
+                            </div>
+                        </div>
+                        <div class="description">
                         </div>
                     </div>
-                    <div class="description">
+                </div>
+                <div class="quiz-block">
+                    <div class="card bg-theme-gradient head">
+                        <span class="title">
+                            <?=Lang('quiz-title')?>
+                        </span>
+                        <span class="score" title="<?=Lang('score')?>">
+                            
+                        </span>
+                    </div>
+                    <div class="content">
                     </div>
                 </div>
             </div>

@@ -130,9 +130,7 @@ class Page {
 		GLOBAL $_SESSION, $_SERVER, $dbp;
 		$dbp->Close();
 
-		trace_error("Wrong".
-			"\n\nSESSION: ".json_encode($_SESSION, JSON_FLAGS).
-			"\n\nSERVER: ".json_encode($_SERVER, JSON_FLAGS));
+		trace_error("Wrong");
 		header('HTTP/1.1 403 Forbidden');
 		exit(403);
 	}

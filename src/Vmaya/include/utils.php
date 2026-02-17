@@ -106,8 +106,8 @@ function downloadFile($url, $savePath)
 }
 
 function HoursDiffDate($dateString, $referenceDate = 'now') {
-    $timestamp1 = strtotime($dateString);
-    $timestamp2 = strtotime($referenceDate);
+    $timestamp1 = strtotime(is_string($dateString) ? $dateString : 'now');
+    $timestamp2 = strtotime(is_string($referenceDate) ? $referenceDate : 'now');
     
     // Разница в секундах
     $diffSeconds = $timestamp2 - $timestamp1;

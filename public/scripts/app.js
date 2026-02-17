@@ -12,6 +12,25 @@ const AppConst = {
         native: 30
     },
     directions: {
+        'quiz': [{
+                show: {
+                    text: 'target',
+                    blur: ['text']
+                }, 
+                speak: 'target', 
+                listen: 'target'
+            },{
+                show: {
+                    text: 'target'
+                }, 
+                speak: 'target', 
+                listen: 'target'
+            },{
+                show: 'native', 
+                speak: 'native', 
+                listen: 'target'
+            }
+        ],
         'native-target': [
             {
                 show: 'native', 
@@ -198,11 +217,10 @@ function Alert(message, title=Lang("info"), showCancel = false) {
 
 class Phrase {
     constructor(data, type) {
+        this.id         = data['id'];
         this.native     = data['native'];
         this.target     = data['target'];
         this.direction  = data['direction'];
-        this.context    = data['context'];
-        this.difficulty_level = data['difficulty_level'];
         this.type       = type;
     }
 
@@ -295,7 +313,8 @@ function Application() {
             let scale = Math.min(1, block.closest('.phrase-container').innerHeight() / block.height());
             block.css('scale', scale);
         }, 5),
-        backgroundAudio: null
+        backgroundAudio: null,
+        quizAnswered: false
     };
 
     const elements = {
@@ -436,11 +455,21 @@ function Application() {
         setCurrentPhraseIndex(getProgressIndex());
     }
 
+    function getProgress() {
+        return state.progress[state.currentListType] ? state.progress[state.currentListType] : {
+            currentRepeat: 0,
+            index: 0
+        };
+    }
+
     function setProgress(curentRepeat, a_index) {
-        let newParams = {
+        setProgressObject({
             currentRepeat: curentRepeat,
             index: a_index
-        }
+        });
+    }
+
+    function setProgressObject(newParams) {
 
         let progress = {}
         Object.keys(state.progress).forEach((key)=>{progress[key] = state.progress[key];});
@@ -449,7 +478,6 @@ function Application() {
         stateManager.updatePlaybackState({
             progress: progress
         });
-        return 0;
     }
 
     function getProgressIndex() {
@@ -593,23 +621,154 @@ function Application() {
         elements.deskBlock.click(()=>{
             toggleDeskBlock();
         });
+
+        elements.deskBlock.find('.score').click(()=>{
+            Confirm(Lang('reset-score-question'))
+                .then(()=>{
+                    setScore(0, 0);
+                });
+        });
+    }
+
+    function isQuiz() {
+        return state.direction == 'quiz';
+    }
+
+    function refreshDeskBlock() {
+        elements.deskBlock.toggleClass('quiz', isQuiz());
+        if (isQuiz() && appData.currentPhrase) {
+            if (state.indexInMode == 0) {
+                updateScore();
+                if (appData.currentPhrase.incorrectList)
+                    refreshIncorrectList();
+                else {
+                    appData.currentPhrase.incorrectList = {};
+                    Ajax({
+                        action: 'getIncorrect',
+                        data: {
+                            phrase_id: appData.currentPhrase.id
+                        }
+                    })
+                    .then((data)=>{
+                        if (data.success) {
+                            appData.currentPhrase.incorrectList = data.list;
+                            refreshIncorrectList();
+                        } else UnawailableQuiz();
+                    })
+                    .catch((e)=>{
+                        UnawailableQuiz();
+                    });
+                }
+            } else if (state.indexInMode == 1)
+                stopQuestionQuiz(!isPlaying() || appData.quizAnswered, !isPlaying());
+            else if (state.indexInMode > 1) {
+                stopQuestionQuiz(true);
+                if (!appData.quizAnswered)
+                    addScope(0, 1);
+            }
+            elements.deskBlock.find('.quiz-block .title').text(Lang(isPlaying() ? 'quiz-title' : 'quiz-title-play'));
+        }
+    }
+
+    function stopQuestionQuiz(stop = true, keep = false) {
+        elements.deskBlock.find('.quiz-block')
+            .toggleClass('stop', stop)
+            .toggleClass('keep', keep);
+    }
+
+    function updateScore() {
+        let progress = {...{success: 0, loss: 0}, ...getProgress()};
+        let scoreElem = elements.deskBlock.find('.quiz-block .score');
+        let k = progress.success / progress.loss;
+        scoreElem.text(progress.success + '/' + progress.loss);
+        scoreElem.toggleClass('success', k > 1)
+            .toggleClass('loss', k < 1);
+    }
+
+    function addScope(successAdd = 0, lossAdd = 0) {
+        let progress = getProgress();
+        
+        setScore((progress.success ? progress.success : 0) + successAdd,
+                (progress.loss ? progress.loss : 0) + lossAdd);
+    }
+
+    function setScore(success = 0, loss = 0) {
+        setProgressObject({success : success, loss: loss});
+        updateScore();
+    }
+
+    function clickAnwer(e) {
+        let elem = $(e.currentTarget);
+        let ok = elem.text() == appData.currentPhrase.native;
+        elem.removeClass('btn-outline-secondary').addClass(ok ? 'btn-outline-success' : 'btn-outline-danger');
+        stopQuestionQuiz();
+        $(window).trigger(ok ? 'success' : 'loss');
+        appData.quizAnswered = true;
+        addScope(ok ? 1 : 0, ok ? 0 : 1);
+    }
+
+    function UnawailableQuiz() {
+        let quiz_block = elements.deskBlock.find('.quiz-block .content');
+        quiz_block.empty();
+        elements.deskBlock.css('display', 'none');
+        phrasesList.refreshAccordion();
+    }
+
+    function refreshIncorrectList() {
+        let list = appData.currentPhrase.incorrectList;
+        if (list && !appData.quizAnswered) {
+            let quiz_block = elements.deskBlock.find('.quiz-block .content');
+
+            if (list.length > 0) {
+                elements.deskBlock.css('display', 'block');
+                list = [...list];
+                list.push({
+                    incorrect_text: appData.currentPhrase.native
+                });
+                let tlist = shuffleArrayWithSeed(list, Date.now());
+
+                let buttons = quiz_block.find('.btn');
+
+                tlist.forEach((item, i)=>{
+                    let aitem;
+                    if (i < buttons.length) {
+                        aitem = $(buttons[i]);
+                        aitem.removeClass('btn-outline-success btn-outline-danger');
+                    }
+                    else {
+                        aitem = $(`<button class="btn btn-sm"></button>`);
+                        aitem.click(clickAnwer);
+                    }
+                    aitem.toggleClass('btn-outline-secondary', true);
+                    aitem.text(item.incorrect_text);
+                    quiz_block.append(aitem);
+                });
+
+                stopQuestionQuiz(!isPlaying(), !isPlaying());
+            }
+            
+            phrasesList.refreshAccordion();
+        }
     }
 
     function toggleDeskBlock() {
-        
-        if (elements.deskBlock.find('.dropdown').css('display') != 'none') {
-            elements.deskBlock.toggleClass('expanded', ...arguments);
-            setTimeout(()=>{
-                phrasesList.refreshAccordion();
-                let btn = elements.deskBlock.find('.btn');
-                btn.removeClass('bi-caret-down-fill bi-caret-up-fill');
-                btn.addClass(elements.deskBlock.hasClass('expanded') ? 'bi-caret-up-fill' : 'bi-caret-down-fill');
-            }, 500);
+        if (!isQuiz()) {
+            let desc_block = elements.deskBlock.find('.description-block');
+
+            if (elements.deskBlock.find('.dropdown').css('display') != 'none') {
+                desc_block.toggleClass('expanded', ...arguments);
+                setTimeout(()=>{
+                    phrasesList.refreshAccordion();
+                    let btn = elements.deskBlock.find('.btn');
+                    btn.removeClass('bi-caret-down-fill bi-caret-up-fill');
+                    btn.addClass(desc_block.hasClass('expanded') ? 'bi-caret-up-fill' : 'bi-caret-down-fill');
+                }, 500);
+            }
         }
     }
 
     function visibleDeskBlock(visible) {
-        elements.deskBlock.toggleClass('hide', visible);
+        elements.deskBlock.toggleClass('hide', !visible);
     }
 
     function appendUserList(name, list) {
@@ -695,6 +854,7 @@ function Application() {
         
         stateManager.saveState();
         updateDisplay();
+        refreshDescription();
 
         if (changes.settingsChanged || changes.listChanged) {
             applyTvScreenState();
@@ -756,12 +916,16 @@ function Application() {
 
     function refreshDescription() {
 
-        let item = typeDescriptions.hasOwnProperty(state.currentListType) ? 
+        if (isQuiz()) {
+            visibleDeskBlock(true);
+        } else {
+            let item = typeDescriptions.hasOwnProperty(state.currentListType) ? 
                             typeDescriptions[state.currentListType] : false;
 
-        visibleDeskBlock(!item);
-        if (item)
-            elements.deskBlock.find('.description').html(`<h4>${item.name}</h4>${item.description}`);
+            visibleDeskBlock(item);
+            if (item)
+                elements.deskBlock.find('.description').html(`<h4>${item.name}</h4>${item.description}`);
+        }
 
         phrasesList.refreshAccordion();
     }
@@ -841,6 +1005,7 @@ function Application() {
             clearTimeout(appData.timeoutId);
             $(window).trigger("playback", 'stop');
             stopRecognition();
+            refreshDeskBlock();
             //stopBackgroundAudio();
 
         } else {
@@ -969,6 +1134,9 @@ function Application() {
     function setCurrentPhraseIndex(index) {
         let newIndex = Math.max(0, Math.min(index, appData.currentPhraseList.length - 1));
 
+        if (state.currentPhraseIndex != newIndex)
+            appData.quizAnswered    = false;
+
         state.currentPhraseIndex    = newIndex;
         state.indexInMode           = 0;
         appData.currentPhrase       = appData.currentPhraseList[state.currentPhraseIndex];
@@ -1080,8 +1248,11 @@ function Application() {
                 setText(elements.phraseHint, hint, 0.7);
     }
 
-    function showPhrase(lang) {
+    function showPhrase(langObj) {
         let updated = false;
+        
+        let hastObj = typeof langObj == 'object';
+        let lang = hastObj ? langObj.text : langObj;
 
         if (lang === 'target') {
             updated = updatePhrases(appData.currentPhrase.target, appData.currentPhrase.native);
@@ -1094,8 +1265,24 @@ function Application() {
             elements.phraseText.removeClass('text-target');
             elements.phraseHint.addClass('text-target');
         }
+
+        let showText = true;
+        let showHint = true;
+
+        if (hastObj) {
+            showText = typeof langObj.text != 'undefined';
+            showHint = typeof langObj.hint != 'undefined';
+        }
+
+        let hasBlur = hastObj && (typeof langObj.blur != 'undefined');
+        elements.phraseText.toggleClass('blur', hasBlur && langObj.blur.includes('text'));
+        elements.phraseHint.toggleClass('blur', hasBlur && langObj.blur.includes('hint'));
+
+        elements.phraseText.css('display', showText ? 'block' : 'none');
+        elements.phraseHint.css('display', showHint ? 'block' : 'none');
         
         if (updated) {
+            
             updateSizePlayerTexts();
             elements.phraseScaleBlock.addClass('animate-text');
             setTimeout(() => {
@@ -1131,6 +1318,7 @@ function Application() {
         }
 
         refreshProgressBar();
+        refreshDeskBlock();
     }
 
     function updateControls() {
