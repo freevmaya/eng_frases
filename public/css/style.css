@@ -149,11 +149,14 @@
 #desk-block > div {
     transition: max-height 0.5s ease;
     display: flex;
-    justify-content: space-between;
 }
 
 #desk-block.expanded > div {
     max-height: 100vw;
+}
+
+.desk-container {
+    width: 100%;
 }
 
 @media (min-aspect-ratio: 1/1) {
