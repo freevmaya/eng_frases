@@ -49,7 +49,7 @@
     <link rel="stylesheet" href="css/style.css<?=$v?>" media="all">
     <link rel="stylesheet" href="css/style-waves.css<?=$v?>" media="all">
     <?if ($is_developer) {?><script>var DEV = true</script><?}?>
-    <script src="scripts/error-tracker.js<?=$v?>"></script>
+    <?include('tracker.php')?>
     <?include('lang_script.php')?>
 
     <!-- Bootstrap & jQuery -->
@@ -61,25 +61,6 @@
     <script src="scripts/main.js<?=$v?>"></script>
     <script src="scripts/user-app.js<?=$v?>" defer></script>
     <script src="scripts/advice-modal.js<?=$v?>"></script>
-    <script type="text/javascript">
-        <?if (isset(Page::$request['params'])) {?>
-            let app_init_params = <?=urldecode(Page::$request['params'])?>;
-        <?}?>
-        ErrorTracker.init({
-            version: <?=SCRIPTS_VERSION;?>,
-            user_id: <?=$user_id;?>,
-            excludeDomains: [
-                'yandex.ru',
-                'google.com',
-                'example.org',
-                'googleapis.com',
-                'api/generate-audio',
-                'api/check-audio'
-            ]
-        });
-
-        var X_CSRF_Token = '<?=Page::LastToken();?>';
-    </script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="scripts/tg.js<?=$v?>"></script>
     <script type="text/javascript">

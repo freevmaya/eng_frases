@@ -176,10 +176,20 @@ const ErrorTracker = {
                             if (entry.transferSize === 0 && entry.duration > 0 && 
                                 !entry.name.includes(window.location.origin)) {
 
-                                // Проверяем, не является ли ресурс из исключаемого домена
+                                // Если это запрос к /collect и transferSize=0, считаем это нормой
+                                if (entry.name.includes('/collect')) {
+                                    return;
+                                }
+
+                                // Такие запросы часто имеют нулевой размер ответа
+                                if (entry.initiatorType === 'beacon') {
+                                    return;
+                                }
+
                                 if (this.isExcludedDomain(entry.name)) {
                                     return; // Пропускаем ресурсы из исключаемых доменов
                                 }
+
                                 this.handleError({
                                     type: 'resource_failed',
                                     message: 'Resource load may have failed',

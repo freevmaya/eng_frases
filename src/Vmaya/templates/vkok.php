@@ -136,9 +136,9 @@
     <link rel="stylesheet" href="css/style.css<?=$v?>" media="all">
     <link rel="stylesheet" href="css/style-waves.css<?=$v?>" media="all">
     <?if ($is_developer) {?><script>var DEV = true</script><?}?>
+	<?include('tracker.php')?>
 	<script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
 	<?include('lang_script.php')?>
-	<script src="scripts/error-tracker.js<?=$v?>"></script>
 	<script>
 		let VK_GROUP_ID = <?=VK_GROUP_ID?>;
 		vkBridge.send("VKWebAppInit", {})
@@ -165,23 +165,6 @@
 	<script src="scripts/main.js<?=$v?>"></script>
 	<script src="scripts/user-app.js<?=$v?>" defer></script>
 	<script src="scripts/advice-modal.js<?=$v?>"></script>
-	<script type="text/javascript">
-		ErrorTracker.init({
-			version: <?=SCRIPTS_VERSION;?>,
-			user_id: <?=$user_id;?>,
-			excludeDomains: [
-				'generate-phrases',
-				'yandex',
-		        'google.com',
-		        'example.org',
-		        'googleapis.com',
-		        'api/generate-audio',
-		        'api/check-audio'
-		    ]
-		});
-
-		var X_CSRF_Token = '<?=Page::LastToken();?>';
-	</script>
 
     <?if ($vkok) {?>
 		<script src="scripts/vkapp.js<?=$v?>" defer></script>

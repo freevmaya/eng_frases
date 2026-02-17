@@ -32,7 +32,7 @@
     <link rel="stylesheet" href="css/<?=$file_style?>.css<?=$v?>" media="all">
     <link rel="stylesheet" href="css/style-waves.css<?=$v?>" media="all">
     <?if ($is_developer) {?><script>var DEV = true</script><?}?>
-    <script src="scripts/error-tracker.js<?=$v?>"></script>
+    <?include('tracker.php')?>
     <?include('lang_script.php')?>
 
     <!-- Bootstrap & jQuery -->
@@ -46,22 +46,6 @@
     <script src="scripts/user-app.js<?=$v?>" defer></script>
     <?}?>
     <script src="scripts/advice-modal.js<?=$v?>"></script>
-    <script type="text/javascript">
-        ErrorTracker.init({
-            version: <?=SCRIPTS_VERSION;?>,
-            user_id: <?=Page::getSession('user_id', 0);?>,
-            excludeDomains: [
-                'yandex',
-                'google.com',
-                'example.org',
-                'googleapis.com',
-                'api/generate-audio',
-                'api/check-audio'
-            ]
-        });
-
-        var X_CSRF_Token = '<?=Page::LastToken();?>';
-    </script>
     <?include('ya-mertika.php');?>
     <?include('gtag.php');?>
 </head>
