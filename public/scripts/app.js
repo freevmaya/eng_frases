@@ -254,6 +254,14 @@ Phrase.createList = (sourceList, type)=>{
 
 function showAdvices() {
     let list = [
+        `<p>` + Lang("advice_quiz_1") + `</p>
+        <p>` + Lang("advice_quiz_2") + `
+        <ul>
+            <li>` + Lang("advice_quiz_3") + `</li>
+            <li>` + Lang("advice_quiz_4") + `</li>
+            <li>` + Lang("advice_quiz_5") + `</li>
+        </ul>
+        </p>`,
         `<p>` + Lang("advice_3_1") + `</p><p>` + Lang("advice_3_2") + `
         <ul>
             <li>` + Lang("advice_3_li_1") + `</li>
@@ -573,6 +581,14 @@ function Application() {
 
         $(window).on('resize', function() {
             updateSizePlayerTexts();
+        });
+
+        $(window).on('start-play', function() {
+            startPlayback();
+        });
+
+        $(window).on('stop-play', function() {
+            stopPlayback();
         });
 
         $(window).on('play_autio_error', function(e, error) {

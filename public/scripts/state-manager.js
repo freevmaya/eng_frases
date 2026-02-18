@@ -12,7 +12,7 @@ class StateManager {
             speed: 1.0,
             pauseBetweenPhrases: 3,
             
-            direction: 'target2-native-target-both',
+            direction: 'quiz',
             phraseDirection: 'en-ru',
             order: 'sequential',
             currentListType: 'Present simple',
@@ -37,6 +37,9 @@ class StateManager {
         };
         
         this.state = { ...this.DEFAULT_STATE };
+
+        if (typeof new_user != 'undefined')
+            localStorage.removeItem(this.STORAGE_KEY);
 
         this.try_saveStateToServer = debounce(()=>{
             this.saveStateServer();

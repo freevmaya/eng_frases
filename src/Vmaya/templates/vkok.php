@@ -27,13 +27,12 @@
 			$items = $userModel->getItems(['source_id' => $source_user_id, 'source'=>$source]);
 
 	    	if (count($items) == 0) {
-	    		$user_id = $userModel->Update([
+	    		$new_user = $user_id = $userModel->Update([
 	    			'source_id'=>$source_user_id,
 	    			'source'=>$source,
 	    			'language_code'=>DEFAULT_LANGUAGE,
 	    			'last_time'=>date('Y-m-d H:i:s')
 	    		]);
-	    		$new_user = $user_id;
 	    	} else $user_id = $items[0]['id'];
 
     	} catch (Exception $e) {
@@ -42,7 +41,7 @@
 
     		if (count($items) > 0) {
 
-    			$user_id = $items[0]['id'];
+    			$new_user = $user_id = $items[0]['id'];
 
     			trace("Warning initalize user {$user_id}".
 	    				"\nError: ".$e->getMessage());
@@ -70,21 +69,6 @@
     	]);
 
     	Page::setSession('user_id', $user_id);
-
-		$requestNotification = false;
-
-    	if (!$new_user && ($user = $userModel->getItem($user_id))) {
-	    	try {
-	    		$last_time = $user['last_time'] ? $user['last_time'] : 'now';
-	    		$user_period = HoursDiffDate($user['create_date'], $last_time);
-
-		    	if ($user['data'] && ($data = json_decode($user['data'], true)) && ($user_period >= 1)) {
-			    	$requestNotification = !(isset($data['allowedMessage']) && ($data['allowedMessage'] == 1));
-			    }
-			} catch (Exception $e) {
-				trace_error($e->getMessage());
-			}
-	    }
     } else if (DEV) {
 
 		//Инициализация пользователя VK. Только при разработке!
@@ -173,13 +157,13 @@
 
 		<script type="text/javascript">
 			var vkApp;
+			<?if ($new_user) {?>
+			var new_user = true;
+			<?}?>
 			$(window).ready(()=>{
 				vkApp = new VKApp(<?=VK_APP_ID?>, <?=$source_user_id?>, '<?=$source?>', <?=json_encode($phrases)?>);
 				<?if ($new_user) {?>
 				showAdvices();
-				<?}?>
-				<?if ($requestNotification) {?>
-					vkApp.requestNotification();
 				<?}?>
 			});
 		</script>

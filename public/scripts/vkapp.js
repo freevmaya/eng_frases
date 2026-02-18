@@ -28,9 +28,12 @@ class VKApp {
 	  	.catch((error) => { tracer.log(error); });
 
 	  	this.initListeners();
+
+	  	setTimeout(this.requestNotification.bind(this), 10000);
 	}
 
 	requestNotification() {
+		tracer.log('requestNotification');
 		vkBridge.send("VKWebAppAllowMessagesFromGroup", { "group_id": VK_GROUP_ID })
 			.then((data) => {
 				if (data.result)

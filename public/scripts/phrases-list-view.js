@@ -10,7 +10,7 @@ class PhrasesListView {
 		$(window).on('added_user_list', this.onAddedUserList.bind(this));
 		$(window).on('user_list_loaded', this.onUserListLoaded.bind(this));
 
-		this.checkTentionDelay = debounce(this.doCheckTention.bind(this), 200);
+		this.checkTentionDelay = debounce(this.doCheckTention.bind(this), 400);
 		this.hiddedDesk = false;
 	}
 
