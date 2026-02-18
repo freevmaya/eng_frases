@@ -653,7 +653,7 @@ function Application() {
                     })
                     .then((data)=>{
                         if (data.success) {
-                            appData.currentPhrase.incorrectList = data.list;
+                            appData.currentPhrase.incorrectList = data.list.slice(0, 3);
                             refreshIncorrectList();
                         } else UnawailableQuiz();
                     })
