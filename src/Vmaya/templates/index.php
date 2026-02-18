@@ -50,6 +50,10 @@
     <?include('gtag.php');?>
 </head>
 <body class="theme site">
+    <div class="loader">
+        <div class="spinner-border" role="status">
+        </div>
+    </div>
     <div class="page">
         <div class="wrap-content">
             <!-- Header -->

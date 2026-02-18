@@ -72,6 +72,10 @@
     <?include('gtag.php');?>
 </head>
 <body class="theme tg">
+    <div class="loader">
+        <div class="spinner-border" role="status">
+        </div>
+    </div>
     <div class="page">
         <div class="wrap-content">
             <!-- Header -->

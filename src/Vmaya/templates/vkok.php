@@ -182,7 +182,6 @@
 <body class="theme vkok">
 	<div class="loader">
 		<div class="spinner-border" role="status">
-			<span class="visually-hidden">Загрузка...</span>
 		</div>
 	</div>
 	<div class="page">
