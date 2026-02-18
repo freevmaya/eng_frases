@@ -207,12 +207,13 @@
                     </div>
                 </div>
                 <?if (Page::isDev()) {?>
+                    <!--
                 <div class="dev card bg-theme-gradient mt-2">
                     <div><?=Lang('dev_panel')?></div>
                     <button type="button" class="btn ext" id="regenerateBtn" title="<?=Lang('regenerate')?>">
                         <i class="bi bi-soundwave"></i>
                     </button>
-                </div>
+                </div>-->
                 <?}?>
             </div>
         </div>

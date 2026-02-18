@@ -166,12 +166,16 @@
     animation: shake-horizontal 0.3s ease-in-out;
 }
 
-.quiz-block .success {
-    color: var(--success-color);
+.score.success > span {
+    color: var(--success-color) !important;
 }
 
-.quiz-block .loss {
-    color: var(--loss-color);
+.score.success .bi-award {
+    color: var(--award-color);
+}
+
+.score.loss {
+    color: var(--loss-color) !important;
 }
 
 .quiz-block {
@@ -190,6 +194,17 @@
 
 .stop .btn {
     pointer-events: none;
+    opacity: 0.4;
+}
+
+.quiz-block .btn-outline-success, 
+.quiz-block .btn-outline-danger {
+    opacity: 1 !important;
+}
+
+.tips .correct {
+    color: var(--correct-color);
+    border-color: var(--correct-color);
 }
 
 .keep .btn {
@@ -215,6 +230,7 @@
     width: calc(50% - 4px);
     display: block;
     min-height: 4em;
+    transition: all 2s ease;
 }
 
 #desk-block .description-block {
@@ -268,7 +284,7 @@
     }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 320px) {
     #desk-block {
         display: none;
     }
@@ -432,9 +448,6 @@
     --bs-btn-active-bg: var(--bs-btn-bg);
     --bs-btn-active-border-color: var(--bs-btn-border-color);
     --bs-btn-active-color: var(--bs-btn-color);
-    
-    /* Убираем transition */
-    transition: none !important;
   }
 
   .btn.active {
@@ -839,15 +852,15 @@ footer {
 }
 
 #payerMessage .success {
-    color: #1bff00;
+    color: var(--success-color);
 }
 
 #payerMessage .almost {
-    color: #709550;
+    color: var(--info);
 }
 
 #payerMessage .fail {
-    color: gray;
+    color: var(--info);
 }
 
 .blur {
@@ -929,8 +942,12 @@ footer {
     text-overflow: ellipsis;
 }
 
+.accordion-body {
+    padding: 0px;
+}
+
 #accordionItems {
-    overflow: hidden;
+    overflow-y: auto;
     flex: 1;
     display: flex;
     flex-direction: column;

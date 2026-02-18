@@ -9,6 +9,9 @@ class PhrasesListView {
         $(window).on('resize', this.refreshAccordion.bind(this));
 		$(window).on('added_user_list', this.onAddedUserList.bind(this));
 		$(window).on('user_list_loaded', this.onUserListLoaded.bind(this));
+
+		this.checkTentionDelay = debounce(this.doCheckTention.bind(this), 200);
+		this.hiddedDesk = false;
 	}
 
 	onUserListLoaded(e, data) {
@@ -18,6 +21,14 @@ class PhrasesListView {
 	onSelected(e, type) {
 		this.current_list_index = type;
 		this.refreshForCurrentList();
+	}
+
+	doCheckTention() {
+		if (this.isTension()) {
+			let show = this.accordion.find('.show');
+			show.hideCollapse();
+			this.refreshAccordion();
+		}
 	}
 
 	filterPhrases(listName, list) {
@@ -102,6 +113,28 @@ class PhrasesListView {
     		});
     }
 
+    itemHeaderHeight() {
+    	let items = this.accordion.children();
+    	return items.length > 0 ? $(items[0]).find('.accordion-header').height() : 0;
+    }
+
+    isTension() {
+    	return Math.round(this.accordion.parent().innerHeight()) < Math.round(this.accordion[0].scrollHeight);
+    }
+
+    calcMinHeight() {
+    	let items = this.accordion.children();
+	    let count = items.length;
+
+    	if (count > 1) {
+    		let gap = this.accordion.getGap();
+    		let item_h = this.itemHeaderHeight();
+	    	return count * item_h + count * gap + gap * 2 + item_h;
+	    }
+
+	    return 0;
+    }
+
     refreshAccordion() {
     	let items = this.accordion.children();
 	    let count = items.length;
@@ -110,14 +143,16 @@ class PhrasesListView {
 
     		let gap = this.accordion.getGap();
     		let h = this.accordion.parent().innerHeight();
-    		let item_h = $(items[0]).find('.accordion-header').height();
+    		let item_h = this.itemHeaderHeight();
 	    	let hfree = h - count * item_h + count * gap + gap * 2;
 
 	    	items.each((i, item)=>{
 	    		item = $(item);
 	    		let show = item.find('.show').length > 0;
-	    		item.css('height', show ? hfree : item_h);
+	    		item.css('height', show ? Math.max(hfree, item_h * 2) : item_h);
 	    	});
+
+	    	this.checkTentionDelay();
 	    }
     }
 
@@ -191,9 +226,17 @@ class PhrasesListView {
     	this.refreshAccordion();
 
 		this.accordion.on('hidden.bs.collapse', event => {
+			if (this.hiddedDesk) {
+				$('#desk-block').show();
+				this.hiddedDesk = false;
+			}
 			this.refreshAccordion();
 		})
 		this.accordion.on('shown.bs.collapse', event => {
+			if (this.calcMinHeight() > this.accordion.parent().innerHeight()) {
+				$('#desk-block').hide();
+				this.hiddedDesk = true;
+			}
 			this.refreshAccordion();
 		})
 		this.refreshForCurrentList();
@@ -210,4 +253,10 @@ class PhrasesListView {
 		this.current_list_index = currentListType;
 		this.refreshItems();
 	}
+}
+
+$.fn.hideCollapse = function () {
+	const collapse = bootstrap.Collapse.getInstance(this[0]);
+    if (collapse) collapse.hide();
+    else this.removeClass('show');
 }

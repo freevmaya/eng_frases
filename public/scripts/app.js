@@ -637,6 +637,8 @@ function Application() {
     function refreshDeskBlock() {
         elements.deskBlock.toggleClass('quiz', isQuiz());
         if (isQuiz() && appData.currentPhrase) {
+            elements.deskBlock.find('.quiz-block .title').text(Lang(appData.quizAnswered ? 'quiz-title-stop' : (isPlaying() ? 'quiz-title' : 'quiz-title-play')));
+
             if (state.indexInMode == 0) {
                 updateScore();
                 if (appData.currentPhrase.incorrectList)
@@ -659,30 +661,32 @@ function Application() {
                         UnawailableQuiz();
                     });
                 }
-            } else if (state.indexInMode == 1)
+            } else if (state.indexInMode == 1) {
                 stopQuestionQuiz(!isPlaying() || appData.quizAnswered, !isPlaying());
+            }
             else if (state.indexInMode > 1) {
-                stopQuestionQuiz(true);
+                stopQuestionQuiz(true, false, true);
                 if (!appData.quizAnswered)
                     addScope(0, 1);
             }
-            elements.deskBlock.find('.quiz-block .title').text(Lang(isPlaying() ? 'quiz-title' : 'quiz-title-play'));
         }
     }
 
-    function stopQuestionQuiz(stop = true, keep = false) {
+    function stopQuestionQuiz(stop = true, keep = false, tips = false) {
         elements.deskBlock.find('.quiz-block')
             .toggleClass('stop', stop)
-            .toggleClass('keep', keep);
+            .toggleClass('keep', keep)
+            .toggleClass('tips', tips);
     }
 
     function updateScore() {
-        let progress = {...{success: 0, loss: 0}, ...getProgress()};
+        let progress = {...{success: 0, loss: 0, award: 0}, ...getProgress()};
         let scoreElem = elements.deskBlock.find('.quiz-block .score');
         let k = progress.success / progress.loss;
-        scoreElem.text(progress.success + '/' + progress.loss);
-        scoreElem.toggleClass('success', k > 1)
-            .toggleClass('loss', k < 1);
+        let scoreText = progress.success + '/' + progress.loss;
+
+        scoreElem.html(progress.award > 0 ? `<i class="bi bi-award"></i><span>${scoreText}</span>` : scoreText);
+        scoreElem.toggleClass('success', k > 1).toggleClass('loss', k < 1);
     }
 
     function addScope(successAdd = 0, lossAdd = 0) {
@@ -693,7 +697,30 @@ function Application() {
     }
 
     function setScore(success = 0, loss = 0) {
-        setProgressObject({success : success, loss: loss});
+        let progress = {...{
+            success: 0, 
+            loss: 0, 
+            award: 0
+        }, ...getProgress()};
+
+        let award = (success > 5) ? (success / Math.max(loss, 1) > 1.5 ? 1 : 0) : 0;
+        if (award != progress.award) {
+
+            $(window).trigger(award ? 'award' : 'dismiss');
+            progress.award = award;
+
+        } else {
+
+            if (progress.success < success)
+                $(window).trigger('success');
+            else if (progress.loss < loss)
+                $(window).trigger('loss');
+
+            progress.success = success;
+            progress.loss = loss;
+        }
+
+        setProgressObject(progress);
         updateScore();
     }
 
@@ -702,8 +729,8 @@ function Application() {
         let ok = elem.text() == appData.currentPhrase.native;
         elem.removeClass('btn-outline-secondary').addClass(ok ? 'btn-outline-success' : 'btn-outline-danger');
         stopQuestionQuiz();
-        $(window).trigger(ok ? 'success' : 'loss');
         appData.quizAnswered = true;
+        elements.deskBlock.find('.quiz-block .title').text(Lang('quiz-title-stop'));
         addScope(ok ? 1 : 0, ok ? 0 : 1);
     }
 
@@ -720,9 +747,11 @@ function Application() {
             let quiz_block = elements.deskBlock.find('.quiz-block .content');
 
             if (list.length > 0) {
+
                 elements.deskBlock.css('display', 'block');
                 list = [...list];
                 list.push({
+                    correct: true,
                     incorrect_text: appData.currentPhrase.native
                 });
                 let tlist = shuffleArrayWithSeed(list, Date.now());
@@ -733,13 +762,14 @@ function Application() {
                     let aitem;
                     if (i < buttons.length) {
                         aitem = $(buttons[i]);
-                        aitem.removeClass('btn-outline-success btn-outline-danger');
+                        aitem.removeClass('btn-outline-success btn-outline-danger correct');
                     }
                     else {
                         aitem = $(`<button class="btn btn-sm"></button>`);
                         aitem.click(clickAnwer);
                     }
                     aitem.toggleClass('btn-outline-secondary', true);
+                    aitem.toggleClass('correct', item.correct === true);
                     aitem.text(item.incorrect_text);
                     quiz_block.append(aitem);
                 });

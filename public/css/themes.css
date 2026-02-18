@@ -21,6 +21,8 @@
     --play-border-color: #FFF;
     --success-color: green;
     --loss-color: red;
+    --correct-color: #66AA66;
+    --award-color: #d38100;
 }
 
 .accordion {

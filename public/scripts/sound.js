@@ -45,6 +45,14 @@ new AppSound({
 		loss: {
 			file: 'data/sounds/loss.mp3',
 			volume: 0.25
+		},
+		award: {
+			file: 'data/sounds/award.mp3',
+			volume: 0.25
+		},
+		dismiss: {
+			file: 'data/sounds/dismiss.mp3',
+			volume: 0.25
 		}
 	}
 });
