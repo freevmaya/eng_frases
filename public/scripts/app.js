@@ -384,12 +384,15 @@ function Application() {
     }
 
     function setInitParams(init_params) {
-        tracer.log(init_params);
-
-        state.currentListType = init_params.type;
-        state.voiceType = init_params.voice;
-        state.direction = init_params.translate_direct == 'en-ru' ? 'target-native-both' : 'native-target-both';
-        state.pauseBetweenPhrases = init_params.pause;
+        state = {...state, ...init_params};
+        if (init_params.type)
+            state.currentListType   = init_params.type;
+        if (init_params.voice)
+            state.voiceType = init_params.voice;
+        if (init_params.translate_direct)
+            state.direction = init_params.translate_direct == 'en-ru' ? 'target-native-both' : 'native-target-both';
+        if (init_params.pause)
+            state.pauseBetweenPhrases = init_params.pause;
     }
 
     function afterLoadList(data) {

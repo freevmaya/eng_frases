@@ -75,10 +75,11 @@ class PhrasesListView {
         });
     }
 
-    blockItem(key, text, withTrash = false) {
+    blockItem(key, text, withShare = true, withTrash = false) {
         let item = $(`<div class="item"><a data-key="${key}">${text}</a></div>`);
+        item.find('a').click(this.typeClick.bind(this));
         if (withTrash) item.append(this.trashButton());
-        item.click(this.typeClick.bind(this));
+        if (withShare) item.append(this.shareButton());
         return item;
     }
 
@@ -90,6 +91,16 @@ class PhrasesListView {
     	let button = $(`<button class="btn btn-sm"><i class="bi bi-trash"></i></button>`);
     	button.click(this.clickTrash.bind(this));
     	return button;
+    }
+
+    shareButton() {
+    	let button = $(`<button class="btn btn-sm"><i class="bi bi-share"></i></button>`);
+    	button.click(this.clickShare.bind(this));
+    	return button;
+    }
+
+    clickShare(e) {
+    	$(window).trigger('share', $(e.currentTarget).parent().find('a').data('key'));
     }
 
     clickTrash(e) {
@@ -203,10 +214,10 @@ class PhrasesListView {
 				let item = null;
 
 				if (typeof list[key] == 'string')
-					item = this.blockItem(key, list[key], isUserFolder);
+					item = this.blockItem(key, list[key], true, isUserFolder);
 				else {
 		            let count = list[key].length;
-		            item = this.blockItem(key, key + ` (${count})`, isUserFolder);
+		            item = this.blockItem(key, key + ` (${count})`, true, isUserFolder);
 		        }
 		        
 		        body.append(item);

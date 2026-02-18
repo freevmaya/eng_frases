@@ -153,7 +153,7 @@
 	<script src="scripts/advice-modal.js<?=$v?>"></script>
 
     <?if ($vkok) {?>
-		<script src="scripts/vkapp<?=DEV ? '-dev' : ''?>.js<?=$v?>" defer></script>
+		<script src="scripts/vkapp.js<?=$v?>" defer></script>
 
 		<script type="text/javascript">
 			var vkApp;

@@ -737,6 +737,14 @@ footer {
     display: flex;
 }
 
+.item .bi-share {
+    display: none;
+}
+
+.current .bi-share {
+    display: block;
+}
+
 .paid_use {
     font-size: min(2.8vw, 1em);
     text-size-adjust: auto;

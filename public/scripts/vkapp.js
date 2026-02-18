@@ -74,7 +74,8 @@ class VKApp {
 	initListeners() {
 		$(window).on('apply_settings', this.onApplySettings.bind(this));
 		$(window).on('playback', this.onPlayback.bind(this));
-		$(window).on('award', this.onAward.bind(this))
+		$(window).on('award', this.onAward.bind(this));
+		$(window).on('share', this.onShare.bind(this));
 	}
 
 	showAd() {
@@ -87,6 +88,12 @@ class VKApp {
 			}
 		})
 		.catch((error) => { tracer.log(error); });
+	}
+
+	onShare(e, data) {
+		tracer.log(data);
+		vkBridge.send('VKWebAppShare', {
+		});
 	}
 
 	onPlayback(e, data) {
