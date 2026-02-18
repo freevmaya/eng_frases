@@ -153,7 +153,7 @@
 	<script src="scripts/advice-modal.js<?=$v?>"></script>
 
     <?if ($vkok) {?>
-		<script src="scripts/vkapp.js<?=$v?>" defer></script>
+		<script src="scripts/vkapp<?=DEV ? '-dev' : ''?>.js<?=$v?>" defer></script>
 
 		<script type="text/javascript">
 			var vkApp;
@@ -180,6 +180,11 @@
     <?include('gtag.php');?>
 </head>
 <body class="theme vkok">
+	<div class="loader">
+		<div class="spinner-border" role="status">
+			<span class="visually-hidden">Загрузка...</span>
+		</div>
+	</div>
 	<div class="page">
 		<div class="wrap-content">
 			<!-- Header -->

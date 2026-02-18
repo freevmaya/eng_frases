@@ -29,7 +29,19 @@ class VKApp {
 
 	  	this.initListeners();
 
-	  	setTimeout(this.requestNotification.bind(this), 10000);
+  		setTimeout((token)=>{
+
+	  		Ajax({
+	  			action: 'vk_apiCall',
+	  			data: {
+	  				method: 'secure.addAppEvent',
+	  				user_id: this.source_user_id,
+	  				activity_id: 1,
+	  				value: 1
+	  			}
+	  		})
+
+  		}, 1000);
 	}
 
 	requestNotification() {

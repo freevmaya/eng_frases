@@ -404,7 +404,7 @@ function Application() {
 
         $(window).trigger('phrases_loaded');
 
-        $('.page').addClass('page-loaded');
+        $('body').addClass('page-loaded');
 
         if (typeof userApp == 'undefined') 
             initCurrentType();
@@ -712,6 +712,14 @@ function Application() {
                 (progress.loss ? progress.loss : 0) + lossAdd);
     }
 
+    function totalScore() {
+        let total = 0;
+        Object.keys(state.progress).forEach(key=>{
+            total += state.progress[key].success ? state.progress[key].success : 0;
+        });
+        return total;
+    }
+
     function setScore(success = 0, loss = 0) {
         let progress = {...{
             success: 0, 
@@ -722,7 +730,7 @@ function Application() {
         let award = (success > 5) ? (success / Math.max(loss, 1) > 1.5 ? 1 : 0) : 0;
         if (award != progress.award) {
 
-            $(window).trigger(award ? 'award' : 'dismiss');
+            $(window).trigger(award ? 'award' : 'dismiss', this.totalScore());
             progress.award = award;
 
         } else {
