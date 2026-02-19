@@ -682,23 +682,25 @@ function Application() {
                     refreshIncorrectList();
                 else {
                     appData.currentPhrase.incorrectList = {};
-                    Ajax({
-                        action: 'getIncorrect',
-                        data: {
-                            phrase_id: appData.currentPhrase.id
-                        }
-                    })
-                    .then((data)=>{
-                        if (data.success) {
+                    if (appData.currentPhrase.id) {
+                        Ajax({
+                            action: 'getIncorrect',
+                            data: {
+                                phrase_id: appData.currentPhrase.id
+                            }
+                        })
+                        .then((data)=>{
+                            if (data.success) {
 
-                            let list = shuffleArrayWithSeed(data.list, Date.now());
-                            appData.currentPhrase.incorrectList = list.slice(0, 3);
-                            refreshIncorrectList();
-                        } else UnawailableQuiz();
-                    })
-                    .catch((e)=>{
-                        UnawailableQuiz();
-                    });
+                                let list = shuffleArrayWithSeed(data.list, Date.now());
+                                appData.currentPhrase.incorrectList = list.slice(0, 3);
+                                refreshIncorrectList();
+                            } else UnawailableQuiz();
+                        })
+                        .catch((e)=>{
+                            UnawailableQuiz();
+                        });
+                    } else UnawailableQuiz();
                 }
             } else if (state.indexInMode == 1) {
                 stopQuestionQuiz(!isPlaying() || appData.quizAnswered, !isPlaying());
