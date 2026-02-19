@@ -227,7 +227,7 @@ class AddPhrasesDialog {
     defaultUseRec() {
         return {
             count: 0,
-            limit: 5,
+            limit: 10,
             date: days()
         }
     }
