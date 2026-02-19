@@ -32,23 +32,30 @@
 
     <script src="scripts/component.js<?=$v?>"></script>
     <script src="scripts/main.js<?=$v?>"></script>
-    <?if ($this->user_id) {?>
+    <?
+    $user_data = json_encode($this->user['data'], JSON_FLAGS);
+    if ($this->user_id && $user_data) {?>
     <script src="scripts/user-app.js<?=$v?>" defer></script>
     <script type="text/javascript">
         $(window).ready(()=>{
 
-            var user_data = <?=json_encode($this->user['data'], JSON_FLAGS)?>;
+            var user_data = <?=$user_data?>;
 
             <?if ($this->new_user) {?>
 
-                let storage_user_id = localStorage.get('user_id');
+                let storage_user_id = localStorage.getItem('site_user_id');
                 if (storage_user_id) {
                     userApp.init(storage_user_id, '<?=Main::$source?>', null);
-                } else userApp.init(user_data.id, '<?=Main::$source?>', user_data, <?=json_encode($phrases)?>);
-                
+                } else {
+                    userApp.init(user_data.id, '<?=Main::$source?>', user_data, <?=json_encode($phrases)?>);
+                    localStorage.setItem('site_user_id', user_data.id);
+                }
+
             <?} else {?>
                 userApp.init(user_data.id, '<?=Main::$source?>', user_data, <?=json_encode($phrases)?>);
+                localStorage.setItem('site_user_id', user_data.id);
             <?}?>
+
         });
     </script>
     <?}?>

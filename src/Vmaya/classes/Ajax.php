@@ -22,15 +22,15 @@ class Ajax extends BaseAjax {
 	protected function initUser($data) {
 		GLOBAL $dbp;
 
-		if (!isset($data['source_id']) || !isset($data['source']) || !isset($data['user_data']))
+		if (!isset($data['source_id']) || !isset($data['source']))
 			Page::Wrong();
 
 		$userModel = new UserModel();
 		$source = $dbp->safeVal($data['source']);
 		$source_id = intval($data['source_id']);
-		$user_data = $data['user_data'];
+		$user_data = $data['user_data'] ?? [];
 
-		if (in_array($source, SOURCES) && $source_id && $user_data) {
+		if (in_array($source, SOURCES) && $source_id) {
 
 			$language = isset($user_data['language_code']) ? $user_data['language_code'] : DEFAULT_LANGUAGE;
 
@@ -45,6 +45,7 @@ class Ajax extends BaseAjax {
 
 	    	$items = $userModel->getItems("source_id = {$source_id} AND source = '{$source}'");
 
+	    	//Если нашли пользователя
 	    	if (count($items) > 0) {
 	    		$values['id'] = $user_id = $items[0]['id'];
 
@@ -52,6 +53,21 @@ class Ajax extends BaseAjax {
 	    			$values['data'] = json_encode($user_data, JSON_FLAGS);
 
 	    		$userModel->Update($values);
+
+				if ($source == 'site') { // Если это пользователь сайта
+
+					$session_user_id = Page::getSession('user_id');
+
+					if ($session_user_id && ($session_user_id != $user_id)) {
+
+						$session_user = $userModel->getItem($session_user_id);
+						//Удаляем если был создан временный пользователь
+						if ($session_user && ($session_user['source'] == 'site')) {
+							$userModel->Delete($session_user_id);
+						}
+					}
+				}
+
 	    	} else {
 	    		$values['data'] = json_encode($user_data, JSON_FLAGS);
 	    		$user_id = $userModel->Update($values);
