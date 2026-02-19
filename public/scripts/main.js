@@ -1312,3 +1312,8 @@ function filterPhrasesAdvanced(sourceArray, excludeArray, compareFields = ['targ
         return !excludeMap.has(sourceKey);
     });
 }
+
+function compareStrings(a, b) {
+    const clean = s => s.replace(/\([^)]*\)/g, '').replace(/[^\w]/g, '').toLowerCase();
+    return clean(a) === clean(b);
+}

@@ -18,17 +18,16 @@ const AppConst = {
                     blur: ['text']
                 }, 
                 speak: 'target', 
-                listen: 'target'
+                listen: 'native'
             },{
                 show: {
                     text: 'target'
                 }, 
                 speak: 'target', 
-                listen: 'target'
+                listen: 'native'
             },{
                 show: 'native', 
-                speak: 'native', 
-                listen: 'target'
+                speak: 'native'
             }
         ],
         'native-target': [
@@ -594,6 +593,8 @@ function Application() {
             stopPlayback();
         });
 
+        $(window).on('recognized', onRecognized.bind(this));
+
         $(window).on('play_autio_error', function(e, error) {
             if (error.name == 'NotAllowedError') {
                 showAlert(Lang("browser_blocks_audio_click_play"));
@@ -647,6 +648,23 @@ function Application() {
                     setScore(0, 0);
                 });
         });
+    }
+
+    function onRecognized(e, result, text) {
+        if (isQuiz() && !appData.quizAnswered) {
+            let quiz_block = elements.deskBlock.find('.quiz-block');
+            let ok = (result == 'success') || (result == 'almost');
+
+            if (ok) {
+                elem = quiz_block.find('.correct');
+
+                elem.removeClass('btn-outline-secondary').addClass('btn-outline-success');
+                stopQuestionQuiz();
+                appData.quizAnswered = true;
+                elements.deskBlock.find('.quiz-block .title').text(Lang('quiz-title-stop'));
+            }
+            addScope(ok ? 1 : 0, ok ? 0 : 1);
+        }
     }
 
     function isQuiz() {
@@ -1247,10 +1265,13 @@ function Application() {
         let modeSetting = AppConst.directions[state.direction][state.indexInMode];
         _speak(modeSetting.show, modeSetting.speak, ()=>{
 
-            startCurrentRecognition(modeSetting.listen);
+            let isRecognizeStart = false;
+            if (!(isQuiz() && appData.quizAnswered))
+                isRecognizeStart = startCurrentRecognition(modeSetting.listen);
                 
             speakPause(() => {
-                summingUpRecognition();
+                if (isRecognizeStart)
+                    summingUpRecognition();
 
                 if (state.indexInMode < AppConst.directions[state.direction].length - 1)
                     state.indexInMode++;
@@ -1266,8 +1287,11 @@ function Application() {
     }
 
     function startCurrentRecognition(phraseDirect) {
-        if (phraseDirect && recognition && stateManager.state.recognize) 
+        if (phraseDirect && recognition && stateManager.state.recognize) {
             recognition.startRecognition(appData.currentPhrase, phraseDirect);
+            return true;
+        }
+        return false;
     }
 
     function speakPause(callback, phraseDirect) {

@@ -73,6 +73,7 @@ class VRecognition {
         } else {
             let result = assessPhrase(this.text, this.output);
             $(window).trigger(result.class);
+            $(window).trigger('recognized', [result.class, this.output]);
             this.playerMessage(`<span class="${result.class}">${result.text}</span>`);
         }
     }
