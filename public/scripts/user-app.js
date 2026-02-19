@@ -25,7 +25,7 @@ class UserApp {
 		if (phrases_list != null) {
 			this.userPhrasesLoaded = 2;
 			afterCondition(()=>{
-				return phrasesList != null;
+				return (typeof phrasesList != 'undefined') && (phrasesList != null);
 			}, ()=>{
 				$(window).trigger('user_list_loaded', phrases_list);
 				this.userPhrasesLoaded = 2;

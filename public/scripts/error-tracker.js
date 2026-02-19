@@ -82,6 +82,59 @@ const ErrorTracker = {
 
         // Отслеживание ошибок для динамически загружаемых ресурсов
         this.setupMutationObserver();
+
+        this.prepareList = [];
+        this.sendTimerId = 0;
+    },
+
+    pushPrepareList(data) {
+
+        let found = this.prepareList.find(item => (item.message === data.message) && (item.source === data.source));
+        if (found) {
+            if (!found.count) found.count = 0;
+            found.count++;
+        } else this.prepareList.push(data);
+    },
+
+    sendToServer(data) {
+        data.version = this.config.version;
+        // Добавляем идентификатор сессии для группировки ошибок
+        if (!data.sessionId) {
+            data.sessionId = this.getSessionId();
+        }
+        
+        // Добавляем информацию об исключаемых доменах для отладки
+        data.excludeDomainsInfo = {
+            configured: this.excludeDomains.length > 0,
+            excluded: this.isExcludedDomain(data.source)
+        };
+
+        this.pushPrepareList(data);
+
+        if (this.sendTimerId)
+            clearTimeout(this.sendTimerId);
+
+        this.sendTimerId = setTimeout(()=>{
+        
+            this.sendPrepareList();
+
+            this.prepareList = [];
+            this.sendTimerId = 0;
+
+        }, 500 + (500 * (this.prepareList.length - 1)));
+    },
+
+    async sendPrepareList() {
+        let tmp = [...this.prepareList];
+        tmp.forEach(async (itm)=>{
+            if (itm.count)
+                itm.message = `${itm.message} (${itm.count})`;
+
+            await Ajax({
+                action: 'addError',
+                data: itm
+            });
+        });
     },
     
     // Проверяет, находится ли URL в списке исключаемых доменов
@@ -283,25 +336,6 @@ const ErrorTracker = {
 
         // Отправляем на сервер
         this.sendToServer(errorInfo);
-    },
-
-    sendToServer(data) {
-        data.version = this.config.version;
-        // Добавляем идентификатор сессии для группировки ошибок
-        if (!data.sessionId) {
-            data.sessionId = this.getSessionId();
-        }
-        
-        // Добавляем информацию об исключаемых доменах для отладки
-        data.excludeDomainsInfo = {
-            configured: this.excludeDomains.length > 0,
-            excluded: this.isExcludedDomain(data.source)
-        };
-        
-        Ajax({
-            action: 'addError',
-            data: data
-        });
     },
     
     getSessionId() {

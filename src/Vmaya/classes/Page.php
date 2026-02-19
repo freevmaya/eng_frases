@@ -109,7 +109,11 @@ class Page {
 
 		if (file_exists($classFileName))
 			include_once($classFileName);
-		else $className = 'Page';
+		else {
+			trace_error("File not found {$classFileName}");
+			header('HTTP/1.1 403 Forbidden');
+    		exit(403);
+		}
 
 		try {
 			Page::$page = $page;

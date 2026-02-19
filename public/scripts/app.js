@@ -672,7 +672,9 @@ function Application() {
                     })
                     .then((data)=>{
                         if (data.success) {
-                            appData.currentPhrase.incorrectList = data.list.slice(0, 3);
+
+                            let list = shuffleArrayWithSeed(data.list, Date.now());
+                            appData.currentPhrase.incorrectList = list.slice(0, 3);
                             refreshIncorrectList();
                         } else UnawailableQuiz();
                     })
