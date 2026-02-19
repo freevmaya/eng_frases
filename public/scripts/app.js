@@ -753,7 +753,7 @@ function Application() {
         let award = (success > 5) ? (success / Math.max(loss, 1) > 1.5 ? 1 : 0) : 0;
         if (award != progress.award) {
 
-            $(window).trigger(award ? 'award' : 'dismiss', this.totalScore());
+            $(window).trigger(award ? 'award' : 'dismiss', totalScore());
             progress.award = award;
 
         } else {

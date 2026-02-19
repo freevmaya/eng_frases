@@ -81,7 +81,7 @@ class Page {
 		}*/
 		Page::$request = $request;
 
-		$className = 'Page';
+		$className = DEFAULTCLASS;
 		$classFileName = dirname(__FILE__).'/'.$className.'.php';
 		$page = null;
 		$subpage = null;
@@ -281,6 +281,14 @@ class Page {
 		return isset($_SESSION[$name]) ? $_SESSION[$name] : $default;
 	}
 
+	public static function unsetSession($name) {
+		GLOBAL $_SESSION;
+		if (isset($_SESSION[$name])) {
+			$_SESSION[$name] = null;
+			unset($_SESSION[$name]);
+		}
+	}
+
 	public function colorSheme($defaultValue = null) {
 
 		$sheme = Page::getSession('color-sheme');
@@ -295,6 +303,7 @@ class Page {
 		$content = $this->getContent($page);
 		$index = isset(Page::$request['index']) ? Page::$request['index'] : 'index';
 		$filename = TEMPLATES_PATH."/{$index}.php";
+
 		if (file_exists($filename))
 			include($filename);
 		else Page::Wrong();

@@ -22,6 +22,9 @@ class Ajax extends BaseAjax {
 	protected function initUser($data) {
 		GLOBAL $dbp;
 
+		if (!isset($data['source_id']) || !isset($data['source']) || !isset($data['user_data']))
+			Page::Wrong();
+
 		$userModel = new UserModel();
 		$source = $dbp->safeVal($data['source']);
 		$source_id = intval($data['source_id']);
@@ -34,8 +37,8 @@ class Ajax extends BaseAjax {
 			$values = [
 				'source_id'=>$source_id,
 				'source'=>$source,
-				'first_name'=>$user_data['first_name'],
-				'last_name'=>$user_data['last_name'],
+				'first_name'=>$user_data['first_name'] ?? '',
+				'last_name'=>$user_data['last_name'] ?? '',
 				'last_time'=>date('Y-m-d H:i:s'),
 				'language_code'=> $language
 			];

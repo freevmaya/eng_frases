@@ -1,13 +1,3 @@
-<?php
-    $v = '?v='.SCRIPTS_VERSION;
-    $user_id = 0;
-
-    /*
-    Page::setSession('user_id', 0);
-    */
-
-    $is_developer = Page::isDev();
-?>
 <!DOCTYPE html>
 <html lang="<?=Lang('html_lang')?>" data-bs-theme="<?=isset(Page::$request['theme']) ? Page::$request['theme'] : 'dark' ?>">
 <head>
@@ -42,8 +32,25 @@
 
     <script src="scripts/component.js<?=$v?>"></script>
     <script src="scripts/main.js<?=$v?>"></script>
-    <?if ($user_id) {?>
+    <?if ($this->user_id) {?>
     <script src="scripts/user-app.js<?=$v?>" defer></script>
+    <script type="text/javascript">
+        $(window).ready(()=>{
+
+            var user_data = <?=json_encode($this->user['data'], JSON_FLAGS)?>;
+
+            <?if ($this->new_user) {?>
+
+                let storage_user_id = localStorage.get('user_id');
+                if (storage_user_id) {
+                    userApp.init(storage_user_id, '<?=Main::$source?>', null);
+                } else userApp.init(user_data.id, '<?=Main::$source?>', user_data, <?=json_encode($phrases)?>);
+                
+            <?} else {?>
+                userApp.init(user_data.id, '<?=Main::$source?>', user_data, <?=json_encode($phrases)?>);
+            <?}?>
+        });
+    </script>
     <?}?>
     <script src="scripts/advice-modal.js<?=$v?>"></script>
     <?include('ya-mertika.php');?>
@@ -91,7 +98,7 @@
         <?include('confirm.php')?>
         <script type="text/javascript">
             window.stateManager = new StateManager({
-                use_server: <?=Page::getSession('user_id', false) ? 'true' : 'false'?>
+                use_server: <?=$this->user_id ? 'true' : 'false'?>
             });
         </script>
 
