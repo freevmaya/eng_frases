@@ -15,11 +15,10 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/themes.css<?=$v?>" media="all">
     <?
-    $file_style = 'style';
-    if (isset(Page::$request['style']))
-        $file_style = Page::$request['style'];
-    ?>
-    <link rel="stylesheet" href="css/<?=$file_style?>.css<?=$v?>" media="all">
+    if (isset(Page::$request['style'])) {?>
+        <link rel="stylesheet" href="css/<?=Page::$request['style']?>.css<?=$v?>" media="all">
+    <?}?>
+    <link rel="stylesheet" href="css/style.css<?=$v?>" media="all">
     <link rel="stylesheet" href="css/style-waves.css<?=$v?>" media="all">
     <?if ($is_developer) {?><script>var DEV = true</script><?}?>
     <?include('tracker.php')?>

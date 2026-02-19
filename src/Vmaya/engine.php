@@ -10,7 +10,7 @@
 	define("CHARSET", "utf-8");
 	define("DEFAULTPAGE", "home");
 	define("DEFAULTCLASS", "Main");
-	define("SCRIPTS_VERSION", 264);
+	define("SCRIPTS_VERSION", 265);
 	
 	define("SOURCES", ['vk', 'ok', 'site', 'tg', 'e-vk', 'e-ok', 'e-tg']);
 	define("LIVETOKEN", DEV ? 20 : 60 * 10); // Врямя жизни токена 10 мин.

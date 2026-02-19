@@ -317,8 +317,8 @@ function Application() {
         playStart: false,
         scaleBlockUpdater: debounce(() => {
             let block = elements.phraseScaleBlock;
-            let scale = Math.min(1, block.closest('.phrase-container').innerHeight() / block.height());
-            block.css('scale', scale);
+            let scale = block.closest('.phrase-container').innerHeight() / block.height();
+            block.css('scale', `calc(min(${scale}, var(--min-scale))`);
         }, 5),
         backgroundAudio: null,
         quizAnswered: false

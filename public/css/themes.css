@@ -23,6 +23,7 @@
     --loss-color: red;
     --correct-color: #66AA66;
     --award-color: #d38100;
+    --min-scale: 1;
 }
 
 .accordion {
