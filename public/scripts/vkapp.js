@@ -1,12 +1,14 @@
 
 class VKApp {
-
+	requireShareCount = 3;
 	_haveAd = false;
 	constructor(app_id, source_user_id, source, user_phrases = null) {
 
 		this.app_id = app_id;
 		this.source = source;
 		this.source_user_id = source_user_id;
+		this.count_phrases = 0;
+		this.sharedSession = false;
 
 		$('body').addClass('vk_layout');
 
@@ -76,6 +78,7 @@ class VKApp {
 		$(window).on('playback', this.onPlayback.bind(this));
 		$(window).on('award', this.onAward.bind(this));
 		$(window).on('share', this.onShare.bind(this));
+		$(window).on('next_phrase', this.onNextPhrase.bind(this));
 	}
 
 	showAd() {
@@ -108,6 +111,52 @@ class VKApp {
 
 	onAward(e, data) {
 
+	}
+
+	shareApp(message) {
+		return new Promise((resolve, reject)=>{
+			vkBridge.send('VKWebAppShare', {
+				text: message
+			})
+			.then((data)=>{
+				if (data.result && data.result.length)
+					resolve(data.result);
+				else reject(data);
+			})
+			.catch((e)=>{
+				reject(e);
+			});
+		});
+	}
+
+	onNextPhrase(e, data) {
+		this.count_phrases++;
+		let requireCount = this.requireShareCount - stateManager.state.shared.length;
+
+		if ((this.count_phrases >= 5) && !this.sharedSession && (requireCount > 0)) {
+			Confirm(Lang('share-confirm', [strEnum(requireCount, Lang('frend-time'))]))
+                .then(()=>{
+					this.shareApp(Lang('share-in-next-phrase'))
+						.then((result)=>{
+							let item = result[0];
+							if ((item.type == 'message') && (item.users.length > 0)) {
+
+								for (let i=0; i<item.users.length; i++) {
+									if (!stateManager.state.shared.includes(item.users[i].id)) {
+										stateManager.state.shared.push(item.users[i].id);
+										this.sharedSession = true;
+									}
+								}
+
+								if (this.sharedSession) stateManager.saveState();
+
+							} else if (item.story_id) {
+							}
+						});
+					});
+
+			$(window).trigger('stop-play');
+		}
 	}
 
 	turnOffVKPlayer() {

@@ -1208,6 +1208,7 @@ function Application() {
         appData.missOne = false;
         setProgress(newRepeat, newIndex);
         setCurrentPhraseIndex(newIndex);
+        $(window).trigger('next_phrase', newIndex);
     }
 
     function setCurrentPhraseIndex(index) {
