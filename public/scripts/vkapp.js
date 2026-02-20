@@ -119,6 +119,7 @@ class VKApp {
 				text: message
 			})
 			.then((data)=>{
+				tracer.log(data);
 				if (data.result && data.result.length)
 					resolve(data.result);
 				else reject(data);
