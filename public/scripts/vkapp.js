@@ -153,13 +153,15 @@ class VKApp {
 									}
 								}
 
-								if (this.sharedSession) stateManager.saveState();
+								if (this.sharedSession)
+									stateManager.saveState();
 
-							} else if (item.story_id) {
+								return;
 							}
+							this.sharedSession = true;
+							tracer.log(result);
 						});
 					});
-			this.sharedSession = true;
 
 			$(window).trigger('stop-play');
 		}
