@@ -154,6 +154,7 @@ class VKApp {
 							}
 						});
 					});
+			this.sharedSession = true;
 
 			$(window).trigger('stop-play');
 		}
