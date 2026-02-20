@@ -122,9 +122,13 @@ class VKApp {
 				let items = data.result || data.items;
 				if (items && items.length)
 					resolve(items);
-				else reject(data);
+				else {
+					tracer.error(data);
+					reject(data);
+				}
 			})
 			.catch((e)=>{
+				tracer.error(e);
 				reject(e);
 			});
 		});
