@@ -21,6 +21,8 @@ class Main extends Page {
 
 		if (!($this->user_id = Page::getSession('user_id'))) {
 
+			Page::setLanguage(getPreferredLanguage(array_keys(LANGUAGES), DEFAULT_LANGUAGE));
+
 			$this->new_user = $this->user_id = $userModel->Update([
     			'source_id'=> rand(0, 100000),
     			'source'=>Main::$source,

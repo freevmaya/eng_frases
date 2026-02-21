@@ -27,27 +27,25 @@ class Page {
 				$this->setUser($user);
 		}
 
+		$language = DEFAULT_LANGUAGE;
+
 		if (isset(Page::$request['lang']) && 
 			file_exists(LANGUAGE_PATH.Page::$request['lang'].'.php')) {
-			Page::$language = Page::$request['lang'];
+			$language = Page::$request['lang'];
 		} else {
-			Page::$language = Page::getSession('language');
+			$language = Page::getSession('language');
 		
 			if ($user) {
 
 				if ($userDB = $this->userModel->getItem($user['id']))
 					$user = array_merge($user, $userDB);
 				
-				if (!Page::checkLanguage(Page::$language))
-					Page::$language = $user['language_code'];
+				if (!Page::checkLanguage($language))
+					$language = $user['language_code'];
 			}
 		}
 
-		if (!Page::checkLanguage(Page::$language))
-			Page::$language = DEFAULT_LANGUAGE;
-
-		Page::setSession('language', Page::$language);
-		include_once(LANGUAGE_PATH.Page::$language.'.php');
+		Page::setLanguage($language);
 
 		$this->model = $this->initModel();
 
@@ -57,6 +55,17 @@ class Page {
 				$this->model->Update(Page::$request);
 			}
 		}
+	}
+
+	public static function setLanguage($language) {
+		GLOBAL $lang;
+
+		if (Page::checkLanguage($language))
+			Page::$language = $language;
+		else Page::$language = DEFAULT_LANGUAGE;
+
+		Page::setSession('language', Page::$language);
+		include(LANGUAGE_PATH.$language.'.php');
 	}
 
 	public static function checkLanguage($language) {

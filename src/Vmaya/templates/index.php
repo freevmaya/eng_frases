@@ -82,10 +82,10 @@
                         </button>
 
                         <ul class="dropdown-menu">
-                            <?foreach (LANGUAGES as $litem) {?>
+                            <?foreach (LANGUAGES as $litem=>$value) {?>
                             <li>
                                 <a class="dropdown-item" href="?lang=<?=$litem?>"><span class="fi fi-ru me-2"></span>
-                                    <?=Lang($litem)?>
+                                    <?=$value?>
                                 </a>
                             </li>
                             <?}?>

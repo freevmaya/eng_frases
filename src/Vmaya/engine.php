@@ -15,7 +15,12 @@
 	define("SOURCES", ['vk', 'ok', 'site', 'tg', 'e-vk', 'e-ok', 'e-tg']);
 	define("LIVETOKEN", DEV ? 20 : 60 * 10); // Врямя жизни токена 10 мин.
 	define("YANDEX_METRIKA_ID", '106450888');
-	define("LANGUAGES", ['ru', 'hi', 'de', 'fr']);
+	define("LANGUAGES", [
+		'ru' => 'Русский',
+	    'hi' => 'हिंदी',
+	    'de' => 'Deutsch',
+	    'fr' => 'Französisch'
+	]);
 	
 	$lv = SCRIPTS_VERSION % 1000;
 	$mv = floor(SCRIPTS_VERSION / 1000);

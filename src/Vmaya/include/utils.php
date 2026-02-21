@@ -958,4 +958,39 @@ function YaTranslate($source_text, $target="en", $baseUrl = 'https://translate.a
 
     return false;
 }
+
+function getPreferredLanguage($availableLanguages = ['ru', 'en', 'de', 'fr'], $default = 'en') {
+    GLOBAL $_SERVER;
+    
+    if (!isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+        return $default;
+    }
+    
+    // Парсим заголовок Accept-Language
+    $langs = [];
+    foreach (explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $part) {
+        $part = explode(';q=', $part);
+        $lang = strtolower(trim($part[0]));
+        $priority = isset($part[1]) ? (float)$part[1] : 1.0;
+        
+        // Берем только первые 2 символа (ru, en, de и т.д.)
+        $langCode = substr($lang, 0, 2);
+        
+        if (!isset($langs[$langCode]) || $langs[$langCode] < $priority) {
+            $langs[$langCode] = $priority;
+        }
+    }
+    
+    // Сортируем по приоритету
+    arsort($langs);
+    
+    // Выбираем первый доступный язык
+    foreach (array_keys($langs) as $langCode) {
+        if (in_array($langCode, $availableLanguages)) {
+            return $langCode;
+        }
+    }
+    
+    return $default;
+}
 ?>
