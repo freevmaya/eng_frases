@@ -64,7 +64,7 @@ class Page {
 	}
 
 	public static function language() {
-		return Page::$language;
+		return Page::$language ? Page::$language : DEFAULT_LANGUAGE;
 	}
 
 	public static function isDev() {

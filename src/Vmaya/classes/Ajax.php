@@ -32,7 +32,7 @@ class Ajax extends BaseAjax {
 
 		if (in_array($source, SOURCES) && $source_id) {
 
-			$language = isset($user_data['language_code']) ? $user_data['language_code'] : DEFAULT_LANGUAGE;
+			$language = isset($user_data['language_code']) ? $user_data['language_code'] : Page::language();
 
 			$values = [
 				'source_id'=>$source_id,
