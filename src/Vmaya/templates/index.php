@@ -46,13 +46,17 @@
                 if (storage_user_id) {
                     userApp.init(storage_user_id, '<?=Main::$source?>', null);
                 } else {
-                    userApp.init(user_data.id, '<?=Main::$source?>', user_data, <?=json_encode($phrases)?>);
-                    localStorage.setItem('site_user_id', user_data.id);
+                    if (user_data.id) {
+                        userApp.init(user_data.id, '<?=Main::$source?>', user_data, <?=json_encode($phrases)?>);
+                        localStorage.setItem('site_user_id', user_data.id);
+                    } else localStorage.setItem('site_user_id', null);
                 }
 
             <?} else {?>
-                userApp.init(user_data.id, '<?=Main::$source?>', user_data, <?=json_encode($phrases)?>);
-                localStorage.setItem('site_user_id', user_data.id);
+                if (user_data.id) {
+                    userApp.init(user_data.id, '<?=Main::$source?>', user_data, <?=json_encode($phrases)?>);
+                    localStorage.setItem('site_user_id', user_data.id);
+                } else localStorage.setItem('site_user_id', null);
             <?}?>
 
         });

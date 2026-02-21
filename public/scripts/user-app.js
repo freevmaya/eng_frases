@@ -19,7 +19,7 @@ class UserApp {
 				if (data.redirect)
 					document.location.href = data.redirect;
 				else this.loadUserPhrases();
-			}
+			} else localStorage.setItem('user_id', null);
 		});
 
 		if (phrases_list != null) {

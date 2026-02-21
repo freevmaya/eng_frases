@@ -42,6 +42,8 @@ class Main extends Page {
 
 		$this->user = $userModel->getItem($this->user_id);
 		$this->user['data'] = json_decode($this->user['data'], JSON_FLAGS);
+		if (!isset($this->user['data']['id']) || !$this->user['data']['id'])
+			$this->user['data']['id'] = $this->user_id;
 	}
 
 	public function Render($page) {
