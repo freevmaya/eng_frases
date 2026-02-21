@@ -216,5 +216,9 @@ $lang = [
     
     // VK/TG
     'vk_layout' => 'vk_layout',
+    
+    'ru' => 'Русский',
+    'hi' => 'हिंदी',
+    'de' => 'Deutsch',
 ];
 ?>

@@ -924,9 +924,9 @@ function vkVerifyParams($secretKey)
     return hash_equals($calc_sign, $sign);
 }
 
-function YaTranslate($ru_text, $target="en", $baseUrl = 'https://translate.api.cloud.yandex.net/translate/v2/', $endpoint = 'translate') {
+function YaTranslate($source_text, $target="en", $baseUrl = 'https://translate.api.cloud.yandex.net/translate/v2/', $endpoint = 'translate') {
 
-    if (!empty($ru_text) && is_string($ru_text)) {
+    if (!empty($source_text) && is_string($source_text)) {
         $ch = curl_init($baseUrl . $endpoint);
                     
         curl_setopt_array($ch, [
@@ -934,7 +934,7 @@ function YaTranslate($ru_text, $target="en", $baseUrl = 'https://translate.api.c
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => json_encode([
                                     "folderId" => YA_FOLDER_ID,
-                                    "texts" => [$ru_text],
+                                    "texts" => [$source_text],
                                     "targetLanguageCode" => $target
                                 ], JSON_FLAGS),
             CURLOPT_HTTPHEADER => [
@@ -954,7 +954,7 @@ function YaTranslate($ru_text, $target="en", $baseUrl = 'https://translate.api.c
                 return $response['translations'][0]['text'];
             else trace_error($response);
         }
-    } else trace_error("Wrong type: $ru_text");
+    } else trace_error("Wrong type: $source_text");
 
     return false;
 }

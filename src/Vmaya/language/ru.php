@@ -234,8 +234,10 @@ $lang = [
     'target2-native-target-both' => 'Англ(з) 2раза > Рус(з) > Англ(з)',
 
     'description-title' => 'Описание',
+    
     'ru' => 'Русский',
     'hi' => 'हिंदी',
+    'de' => 'Deutsch',
 
     'quiz' => 'Викторина',
     'quiz-title' => 'Выберите верный перевод',
