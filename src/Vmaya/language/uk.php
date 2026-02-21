@@ -220,5 +220,6 @@ $lang = [
     'ru' => 'Русский',
     'hi' => 'हिंदी',
     'de' => 'Deutsch',
+    'fr' => 'Französisch',
 ];
 ?>

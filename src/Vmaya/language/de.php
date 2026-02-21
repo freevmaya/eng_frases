@@ -205,6 +205,7 @@ $lang = [
     'ru' => 'Русский',
     'hi' => 'हिंदी',
     'de' => 'Deutsch',
+    'fr' => 'Französisch',
     
     'quiz' => 'Quiz',
     'quiz-title' => 'Wählen Sie die richtige Übersetzung aus',
