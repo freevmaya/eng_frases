@@ -19,7 +19,12 @@ class Main extends Page {
 			}
 		}
 
-		if (!($this->user_id = Page::getSession('user_id'))) {
+		if ($this->user_id = Page::getSession('user_id')) {
+			if (!$userModel->getItem($this->user_id)) 
+				$this->user_id = null;
+		}
+
+		if (!$this->user_id) {
 
 			Page::setLanguage(getPreferredLanguage(array_keys(LANGUAGES), DEFAULT_LANGUAGE));
 
@@ -38,12 +43,13 @@ class Main extends Page {
 	    		]);
 		}
 
-		Page::setSession('user_id', $this->user_id);
+		if ($this->user = $userModel->getItem($this->user_id)) {
 
-		$this->user = $userModel->getItem($this->user_id);
-		$this->user['data'] = json_decode($this->user['data'], JSON_FLAGS);
-		if (!isset($this->user['data']['id']) || !$this->user['data']['id'])
-			$this->user['data']['id'] = $this->user_id;
+			Page::setSession('user_id', $this->user_id);
+			$this->user['data'] = json_decode($this->user['data'], JSON_FLAGS);
+			if (!isset($this->user['data']['id']) || !$this->user['data']['id'])
+				$this->user['data']['id'] = $this->user_id;
+		}
 	}
 
 	public function Render($page) {
