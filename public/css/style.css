@@ -262,6 +262,14 @@
     display: flex;
 }
 
+#desk-block .description {
+    opacity: 0.5;
+}
+
+#desk-block .expanded .description {
+    opacity: 1;
+}
+
 #desk-block .expanded {
     max-height: 100vw !important;
 }
