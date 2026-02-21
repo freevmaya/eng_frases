@@ -65,7 +65,7 @@ class Page {
 		else Page::$language = DEFAULT_LANGUAGE;
 
 		Page::setSession('language', Page::$language);
-		include(LANGUAGE_PATH.$language.'.php');
+		include(LANGUAGE_PATH.Page::$language.'.php');
 	}
 
 	public static function checkLanguage($language) {
