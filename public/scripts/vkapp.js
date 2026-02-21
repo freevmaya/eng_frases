@@ -135,6 +135,10 @@ class VKApp {
 	}
 
 	onNextPhrase(e, data) {
+
+		if (typeof new_user != 'undefined')
+			return;
+
 		this.count_phrases++;
 		let requireCount = this.requireShareCount - stateManager.state.shared.length;
 
