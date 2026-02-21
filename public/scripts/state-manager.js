@@ -12,8 +12,7 @@ class StateManager {
             speed: 1.0,
             pauseBetweenPhrases: 3,
             
-            direction: 'quiz',
-            phraseDirection: 'en-ru',
+            direction: 'target2-native-target-both',
             order: 'sequential',
             currentListType: 'Present simple',
             progress: {},

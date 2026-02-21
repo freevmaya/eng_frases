@@ -24,7 +24,7 @@ class Main extends Page {
 			$this->new_user = $this->user_id = $userModel->Update([
     			'source_id'=> rand(0, 100000),
     			'source'=>Main::$source,
-    			'language_code' => Page::$language ? Page::$language : DEFAULT_LANGUAGE,
+    			'language_code' => Page::language(),
     			'last_time'=>date('Y-m-d H:i:s')
     		]);
 

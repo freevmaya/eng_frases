@@ -389,7 +389,7 @@ function Application() {
         if (init_params.voice)
             state.voiceType = init_params.voice;
         if (init_params.translate_direct)
-            state.direction = init_params.translate_direct == 'en-ru' ? 'target-native-both' : 'native-target-both';
+            state.direction = init_params.translate_direct == LANGUAGE + '-ru' ? 'target-native-both' : 'native-target-both';
         if (init_params.pause)
             state.pauseBetweenPhrases = init_params.pause;
     }

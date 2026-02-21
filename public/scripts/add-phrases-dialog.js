@@ -143,7 +143,7 @@ class AddPhrasesDialog {
         this.af_list.find('.item').each((i, elem)=>{
             elem = $(elem);
             list.push({
-                direction: stateManager.state.phraseDirection,
+                direction: LANGUAGE + '-ru',
                 target: elem.find('.target').text().trim(),
                 native: elem.find('.native').text().trim()
             });
@@ -189,7 +189,7 @@ class AddPhrasesDialog {
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify({
-                    native_lang: 'ru',
+                    native_lang: LANGUAGE,
                     target_lang: 'en',
                     theme: theme
                 })
