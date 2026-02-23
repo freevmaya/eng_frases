@@ -273,6 +273,7 @@
 <script type="text/javascript">
     var SPEECH_CONFIG = <?=SPEECH_CONFIG?>;
     var LANGUAGE = '<?=Page::language()?>';
+    var TARGET_LANGUAGE = '<?=Page::getSession('TARGET_LANGUAGE', 'en')?>';
     var AI_URL = '<?=AI_URL?>';
     <?if (isset(Page::$request['SPEECH_CONFIG'])) {?>
         Object.assign(SPEECH_CONFIG, <?=Page::$request['SPEECH_CONFIG']?>);

@@ -143,7 +143,7 @@ class AddPhrasesDialog {
         this.af_list.find('.item').each((i, elem)=>{
             elem = $(elem);
             list.push({
-                direction: 'en-' + LANGUAGE,
+                direction: TARGET_LANGUAGE + '-' + LANGUAGE,
                 target: elem.find('.target').text().trim(),
                 native: elem.find('.native').text().trim()
             });
