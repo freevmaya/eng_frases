@@ -1,0 +1,994 @@
+{
+	"Degrees of comparison": [
+	  {
+	    "direction": "en-ru",
+	    "target": "big",
+	    "native": "большой"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "bigger",
+	    "native": "больше"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the biggest",
+	    "native": "самый большой"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "small",
+	    "native": "маленький"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "smaller",
+	    "native": "меньше"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the smallest",
+	    "native": "самый маленький"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "tall",
+	    "native": "высокий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "taller",
+	    "native": "выше"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the tallest",
+	    "native": "самый высокий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "short",
+	    "native": "короткий, низкий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "shorter",
+	    "native": "короче, ниже"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the shortest",
+	    "native": "самый короткий, самый низкий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "long",
+	    "native": "длинный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "longer",
+	    "native": "длиннее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the longest",
+	    "native": "самый длинный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "wide",
+	    "native": "широкий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "wider",
+	    "native": "шире"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the widest",
+	    "native": "самый широкий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "narrow",
+	    "native": "узкий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "narrower",
+	    "native": "уже"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the narrowest",
+	    "native": "самый узкий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "deep",
+	    "native": "глубокий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "deeper",
+	    "native": "глубже"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the deepest",
+	    "native": "самый глубокий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "shallow",
+	    "native": "мелкий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "shallower",
+	    "native": "мельче"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the shallowest",
+	    "native": "самый мелкий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "high",
+	    "native": "высокий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "higher",
+	    "native": "выше"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the highest",
+	    "native": "самый высокий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "low",
+	    "native": "низкий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "lower",
+	    "native": "ниже"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the lowest",
+	    "native": "самый низкий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "fast",
+	    "native": "быстрый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "faster",
+	    "native": "быстрее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the fastest",
+	    "native": "самый быстрый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "slow",
+	    "native": "медленный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "slower",
+	    "native": "медленнее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the slowest",
+	    "native": "самый медленный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "early",
+	    "native": "ранний"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "earlier",
+	    "native": "раньше"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the earliest",
+	    "native": "самый ранний"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "late",
+	    "native": "поздний"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "later",
+	    "native": "позже"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the latest",
+	    "native": "самый поздний"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "close",
+	    "native": "близкий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "closer",
+	    "native": "ближе"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the closest",
+	    "native": "самый близкий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "far",
+	    "native": "далекий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "farther / further",
+	    "native": "дальше"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the farthest / the furthest",
+	    "native": "самый дальний"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "cheap",
+	    "native": "дешевый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "cheaper",
+	    "native": "дешевле"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the cheapest",
+	    "native": "самый дешевый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "expensive",
+	    "native": "дорогой"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "more expensive",
+	    "native": "дороже"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the most expensive",
+	    "native": "самый дорогой"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "good",
+	    "native": "хороший"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "better",
+	    "native": "лучше"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the best",
+	    "native": "самый лучший"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "bad",
+	    "native": "плохой"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "worse",
+	    "native": "хуже"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the worst",
+	    "native": "самый плохой"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "much / many",
+	    "native": "много"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "more",
+	    "native": "больше"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the most",
+	    "native": "больше всего"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "little",
+	    "native": "мало"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "less",
+	    "native": "меньше"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the least",
+	    "native": "меньше всего"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "easy",
+	    "native": "легкий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "easier",
+	    "native": "легче"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the easiest",
+	    "native": "самый легкий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "difficult",
+	    "native": "трудный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "more difficult",
+	    "native": "труднее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the most difficult",
+	    "native": "самый трудный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "heavy",
+	    "native": "тяжелый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "heavier",
+	    "native": "тяжелее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the heaviest",
+	    "native": "самый тяжелый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "light",
+	    "native": "легкий (по весу)"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "lighter",
+	    "native": "легче"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the lightest",
+	    "native": "самый легкий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "strong",
+	    "native": "сильный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "stronger",
+	    "native": "сильнее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the strongest",
+	    "native": "самый сильный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "weak",
+	    "native": "слабый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "weaker",
+	    "native": "слабее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the weakest",
+	    "native": "самый слабый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "hot",
+	    "native": "горячий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "hotter",
+	    "native": "горячее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the hottest",
+	    "native": "самый горячий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "cold",
+	    "native": "холодный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "colder",
+	    "native": "холоднее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the coldest",
+	    "native": "самый холодный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "warm",
+	    "native": "теплый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "warmer",
+	    "native": "теплее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the warmest",
+	    "native": "самый теплый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "cool",
+	    "native": "прохладный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "cooler",
+	    "native": "прохладнее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the coolest",
+	    "native": "самый прохладный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "young",
+	    "native": "молодой"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "younger",
+	    "native": "моложе"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the youngest",
+	    "native": "самый молодой"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "old",
+	    "native": "старый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "older / elder",
+	    "native": "старше"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the oldest / the eldest",
+	    "native": "самый старый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "new",
+	    "native": "новый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "newer",
+	    "native": "новее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the newest",
+	    "native": "самый новый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "old (things)",
+	    "native": "старый (о вещах)"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "older",
+	    "native": "старше"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the oldest",
+	    "native": "самый старый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "clean",
+	    "native": "чистый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "cleaner",
+	    "native": "чище"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the cleanest",
+	    "native": "самый чистый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "dirty",
+	    "native": "грязный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "dirtier",
+	    "native": "грязнее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the dirtiest",
+	    "native": "самый грязный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "bright",
+	    "native": "яркий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "brighter",
+	    "native": "ярче"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the brightest",
+	    "native": "самый яркий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "dark",
+	    "native": "темный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "darker",
+	    "native": "темнее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the darkest",
+	    "native": "самый темный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "clear",
+	    "native": "ясный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "clearer",
+	    "native": "яснее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the clearest",
+	    "native": "самый ясный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "smart",
+	    "native": "умный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "smarter",
+	    "native": "умнее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the smartest",
+	    "native": "самый умный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "kind",
+	    "native": "добрый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "kinder",
+	    "native": "добрее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the kindest",
+	    "native": "самый добрый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "happy",
+	    "native": "счастливый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "happier",
+	    "native": "счастливее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the happiest",
+	    "native": "самый счастливый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "sad",
+	    "native": "грустный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "sadder",
+	    "native": "грустнее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the saddest",
+	    "native": "самый грустный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "rich",
+	    "native": "богатый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "richer",
+	    "native": "богаче"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the richest",
+	    "native": "самый богатый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "poor",
+	    "native": "бедный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "poorer",
+	    "native": "беднее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the poorest",
+	    "native": "самый бедный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "interesting",
+	    "native": "интересный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "more interesting",
+	    "native": "интереснее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the most interesting",
+	    "native": "самый интересный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "boring",
+	    "native": "скучный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "more boring",
+	    "native": "скучнее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the most boring",
+	    "native": "самый скучный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "beautiful",
+	    "native": "красивый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "more beautiful",
+	    "native": "красивее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the most beautiful",
+	    "native": "самый красивый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "ugly",
+	    "native": "уродливый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "uglier",
+	    "native": "уродливее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the ugliest",
+	    "native": "самый уродливый"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "delicious",
+	    "native": "вкусный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "more delicious",
+	    "native": "вкуснее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the most delicious",
+	    "native": "самый вкусный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "comfortable",
+	    "native": "удобный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "more comfortable",
+	    "native": "удобнее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the most comfortable",
+	    "native": "самый удобный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "important",
+	    "native": "важный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "more important",
+	    "native": "важнее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the most important",
+	    "native": "самый важный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "popular",
+	    "native": "популярный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "more popular",
+	    "native": "популярнее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the most popular",
+	    "native": "самый популярный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "dangerous",
+	    "native": "опасный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "more dangerous",
+	    "native": "опаснее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the most dangerous",
+	    "native": "самый опасный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "safe",
+	    "native": "безопасный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "safer",
+	    "native": "безопаснее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the safest",
+	    "native": "самый безопасный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "quiet",
+	    "native": "тихий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "quieter",
+	    "native": "тише"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the quietest",
+	    "native": "самый тихий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "loud",
+	    "native": "громкий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "louder",
+	    "native": "громче"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the loudest",
+	    "native": "самый громкий"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "simple",
+	    "native": "простой"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "simpler",
+	    "native": "проще"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the simplest",
+	    "native": "самый простой"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "complex",
+	    "native": "сложный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "more complex",
+	    "native": "сложнее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the most complex",
+	    "native": "самый сложный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "friendly",
+	    "native": "дружелюбный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "friendlier",
+	    "native": "дружелюбнее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the friendliest",
+	    "native": "самый дружелюбный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "honest",
+	    "native": "честный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "more honest",
+	    "native": "честнее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the most honest",
+	    "native": "самый честный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "funny",
+	    "native": "смешной"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "funnier",
+	    "native": "смешнее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the funniest",
+	    "native": "самый смешной"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "serious",
+	    "native": "серьезный"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "more serious",
+	    "native": "серьезнее"
+	  },
+	  {
+	    "direction": "en-ru",
+	    "target": "the most serious",
+	    "native": "самый серьезный"
+	  }
+	]
+}
