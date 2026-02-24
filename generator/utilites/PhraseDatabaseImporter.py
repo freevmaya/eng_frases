@@ -3,6 +3,7 @@ import mysql.connector
 from mysql.connector import Error
 from typing import Dict, List, Any
 import sys
+import os
 from pathlib import Path
 import argparse
 import logging
