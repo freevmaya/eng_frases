@@ -1,507 +1,509 @@
-[
-  {
-    "direction": "en-ru",
-    "target": "My house is bigger than yours.",
-    "native": "Мой дом больше, чем твой."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is taller than her brother.",
-    "native": "Она выше своего брата."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This book is more interesting than that one.",
-    "native": "Эта книга интереснее, чем та."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He runs faster than me.",
-    "native": "Он бегает быстрее меня."
-  },
-  {
-    "direction": "en-ru",
-    "target": "Today is colder than yesterday.",
-    "native": "Сегодня холоднее, чем вчера."
-  },
-  {
-    "direction": "en-ru",
-    "target": "Your car is more expensive than mine.",
-    "native": "Твоя машина дороже, чем моя."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She speaks English better than I do.",
-    "native": "Она говорит по-английски лучше, чем я."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This task is easier than the last one.",
-    "native": "Это задание легче, чем предыдущее."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He arrived earlier than expected.",
-    "native": "Он прибыл раньше, чем ожидалось."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is the best coffee I've ever had.",
-    "native": "Это лучший кофе, который я когда-либо пробовал."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is the most talented singer in the group.",
-    "native": "Она самая талантливая певица в группе."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He is funnier than his brother.",
-    "native": "Он смешнее своего брата."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This route is shorter than the other one.",
-    "native": "Этот маршрут короче, чем другой."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She works harder than anyone else.",
-    "native": "Она работает усерднее, чем кто-либо другой."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This exam was more difficult than I expected.",
-    "native": "Этот экзамен был труднее, чем я ожидал."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He is older than he looks.",
-    "native": "Он старше, чем выглядит."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This restaurant is cheaper than the one we went to yesterday.",
-    "native": "Этот ресторан дешевле, чем тот, в который мы ходили вчера."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She dances more gracefully than her sister.",
-    "native": "Она танцует более грациозно, чем её сестра."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is the worst movie I've ever seen.",
-    "native": "Это худший фильм, который я когда-либо видел."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He is the least experienced member of the team.",
-    "native": "Он наименее опытный член команды."
-  },
-  {
-    "direction": "en-ru",
-    "target": "My apartment is smaller than yours.",
-    "native": "Моя квартира меньше, чем твоя."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is more patient than her husband.",
-    "native": "Она терпеливее своего мужа."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He drives more carefully than before.",
-    "native": "Он водит машину осторожнее, чем раньше."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is the most delicious cake I've ever tasted.",
-    "native": "Это самый вкусный торт, который я когда-либо пробовал."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is younger than her sister.",
-    "native": "Она моложе своей сестры."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This phone is more reliable than my old one.",
-    "native": "Этот телефон надежнее, чем мой старый."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He speaks more loudly than necessary.",
-    "native": "Он говорит громче, чем нужно."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is the most beautiful place I've ever visited.",
-    "native": "Это самое красивое место, которое я когда-либо посещал."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is the smartest student in the class.",
-    "native": "Она самая умная ученица в классе."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He is stronger than he looks.",
-    "native": "Он сильнее, чем выглядит."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This bag is lighter than the other one.",
-    "native": "Эта сумка легче, чем та."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She writes more clearly than he does.",
-    "native": "Она пишет яснее, чем он."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is the most comfortable chair in the house.",
-    "native": "Это самый удобный стул в доме."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He is the worst player on the team.",
-    "native": "Он худший игрок в команде."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This road is narrower than the main highway.",
-    "native": "Эта дорога уже, чем главное шоссе."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is more careful now than before.",
-    "native": "Она сейчас осторожнее, чем раньше."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He arrived later than everyone else.",
-    "native": "Он прибыл позже всех."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is the funniest joke I've ever heard.",
-    "native": "Это самая смешная шутка, которую я когда-либо слышал."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is the most important person in my life.",
-    "native": "Она самый важный человек в моей жизни."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He is less talkative than his sister.",
-    "native": "Он менее разговорчив, чем его сестра."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This task is more complex than I thought.",
-    "native": "Это задача сложнее, чем я думал."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She runs more slowly than her friend.",
-    "native": "Она бегает медленнее, чем её подруга."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is the most exciting news I've heard today.",
-    "native": "Это самые захватывающие новости, которые я слышал сегодня."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He is the happiest person I know.",
-    "native": "Он самый счастливый человек, которого я знаю."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This computer is faster than the old one.",
-    "native": "Этот компьютер быстрее, чем старый."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is more confident than she used to be.",
-    "native": "Она увереннее, чем была раньше."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He eats more healthily than his brother.",
-    "native": "Он ест более здоровую пищу, чем его брат."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is the least expensive option.",
-    "native": "Это наименее дорогой вариант."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is the most hardworking employee here.",
-    "native": "Она самая трудолюбивая сотрудница здесь."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He is more generous than I expected.",
-    "native": "Он щедрее, чем я ожидал."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This movie is more exciting than the book.",
-    "native": "Этот фильм более захватывающий, чем книга."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She sings more beautifully than anyone I know.",
-    "native": "Она поёт красивее, чем кто-либо из моих знакомых."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is the safest place in the city.",
-    "native": "Это самое безопасное место в городе."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He is the most reliable person I trust.",
-    "native": "Он самый надёжный человек, которому я доверяю."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This dress is more elegant than that one.",
-    "native": "Это платье элегантнее, чем то."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is more polite than her brother.",
-    "native": "Она вежливее своего брата."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He works more efficiently than before.",
-    "native": "Он работает эффективнее, чем раньше."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is the most challenging task I've ever done.",
-    "native": "Это самая сложная задача, которую я когда-либо выполнял."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is the most organized person in our office.",
-    "native": "Она самый организованный человек в нашем офисе."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He is less interested in sports now.",
-    "native": "Он сейчас менее заинтересован в спорте."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This hotel is more luxurious than the last one.",
-    "native": "Этот отель более роскошный, чем предыдущий."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She speaks more quietly than her sister.",
-    "native": "Она говорит тише, чем её сестра."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is the most peaceful place I know.",
-    "native": "Это самое мирное место, которое я знаю."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He is the most generous person I've met.",
-    "native": "Он самый щедрый человек, которого я встречал."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This route is more scenic than the highway.",
-    "native": "Этот маршрут более живописный, чем шоссе."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is more energetic in the morning.",
-    "native": "Она более энергичная по утрам."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He drives more slowly now after the accident.",
-    "native": "Он сейчас водит медленнее после аварии."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is the least crowded beach we've been to.",
-    "native": "Это наименее многолюдный пляж, где мы были."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is the most creative designer in the team.",
-    "native": "Она самый креативный дизайнер в команде."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He is more understanding than his father.",
-    "native": "Он более понимающий, чем его отец."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This coffee is stronger than the one I usually drink.",
-    "native": "Этот кофе крепче, чем тот, который я обычно пью."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She dances more energetically than before.",
-    "native": "Она танцует более энергично, чем раньше."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is the most romantic restaurant in town.",
-    "native": "Это самый романтичный ресторан в городе."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He is the most punctual person I know.",
-    "native": "Он самый пунктуальный человек, которого я знаю."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This bag is more durable than the cheap one.",
-    "native": "Эта сумка более прочная, чем дешёвая."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is more relaxed on weekends.",
-    "native": "Она более расслабленная по выходным."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He speaks more clearly when he's calm.",
-    "native": "Он говорит более чётко, когда он спокоен."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is the most effective method I've tried.",
-    "native": "Это самый эффективный метод, который я пробовал."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is the most patient teacher I've had.",
-    "native": "Она самый терпеливый учитель, который у меня был."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He is less active than he used to be.",
-    "native": "Он менее активен, чем раньше."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This new model is more advanced than the previous one.",
-    "native": "Эта новая модель более продвинутая, чем предыдущая."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She writes more neatly than her classmates.",
-    "native": "Она пишет аккуратнее, чем её одноклассники."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is the most reliable car I've ever owned.",
-    "native": "Это самая надёжная машина, которая у меня когда-либо была."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He is the most helpful colleague I work with.",
-    "native": "Он самый отзывчивый коллега, с которым я работаю."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This recipe is simpler than the original one.",
-    "native": "Этот рецепт проще, чем оригинальный."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is more cheerful today than yesterday.",
-    "native": "Она сегодня более жизнерадостная, чем вчера."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He eats more slowly when he's nervous.",
-    "native": "Он ест медленнее, когда нервничает."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is the most fascinating documentary I've seen.",
-    "native": "Это самый захватывающий документальный фильм, который я видел."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is the most thoughtful person in our family.",
-    "native": "Она самый заботливый человек в нашей семье."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He is more talkative after a few drinks.",
-    "native": "Он более разговорчив после нескольких напитков."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This pillow is softer than the one I had before.",
-    "native": "Эта подушка мягче, чем та, что была у меня раньше."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She responds more quickly to text messages.",
-    "native": "Она отвечает быстрее на текстовые сообщения."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is the most comfortable bed I've slept in.",
-    "native": "Это самая удобная кровать, на которой я спал."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He is the most trustworthy friend I have.",
-    "native": "Он самый надёжный друг, который у меня есть."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This new job is more stressful than my old one.",
-    "native": "Эта новая работа более стрессовая, чем моя старая."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is more graceful than her sister.",
-    "native": "Она более грациозная, чем её сестра."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He behaves more responsibly now.",
-    "native": "Он теперь ведёт себя более ответственно."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is the least effective solution.",
-    "native": "Это наименее эффективное решение."
-  },
-  {
-    "direction": "en-ru",
-    "target": "She is the most cheerful person I know.",
-    "native": "Она самый жизнерадостный человек, которого я знаю."
-  },
-  {
-    "direction": "en-ru",
-    "target": "He is more experienced than he appears.",
-    "native": "Он более опытен, чем кажется."
-  },
-  {
-    "direction": "en-ru",
-    "target": "This is better than nothing.",
-    "native": "Это лучше, чем ничего."
-  }
-]
+{
+  "Comparison": [
+    {
+      "direction": "en-ru",
+      "target": "My house is bigger than yours.",
+      "native": "Мой дом больше, чем твой."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is taller than her brother.",
+      "native": "Она выше своего брата."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This book is more interesting than that one.",
+      "native": "Эта книга интереснее, чем та."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He runs faster than me.",
+      "native": "Он бегает быстрее меня."
+    },
+    {
+      "direction": "en-ru",
+      "target": "Today is colder than yesterday.",
+      "native": "Сегодня холоднее, чем вчера."
+    },
+    {
+      "direction": "en-ru",
+      "target": "Your car is more expensive than mine.",
+      "native": "Твоя машина дороже, чем моя."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She speaks English better than I do.",
+      "native": "Она говорит по-английски лучше, чем я."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This task is easier than the last one.",
+      "native": "Это задание легче, чем предыдущее."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He arrived earlier than expected.",
+      "native": "Он прибыл раньше, чем ожидалось."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is the best coffee I've ever had.",
+      "native": "Это лучший кофе, который я когда-либо пробовал."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is the most talented singer in the group.",
+      "native": "Она самая талантливая певица в группе."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He is funnier than his brother.",
+      "native": "Он смешнее своего брата."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This route is shorter than the other one.",
+      "native": "Этот маршрут короче, чем другой."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She works harder than anyone else.",
+      "native": "Она работает усерднее, чем кто-либо другой."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This exam was more difficult than I expected.",
+      "native": "Этот экзамен был труднее, чем я ожидал."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He is older than he looks.",
+      "native": "Он старше, чем выглядит."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This restaurant is cheaper than the one we went to yesterday.",
+      "native": "Этот ресторан дешевле, чем тот, в который мы ходили вчера."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She dances more gracefully than her sister.",
+      "native": "Она танцует более грациозно, чем её сестра."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is the worst movie I've ever seen.",
+      "native": "Это худший фильм, который я когда-либо видел."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He is the least experienced member of the team.",
+      "native": "Он наименее опытный член команды."
+    },
+    {
+      "direction": "en-ru",
+      "target": "My apartment is smaller than yours.",
+      "native": "Моя квартира меньше, чем твоя."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is more patient than her husband.",
+      "native": "Она терпеливее своего мужа."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He drives more carefully than before.",
+      "native": "Он водит машину осторожнее, чем раньше."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is the most delicious cake I've ever tasted.",
+      "native": "Это самый вкусный торт, который я когда-либо пробовал."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is younger than her sister.",
+      "native": "Она моложе своей сестры."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This phone is more reliable than my old one.",
+      "native": "Этот телефон надежнее, чем мой старый."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He speaks more loudly than necessary.",
+      "native": "Он говорит громче, чем нужно."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is the most beautiful place I've ever visited.",
+      "native": "Это самое красивое место, которое я когда-либо посещал."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is the smartest student in the class.",
+      "native": "Она самая умная ученица в классе."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He is stronger than he looks.",
+      "native": "Он сильнее, чем выглядит."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This bag is lighter than the other one.",
+      "native": "Эта сумка легче, чем та."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She writes more clearly than he does.",
+      "native": "Она пишет яснее, чем он."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is the most comfortable chair in the house.",
+      "native": "Это самый удобный стул в доме."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He is the worst player on the team.",
+      "native": "Он худший игрок в команде."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This road is narrower than the main highway.",
+      "native": "Эта дорога уже, чем главное шоссе."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is more careful now than before.",
+      "native": "Она сейчас осторожнее, чем раньше."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He arrived later than everyone else.",
+      "native": "Он прибыл позже всех."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is the funniest joke I've ever heard.",
+      "native": "Это самая смешная шутка, которую я когда-либо слышал."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is the most important person in my life.",
+      "native": "Она самый важный человек в моей жизни."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He is less talkative than his sister.",
+      "native": "Он менее разговорчив, чем его сестра."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This task is more complex than I thought.",
+      "native": "Это задача сложнее, чем я думал."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She runs more slowly than her friend.",
+      "native": "Она бегает медленнее, чем её подруга."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is the most exciting news I've heard today.",
+      "native": "Это самые захватывающие новости, которые я слышал сегодня."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He is the happiest person I know.",
+      "native": "Он самый счастливый человек, которого я знаю."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This computer is faster than the old one.",
+      "native": "Этот компьютер быстрее, чем старый."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is more confident than she used to be.",
+      "native": "Она увереннее, чем была раньше."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He eats more healthily than his brother.",
+      "native": "Он ест более здоровую пищу, чем его брат."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is the least expensive option.",
+      "native": "Это наименее дорогой вариант."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is the most hardworking employee here.",
+      "native": "Она самая трудолюбивая сотрудница здесь."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He is more generous than I expected.",
+      "native": "Он щедрее, чем я ожидал."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This movie is more exciting than the book.",
+      "native": "Этот фильм более захватывающий, чем книга."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She sings more beautifully than anyone I know.",
+      "native": "Она поёт красивее, чем кто-либо из моих знакомых."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is the safest place in the city.",
+      "native": "Это самое безопасное место в городе."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He is the most reliable person I trust.",
+      "native": "Он самый надёжный человек, которому я доверяю."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This dress is more elegant than that one.",
+      "native": "Это платье элегантнее, чем то."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is more polite than her brother.",
+      "native": "Она вежливее своего брата."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He works more efficiently than before.",
+      "native": "Он работает эффективнее, чем раньше."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is the most challenging task I've ever done.",
+      "native": "Это самая сложная задача, которую я когда-либо выполнял."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is the most organized person in our office.",
+      "native": "Она самый организованный человек в нашем офисе."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He is less interested in sports now.",
+      "native": "Он сейчас менее заинтересован в спорте."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This hotel is more luxurious than the last one.",
+      "native": "Этот отель более роскошный, чем предыдущий."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She speaks more quietly than her sister.",
+      "native": "Она говорит тише, чем её сестра."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is the most peaceful place I know.",
+      "native": "Это самое мирное место, которое я знаю."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He is the most generous person I've met.",
+      "native": "Он самый щедрый человек, которого я встречал."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This route is more scenic than the highway.",
+      "native": "Этот маршрут более живописный, чем шоссе."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is more energetic in the morning.",
+      "native": "Она более энергичная по утрам."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He drives more slowly now after the accident.",
+      "native": "Он сейчас водит медленнее после аварии."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is the least crowded beach we've been to.",
+      "native": "Это наименее многолюдный пляж, где мы были."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is the most creative designer in the team.",
+      "native": "Она самый креативный дизайнер в команде."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He is more understanding than his father.",
+      "native": "Он более понимающий, чем его отец."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This coffee is stronger than the one I usually drink.",
+      "native": "Этот кофе крепче, чем тот, который я обычно пью."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She dances more energetically than before.",
+      "native": "Она танцует более энергично, чем раньше."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is the most romantic restaurant in town.",
+      "native": "Это самый романтичный ресторан в городе."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He is the most punctual person I know.",
+      "native": "Он самый пунктуальный человек, которого я знаю."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This bag is more durable than the cheap one.",
+      "native": "Эта сумка более прочная, чем дешёвая."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is more relaxed on weekends.",
+      "native": "Она более расслабленная по выходным."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He speaks more clearly when he's calm.",
+      "native": "Он говорит более чётко, когда он спокоен."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is the most effective method I've tried.",
+      "native": "Это самый эффективный метод, который я пробовал."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is the most patient teacher I've had.",
+      "native": "Она самый терпеливый учитель, который у меня был."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He is less active than he used to be.",
+      "native": "Он менее активен, чем раньше."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This new model is more advanced than the previous one.",
+      "native": "Эта новая модель более продвинутая, чем предыдущая."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She writes more neatly than her classmates.",
+      "native": "Она пишет аккуратнее, чем её одноклассники."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is the most reliable car I've ever owned.",
+      "native": "Это самая надёжная машина, которая у меня когда-либо была."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He is the most helpful colleague I work with.",
+      "native": "Он самый отзывчивый коллега, с которым я работаю."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This recipe is simpler than the original one.",
+      "native": "Этот рецепт проще, чем оригинальный."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is more cheerful today than yesterday.",
+      "native": "Она сегодня более жизнерадостная, чем вчера."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He eats more slowly when he's nervous.",
+      "native": "Он ест медленнее, когда нервничает."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is the most fascinating documentary I've seen.",
+      "native": "Это самый захватывающий документальный фильм, который я видел."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is the most thoughtful person in our family.",
+      "native": "Она самый заботливый человек в нашей семье."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He is more talkative after a few drinks.",
+      "native": "Он более разговорчив после нескольких напитков."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This pillow is softer than the one I had before.",
+      "native": "Эта подушка мягче, чем та, что была у меня раньше."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She responds more quickly to text messages.",
+      "native": "Она отвечает быстрее на текстовые сообщения."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is the most comfortable bed I've slept in.",
+      "native": "Это самая удобная кровать, на которой я спал."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He is the most trustworthy friend I have.",
+      "native": "Он самый надёжный друг, который у меня есть."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This new job is more stressful than my old one.",
+      "native": "Эта новая работа более стрессовая, чем моя старая."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is more graceful than her sister.",
+      "native": "Она более грациозная, чем её сестра."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He behaves more responsibly now.",
+      "native": "Он теперь ведёт себя более ответственно."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is the least effective solution.",
+      "native": "Это наименее эффективное решение."
+    },
+    {
+      "direction": "en-ru",
+      "target": "She is the most cheerful person I know.",
+      "native": "Она самый жизнерадостный человек, которого я знаю."
+    },
+    {
+      "direction": "en-ru",
+      "target": "He is more experienced than he appears.",
+      "native": "Он более опытен, чем кажется."
+    },
+    {
+      "direction": "en-ru",
+      "target": "This is better than nothing.",
+      "native": "Это лучше, чем ничего."
+    }
+  ]
+}
