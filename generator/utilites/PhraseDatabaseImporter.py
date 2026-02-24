@@ -7,6 +7,10 @@ from pathlib import Path
 import argparse
 import logging
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Загрузить переменные из .env файла
+load_dotenv()
 
 # Настройка логирования
 logging.basicConfig(
@@ -515,11 +519,14 @@ def main():
     """Основная функция"""
     parser = argparse.ArgumentParser(description='Импорт фраз из JSON в MySQL базу данных')
     
+    DB_USER             = os.environ.get('DB_USER', 'root')
+    DB_PASSWORD         = os.environ.get('DB_PASSWORD', '')
+
     parser.add_argument('json_file', help='Путь к JSON файлу с фразами')
     parser.add_argument('--host', default='localhost', help='Хост MySQL (по умолчанию: localhost)')
     parser.add_argument('--database', default='eng_phrases', help='Имя базы данных (по умолчанию: eng_phrases)')
-    parser.add_argument('--user', default='root', help='Имя пользователя MySQL (по умолчанию: root)')
-    parser.add_argument('--password', default='', help='Пароль MySQL')
+    parser.add_argument('--user', default=DB_USER, help='Имя пользователя MySQL (по умолчанию: root)')
+    parser.add_argument('--password', default=DB_PASSWORD, help='Пароль MySQL')
     parser.add_argument('--port', type=int, default=3306, help='Порт MySQL (по умолчанию: 3306)')
     parser.add_argument('--create-db', action='store_true', help='Создать базу данных если не существует')
     parser.add_argument('--direction', default='en-ru', help='Направление перевода')
