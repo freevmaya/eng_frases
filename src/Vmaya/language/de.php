@@ -220,6 +220,7 @@ $lang = [
     'phrases-page' => 'Phrasen',
     'phrases-page-description' => 'Hier können Sie sich anhören, wie die Sätze in der Originalsprache klingen.',
     'site-description' => 'Lerne englische Redewendungen mit interaktiven Übungen',
-    'site-keywords' => 'Englisch, Redewendungen, Simulator, Lernen, Training'
+    'site-keywords' => 'Englisch, Redewendungen, Simulator, Lernen, Training',
+    'phrases-page-toapp' => 'Üben Sie außerdem Ihre gesprochenen Sprachkenntnisse auf dem <a href="'.BASEURL.'">Trainer</a>'
 ];
 ?>

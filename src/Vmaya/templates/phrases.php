@@ -66,11 +66,6 @@
                             <?}?>
                         </ul>
                     </div>
-                    <!--
-                    <button type="button" class="btn">
-                        <i class="bi bi-person"></i>
-                    </button>
-                    -->
                 </div>
             </div>
             <?if ($descriptionItem) {?>
@@ -80,7 +75,8 @@
             </div>
             <?}?>
             <div>
-                <?=Lang('phrases-page-description')?>
+                <?=Lang('phrases-page-description')?><br>
+                <?=Lang('phrases-page-toapp')?>
             </div>
         </header>
         <div class="phrases-body">
