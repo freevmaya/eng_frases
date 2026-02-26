@@ -50,6 +50,10 @@ footer {
 	padding: 1em;
 }
 
+.page-content p {
+	margin-bottom: 0.2em;
+}
+
 .phrases-body {
 	flex: 1 1 auto; /* растягивается на всё свободное место */
 	overflow-y: auto; /* скролл если нужно */
