@@ -40,12 +40,12 @@
             <div class="navigator">
             <?if ($prev_url) {?>
                 <a href="<?=$prev_url?>" class="prev"><i class="bi bi-skip-backward-circle-fill"></i>
-                    <span><?=$prev['type_name']?></span></a>
+                    <span><?=$prev[0]['target_text']?></span></a>
             <?} else {?>
                 <div></div>
             <?}?>
             <?if ($next_url) {?>
-                <a href="<?=$next_url?>" class="next"><span><?=$next['type_name']?></span>
+                <a href="<?=$next_url?>" class="next"><span><?=$next[0]['target_text']?></span>
                     <i class="bi bi-fast-forward-circle-fill"></i></a>
             <?} else {?>
                 <div></div>
@@ -82,18 +82,16 @@
         </header>
         <div class="phrases-body">
             <div class="phrases-list">
-            <?foreach ($phrases as $phrase) {
-                ?>
                 <div class="item">
+                    <h2><?=Lang('phrase')?></h2>
                     <div class="native">
-                        <?=$phrase['native_text']?>
+                        <?=$phraseItem['native_text']?>
                     </div>
-                    <div class="target" data-url="<?=$this->getAudioUrl($phrase)?>">
+                    <div class="target" data-url="<?=$this->getAudioUrl($phraseItem)?>">
                         <i class="bi bi-play-circle play"></i>
-                        <a href="<?=$this->Route(['phrases', $lang, str_replace(' ', '_', $type_name), str_replace(' ', '_', $phrase['target_text'])])?>"><?=$phrase['target_text']?></a>
+                        <?=$phraseItem['target_text']?>                        
                     </div>
                 </div>
-            <?}?>
             </div>
         </div>
         <footer class="mt-2 pt-2 border-top border-secondary text-center text-muted small">

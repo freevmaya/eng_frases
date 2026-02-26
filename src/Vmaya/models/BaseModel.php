@@ -9,11 +9,14 @@ abstract class BaseModel {
 	public function getTitle() { return Lang(get_class($this)); }
 
 	protected function verifyId($idField, $id) {
+		GLOBAL $dbp;
 
 		if ($id) {
 			$fields = $this->getFields();
-			if (isset($fields[$idField]) && ($fields[$idField]['dbtype'] == 's'))
+			if (isset($fields[$idField]) && ($fields[$idField]['dbtype'] == 's')) {
+				$id = $dbp->safeVal($id);
 				$id = "'{$id}'";
+			}
 		}
 
 		return $id;
@@ -127,6 +130,14 @@ abstract class BaseModel {
 		if ($id) $id = $this->verifyId($idField, $id);
 		
 		return $id ? $dbp->line("SELECT * FROM {$this->getTable()} WHERE `{$idField}`={$id}") : $dbp->line("SELECT * FROM {$this->getTable()} LIMIT 1");
+	}
+
+	public function getItemLike($value, $idField = 'name') {		
+		GLOBAL $dbp;
+
+		if ($value) $value = $dbp->safeVal($value);
+		
+		return $value ? $dbp->line("SELECT * FROM {$this->getTable()} WHERE `{$idField}` LIKE '%{$value}%'") : $dbp->line("SELECT * FROM {$this->getTable()} LIMIT 1");
 	}
 
 	public function Delete($id, $idField = 'id') {		

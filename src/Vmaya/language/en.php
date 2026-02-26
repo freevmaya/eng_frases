@@ -221,6 +221,7 @@ $lang = [
     'phrases-page-description' => 'Here you can listen to how phrases sound in the original language.',
     'site-description' => 'Learn English phrases with interactive exercises',
     'site-keywords' => 'English, phrases, simulator, learning, training',
-    'phrases-page-toapp' => 'Also practice your spoken language on the <a href="'.BASEURL.'">trainer</a>'
+    'phrases-page-toapp' => 'Also practice your spoken language on the <a href="'.BASEURL.'">trainer</a>',
+    'phrase' => 'Phrase'
 ];
 ?>

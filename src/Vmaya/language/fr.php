@@ -219,6 +219,7 @@ $lang = [
     'phrases-page-description' => 'Ici, vous pouvez écouter la prononciation des phrases dans leur langue d\'origine.',
     'site-description' => 'Apprenez des expressions anglaises grâce à des exercices interactifs',
     'site-keywords' => 'Anglais, phrases, simulateur, apprentissage, formation',
-    'phrases-page-toapp' => 'Entraînez-vous également à parler votre langue sur le <a href="'.BASEURL.'">entraîneur</a>'
+    'phrases-page-toapp' => 'Entraînez-vous également à parler votre langue sur le <a href="'.BASEURL.'">entraîneur</a>',
+    'phrase' => 'Phrase'
 ];
 ?>
