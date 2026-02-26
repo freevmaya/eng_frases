@@ -1,5 +1,6 @@
 <?
     $page_title = Lang('phrases-page').' '.$type_name;
+    $is_request_theme = isset(Page::$request['theme']);
 ?>
 <!DOCTYPE html>
 <html lang="<?=Lang('html_lang')?>" data-bs-theme="<?=Page::getRequest('theme', 'dark')?>">
@@ -26,12 +27,13 @@
     <script src="<?=BASEURL?>scripts/phrases-page.js<?=$v?>"></script>
     <?include('ya-mertika.php');?>
     <?include('gtag.php');?>
+    <?if (!$is_request_theme) include('check-theme.php');?>
 </head>
 <body class="phrases-page">
     <div class="page-content">
         <header>
             <h1 class="display-4 app-name">
-                <i class="bi bi-translate text-primary"></i>
+                <i class="bi bi-translate"></i>
                 <?=$page_title;?>
             </h1>
             <div class="navigator">

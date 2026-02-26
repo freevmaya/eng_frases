@@ -1,9 +1,13 @@
+<?
+    $page_title = Lang('app_name');
+    $is_request_theme = isset(Page::$request['theme']);
+?>
 <!DOCTYPE html>
 <html lang="<?=Lang('html_lang')?>" data-bs-theme="<?=isset(Page::$request['theme']) ? Page::$request['theme'] : 'dark' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?=Lang('app_name');?></title>
+    <?include('title-meta.php')?>
 
     <!-- PWA Support -->
     <link rel="manifest" href="manifest.json">
@@ -65,6 +69,7 @@
     <script src="<?=BASEURL?>scripts/advice-modal.js<?=$v?>"></script>
     <?include('ya-mertika.php');?>
     <?include('gtag.php');?>
+    <?if (!$is_request_theme) include('check-theme.php');?>
 </head>
 <body class="theme site">
     <div class="loader">

@@ -1,5 +1,14 @@
 :root {
-	--bs-body-bg: #000;
+}
+
+[data-bs-theme="dark"] {
+	--bs-body-bg: black;
+	--bs-link-color-rgb: 110, 168, 254;
+}
+
+[data-bs-theme="light"] {
+	--bs-body-bg: white;
+	--bs-link-color-rgb: 10, 81, 187;
 }
 
 html, body {
@@ -94,4 +103,7 @@ a {
 
 .navigator span {
 	margin: 0 0.2em;
+}
+
+.app-name .bi {
 }
