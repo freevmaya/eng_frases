@@ -1,5 +1,5 @@
 .theme {
-    height: 100%;
+    height: 100dvh;
     color: var(--light);
     max-width: var(--max-width);
     margin: 0 auto;
@@ -15,7 +15,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -149,8 +149,8 @@
 .wrap-content {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 50px);
-    max-height: calc(100vh - 50px);
+    height: calc(100dvh - 50px);
+    max-height: calc(100dvh - 50px);
 }
 
 .vk_layout .wrap-content {
