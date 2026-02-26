@@ -75,7 +75,7 @@
                 <?=$descriptionItem['description']?>
             </div>
             <?}?>
-            <div>
+            <div class="small">
                 <?=Lang('phrases-page-description')?><br>
                 <?=Lang('phrases-page-toapp')?>
             </div>
