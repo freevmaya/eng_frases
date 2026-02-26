@@ -1,5 +1,5 @@
 <?
-    $page_title = Lang('phrases-page').' '.$type_name;
+    $page_title = $phraseItem['target_text'];
     $is_request_theme = isset(Page::$request['theme']);
     $lang = Page::language();
 ?>
@@ -33,10 +33,10 @@
 <body class="phrases-page">
     <div class="page-content">
         <header>
-            <h1 class="display-4 app-name">
-                <i class="bi bi-translate"></i>
-                <?=$page_title;?>
-            </h1>
+            <a class="display-6" href="<?=$this->Route(['phrases', $lang, ftou($type_name)])?>">
+                <i class="bi bi-arrow-left"></i>
+                <?=Lang('phrases-page').' '.$type_name;?>
+            </a>
             <div class="navigator">
             <?if ($prev_url) {?>
                 <a href="<?=$prev_url?>" class="prev"><i class="bi bi-skip-backward-circle-fill"></i>

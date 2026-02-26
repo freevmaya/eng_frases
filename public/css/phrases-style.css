@@ -61,6 +61,7 @@ footer {
 	background: var(--bs-secondary-bg);
 	padding: 1em;
 	border-radius: 1em;
+	min-height: 10em;
 }
 
 .phrases-list {
@@ -100,6 +101,8 @@ footer {
 .navigator > * {
     white-space: nowrap;
     text-overflow: ellipsis;
+    max-width: 12em;
+    overflow: hidden;
 }
 
 a {
