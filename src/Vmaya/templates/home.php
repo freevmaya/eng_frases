@@ -263,13 +263,6 @@
     </div>
 </div>
 
-<!-- Footer -->
-<footer class="mt-2 pt-2 border-top border-secondary text-center text-muted">
-    <p class="small">
-        <?=SITE_NAME?> v<?php echo APP_VERSION; ?> | <a class="link" onclick="showAdvices()"><?=Lang('help')?></a> | <a class="link" href="https://vk.com/club235452440"><?=Lang('group')?></a>
-    </p>
-</footer>
-
 <script type="text/javascript">
     var SPEECH_CONFIG = <?=SPEECH_CONFIG?>;
     var LANGUAGE = '<?=Page::language()?>';
