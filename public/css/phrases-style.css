@@ -2,7 +2,7 @@
 }
 
 [data-bs-theme="dark"] {
-	--bs-body-bg: black;
+	--bs-body-bg: #222;
 	--bs-link-color-rgb: 110, 168, 254;
 }
 
