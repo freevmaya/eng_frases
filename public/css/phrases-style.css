@@ -45,6 +45,9 @@ footer {
 	flex: 1 1 auto; /* растягивается на всё свободное место */
 	overflow-y: auto; /* скролл если нужно */
 	margin: 1em 0;
+	background: var(--bs-secondary-bg);
+	padding: 1em;
+	border-radius: 1em;
 }
 
 .phrases-list {
