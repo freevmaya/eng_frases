@@ -219,18 +219,78 @@
         </div>
         <div id="desk-block">
             <div>
-                <div class="description-block">
+                <!--
+                <div class="description-block accordion" id="description-block">
                     <div class="dropdown">
                         <button class="btn btn-sm bi-caret-down-fill" type="button">
                         </button>
                     </div>
-                    <div class="desk-container">
+
+                    <div class="desk-container accordion-item">
                         <div class="accordion-header">
                             <div class="card bg-theme-gradient head">
                                 <?=Lang('description-title')?>
                             </div>
                         </div>
-                        <div class="description">
+                        <div class="description accordion-collapse collapse">
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header">
+                            <div class="card bg-theme-gradient head">
+                                <?=Lang('phrases-title')?>
+                            </div>
+                        </div>
+                        <div class="accordion-collapse collapse show">
+                            <div>Phrse 1</div>
+                            <div>Phrse 1</div>
+                            <div>Phrse 1</div>
+                            <div>Phrse 1</div>
+                            <div>Phrse 1</div>
+                            <div>Phrse 1</div>
+                        </div>
+                    </div>
+
+                </div>-->
+
+                <div class="accordion" id="description-block">
+                    <!-- Первый элемент аккордеона -->
+                    <div class="accordion-item">
+                        <div class="dropdown">
+                            <button class="btn btn-sm bi-caret-down-fill" type="button">
+                            </button>
+                        </div>
+                        <div class="accordion-header">
+                            <div class="card bg-theme-gradient head" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                <?=Lang('description-title')?>
+                            </div>
+                        </div>
+                        <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#description-block">
+                            <div class="accordion-body">
+                                <div class="description">
+                                    <!-- Контент описания -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Второй элемент аккордеона -->
+                    <div class="accordion-item">
+                        <div class="accordion-header" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                            <div class="card bg-theme-gradient head">
+                                <?=Lang('phrases-title')?>
+                            </div>
+                        </div>
+                        <div id="collapseTwo" class="accordion-collapse collapse show" data-bs-parent="#description-block">
+                            <div class="accordion-body">
+                                <div>Phrase 1</div>
+                                <div>Phrase 2</div>
+                                <div>Phrase 3</div>
+                                <div>Phrase 4</div>
+                                <div>Phrase 5</div>
+                                <div>Phrase 6</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -266,7 +326,7 @@
 <!-- Footer -->
 <footer class="mt-2 pt-2 border-top border-secondary text-center text-muted">
     <p class="small">
-        <?=SITE_NAME?> v<?php echo APP_VERSION; ?> | <a class="link" onclick="showAdvices()"><?=Lang('help')?></a> | <a class="link" href="https://vk.com/club235452440"><?=Lang('group')?></a>
+        English Phrases Trainer v<?php echo APP_VERSION; ?> | <a class="link" onclick="showAdvices()"><?=Lang('help')?></a> | <a class="link" href="https://vk.com/club235452440"><?=Lang('group')?></a>
     </p>
 </footer>
 
@@ -282,11 +342,11 @@
     var typeDescriptions = <?=json_encode((new TypeDescriptionModel())->getAllItems(Page::language()))?>;
     $('.numeral-source').numeral(false);
 </script>
-<script src="<?=BASEURL?>scripts/speech-synthesizer.js<?=$v?>"></script>
-<script src="<?=BASEURL?>scripts/state-manager.js<?=$v?>"></script>
-<script src="<?=BASEURL?>scripts/player-controls.js<?=$v?>"></script>
-<script src="<?=BASEURL?>scripts/phrases-list-view.js<?=$v?>"></script>
-<script src="<?=BASEURL?>scripts/add-phrases-dialog.js<?=$v?>"></script>
-<script src="<?=BASEURL?>scripts/app.js<?=$v?>" defer></script>
-<script src="<?=BASEURL?>scripts/sound.js<?=$v?>"></script>
-<script src="<?=BASEURL?>scripts/vrecognition.js<?=$v?>"></script>
+<script src="scripts/speech-synthesizer.js<?=$v?>"></script>
+<script src="scripts/state-manager.js<?=$v?>"></script>
+<script src="scripts/player-controls.js<?=$v?>"></script>
+<script src="scripts/phrases-list-view.js<?=$v?>"></script>
+<script src="scripts/add-phrases-dialog.js<?=$v?>"></script>
+<script src="scripts/app.js<?=$v?>" defer></script>
+<script src="scripts/sound.js<?=$v?>"></script>
+<script src="scripts/vrecognition.js<?=$v?>"></script>

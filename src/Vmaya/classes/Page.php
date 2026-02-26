@@ -57,6 +57,18 @@ class Page {
 		}
 	}
 
+	public function Route($params) {
+		$url = rtrim(BASEURL, '/');
+		foreach ($params as $key=>$value)
+			$url .= DS.$value;
+
+		return $url;
+	}
+
+	public static function getRequest($name, $default = null) {
+		return isset(Page::$request[$name]) ? Page::$request[$name] : $default;
+	} 
+
 	public static function setLanguage($language) {
 		GLOBAL $lang;
 
@@ -74,6 +86,10 @@ class Page {
 
 	public static function language() {
 		return Page::$language ? Page::$language : DEFAULT_LANGUAGE;
+	}
+
+	public function getDirection() {
+		return 'en-'.Page::language();
 	}
 
 	public static function isDev() {

@@ -98,7 +98,7 @@
 						$ret[] = $row;
 				
 					$result->free();
-				} else trace_error("Wrong query: {$query}, params: ".json_encode($params));
+				} else trace_error("Wrong query: {$query}, params: ".json_encode($params).'. Response: '.$result);
 			}
 			return $ret;
 	    }

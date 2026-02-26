@@ -214,5 +214,10 @@ $lang = [
     'frend-time' => 'Dru[GOM, zyam,zyam]',
     'share-confirm' => 'Si vous aimez l\'application, Partagez-la avec %1.<br > Donc, vous nous aiderez à maintenir et à améliorer son fonctionnement.',
     'share-in-next-phrase' => 'C\'est la meilleure application pour améliorer votre niveau d\'anglais',
+
+    'phrases-page' => 'Phrases',
+    'phrases-page-description' => 'Ici, vous pouvez écouter la prononciation des phrases dans leur langue d\'origine.',
+    'site-description' => 'Apprenez des expressions anglaises grâce à des exercices interactifs',
+    'site-keywords' => 'Anglais, phrases, simulateur, apprentissage, formation'
 ];
 ?>

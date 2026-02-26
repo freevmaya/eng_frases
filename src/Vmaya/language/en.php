@@ -216,5 +216,10 @@ $lang = [
     
     // VK/TG
     'vk_layout' => 'vk_layout',
+
+    'phrases-page' => 'Phrases',
+    'phrases-page-description' => 'Here you can listen to how phrases sound in the original language.',
+    'site-description' => 'Learn English phrases with interactive exercises',
+    'site-keywords' => 'English, phrases, simulator, learning, training'
 ];
 ?>

@@ -46,5 +46,17 @@ class PhraseTypesModel extends BaseModel {
             ]
         ];
     }
+
+    public function NextOrPrevType($type_id, $direction, $next = true) {
+        GLOBAL $dbp;
+
+        $cmd = $next ? '>' : '<';
+
+        $list = $dbp->asArray("SELECT * FROM `phrase_types` t WHERE t.id {$cmd} {$type_id} AND t.is_active = 1 AND (SELECT COUNT(id) FROM phrases WHERE type_id = t.id AND is_active = 1 AND direction = '{$direction}') > 0;");
+
+        if (count($list) > 0)
+            return $next ? $list[0] : $list[count($list) - 1];
+        return null;
+    }
 }
 ?>

@@ -216,5 +216,10 @@ $lang = [
     'frend-time' => 'der andere [gum, gum, gum]',
     'share-confirm' => 'Wenn Ihnen die App gefällt, teilen Sie sie mit %1.<br>Auf diese Weise helfen Sie uns, seine Arbeit zu unterstützen und zu verbessern.',
     'share-in-next-phrase' => 'Dies ist die beste App, um Ihr Englisch zu verbessern',
+
+    'phrases-page' => 'Phrasen',
+    'phrases-page-description' => 'Hier können Sie sich anhören, wie die Sätze in der Originalsprache klingen.',
+    'site-description' => 'Lerne englische Redewendungen mit interaktiven Übungen',
+    'site-keywords' => 'Englisch, Redewendungen, Simulator, Lernen, Training'
 ];
 ?>

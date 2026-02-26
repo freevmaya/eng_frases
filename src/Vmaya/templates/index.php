@@ -13,28 +13,28 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/themes.css<?=$v?>" media="all">
+    <link rel="stylesheet" href="<?=BASEURL?>css/themes.css<?=$v?>" media="all">
     <?
     if (isset(Page::$request['style'])) {?>
-        <link rel="stylesheet" href="css/<?=Page::$request['style']?>.css<?=$v?>" media="all">
+        <link rel="stylesheet" href="<?=BASEURL?>css/<?=Page::$request['style']?>.css<?=$v?>" media="all">
     <?}?>
-    <link rel="stylesheet" href="css/style.css<?=$v?>" media="all">
-    <link rel="stylesheet" href="css/style-waves.css<?=$v?>" media="all">
+    <link rel="stylesheet" href="<?=BASEURL?>css/style.css<?=$v?>" media="all">
+    <link rel="stylesheet" href="<?=BASEURL?>css/style-waves.css<?=$v?>" media="all">
     <?if ($is_developer) {?><script>var DEV = true</script><?}?>
     <?include('tracker.php')?>
     <?include('lang_script.php')?>
 
     <!-- Bootstrap & jQuery -->
-    <script src="scripts/jquery-3.7.0.min.js"></script>
-    <script src="scripts/bootstrap.bundle.min.js"></script>
-    <script src="scripts/crypto-js.min.js"></script>
+    <script src="<?=BASEURL?>scripts/jquery-3.7.0.min.js"></script>
+    <script src="<?=BASEURL?>scripts/bootstrap.bundle.min.js"></script>
+    <script src="<?=BASEURL?>scripts/crypto-js.min.js"></script>
 
-    <script src="scripts/component.js<?=$v?>"></script>
-    <script src="scripts/main.js<?=$v?>"></script>
+    <script src="<?=BASEURL?>scripts/component.js<?=$v?>"></script>
+    <script src="<?=BASEURL?>scripts/main.js<?=$v?>"></script>
     <?
     $user_data = json_encode($this->user['data'], JSON_FLAGS);
     if ($this->user_id && $user_data) {?>
-    <script src="scripts/user-app.js<?=$v?>" defer></script>
+    <script src="<?=BASEURL?>scripts/user-app.js<?=$v?>" defer></script>
     <script type="text/javascript">
         $(window).ready(()=>{
 
@@ -62,7 +62,7 @@
         });
     </script>
     <?}?>
-    <script src="scripts/advice-modal.js<?=$v?>"></script>
+    <script src="<?=BASEURL?>scripts/advice-modal.js<?=$v?>"></script>
     <?include('ya-mertika.php');?>
     <?include('gtag.php');?>
 </head>

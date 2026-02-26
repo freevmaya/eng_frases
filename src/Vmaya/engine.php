@@ -8,9 +8,9 @@
 	define('LANGUAGE_PATH', BASEPATH.'/src/Vmaya/language/');
 	define('TEMPLATES_PATH', BASEPATH.'/src/Vmaya/templates/');
 	define("CHARSET", "utf-8");
-	define("DEFAULTPAGE", "home");
+	define("DEFAULTPAGE", "home". (DEV ? '' : ''));
 	define("DEFAULTCLASS", "Main");
-	define("SCRIPTS_VERSION", 277);
+	define("SCRIPTS_VERSION", 278);
 	
 	define("SOURCES", ['vk', 'ok', 'site', 'tg', 'e-vk', 'e-ok', 'e-tg']);
 	define("LIVETOKEN", DEV ? 20 : 60 * 10); // Врямя жизни токена 10 мин.
@@ -27,12 +27,14 @@
 	// Конфигурация приложения
 	define('APP_VERSION', "1.{$mv}.{$lv}");
 	define('APP_NAME', 'Тренажер английского языка');
+	define('SITE_NAME', 'English Phrases Trainer');
 	define('DEFAULT_SPEED', 1.0);
 	define('DEFAULT_PAUSE', 3);
 	define('DEFAULT_LANG_PAUSE', 2);
 
 	define('DOWNLOADS_PATH', BASEPATH.'downloads'.DS);
 	define('DOWNLOADS_URL', BASEURL.'downloads'.DS);
+	define('VOICES_URL', BASEURL.'data'.DS.'voices'.DS);
 
 	define('DEVUSERS', [49, 14]);
 	define('DEVUSER', 49);

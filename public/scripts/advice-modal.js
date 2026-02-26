@@ -42,3 +42,37 @@ class AdviceModal {
 function appAlert(msg, title=null) {
     new AdviceModal($('#message'), isStr(msg) ? [msg] : msg, title);
 }
+
+function showAdvices() {
+    let list = [
+        `<p>` + Lang("advice_quiz_1") + `</p>
+        <p>` + Lang("advice_quiz_2") + `
+        <ul>
+            <li>` + Lang("advice_quiz_3") + `</li>
+            <li>` + Lang("advice_quiz_4") + `</li>
+            <li>` + Lang("advice_quiz_5") + `</li>
+        </ul>
+        </p>`,
+        `<p>` + Lang("advice_3_1") + `</p><p>` + Lang("advice_3_2") + `
+        <ul>
+            <li>` + Lang("advice_3_li_1") + `</li>
+            <li>` + Lang("advice_3_li_2") + `</li>
+        </ul>
+        </p>`,
+        `<p>` + Lang("advice_4_1") + `</p><p>` + Lang("advice_4_2") + `
+        <ul>
+            <li>` + Lang("advice_4_li_1") + `</li>
+            <li>` + Lang("advice_4_li_2") + `</li>
+        </ul>
+        </p><p>` + Lang("advice_4_3") + `</p>`,
+        `<p>` + Lang("advice_1_1") + `</p><p>` + Lang("advice_1_2") + `</p>`,
+        `<p>` + Lang("advice_2_1") + `</p><p>` + Lang("advice_2_2") + `</p>`,
+        `<p>` + Lang("advice_5_1") + `</p>
+        <p>` + Lang("advice_5_2") + `
+        </p>
+        <p>` + Lang("advice_5_3") + `</p>
+        <hr>
+        <p><span class="bi bi-award me-2"><span> ` + Lang("happy_learning") + `</p>`
+    ];
+    appAlert(list, Lang("help_tips_recommendations"));
+}

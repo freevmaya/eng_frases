@@ -961,6 +961,11 @@ footer {
 
 /*------------------ACCORDION-------------------*/
 
+.accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
 
 .list-view {
     flex: 1;
@@ -986,9 +991,6 @@ footer {
 #accordionItems {
     overflow-y: auto;
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5em;
 }
 
 .accordion-item {
