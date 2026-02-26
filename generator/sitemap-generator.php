@@ -49,5 +49,7 @@ Sitemap: '.BASEURL.'/sitemap.xml';
 	$filename = BASEPATH.DS.'public'.DS.'robots.txt';
 	file_put_contents($filename, $robots_text);
 
+	chmod($filename, 0744);
+
 	$dbp->Close();
 ?>
