@@ -1,7 +1,7 @@
 import json
 import mysql.connector
 from mysql.connector import Error
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 import sys
 import os
 from pathlib import Path
@@ -105,6 +105,26 @@ class PhraseDatabaseImporter:
             logger.error(f"Ошибка проверки столбца {column_name} в таблице {table_name}: {e}")
             return False
     
+    def add_speaker_column_if_not_exists(self):
+        """Добавление колонки speaker в таблицу phrases если она не существует"""
+        try:
+            if not self.check_column_exists('phrases', 'speaker'):
+                logger.info("Добавление колонки 'speaker' в таблицу phrases...")
+                
+                # Добавляем колонку speaker
+                alter_query = """
+                ALTER TABLE phrases 
+                ADD COLUMN speaker varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL AFTER native_text
+                """
+                self.cursor.execute(alter_query)
+                self.connection.commit()
+                logger.info("✓ Колонка 'speaker' успешно добавлена")
+                
+        except Error as e:
+            logger.error(f"Ошибка при добавлении колонки speaker: {e}")
+            self.connection.rollback()
+            raise
+    
     def drop_table_if_exists(self, table_name: str):
         """Удаление таблицы если она существует"""
         try:
@@ -118,40 +138,43 @@ class PhraseDatabaseImporter:
             self.connection.rollback()
     
     def create_tables(self):
-        """Создание таблиц"""
+        """Создание таблиц с поддержкой speaker"""
         try:
-
             # Удаляем существующие таблицы
-            '''
             self.drop_table_if_exists('phrases')
             self.drop_table_if_exists('phrase_types')
             
             # Таблица типов фраз (phrase_types)
             create_phrase_types_table = """
             CREATE TABLE `phrase_types` (
-              `id` int NOT NULL,
+              `id` int NOT NULL AUTO_INCREMENT,
               `type_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
               `order` int NOT NULL DEFAULT '0',
               `description` text COLLATE utf8mb4_unicode_ci,
               `is_active` tinyint(1) NOT NULL DEFAULT '1',
               `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-              `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+              `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+              PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             """
             
-            # Таблица фраз (phrases)
+            # Таблица фраз (phrases) с полем speaker
             create_phrases_table = """
             CREATE TABLE `phrases` (
-              `id` int NOT NULL,
+              `id` int NOT NULL AUTO_INCREMENT,
               `type_id` int NOT NULL,
               `target_text` text COLLATE utf8mb4_unicode_ci NOT NULL,
               `context` text COLLATE utf8mb4_unicode_ci,
               `native_text` text COLLATE utf8mb4_unicode_ci NOT NULL,
+              `speaker` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
               `difficulty_level` tinyint NOT NULL DEFAULT '2',
               `direction` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT 'en-ru',
               `is_active` tinyint(1) DEFAULT '1',
               `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-              `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+              `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+              PRIMARY KEY (`id`),
+              KEY `type_id` (`type_id`),
+              CONSTRAINT `phrases_ibfk_1` FOREIGN KEY (`type_id`) REFERENCES `phrase_types` (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             """
             
@@ -160,10 +183,9 @@ class PhraseDatabaseImporter:
             logger.info("✓ Таблица phrase_types создана")
             
             self.cursor.execute(create_phrases_table)
-            logger.info("✓ Таблица phrases создана")
+            logger.info("✓ Таблица phrases создана (с поддержкой speaker)")
             
             self.connection.commit()
-            '''
             
         except Error as e:
             logger.error(f"Ошибка создания таблиц: {e}")
@@ -183,15 +205,13 @@ class PhraseDatabaseImporter:
         try:
             # Проверяем, существует ли таблица phrase_types
             if not self.check_table_exists('phrase_types'):
-                logger.warning("Таблица phrase_types не существует.")
-                self.connection.rollback()
-                raise
+                logger.error("Таблица phrase_types не существует.")
+                raise Exception("Таблица phrase_types не найдена")
             
             # Проверяем структуру таблицы
             if not self.check_column_exists('phrase_types', 'type_name'):
                 logger.error("Столбец type_name не найден!")
-                self.connection.rollback()
-                raise
+                raise Exception("Неправильная структура таблицы phrase_types")
             
             # Пытаемся найти существующий тип
             query = "SELECT id FROM phrase_types WHERE type_name = %s"
@@ -217,7 +237,7 @@ class PhraseDatabaseImporter:
             self.connection.rollback()
             raise
     
-    def insert_phrase(self, type_id: int, target_text: str, native_text: str) -> bool:
+    def insert_phrase(self, type_id: int, target_text: str, native_text: str, speaker: Optional[str] = None) -> bool:
         """
         Вставка фразы в базу данных
         
@@ -225,6 +245,7 @@ class PhraseDatabaseImporter:
             type_id: ID типа фразы
             target_text: Текст на целевом языке (английский)
             native_text: Текст на родном языке (русский)
+            speaker: Говорящий (опционально)
         
         Returns:
             True если успешно
@@ -232,40 +253,49 @@ class PhraseDatabaseImporter:
         try:
             # Проверяем, существует ли таблица phrases
             if not self.check_table_exists('phrases'):
-                logger.warning("Таблица phrases не существует.")
-                self.connection.rollback()
-                raise
+                logger.error("Таблица phrases не существует.")
+                raise Exception("Таблица phrases не найдена")
             
-            # Проверяем структуру таблицы
+            # Проверяем наличие колонки speaker
+            has_speaker_column = self.check_column_exists('phrases', 'speaker')
+            
+            # Проверяем остальные колонки
             if not all([
                 self.check_column_exists('phrases', 'target_text'),
                 self.check_column_exists('phrases', 'native_text'),
                 self.check_column_exists('phrases', 'direction')
             ]):
-                logger.warning("Неправильная структура таблицы phrases.")
-                self.connection.rollback()
-                raise
+                logger.error("Неправильная структура таблицы phrases.")
+                raise Exception("Отсутствуют необходимые колонки в таблице phrases")
 
-            # Пытаемся найти фразу
-            query = f"SELECT id FROM phrases WHERE target_text = %s AND direction = %s"
+            # Пытаемся найти существующую фразу
+            query = "SELECT id FROM phrases WHERE target_text = %s AND direction = %s"
             self.cursor.execute(query, (target_text, self.direction))
             result = self.cursor.fetchone()
 
             if result:
-                logger.debug(f"Фраза найдена (ID: {result[0]})")
+                logger.debug(f"Фраза уже существует (ID: {result[0]})")
                 return False
             
-            # Вставляем фразу
-            query = """
-            INSERT INTO phrases (type_id, target_text, native_text, direction)
-            VALUES (%s, %s, %s, %s)
-            """
+            # Вставляем фразу (с учетом наличия колонки speaker)
+            if has_speaker_column and speaker is not None:
+                query = """
+                INSERT INTO phrases (type_id, target_text, native_text, speaker, direction)
+                VALUES (%s, %s, %s, %s, %s)
+                """
+                self.cursor.execute(query, (type_id, target_text, native_text, speaker, self.direction))
+            else:
+                query = """
+                INSERT INTO phrases (type_id, target_text, native_text, direction)
+                VALUES (%s, %s, %s, %s)
+                """
+                self.cursor.execute(query, (type_id, target_text, native_text, self.direction))
             
-            self.cursor.execute(query, (type_id, target_text, native_text, self.direction))
             self.connection.commit()
             
             phrase_id = self.cursor.lastrowid
-            logger.debug(f"✓ Фраза добавлена (ID: {phrase_id})")
+            speaker_info = f", speaker: {speaker}" if speaker else ""
+            logger.debug(f"✓ Фраза добавлена (ID: {phrase_id}{speaker_info})")
             
             return True
             
@@ -273,12 +303,14 @@ class PhraseDatabaseImporter:
             logger.error(f"Ошибка при добавлении фразы: {e}")
             logger.error(f"Текст (TARGET): {target_text[:50]}...")
             logger.error(f"Текст (NATIVE): {native_text[:50]}...")
+            if speaker:
+                logger.error(f"Speaker: {speaker}")
             self.connection.rollback()
             return False
     
     def import_json_file(self, json_file_path: str, clear_existing: bool = False):
         """
-        Импорт данных из JSON файла
+        Импорт данных из JSON файла нового формата
         
         Args:
             json_file_path: Путь к JSON файлу
@@ -294,9 +326,12 @@ class PhraseDatabaseImporter:
             with open(json_file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
-            print(f"✓ Файл прочитан: {json_file_path}");
             logger.info(f"✓ Файл прочитан: {json_file_path}")
             logger.info(f"Количество категорий: {len(data)}")
+            
+            # Проверяем наличие колонки speaker и добавляем если нужно
+            if self.check_table_exists('phrases'):
+                self.add_speaker_column_if_not_exists()
             
             # Очищаем существующие данные если нужно
             if clear_existing:
@@ -306,7 +341,8 @@ class PhraseDatabaseImporter:
             stats = {
                 'total_types': 0,
                 'total_phrases': 0,
-                'errors': 0
+                'errors': 0,
+                'total_speakers': 0
             }
             
             # Обрабатываем каждую категорию
@@ -320,9 +356,17 @@ class PhraseDatabaseImporter:
                     stats['total_types'] += 1
                     
                     # Обрабатываем каждую фразу
-                    for i, phrase_pair in enumerate(phrases_list, 1):
-                        target_text = phrase_pair.get('target', '').strip()
-                        native_text = phrase_pair.get('native', '').strip()
+                    for i, phrase_item in enumerate(phrases_list, 1):
+                        # Извлекаем данные из нового формата
+                        target_text = phrase_item.get('target', '').strip()
+                        native_text = phrase_item.get('native', '').strip()
+                        speaker = phrase_item.get('speaker', '').strip() or None
+                        direction = phrase_item.get('direction', self.direction)
+                        
+                        # Пропускаем если направление не соответствует
+                        if direction != self.direction:
+                            logger.debug(f"  Фраза #{i}: пропущена (направление {direction} не соответствует {self.direction})")
+                            continue
                         
                         if not target_text or not native_text:
                             logger.warning(f"  Фраза #{i}: пропущена (пустой текст)")
@@ -331,15 +375,17 @@ class PhraseDatabaseImporter:
                         logger.debug(f"  Фраза #{i}:")
                         logger.debug(f"    TARGET: {target_text[:60]}...")
                         logger.debug(f"    NATIVE: {native_text[:60]}...")
+                        if speaker:
+                            logger.debug(f"    SPEAKER: {speaker}")
+                            stats['total_speakers'] += 1
                         
                         # Добавляем фразу в базу
-                        success = self.insert_phrase(type_id, target_text, native_text)
+                        success = self.insert_phrase(type_id, target_text, native_text, speaker)
                         
                         if success:
                             stats['total_phrases'] += 1
                         else:
                             stats['errors'] += 1
-                            #logger.error(f"  ✗ Ошибка добавления фразы #{i}")
                     
                     logger.info(f"✓ Завершено: {len(phrases_list)} фраз обработано")
                     
@@ -392,31 +438,57 @@ class PhraseDatabaseImporter:
             logger.info("ОБРАЗЕЦ ДАННЫХ ИЗ БАЗЫ:")
             logger.info(f"{'='*60}")
             
-            # Получаем образцы данных
-            query = f"""
-            SELECT 
-                pt.type_name,
-                p.target_text,
-                p.native_text,
-                p.direction,
-                p.created_at
-            FROM phrases p
-            JOIN phrase_types pt ON p.type_id = pt.id
-            WHERE p.direction = %s
-            ORDER BY p.id DESC
-            LIMIT %s
-            """
+            # Проверяем наличие колонки speaker
+            has_speaker = self.check_column_exists('phrases', 'speaker')
             
-            self.cursor.execute(query, (self.direction, limit))
-            results = self.cursor.fetchall()
+            # Формируем запрос в зависимости от наличия колонки speaker
+            if has_speaker:
+                query = f"""
+                SELECT 
+                    pt.type_name,
+                    p.target_text,
+                    p.native_text,
+                    p.speaker,
+                    p.direction,
+                    p.created_at
+                FROM phrases p
+                JOIN phrase_types pt ON p.type_id = pt.id
+                WHERE p.direction = %s
+                ORDER BY p.id DESC
+                LIMIT %s
+                """
+                self.cursor.execute(query, (self.direction, limit))
+                results = self.cursor.fetchall()
+            else:
+                query = f"""
+                SELECT 
+                    pt.type_name,
+                    p.target_text,
+                    p.native_text,
+                    p.direction,
+                    p.created_at
+                FROM phrases p
+                JOIN phrase_types pt ON p.type_id = pt.id
+                WHERE p.direction = %s
+                ORDER BY p.id DESC
+                LIMIT %s
+                """
+                self.cursor.execute(query, (self.direction, limit))
+                results = self.cursor.fetchall()
             
             if not results:
                 logger.info("Нет данных в базе")
                 return
             
             for i, row in enumerate(results, 1):
-                type_name, target_text, native_text, direction, created_at = row
-                logger.info(f"\n{i}. Тип: {type_name} (направление: {direction})")
+                if has_speaker and len(row) >= 6:
+                    type_name, target_text, native_text, speaker, direction, created_at = row
+                    speaker_info = f", speaker: {speaker}" if speaker else ""
+                    logger.info(f"\n{i}. Тип: {type_name} (направление: {direction}{speaker_info})")
+                else:
+                    type_name, target_text, native_text, direction, created_at = row
+                    logger.info(f"\n{i}. Тип: {type_name} (направление: {direction})")
+                
                 logger.info(f"   TARGET: {target_text[:80]}...")
                 logger.info(f"   NATIVE: {native_text[:80]}...")
                 logger.info(f"   Дата: {created_at}")
@@ -457,11 +529,29 @@ class PhraseDatabaseImporter:
             """)
             direction_stats = self.cursor.fetchall()
             
+            # Статистика по speaker (если колонка существует)
+            has_speaker = self.check_column_exists('phrases', 'speaker')
+            speaker_stats = None
+            if has_speaker:
+                self.cursor.execute("""
+                    SELECT speaker, COUNT(*) as count
+                    FROM phrases
+                    WHERE speaker IS NOT NULL AND speaker != ''
+                    GROUP BY speaker
+                    ORDER BY count DESC
+                """)
+                speaker_stats = self.cursor.fetchall()
+            
             logger.info(f"\n{'='*60}")
             logger.info("СТАТИСТИКА БАЗЫ ДАННЫХ:")
             logger.info(f"{'='*60}")
             logger.info(f"Всего типов фраз: {type_count}")
             logger.info(f"Всего фраз: {phrase_count}")
+            
+            if has_speaker:
+                self.cursor.execute("SELECT COUNT(*) FROM phrases WHERE speaker IS NOT NULL AND speaker != ''")
+                phrases_with_speaker = self.cursor.fetchone()[0]
+                logger.info(f"Фраз с указанием speaker: {phrases_with_speaker}")
             
             logger.info("\nРаспределение по типам:")
             for type_name, count in type_stats:
@@ -471,17 +561,25 @@ class PhraseDatabaseImporter:
             for direction, count in direction_stats:
                 logger.info(f"  {direction}: {count} фраз")
             
+            if has_speaker and speaker_stats:
+                logger.info("\nРаспределение по speaker:")
+                for speaker, count in speaker_stats[:10]:  # Топ-10
+                    logger.info(f"  {speaker}: {count} фраз")
+                if len(speaker_stats) > 10:
+                    logger.info(f"  ... и еще {len(speaker_stats) - 10} speaker'ов")
+            
         except Error as e:
             logger.error(f"Ошибка получения статистики: {e}")
     
     def print_stats(self, stats: Dict[str, int]):
         """Вывод статистики импорта"""
-        print(f"\n{'='*60}")
-        print("СТАТИСТИКА ИМПОРТА:")
-        print(f"{'='*60}")
-        print(f"Обработано категорий: {stats['total_types']}")
-        print(f"Добавлено фраз: {stats['total_phrases']}")
-        print(f"Ошибок: {stats['errors']}")
+        logger.info(f"\n{'='*60}")
+        logger.info("СТАТИСТИКА ИМПОРТА:")
+        logger.info(f"{'='*60}")
+        logger.info(f"Обработано категорий: {stats['total_types']}")
+        logger.info(f"Добавлено фраз: {stats['total_phrases']}")
+        logger.info(f"Фраз с указанием speaker: {stats.get('total_speakers', 0)}")
+        logger.info(f"Ошибок: {stats['errors']}")
 
 def create_database_if_not_exists(host: str, user: str, password: str, database: str, port: int = 3306):
     """
@@ -532,6 +630,7 @@ def main():
     parser.add_argument('--create-db', action='store_true', help='Создать базу данных если не существует')
     parser.add_argument('--direction', default='en-ru', help='Направление перевода')
     parser.add_argument('--clear', action='store_true', help='Очистить существующие данные перед импортом')
+    parser.add_argument('--create-tables', action='store_true', help='Создать таблицы (с поддержкой speaker)')
     
     args = parser.parse_args()
     
@@ -559,8 +658,9 @@ def main():
         # Подключаемся к базе данных
         importer.connect()
         
-        # Создаем таблицы
-        # importer.create_tables()
+        # Создаем таблицы если нужно
+        if args.create_tables:
+            importer.create_tables()
         
         # Импортируем данные
         importer.import_json_file(args.json_file, clear_existing=args.clear)

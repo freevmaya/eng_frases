@@ -81,11 +81,11 @@
         </div>
     </div>
     <div class="page">
-        <!-- Yandex.RTB R-A-18903225-1 -->
+        <!-- Yandex.RTB R-A-18903581-1 -->
         <script>
         window.yaContextCb.push(() => {
             Ya.Context.AdvManager.render({
-                "blockId": "R-A-18903225-1",
+                "blockId": "R-A-18903581-1",
                 "type": "topAd"
             })
         })

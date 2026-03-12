@@ -122,6 +122,19 @@ const AppConst = {
                 speak: 'target', 
                 listen: 'target'
             }
+        ],
+        'dialog': [
+            {
+                show: 'target',
+                speak: 'target',
+                listen: 'target',
+                genderVoice: 'female'
+            },{
+                show: 'target', 
+                speak: 'target', 
+                listen: 'target',
+                genderVoice: 'male'
+            }
         ]
     }
 }
@@ -1197,7 +1210,7 @@ function Application() {
         speechSynthesizer.stop();
     }
 
-    function _speak(showLang, speakLang, then) {
+    function _speak(showLang, speakLang, then, genderVoice = null) {
         clearTimeout(appData.timeoutId);
         showPhrase(showLang);
 
@@ -1205,7 +1218,7 @@ function Application() {
 
         tracer.log(`${state.currentListType}: ${state.currentPhraseIndex} start ${appData.currentPhrase[speakLang]}`);
         speechSynthesizer.speak(appData.currentPhrase, speakLang, 
-                    appData.currentPhrase.type, state.speed, state.genderVoice)
+                    appData.currentPhrase.type, state.speed, genderVoice ? genderVoice : state.genderVoice)
                 .then((result) => {
                     if (isPlaying()) {
                         diff = Date.now() - startTime;
@@ -1229,8 +1242,9 @@ function Application() {
         appData.currentPhrase = appData.currentPhraseList[state.currentPhraseIndex];
         updateDisplay();
 
+        let directionMode = AppConst.directions[state.direction];
 
-        let modeSetting = AppConst.directions[state.direction][state.indexInMode];
+        let modeSetting = directionMode[state.indexInMode];
         _speak(modeSetting.show, modeSetting.speak, ()=>{
 
             let isRecognizeStart = false;
@@ -1241,12 +1255,12 @@ function Application() {
                 if (isRecognizeStart)
                     summingUpRecognition();
 
-                if (state.indexInMode < AppConst.directions[state.direction].length - 1)
+                if (state.indexInMode < directionMode.length - 1)
                     state.indexInMode++;
                 else incCurrentPhraseIndex();
                 playCurrentPhrase();
             }, modeSetting.speak);
-        });
+        }, modeSetting.genderVoice);
     }
 
     function summingUpRecognition() {

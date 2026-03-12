@@ -1,0 +1,106 @@
+{
+  "В ресторане": [
+    {
+      "direction": "en-ru",
+      "speaker": "Waiter",
+      "target": "Good morning! Table for one?",
+      "native": "Доброе утро! Столик на одного?"
+    },
+    {
+      "direction": "en-ru",
+      "speaker": "Visitor",
+      "target": "Yes, please. By the window, if possible.",
+      "native": "Да, пожалуйста. У окна, если возможно."
+    },
+    {
+      "direction": "en-ru",
+      "speaker": "Waiter",
+      "target": "Of course. Here are the menus. Can I get you something to drink first?",
+      "native": "Конечно. Вот меню. Могу я принести вам что-нибудь выпить сначала?"
+    },
+    {
+      "direction": "en-ru",
+      "speaker": "Visitor",
+      "target": "Yes, I'd like a fresh orange juice and a black coffee, please.",
+      "native": "Да, я бы хотел свежевыжатый апельсиновый сок и черный кофе, пожалуйста."
+    },
+    {
+      "direction": "en-ru",
+      "speaker": "Waiter",
+      "target": "Certainly. Are you ready to order breakfast, or do you need a few more minutes?",
+      "native": "Обязательно. Вы готовы заказать завтрак или вам нужно еще несколько минут?"
+    },
+    {
+      "direction": "en-ru",
+      "speaker": "Visitor",
+      "target": "I'm ready now. What do you recommend?",
+      "native": "Я готов сейчас. Что вы порекомендуете?"
+    },
+    {
+      "direction": "en-ru",
+      "speaker": "Waiter",
+      "target": "The full English breakfast is very popular. It comes with eggs, bacon, sausages, beans, and toast.",
+      "native": "Английский завтрак полной порции очень популярен. В него входят яйца, бекон, сосиски, фасоль и тосты."
+    },
+    {
+      "direction": "en-ru",
+      "speaker": "Visitor",
+      "target": "That sounds good, but can I have scrambled eggs instead of fried eggs?",
+      "native": "Звучит хорошо, но можно мне яйца-болтунью вместо яичницы?"
+    },
+    {
+      "direction": "en-ru",
+      "speaker": "Waiter",
+      "target": "Of course, no problem. And how would you like your toast? White or brown bread?",
+      "native": "Конечно, без проблем. И какой хлеб для тостов вы предпочитаете? Белый или черный?"
+    },
+    {
+      "direction": "en-ru",
+      "speaker": "Visitor",
+      "target": "Brown bread, please.",
+      "native": "Черный хлеб, пожалуйста."
+    },
+    {
+      "direction": "en-ru",
+      "speaker": "Waiter",
+      "target": "Perfect. So that's one Full English with scrambled eggs and brown toast. I'll bring your drinks right away.",
+      "native": "Отлично. Итак, один полный английский завтрак с яйцом-болтуньей и черным тостом. Я сейчас принесу ваши напитки."
+    },
+    {
+      "direction": "en-ru",
+      "speaker": "Waiter",
+      "target": "Here is your breakfast. Enjoy your meal!",
+      "native": "Вот ваш завтрак. Приятного аппетита!"
+    },
+    {
+      "direction": "en-ru",
+      "speaker": "Visitor",
+      "target": "Thank you, it looks delicious.",
+      "native": "Спасибо, выглядит очень вкусно."
+    },
+    {
+      "direction": "en-ru",
+      "speaker": "Waiter",
+      "target": "How was everything?",
+      "native": "Как вам всё?"
+    },
+    {
+      "direction": "en-ru",
+      "speaker": "Visitor",
+      "target": "It was excellent, thank you. Could I have the bill, please?",
+      "native": "Было превосходно, спасибо. Можно счет, пожалуйста?"
+    },
+    {
+      "direction": "en-ru",
+      "speaker": "Waiter",
+      "target": "Certainly. Here you are. You can pay at the counter when you're ready.",
+      "native": "Конечно. Вот, держите. Вы можете оплатить на кассе, когда будете готовы."
+    },
+    {
+      "direction": "en-ru",
+      "speaker": "Visitor",
+      "target": "Thanks very much.",
+      "native": "Большое спасибо."
+    }
+  ]
+}
