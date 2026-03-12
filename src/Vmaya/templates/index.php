@@ -28,6 +28,10 @@
     <?include('tracker.php')?>
     <?include('lang_script.php')?>
 
+    <!-- Yandex.RTB -->
+    <script>window.yaContextCb=window.yaContextCb||[]</script>
+    <script src="https://yandex.ru/ads/system/context.js" async></script>
+
     <!-- Bootstrap & jQuery -->
     <script src="<?=BASEURL?>scripts/jquery-3.7.0.min.js"></script>
     <script src="<?=BASEURL?>scripts/bootstrap.bundle.min.js"></script>
@@ -77,6 +81,15 @@
         </div>
     </div>
     <div class="page">
+        <!-- Yandex.RTB R-A-18903225-1 -->
+        <script>
+        window.yaContextCb.push(() => {
+            Ya.Context.AdvManager.render({
+                "blockId": "R-A-18903225-1",
+                "type": "topAd"
+            })
+        })
+        </script>
         <div class="wrap-content">
             <!-- Header -->
             <header class="text-center mb-1 site-header">
