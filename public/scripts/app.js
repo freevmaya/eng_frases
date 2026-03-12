@@ -786,6 +786,7 @@ function Application() {
         quiz_block.empty();
         elements.deskBlock.css('display', 'none');
         phrasesList.refreshAccordion();
+        showAlert(Lang('dont_available_quiz'));
     }
 
     function refreshIncorrectList() {
