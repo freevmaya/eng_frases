@@ -1,0 +1,88 @@
+{
+  "At the hotel (Check-in)": [
+    {
+      "direction": "en-ru",
+      "participant": "Receptionist",
+      "target": "Good evening. Welcome to our hotel.",
+      "native": "Добрый вечер. Добро пожаловать в наш отель."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "Hello. I have a reservation. My name is Ivan Ivanov.",
+      "native": "Здравствуйте. У меня есть бронь. Меня зовут Иван Иванов."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Receptionist",
+      "target": "Just a moment, please. ... Yes, Mr. Ivanov. A standard room for three nights.",
+      "native": "Одну минуту, пожалуйста. ... Да, мистер Иванов. Стандартный номер на три ночи."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "Correct. Do you have a room with a sea view?",
+      "native": "Верно. У вас есть номер с видом на море?"
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Receptionist",
+      "target": "Yes, we do. It costs a little more.",
+      "native": "Да, есть. Он стоит немного дороже."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "That's fine. I want the sea view.",
+      "native": "Хорошо. Я хочу с видом на море."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Receptionist",
+      "target": "Great. Can I see your passport, please?",
+      "native": "Отлично. Можно ваш паспорт, пожалуйста?"
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "Here it is.",
+      "native": "Вот."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Receptionist",
+      "target": "Thank you. Please fill out this form. Write your address and sign here.",
+      "native": "Спасибо. Пожалуйста, заполните эту форму. Напишите ваш адрес и распишитесь здесь."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "Sure. ... Here you go.",
+      "native": "Конечно. ... Готово."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Receptionist",
+      "target": "Perfect. Here is your key card. Your room number is 712. Breakfast is from 7 to 10 am.",
+      "native": "Отлично. Вот ваша ключ-карта. Номер вашей комнаты 712. Завтрак с 7 до 10 утра."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "Great, thank you. What time is check-out?",
+      "native": "Отлично, спасибо. Во сколько освобождать номер?"
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Receptionist",
+      "target": "Check-out is at 12 pm. Enjoy your stay!",
+      "native": "Освобождение номера в 12 часов дня. Приятного пребывания!"
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "Thanks!",
+      "native": "Спасибо!"
+    }
+  ]
+}

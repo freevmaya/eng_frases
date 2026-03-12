@@ -1,0 +1,70 @@
+{
+  "At the airport (gate)": [
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "Excuse me. Can you help me?",
+      "native": "Извините. Вы можете мне помочь?"
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Airport Worker",
+      "target": "Of course. What do you need?",
+      "native": "Конечно. Что вам нужно?"
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "Where is the gate for flight SU 245 to Moscow?",
+      "native": "Где выход на рейс SU 245 в Москву?"
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Airport Worker",
+      "target": "Let me check. Flight SU 245. That is gate B7.",
+      "native": "Сейчас проверю. Рейс SU 245. Это выход B7."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "And how do I get there?",
+      "native": "И как мне туда пройти?"
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Airport Worker",
+      "target": "Go straight, then turn left. You will see the signs.",
+      "native": "Идите прямо, потом поверните налево. Увидите указатели."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "Is it far?",
+      "native": "Это далеко?"
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Airport Worker",
+      "target": "No, about five minutes. Not far.",
+      "native": "Нет, около пяти минут. Недалеко."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "Great. Thank you very much.",
+      "native": "Отлично. Большое спасибо."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Airport Worker",
+      "target": "You're welcome. Have a good flight!",
+      "native": "Пожалуйста. Хорошего полета!"
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "Thanks!",
+      "native": "Спасибо!"
+    }
+  ]
+}

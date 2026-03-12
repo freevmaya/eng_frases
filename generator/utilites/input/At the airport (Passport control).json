@@ -1,0 +1,100 @@
+{
+  "At the airport (Passport control)": [
+    {
+      "direction": "en-ru",
+      "participant": "Officer",
+      "target": "Next, please. Good morning. Passport, please.",
+      "native": "Следующий, пожалуйста. Доброе утро. Паспорт, пожалуйста."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "Good morning. Here you are.",
+      "native": "Доброе утро. Вот, пожалуйста."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Officer",
+      "target": "Thank you. Mr. Ivanov?",
+      "native": "Спасибо. Мистер Иванов?"
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "Yes, that's me.",
+      "native": "Да, это я."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Officer",
+      "target": "What is the purpose of your visit?",
+      "native": "Какова цель вашего визита?"
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "Tourism. I'm on vacation.",
+      "native": "Туризм. Я в отпуске."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Officer",
+      "target": "How long will you stay?",
+      "native": "Как долго вы пробудете?"
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "For one week. Until next Tuesday.",
+      "native": "Одну неделю. До следующего вторника."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Officer",
+      "target": "Where will you stay?",
+      "native": "Где вы остановитесь?"
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "At the Grand Hotel in the city center.",
+      "native": "В Гранд Отеле в центре города."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Officer",
+      "target": "Do you have a return ticket?",
+      "native": "У вас есть обратный билет?"
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "Yes, I do. Here is the confirmation.",
+      "native": "Да, есть. Вот подтверждение."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Officer",
+      "target": "That's fine. How much cash do you have with you?",
+      "native": "Хорошо. Сколько наличных денег у вас с собой?"
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "About 500 euros and some credit cards.",
+      "native": "Около 500 евро и несколько кредитных карт."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Officer",
+      "target": "OK. Look into the camera, please. ... Thank you. Enjoy your trip.",
+      "native": "Хорошо. Посмотрите в камеру, пожалуйста. ... Спасибо. Хорошей поездки."
+    },
+    {
+      "direction": "en-ru",
+      "participant": "Traveler",
+      "target": "Thank you very much.",
+      "native": "Большое спасибо."
+    }
+  ]
+}
