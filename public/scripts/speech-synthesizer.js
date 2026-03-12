@@ -219,8 +219,11 @@ class SpeechSynthesizer {
     }
 
     async smartSpeak(phraseObj, phraseType, category = null, speed = 1.0, genderVoice = 'male') {
-        const cleanText = phraseObj.CleanText(phraseType);
-        const language = phraseObj.Language(phraseType);
+
+        const direct = isStr(phraseType) ? phraseType : phraseType.direct;
+        const volume = isStr(phraseType) ? 1.0 : phraseType.volume;
+        const cleanText = phraseObj.CleanText(direct);
+        const language = phraseObj.Language(direct);
         
         if (this.state.isBusy) {
             return {
@@ -237,7 +240,7 @@ class SpeechSynthesizer {
             const localUrlInfo = await this.getAudioUrl(cleanText, language, category, genderVoice);
 
             try {
-                return await this.playAudioFromUrl(localUrlInfo.url);
+                return await this.playAudioFromUrl(localUrlInfo.url, volume);
             } catch(e) {
 
                 if (e.name == 'Error') {
@@ -252,7 +255,7 @@ class SpeechSynthesizer {
                             await new Promise(resolve => setTimeout(resolve, 500));
                             
                             try {
-                                return await this.playAudioFromUrl(localUrlInfo.url);
+                                return await this.playAudioFromUrl(localUrlInfo.url, volume);
                             } catch (playError) {
                                 console.warn('Failed to play generated audio, trying fallback...', playError);
                             }
@@ -265,13 +268,13 @@ class SpeechSynthesizer {
             
             if (this.config.fallbackToSpeech && this.state.hasSpeechSynthesis) {
                 tracer.log('Using fallback speech synthesis');
-                return this._speakWithSynthesis(phraseObj, phraseType, speed);
+                return this._speakWithSynthesis(phraseObj, direct, speed);
             } else {
 
                 $(window).trigger("play_autio_error", {
                     name: 'No speech synthesis'
                 });
-                return await new Promise(resolve => setTimeout(resolve, cleanText.length * AppConst.charTime[phraseType]));
+                return await new Promise(resolve => setTimeout(resolve, cleanText.length * AppConst.charTime[direct]));
             }
             
             this._clearBusy();
@@ -287,13 +290,13 @@ class SpeechSynthesizer {
             tracer.error('Error in smartSpeak:', error);
             
             if (this.config.fallbackToSpeech && this.state.hasSpeechSynthesis) {
-                return this._speakWithSynthesis(phraseObj, phraseType, speed);
+                return this._speakWithSynthesis(phraseObj, direct, speed);
             } else {
 
                 $(window).trigger("play_autio_error", {
                     name: 'No speech synthesis'
                 });
-                return await new Promise(resolve => setTimeout(resolve, cleanText.length * AppConst.charTime[phraseType]));
+                return await new Promise(resolve => setTimeout(resolve, cleanText.length * AppConst.charTime[direct]));
             }
             
             this._clearBusy();
@@ -313,7 +316,7 @@ class SpeechSynthesizer {
                  this.currentAudio.readyState >= 4);
     }
 
-    async playAudioFromUrl(fileUrl) {
+    async playAudioFromUrl(fileUrl, volume = 1.0) {
 
         this._setBusy('playing');
 
@@ -335,7 +338,7 @@ class SpeechSynthesizer {
             this._stopPlayback();
             this.currentAudio = audio;
             
-            audio.volume = 1.0;
+            audio.volume = volume;
             audio.playbackRate = 1.0;
             
             return new Promise((resolve, reject) => {
@@ -426,7 +429,8 @@ class SpeechSynthesizer {
             return;
         }
 
-        if ((phraseType == 'native') && phraseObj.isQuestion(phraseType))
+        let direct = isStr(phraseType) ? phraseType : phraseType.direct;
+        if ((direct == 'native') && phraseObj.isQuestion(direct))
             $(window).trigger('question_phrase');
 
         return this.smartSpeak(phraseObj, phraseType, category, speed, genderVoice);

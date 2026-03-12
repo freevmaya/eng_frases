@@ -123,17 +123,37 @@ const AppConst = {
                 listen: 'target'
             }
         ],
-        'dialog': [
+        'dialog_prepare': [
             {
                 show: 'target',
                 speak: 'target',
                 listen: 'target',
-                genderVoice: 'female'
+                genderVoice: 0,
+                nextPhrase: true
             },{
-                show: 'target', 
-                speak: 'target', 
+                show: 'target',
+                speak: 'target',
                 listen: 'target',
-                genderVoice: 'male'
+                genderVoice: 1,
+                nextPhrase: true
+            }
+        ],
+        'dialog_exam': [
+            {
+                show: 'target',
+                speak: 'target',
+                listen: 'target',
+                genderVoice: 0,
+                nextPhrase: true
+            },{
+                show: 'target',
+                speak: {
+                    direct: 'target',
+                    volume: 0
+                },
+                listen: 'target',
+                genderVoice: 1,
+                nextPhrase: true
             }
         ]
     }
@@ -1166,8 +1186,11 @@ function Application() {
         newIndex = state.currentPhraseIndex + 1;
 
         if (newIndex >= appData.currentPhraseList.length) {
+            newIndex = 0;
+            /*
             setNextType();
             return;
+            */
         }
 
         let newRepeat = getCurentRepeat();
@@ -1212,11 +1235,19 @@ function Application() {
 
     function _speak(showLang, speakLang, then, genderVoice = null) {
         clearTimeout(appData.timeoutId);
+
         showPhrase(showLang);
 
         let startTime = Date.now();
 
-        tracer.log(`${state.currentListType}: ${state.currentPhraseIndex} start ${appData.currentPhrase[speakLang]}`);
+        let lang = isStr(speakLang) ? speakLang : speakLang.direct;
+        tracer.log(`${state.currentListType}: ${state.currentPhraseIndex} start ${appData.currentPhrase[lang]}`);
+
+        if (isNumeric(genderVoice)) {
+            let cidx = VOICES.indexOf(state.genderVoice);
+            genderVoice = VOICES[(cidx + genderVoice) % VOICES.length];
+        }
+
         speechSynthesizer.speak(appData.currentPhrase, speakLang, 
                     appData.currentPhrase.type, state.speed, genderVoice ? genderVoice : state.genderVoice)
                 .then((result) => {
@@ -1255,8 +1286,14 @@ function Application() {
                 if (isRecognizeStart)
                     summingUpRecognition();
 
-                if (state.indexInMode < directionMode.length - 1)
+                if (state.indexInMode < directionMode.length - 1) {
                     state.indexInMode++;
+                    if (modeSetting.nextPhrase) {
+                        let lastInMode = state.indexInMode;
+                        incCurrentPhraseIndex();
+                        state.indexInMode = lastInMode;
+                    }
+                }
                 else incCurrentPhraseIndex();
                 playCurrentPhrase();
             }, modeSetting.speak);
@@ -1269,8 +1306,10 @@ function Application() {
     }
 
     function startCurrentRecognition(phraseDirect) {
+
         if (phraseDirect && recognition && stateManager.state.recognize) {
-            recognition.startRecognition(appData.currentPhrase, phraseDirect);
+            let direct = isStr(phraseDirect) ? phraseDirect : phraseDirect.direct;
+            recognition.startRecognition(appData.currentPhrase, direct);
             return true;
         }
         return false;
@@ -1278,7 +1317,7 @@ function Application() {
 
     function speakPause(callback, phraseDirect) {
         clearTimeout(appData.timeoutId);
-        let delay = calcTime(phraseDirect);
+        let delay = calcTime(isStr(phraseDirect) ? phraseDirect : phraseDirect.direct);
 
         if (isNumeric(delay) && (delay > 0))
             appData.timeoutId = setTimeout(callback, delay);

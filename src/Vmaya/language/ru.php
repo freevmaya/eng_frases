@@ -232,6 +232,8 @@ $lang = [
     'native-target2-both' => 'Рус(звук) > Англ(звук) 2раза',
     'target2-native-both' => 'Англ(звук) 2раза > Рус(звук)',
     'target2-native-target-both' => 'Англ(з) 2раза > Рус(з) > Англ(з)',
+    'dialog_prepare' => 'Диалог. Подготовка.',
+    'dialog_exam' => 'Диалог. Тест.',
 
     'description-title' => 'Описание',
 

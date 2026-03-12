@@ -1,6 +1,7 @@
 <?php
     $v = '?v='.SCRIPTS_VERSION;
     $is_developer = Page::isDev();
+    $voices = ['male', 'female'];
 ?>
 <!-- Settings Modal -->
 <div class="modal fade fullscreen-modal" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
@@ -107,8 +108,9 @@
                     </h6>
                     <div class="btn-group repeat-block" role="group">
                         <select class="form-select bg-form border-secondary" id="genderVoice">
-                            <option value="male"><?=Lang('male')?></option>
-                            <option value="female"><?=Lang('female')?></option>
+                            <?foreach ($voices as $voice) {?>
+                            <option value="<?=$voice?>"><?=Lang($voice)?></option>
+                            <?}?>
                         </select>
                     </div>
                 </div>
@@ -268,6 +270,7 @@
     var LANGUAGE = '<?=Page::language()?>';
     var TARGET_LANGUAGE = '<?=Page::getSession('TARGET_LANGUAGE', 'en')?>';
     var AI_URL = '<?=AI_URL?>';
+    const VOICES = <?=json_encode($voices)?>;
     <?if (isset(Page::$request['SPEECH_CONFIG'])) {?>
         Object.assign(SPEECH_CONFIG, <?=Page::$request['SPEECH_CONFIG']?>);
     <?}?>
