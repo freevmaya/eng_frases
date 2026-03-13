@@ -282,7 +282,6 @@
     <?}?>
     var phrasesData = <?=json_encode(PhrasesModel::getPhrasesAsJsonWithDifficulty(Page::language()), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);?>;
     var preferModes = <?=json_encode(PhraseTypesModel::getPreferModes())?>;
-    console.log(preferModes);
     var typeDescriptions = <?=json_encode((new TypeDescriptionModel())->getAllItems(Page::language()))?>;
     $('.numeral-source').numeral(false);
 </script>
