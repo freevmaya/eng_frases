@@ -159,7 +159,10 @@ class Page {
 		GLOBAL $_SESSION, $_SERVER, $dbp;
 		$dbp->Close();
 
-		trace_error("Wrong");
+		if (DEV)
+			trace_error("\nWRONG\nSESSION: ".json_encode($_SESSION, JSON_FLAGS));
+		else trace_error("Wrong");
+
 		header('HTTP/1.1 403 Forbidden');
 		exit(403);
 	}
@@ -298,16 +301,28 @@ class Page {
 
 	public static function setSession($name, $value = null) {	
 		GLOBAL $_SESSION;
+
+		if (session_status() === PHP_SESSION_NONE)
+        	session_start();
+
 		$_SESSION[$name] = $value;
 	}
 
 	public static function getSession($name, $default = null) {
 		GLOBAL $_SESSION;
+		
+		if (session_status() === PHP_SESSION_NONE)
+        	session_start();
+
 		return isset($_SESSION[$name]) ? $_SESSION[$name] : $default;
 	}
 
 	public static function unsetSession($name) {
 		GLOBAL $_SESSION;
+		
+		if (session_status() === PHP_SESSION_NONE)
+        	session_start();
+        
 		if (isset($_SESSION[$name])) {
 			$_SESSION[$name] = null;
 			unset($_SESSION[$name]);

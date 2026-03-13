@@ -90,6 +90,7 @@ class Ajax extends BaseAjax {
 	}
 
 	protected function getUserState($data) {
+		GLOBAL $_SESSION;
 		if ($user_id = Page::getSession('user_id')) {
     		if ($stateItem = (new UserStateModel())->getItem($user_id, 'user_id')) {
     			
@@ -100,7 +101,6 @@ class Ajax extends BaseAjax {
     		}
 			return 0;
 		}
-
 		Page::Wrong();
 	}
 
@@ -113,7 +113,7 @@ class Ajax extends BaseAjax {
 					    			'data' => $data
 					    		], 'user_id')) ? true : false
 			];
-		} 
+		}
 		Page::Wrong();
 	}
 
