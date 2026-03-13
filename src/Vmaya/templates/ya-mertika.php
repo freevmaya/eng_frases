@@ -12,3 +12,14 @@
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/<?=YANDEX_METRIKA_ID?>" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
+<script>
+    $(window).on('apply_settings', ()=>{
+        window.yaContextCb.push(() => {
+            Ya.Context.AdvManager.render({
+                "blockId": "R-A-1<?=YANDEX_METRIKA_ID?>-2",
+                "type": "fullscreen",
+                "platform": "touch"
+            })
+        });
+    });
+</script>
