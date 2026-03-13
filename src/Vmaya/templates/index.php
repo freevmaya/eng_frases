@@ -83,12 +83,22 @@
     <div class="page">
         <!-- Yandex.RTB R-A-18903581-1 -->
         <script>
-        window.yaContextCb.push(() => {
-            Ya.Context.AdvManager.render({
-                "blockId": "R-A-18903581-1",
-                "type": "topAd"
+            window.yaContextCb.push(() => {
+                Ya.Context.AdvManager.render({
+                    "blockId": "R-A-18903581-1",
+                    "type": "topAd"
+                })
             })
-        })
+            
+            $(window).on('apply_settings', ()=>{
+                window.yaContextCb.push(() => {
+                    Ya.Context.AdvManager.render({
+                        "blockId": "R-A-18903581-2",
+                        "type": "fullscreen",
+                        "platform": "touch"
+                    })
+                });
+            });
         </script>
         <div class="wrap-content">
             <!-- Header -->
