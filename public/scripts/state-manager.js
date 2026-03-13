@@ -92,6 +92,11 @@ class StateManager {
         return this.state[name];
     }
 
+    set(name, value) {
+        this.state[name] = value;
+        this.saveState();
+    }
+
     getHash() {
         return CryptoJS.MD5(JSON.stringify(this.state)).toString();
     }

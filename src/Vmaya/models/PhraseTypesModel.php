@@ -21,6 +21,10 @@ class PhraseTypesModel extends BaseModel {
                 'type' => 'input',
                 'dbtype' => 'i'
             ],
+            'prefer_mode' => [
+                'label' => 'prefer_mode',
+                'dbtype' => '2'
+            ],
             'description' => [
                 'label' => 'Description',
                 'type' => 'textarea',
@@ -45,6 +49,24 @@ class PhraseTypesModel extends BaseModel {
                 'readonly' => true
             ]
         ];
+    }
+
+    public static function getPreferModes() {
+        GLOBAL $dbp;
+        
+        $query = "
+            SELECT 
+                t.type_name,
+                t.prefer_mode
+            FROM phrase_types t WHERE t.is_active = 1 AND t.prefer_mode IS NOT NULL AND t.prefer_mode > ''
+        ";
+
+        $list = $dbp->asArray($query);
+        $result = [];
+        foreach ($list as $item)
+            $result[$item['type_name']] = $item['prefer_mode'];
+        
+        return $result;
     }
 
     public function NextOrPrevType($type_id, $direction, $next = true) {

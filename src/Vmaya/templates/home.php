@@ -62,6 +62,12 @@
                         <select id="mode-direction" class="form-select bg-form border-secondary">
                         </select>
                     </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="saveDirection" checked>
+                        <label class="form-check-label" for="saveDirection">
+                            <?=Lang('save_direction')?>
+                        </label>
+                    </div>
                 </div>
 
                 <div class="mb-4">
@@ -275,6 +281,8 @@
         Object.assign(SPEECH_CONFIG, <?=Page::$request['SPEECH_CONFIG']?>);
     <?}?>
     var phrasesData = <?=json_encode(PhrasesModel::getPhrasesAsJsonWithDifficulty(Page::language()), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);?>;
+    var preferModes = <?=json_encode(PhraseTypesModel::getPreferModes())?>;
+    console.log(preferModes);
     var typeDescriptions = <?=json_encode((new TypeDescriptionModel())->getAllItems(Page::language()))?>;
     $('.numeral-source').numeral(false);
 </script>

@@ -331,6 +331,7 @@ function Application() {
         phraseType: $('#phraseType'),
         progressBar: $('#progressBar'),
         progressControl: $('#progressControl'),
+        saveDirection: $('#saveDirection'),
         playButton: $('#playButton'),
         nextBtn: $('#nextBtn'),
         prevBtn: $('#prevBtn'),
@@ -471,10 +472,14 @@ function Application() {
     }
 
     function setProgress(curentRepeat, a_index) {
-        setProgressObject({
+        let params = {
             currentRepeat: curentRepeat,
             index: a_index
-        });
+        };
+        if (state.saveDirection)
+            params.direction = state.direction;
+
+        setProgressObject(params);
     }
 
     function setProgressObject(newParams) {
@@ -876,6 +881,7 @@ function Application() {
         elements.recognizeToggle.prop('checked', state.recognize);
         elements.backgroundPlayback.prop('checked', state.backgroundPlayback);
         elements.useSpeakPhrase.prop('checked', state.useSpeakPhrase);
+        elements.saveDirection.prop('checked', state.saveDirection);
 
         elements.repeatLength.val(state.repeatLength);
         elements.repeatCount.val(state.repeatCount);
@@ -903,7 +909,8 @@ function Application() {
             genderVoice: elements.genderVoice.val(),
             backgroundPlayback: elements.backgroundPlayback.prop('checked'),
             useSpeakPhrase: elements.useSpeakPhrase.prop('checked'),
-            indexInMode: state.indexInMode
+            indexInMode: state.indexInMode,
+            saveDirection: elements.saveDirection.prop('checked')
         };
 
         if (newSettings.repeatCount < getCurentRepeat())
@@ -917,6 +924,9 @@ function Application() {
         
         const changes = stateManager.updateSettings(newSettings);
         Object.assign(state, stateManager.getState());
+
+        if (newSettings.saveDirection)
+            setProgressObject({direction: state.direction});
         
         if (changes.listChanged || listChanged) {
             loadPhraseList();
@@ -953,6 +963,12 @@ function Application() {
 
             state.currentListType = type;
 
+            if (state.saveDirection) {
+                let progress = getProgress();
+                if (progress && progress.direction)
+                    state.direction = progress.direction;
+            }
+
             speechSynthesizer.stop();
             stopRecognition();
 
@@ -974,6 +990,28 @@ function Application() {
 
             $(window).trigger('selected_list_type', state.currentListType);
 
+            appData.selectTypeRecently = true;
+            setTimeout(()=>{
+                appData.selectTypeRecently = false;
+            }, 1000);
+
+            refreshDescription();
+
+            if (preferModes) {
+                let prefer = preferModes[state.currentListType];
+                if (prefer && prefer != state.direction) {
+                    Confirm(Lang('prefer_mode_confirm', [Lang(prefer)]))
+                        .then((result)=>{
+                            if (result)
+                                stateManager.set('direction', state.direction = prefer);
+                        });
+
+                    if (stateManager.isPlaying)
+                        stopPlayback();
+                    return;
+                }
+            }
+
             if (stateManager.isPlaying) {
                 debouncePage(()=>{
                     speechSynthesizer.waitForCompletion()
@@ -982,13 +1020,6 @@ function Application() {
                         });
                 });
             }
-
-            appData.selectTypeRecently = true;
-            setTimeout(()=>{
-                appData.selectTypeRecently = false;
-            }, 1000);
-
-            refreshDescription();
         }
     }
 

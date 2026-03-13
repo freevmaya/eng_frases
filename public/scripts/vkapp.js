@@ -31,7 +31,7 @@ class VKApp {
 
 	  	this.initListeners();
 
-	  	setTimeout(this.requestNotification.bind(this), 10000);
+	  	//setTimeout(this.requestNotification.bind(this), 10000);
 	}
 
 	requestNotification() {
