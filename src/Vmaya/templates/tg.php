@@ -63,12 +63,9 @@
                 use_server: <?=Page::getSession('user_id', false) ? 'true' : 'false'?>
             });
         </script>
-
-        <?if ($is_developer) {?>
         <!-- Eruda is console for mobile browsers-->
         <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
         <script>eruda.init();</script>
-        <?}?>
     </div>
 </body>
 </html>
