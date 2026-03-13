@@ -14,10 +14,12 @@
 <!-- /Yandex.Metrika counter -->
 <script>
     $(window).on('apply_settings', ()=>{
-        Ya.Context.AdvManager.render({
-            "blockId": "R-A-1<?=YANDEX_METRIKA_ID?>-2",
-            "type": "fullscreen",
-            "platform": "touch"
-        })
+        window.yaContextCb.push(() => {
+            Ya.Context.AdvManager.render({
+                "blockId": "R-A-18903581-2",
+                "type": "fullscreen",
+                "platform": "touch"
+            })
+        });
     });
 </script>
