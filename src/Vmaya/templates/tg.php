@@ -1,34 +1,3 @@
-<?php
-    $v = '?v='.SCRIPTS_VERSION.'_'.filemtime(BASEPATH.'/public/scripts/tg.js');
-
-    $source         = 'tg';
-    $source_user_id = 1;
-    $userModel      = new UserModel();
-
-    if (!Page::getSession('source_user')) {
-
-        $items = $userModel->getItems("source_id = {$source_user_id} AND source = '{$source}'");
-
-        if (count($items) == 0) {
-            $user_id = $userModel->Update([
-                'source_id'=>$source_user_id,
-                'source'=>$source,
-                'language_code'=>DEFAULT_LANGUAGE
-            ]);
-        } else $user_id = $items[0]['id'];
-
-        Page::setSession('source_user', [
-            'id' => $source_user_id,
-            'source' => $source
-        ]);
-
-        Page::setSession('user_id', $user_id);
-    } else {
-        $user_id = Page::getSession('user_id');
-    }
-
-    $is_developer = Page::isDev();
-?>
 <!DOCTYPE html>
 <html lang="<?=Lang('html_lang')?>" data-bs-theme="dark" data-source="tg">
 <head>
@@ -65,7 +34,7 @@
     <script src="scripts/tg.js<?=$v?>"></script>
     <script type="text/javascript">
         $(window).ready(()=>{
-            new TGApp(<?=VK_APP_ID?>);
+            new TGApp();
         });
     </script>
     <?include('ya-mertika.php');?>

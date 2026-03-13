@@ -1,5 +1,5 @@
 class TGApp {
-	constructor(app_id, params) {
+	constructor() {
 		this.tg = window.Telegram?.WebApp;
         
         // Initialize

@@ -3,14 +3,14 @@ class UserApp {
 		this.userPhrasesLoaded = 0;
 	}
 
-	init(source_id, source, data, phrases_list = null) {
+	init(source_id, source, a_user_data, phrases_list = null) {
 
 		Ajax({
 			action: 'initUser',
 			data: {
 				source_id: source_id,
 				source: source,
-				user_data:  data
+				user_data:  a_user_data
 			}
 		}).then((data)=>{
 			if (data) {
