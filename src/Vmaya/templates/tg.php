@@ -33,6 +33,9 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="scripts/tg.js<?=$v?>"></script>
     <script type="text/javascript">
+        <?if ($app_init_params) {?>
+            var app_init_params = <?=$app_init_params?>;
+        <?}?>
         $(window).ready(()=>{
             new TGApp();
         });
