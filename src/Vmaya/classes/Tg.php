@@ -13,7 +13,8 @@ class Tg extends Page {
 		GLOBAL $dbp;
 		$v				= '?v='.SCRIPTS_VERSION;
 		$content 		= $this->getContent(DEFAULTPAGE);
-		$app_init_params = urldecode(Page::getRequest('params'));
+		if ($app_init_params = Page::getRequest('params'))
+			$app_init_params = urldecode($app_init_params);
 		include($templatePath);
 	}
 }
