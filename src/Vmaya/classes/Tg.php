@@ -12,11 +12,8 @@ class Tg extends Page {
 	protected function RenderIndex($templatePath) {
 		GLOBAL $dbp;
 		$v				= '?v='.SCRIPTS_VERSION;
-	    $is_developer 	= Page::isDev();
 		$content 		= $this->getContent(DEFAULTPAGE);
 		$app_init_params = urldecode(Page::getRequest('params'));
-
-		trace($app_init_params);
 		include($templatePath);
 	}
 }

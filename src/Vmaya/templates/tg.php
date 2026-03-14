@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="css/themes.css<?=$v?>" media="all">
     <link rel="stylesheet" href="css/style.css<?=$v?>" media="all">
     <link rel="stylesheet" href="css/style-waves.css<?=$v?>" media="all">
-    <?if ($is_developer) {?><script>var DEV = true</script><?}?>
+    <?if (Page::isDev()) {?><script>var DEV = true</script><?}?>
     <?include('tracker.php')?>
     <?include('lang_script.php')?>
 
@@ -66,9 +66,11 @@
                 use_server: <?=Page::getSession('user_id', false) ? 'true' : 'false'?>
             });
         </script>
+        <?if (Page::isDev()) {?>
         <!-- Eruda is console for mobile browsers-->
         <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
         <script>eruda.init();</script>
+        <?}?>
     </div>
 </body>
 </html>
