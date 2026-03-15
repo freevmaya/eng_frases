@@ -51,10 +51,6 @@ class StateManager {
             this.saveImmediately();
         });
 
-        window.addEventListener('unload', (e)=>{
-            this.saveImmediately();
-        });
-
         window.addEventListener('pagehide', (e)=>{
             this.saveImmediately();
         });

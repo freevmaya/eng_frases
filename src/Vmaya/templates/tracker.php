@@ -1,8 +1,13 @@
+<?
+
+$t_user_id =  isset($this->user_id) ? $this->user_id : @$user_id;
+if ($t_user_id) {
+?>
 <script src="scripts/error-tracker.js<?=$v?>"></script>
 <script type="text/javascript">
 	ErrorTracker.init({
 		version: <?=SCRIPTS_VERSION;?>,
-		user_id: <?=isset($this->user_id) ? $this->user_id : $user_id;?>,
+		user_id: <?=$t_user_id;?>,
 		excludeDomains: [
 			'generate-phrases',
 			'yandex',
@@ -15,3 +20,4 @@
 
 	var X_CSRF_Token = '<?=Page::LastToken();?>';
 </script>
+<?}?>
