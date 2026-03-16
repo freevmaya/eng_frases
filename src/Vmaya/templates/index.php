@@ -69,8 +69,8 @@
                     "type": "topAd"
                 })
             })
-            
-            $(window).on('on_modal_hide', ()=>{
+
+            $(document).on('hidden.bs.modal', function() {
                 window.yaContextCb.push(() => {
                     Ya.Context.AdvManager.render({
                         "blockId": "R-A-18903581-2",
