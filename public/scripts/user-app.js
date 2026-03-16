@@ -13,13 +13,16 @@ class UserApp {
 				user_data:  a_user_data
 			}
 		}).then((data)=>{
-			if (data) {
+			if (data && data.user_id) {
+
 				this.user_id = data.user_id;
+				$(window).trigger('on_user_id', this.user_id);
 
 				if (data.redirect)
 					document.location.href = data.redirect;
 				else this.loadUserPhrases();
-			} else localStorage.setItem('site_user_id', null);
+
+			}
 		});
 
 		if (phrases_list != null) {

@@ -7,7 +7,7 @@ if ($t_user_id) {
 <script type="text/javascript">
 	ErrorTracker.init({
 		version: <?=SCRIPTS_VERSION;?>,
-		user_id: <?=$t_user_id;?>,
+		user_id: <?=is_numeric($t_user_id) ? $t_user_id : "'{$t_user_id}'";?>,
 		excludeDomains: [
 			'generate-phrases',
 			'yandex',

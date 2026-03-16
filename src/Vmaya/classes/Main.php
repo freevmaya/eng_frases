@@ -14,7 +14,7 @@ class Main extends Page {
 		if (DEV) {
 			if ($user_id = Page::getSession('user_id')) {
 				$user = $userModel->getItem($user_id);
-				if (!$user || ($user['source'] != 'site'))
+				if (!$user || ($user['source'] != Main::$source))
 					Page::unsetSession('user_id');
 			}
 		}
@@ -24,6 +24,14 @@ class Main extends Page {
 				$this->user_id = null;
 		}
 
+		if (!$this->user_id) {
+
+			Page::setLanguage(getPreferredLanguage(array_keys(LANGUAGES), DEFAULT_LANGUAGE));
+			$this->user_id = 'new';
+			$this->user['data'] = ['id' => 'new'];
+		}
+
+		/*
 		if (!$this->user_id) {
 
 			Page::setLanguage(getPreferredLanguage(array_keys(LANGUAGES), DEFAULT_LANGUAGE));
@@ -41,9 +49,9 @@ class Main extends Page {
 	    			'source_id'=> $this->user_id,
 	    			'data' => json_encode(['id' => $this->user_id])
 	    		]);
-		}
+		}*/
 
-		if ($this->user = $userModel->getItem($this->user_id)) {
+		if (is_numeric($this->user_id) && ($this->user = $userModel->getItem($this->user_id))) {
 
 			Page::setSession('user_id', $this->user_id);
 			$this->user['data'] = json_decode($this->user['data'], JSON_FLAGS);

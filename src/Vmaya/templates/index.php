@@ -40,33 +40,13 @@
     <script src="<?=BASEURL?>scripts/component.js<?=$v?>"></script>
     <script src="<?=BASEURL?>scripts/main.js<?=$v?>"></script>
     <?
-    $user_data = json_encode($this->user['data'], JSON_FLAGS);
-    if ($this->user_id && $user_data) {?>
+    $user_data = isset($this->user['data']) ? json_encode($this->user['data'], JSON_FLAGS) : ['id'=>$this->user_id];
+    if ($user_data) {?>
     <script src="<?=BASEURL?>scripts/user-app.js<?=$v?>" defer></script>
     <script type="text/javascript">
         $(window).ready(()=>{
-
             var user_data = <?=$user_data?>;
-
-            <?if ($this->new_user) {?>
-
-                let storage_user_id = localStorage.getItem('site_user_id');
-                if (storage_user_id) {
-                    userApp.init(storage_user_id, '<?=Main::$source?>', null);
-                } else {
-                    if (user_data.id) {
-                        userApp.init(user_data.id, '<?=Main::$source?>', user_data, <?=json_encode($phrases)?>);
-                        localStorage.setItem('site_user_id', user_data.id);
-                    } else localStorage.setItem('site_user_id', null);
-                }
-
-            <?} else {?>
-                if (user_data.id) {
-                    userApp.init(user_data.id, '<?=Main::$source?>', user_data, <?=json_encode($phrases)?>);
-                    localStorage.setItem('site_user_id', user_data.id);
-                } else localStorage.setItem('site_user_id', null);
-            <?}?>
-
+            userApp.init(user_data.id, '<?=Main::$source?>', user_data, <?=json_encode($phrases)?>);
         });
     </script>
     <?}?>
@@ -143,7 +123,7 @@
         <?include('confirm.php')?>
         <script type="text/javascript">
             window.stateManager = new StateManager({
-                use_server: <?=$this->user_id ? 'true' : 'false'?>
+                use_server: <?=is_numeric($this->user_id) ? 'true' : 'false'?>
             });
         </script>
 

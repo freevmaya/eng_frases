@@ -26,7 +26,25 @@ class Ajax extends BaseAjax {
 			Page::Wrong();
 
 		$userModel = new UserModel();
+
 		$source = $dbp->safeVal($data['source']);
+
+		if ($data['source_id'] == 'new') {
+			if ($data['source_id'] = $userModel->Update([
+					'source_id' => rand(0, 100000),
+	    			'source'=>$source,
+	    			'language_code' => Page::language()
+	    		])) {
+
+	    		$userModel->Update([
+	    			'id'=> $data['source_id'],
+	    			'source_id'=> $data['source_id']
+	    		]);
+
+	    		$data['user_data'] = ['id' => $data['source_id']];
+			}
+		}
+		
 		$source_id = intval($data['source_id']);
 		$user_data = $data['user_data'] ?? [];
 
@@ -37,8 +55,8 @@ class Ajax extends BaseAjax {
 			$values = [
 				'source_id'=>$source_id,
 				'source'=>$source,
-				'first_name'=>$user_data['first_name'] ?? '',
-				'last_name'=>$user_data['last_name'] ?? '',
+				'first_name'=>$user_data['first_name'] ?? 'No name',
+				'last_name'=>$user_data['last_name'] ?? 'No name',
 				'last_time'=>date('Y-m-d H:i:s'),
 				'language_code'=> $language
 			];
@@ -74,6 +92,8 @@ class Ajax extends BaseAjax {
 	    	}
 
 	    	$this->setUser($userModel->getItem($user_id));
+
+			trace("$user_id:$source_id $source");
 	    	Page::setSession('user_id', $user_id);
 
 	    	$result = [

@@ -598,6 +598,11 @@ function Application() {
 
         $(window).on('recognized', onRecognized.bind(this));
 
+        $(window).on('on_user_id', (e, user_id)=>{
+            if (isNumeric(user_id))
+                stateManager.config.use_server = true;
+        })
+
         $(window).on('play_autio_error', function(e, error) {
             if (error.name == 'NotAllowedError') {
                 showAlert(Lang("browser_blocks_audio_click_play"));
