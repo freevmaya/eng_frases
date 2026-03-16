@@ -70,7 +70,7 @@
                 })
             })
             
-            $(window).on('apply_settings', ()=>{
+            $(window).on('on_modal_hide', ()=>{
                 window.yaContextCb.push(() => {
                     Ya.Context.AdvManager.render({
                         "blockId": "R-A-18903581-2",

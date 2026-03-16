@@ -1496,9 +1496,11 @@ $(document).ready(function() {
 
     window.addEventListener('popstate', function(e) {
         if (isModalOpen) {
-            $('.modal.show').modal('hide');
+            let modal = $('.modal.show');
+            modal.modal('hide');
             history.pushState(null, '', window.location.href);
             e.preventDefault();
+            $(window).trigger('on_modal_hide', modal);
         }
     });
 
