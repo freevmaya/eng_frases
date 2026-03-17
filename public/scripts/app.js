@@ -700,6 +700,8 @@ function Application() {
             }
             addScope(ok ? 1 : 0, ok ? 0 : 1);
         }
+
+        stat.push('recognize_' + result, appData.currentPhrase.id);
     }
 
     function isQuiz() {
