@@ -1349,3 +1349,40 @@ function addSwipeClasses(selector, leftClass = 'swipe-left', rightClass = 'swipe
     //setTimeout(() => $el.removeClass(leftClass + ' ' + rightClass), 300);
   });
 }
+
+function onTap(element, callback) {
+  const $el = $(element);
+  let touchStartX, touchStartY;
+  let isTouching = false;
+  
+  $el.on('touchstart', (e) => {
+    const touch = e.originalEvent.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    isTouching = true;
+  });
+  
+  $el.on('touchmove', (e) => {
+    if (!isTouching) return;
+    
+    const touch = e.originalEvent.touches[0];
+    const dx = Math.abs(touch.clientX - touchStartX);
+    const dy = Math.abs(touch.clientY - touchStartY);
+    
+    if (dx > 10 || dy > 10) {
+      isTouching = false; // Отменяем, если было движение
+    }
+  });
+  
+  $el.on('touchend', (e) => {
+    if (isTouching) {
+      e.preventDefault();
+      callback.call(this, e, 'tap');
+    }
+    isTouching = false;
+  });
+  
+  $el.on('click', (e) => {
+    callback.call(this, e, 'click');
+  });
+}

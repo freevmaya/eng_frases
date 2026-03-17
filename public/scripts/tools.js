@@ -6,13 +6,13 @@ class Tools {
 
 		this.report_phrase_btn = $(`<a class="item" title="${Lang('report a phrase')}">
             <i class="bi bi-emoji-frown" title=""></i>
-        </a>`)
-        .on('click touchstart', this.reportPhrase.bind(this));
+        </a>`);
+        onTap(this.report_phrase_btn, this.reportPhrase.bind(this));
 
 		this.add_favorites_btn = $(`<a class="item" title="${Lang('add to favorites')}">
             <i class="bi bi-bookmark item"></i>
-        </a>`)
-        .on('click touchstart', this.toggleFovorite.bind(this));
+        </a>`);
+        onTap(this.add_favorites_btn, this.toggleFovorite.bind(this));
 
 		this.layer.append(this.report_phrase_btn);
 		this.layer.append(this.add_favorites_btn);
