@@ -318,5 +318,39 @@ class Ajax extends BaseAjax {
 
 		Page::Wrong();
 	}
+
+	protected function reportPhrase($data) {
+		if (($phrase_id = intval($data['phrase_id'])) && 
+			($user_id = Page::getSession('user_id'))) {
+			$model = new UserRequests();
+
+			return $model->Update([
+				'user_id' => $user_id,
+				'time' => date('Y-m-d H:i:s'),
+				'source_id' => $phrase_id,
+				'type' => 'complaint_phrase'
+			]);
+		}
+
+		Page::Wrong();
+	}
+
+	protected function toggleFovorite($data) {
+		
+		if (($phrase_id = intval($data['phrase_id'])) && 
+			($user_id = Page::getSession('user_id'))) {
+			$model = new UserFavorites();
+
+			$items = $model->getItems("user_id = {$user_id} AND phrase_id = {$phrase_id}");
+			if (count($items) > 0) 
+				return $model->Delete($items[0]['id']) ? 0 : null;
+			else return $model->Update([
+				'user_id' => $user_id,
+				'phrase_id' => $phrase_id
+			]);
+		}
+
+		Page::Wrong();
+	}
 }
 ?>

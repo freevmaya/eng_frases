@@ -414,8 +414,12 @@ function Application() {
     function initCurrentType() {
 
         let type = state.currentListType;
-        if (typeof phrasesData[type] == 'undefined')
-            setCurrentType(Object.keys(phrasesData)[0]);
+        if (typeof phrasesData[type] == 'undefined') {
+            if (type == '_favorites') {
+                updateFavorites();
+                setCurrentType('_favorites', true);
+            } else setCurrentType(Object.keys(phrasesData)[0]);
+        }
         else {
             loadPhraseList();
 
@@ -656,6 +660,29 @@ function Application() {
                     setScore(0, 0);
                 });
         });
+
+        $(window).on('favorites_list', (e)=>{
+            updateFavorites();
+            if (phrasesData['_favorites'].length > 0)
+                setCurrentType('_favorites');
+        });
+    }
+
+    function updateFavorites() {
+
+        if (typeof phrase_favorites != 'undefined') {
+            let items = [];
+            Object.keys(phrasesData).forEach((key)=>{
+                if (key != '_favorites')
+                    phrasesData[key].forEach((item)=>{
+                        if (phrase_favorites.includes(parseInt(item.id)))
+                            items.push(item);
+                    });
+            });
+            phrasesData['_favorites'] = items;
+            if (items.length == 0)
+                showAlert(Lang('favorites_empty'));
+        }
     }
 
     function onRecognized(e, result, text) {
@@ -956,7 +983,7 @@ function Application() {
         $(window).trigger('apply_settings');
     }
 
-    function setCurrentType(type = null) {
+    function setCurrentType(type = null, updateRequire = false) {
 
         let keys = Object.keys(phrasesData);
         keys.push('all');
@@ -964,7 +991,7 @@ function Application() {
         if (!type || !keys.includes(type))
             type = keys[0];
 
-        if (state.currentListType != type) {
+        if ((state.currentListType != type) || updateRequire) {
 
             state.currentListType = type;
 
@@ -1258,9 +1285,11 @@ function Application() {
         state.currentPhraseIndex    = newIndex;
         state.indexInMode           = 0;
         appData.currentPhrase       = appData.currentPhraseList[state.currentPhraseIndex];
+        state.currentPhraseId       = appData.currentPhrase.id;
 
         stateManager.updatePlaybackState({
-            currentPhraseIndex: state.currentPhraseIndex
+            currentPhraseIndex: state.currentPhraseIndex,
+            currentPhraseId: state.currentPhraseId
         });
 
         setProgress(getCurentRepeat(), newIndex);
@@ -1268,6 +1297,8 @@ function Application() {
         updateDisplay();
 
         speechSynthesizer.stop();
+
+        $(window).trigger('set_current_phrase', appData.currentPhrase);
     }
 
     function _speak(showLang, speakLang, then, genderVoice = null) {

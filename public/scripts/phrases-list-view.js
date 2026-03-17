@@ -83,6 +83,10 @@ class PhrasesListView {
         return item;
     }
 
+    favoriteItemAdd() {
+        return $(`<div class="item favorite-list"><a data-key="_favorites"><i class="bi bi-bookmark-fill"></i> ` + Lang("favorites") + `</a></div>`);
+    }
+
     blockItemAdd() {
         return $(`<div class="item add-list"><a>+ ` + Lang("add") + `</a></div>`);
     }
@@ -223,12 +227,14 @@ class PhrasesListView {
 		        body.append(item);
 	        });
 
-			if (isUserFolder)
-		        body.append(this.blockItemAdd());
-
-		    layer.find('.add-list').click(()=>{
-	        	$(window).trigger("add_user_list");
-	        });
+			if (isUserFolder) {
+		        body.append(this.favoriteItemAdd().click(()=>{
+		        	$(window).trigger("favorites_list");
+		        }));
+		        body.append(this.blockItemAdd().click(()=>{
+		        	$(window).trigger("add_user_list");
+		        }));
+			}
 
 	        this.accordion.append(layer);
     	});

@@ -206,7 +206,7 @@ class StateManager {
     }
     
     updatePlaybackState(state) {
-        const playbackKeys = ['currentPhraseIndex', 'indexInMode', 'progress', 'paid_use'];
+        const playbackKeys = ['currentPhraseIndex', 'currentPhraseId', 'indexInMode', 'progress', 'paid_use'];
         playbackKeys.forEach(key => {
             if (state[key] !== undefined) {
                 this.state[key] = state[key];

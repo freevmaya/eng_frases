@@ -60,7 +60,7 @@ class PlayerControls {
                 if (this.state.visible && 
                     !t.is(this.elements.container) && 
                     (t.closest(this.elements.viewer).length > 0) && 
-                    !t.hasClass('control'))
+                    (t.closest('.control').length == 0))
                     this.hide();
             }).bind(this));
 

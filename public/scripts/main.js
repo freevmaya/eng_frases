@@ -1317,3 +1317,35 @@ function compareStrings(a, b) {
     const clean = s => s.replace(/\([^)]*\)/g, '').replace(/[^\w]/g, '').toLowerCase();
     return clean(a) === clean(b);
 }
+
+function addSwipeClasses(selector, leftClass = 'swipe-left', rightClass = 'swipe-right') {
+  const $el = $(selector);
+  let startX = 0;
+  let isDragging = false;
+  
+  $el.on('touchstart mousedown', function(e) {
+    e.preventDefault();
+    startX = e.type === 'touchstart' ? e.originalEvent.touches[0].clientX : e.clientX;
+    isDragging = true;
+  });
+  
+  $el.on('touchmove mousemove', function(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    
+    const currentX = e.type === 'touchmove' ? e.originalEvent.touches[0].clientX : e.clientX;
+    const diff = currentX - startX;
+    $el.removeClass(leftClass + ' ' + rightClass);
+    
+    if (diff > 20) {
+      $el.removeClass(leftClass).addClass(rightClass);
+    } else if (diff < -20) {
+      $el.removeClass(rightClass).addClass(leftClass);
+    }
+  });
+  
+  $el.on('touchend mouseup', function() {
+    isDragging = false;
+    //setTimeout(() => $el.removeClass(leftClass + ' ' + rightClass), 300);
+  });
+}

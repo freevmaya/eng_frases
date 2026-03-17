@@ -137,7 +137,9 @@
     <!-- Main Content -->
     <div class="row">
         <div class="app-display">
+
             <div class="col-lg-12">
+
                 <div class="card bg-theme-gradient border-primary border-3 animate-card">
 
                     <div class="tv-screen">
@@ -161,8 +163,7 @@
                         <div class="scan-line"></div>
                     </div>
 
-                    <div class="card-body text-center p-4">
-
+                    <div class="card-body text-center">
                         <div>
                             <div class="phrase-container animate-text">
                                 <div class="scale-block">
@@ -283,6 +284,9 @@
     var phrasesData = <?=json_encode(PhrasesModel::getPhrasesAsJsonWithDifficulty(Page::language()), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);?>;
     var preferModes = <?=json_encode(PhraseTypesModel::getPreferModes())?>;
     var typeDescriptions = <?=json_encode((new TypeDescriptionModel())->getAllItems(Page::language()))?>;
+    <?if ($user_id = Page::getSession('user_id')) {?>
+    var phrase_favorites = <?=json_encode(UserFavorites::getFavoritesPhrases($user_id))?>;
+    <?}?>
     $('.numeral-source').numeral(false);
 </script>
 <script src="<?=BASEURL?>scripts/speech-synthesizer.js<?=$v?>"></script>
@@ -293,3 +297,4 @@
 <script src="<?=BASEURL?>scripts/app.js<?=$v?>" defer></script>
 <script src="<?=BASEURL?>scripts/sound.js<?=$v?>"></script>
 <script src="<?=BASEURL?>scripts/vrecognition.js<?=$v?>"></script>
+<script src="<?=BASEURL?>scripts/tools.js<?=$v?>"></script>

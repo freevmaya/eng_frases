@@ -1070,3 +1070,39 @@ footer {
         max-height: 100%;
     }
 }
+
+
+.app-display .tools {
+    position: absolute;
+    border-radius: 0 1em 1em 0;
+    margin-left: -45px;
+    width: 70px;
+    margin-top: 20px;
+    text-align: right;
+    z-index: 1000;
+    display: flex;
+    gap: 8px;
+    transition: margin 0.5s ease;
+}
+
+.swipe-left {
+    margin-left: -45px;
+}
+
+.app-display .tools:hover {
+    transition-delay: 1s;
+}
+
+.app-display .tools:hover,
+.app-display .swipe-right {
+    margin-left: -12px;
+}
+
+.tools .item {
+    cursor: pointer;
+    color: var(--white);
+}
+
+.tools .item:hover {
+    color: var(--target);
+}
