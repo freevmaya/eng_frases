@@ -249,3 +249,28 @@ class StateManager {
         localStorage.removeItem(this.STORAGE_KEY);
     }
 }
+
+class UserStat {
+    constructor() {
+        this.cache = [];
+        this.send = debounce(()=>{
+            Ajax({
+                action: 'userStat',
+                data: this.cache
+            });
+            this.cache = [];
+        }, 5000);
+    }
+
+    push(stat_name, json_data=null) {
+        if (stateManager.config.use_server) {
+            this.cache.push({
+                name: stat_name,
+                data: json_data
+            });
+            this.send();
+        }
+    }
+}
+
+var stat = new UserStat();
