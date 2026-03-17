@@ -25,6 +25,12 @@ class Tools {
 			if (typeof phrase_favorites != 'undefined')
 				this.updateFavorite(phrase_favorites.includes(phrase.id));
 		});
+
+		$('body').click((e) => {
+            let t = $(e.target);
+            if (t.closest(this.layer).length == 0)
+                this.layer.removeClass('swipe-right');
+        });
 	}
 
 	reportPhrase() {

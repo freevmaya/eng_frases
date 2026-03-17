@@ -770,6 +770,8 @@ function Application() {
         
         setScore((progress.success ? progress.success : 0) + successAdd,
                 (progress.loss ? progress.loss : 0) + lossAdd);
+
+        stat.push(successAdd > 0 ? 'quiz_success' : 'quiz_loss', appData.currentPhrase.id);
     }
 
     function totalScore() {
@@ -1270,6 +1272,7 @@ function Application() {
             }
         }
 
+
         appData.missOne = false;
         setProgress(newRepeat, newIndex);
         setCurrentPhraseIndex(newIndex);
@@ -1299,6 +1302,8 @@ function Application() {
         speechSynthesizer.stop();
 
         $(window).trigger('set_current_phrase', appData.currentPhrase);
+
+        stat.push('cur_phrase', appData.currentPhrase.id);
     }
 
     function _speak(showLang, speakLang, then, genderVoice = null) {

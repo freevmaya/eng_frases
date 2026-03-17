@@ -352,5 +352,18 @@ class Ajax extends BaseAjax {
 
 		Page::Wrong();
 	}
+
+	protected function userStat($data) {
+		if ($user_id = Page::getSession('user_id')) {
+			$model = new UserStatModel();
+
+			$result = [];
+			foreach ($data as $statItem)
+				$result[] = $model->Update($statItem);
+			return $result;
+		}
+
+		Page::Wrong();
+	}
 }
 ?>

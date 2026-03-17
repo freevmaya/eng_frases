@@ -77,7 +77,7 @@ const ErrorTracker = {
             });
             
             // Проверяем неудачные загрузки через PerformanceObserver
-            this.setupResourceLoadObserver();
+            //this.setupResourceLoadObserver();
         });
 
         // Отслеживание ошибок для динамически загружаемых ресурсов

@@ -1386,3 +1386,26 @@ function onTap(element, callback) {
     callback.call(this, e, 'click');
   });
 }
+
+class UserStat {
+    constructor() {
+        this.cache = [];
+        this.send = debounce(()=>{
+            Ajax({
+                action: 'userStat',
+                data: this.cache
+            });
+            this.cache = [];
+        }, 5000);
+    }
+
+    push(stat_name, json_data=null) {
+        this.cache.push({
+            name: stat_name,
+            data: json_data
+        });
+        this.send();
+    }
+}
+
+var stat = new UserStat();
