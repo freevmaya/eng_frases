@@ -359,7 +359,11 @@ class Ajax extends BaseAjax {
 
 			$result = [];
 			foreach ($data as $statItem)
-				$result[] = $model->Update($statItem);
+				$result[] = $model->Update([
+					'user_id' => $user_id,
+					'name' => $statItem['name'],
+					'data' => $statItem['data']
+				]);
 			return $result;
 		}
 

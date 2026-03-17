@@ -13,6 +13,10 @@ class UserStatModel extends BaseModel {
 				'type' => 'hidden',
 				'dbtype' => 'i'
 			],
+            'user_id' => [
+                'label' => 'user_id',
+                'dbtype' => 'i'
+            ],
 			'name' => [
 				'type' => 'type',
 				'dbtype' => 's'
