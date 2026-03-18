@@ -687,7 +687,7 @@ function Application() {
     }
 
     function onPreRecognized(e, result) {
-        stat.setRecognize(result);
+        stat.updateTimer('recognize', {value: result, phrase_id: appData.currentPhrase.id});
     }
 
     function onRecognized(e, result, text) {
@@ -705,6 +705,7 @@ function Application() {
             }
             addScope(ok ? 1 : 0, ok ? 0 : 1);
         }
+        stat.stopTimer('recognize');
     }
 
     function isQuiz() {
@@ -1297,9 +1298,6 @@ function Application() {
         let newIndex = Math.max(0, Math.min(index, appData.currentPhraseList.length - 1));
 
         if (state.currentPhraseIndex != newIndex) {
-            stat.applyRecognize({
-                phrase_id: state.currentPhraseIndex
-            });
             appData.quizAnswered    = false;
         }
 
@@ -1402,6 +1400,8 @@ function Application() {
         if (phraseDirect && recognition && stateManager.state.recognize) {
             let direct = isStr(phraseDirect) ? phraseDirect : phraseDirect.direct;
             recognition.startRecognition(appData.currentPhrase, direct);
+
+            stat.startTimer('recognize');
             return true;
         }
         return false;

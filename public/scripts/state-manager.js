@@ -253,7 +253,7 @@ class StateManager {
 
 class UserStat {
     constructor() {
-        this.recognizeStatus = null;
+        this.timers = {};
         this.cache = [];
         this.send = debounce(()=>{
             Ajax({
@@ -265,21 +265,27 @@ class UserStat {
         }, 5000);
     }
 
-    setRecognize(value, extData = null) {
-        
-        this.recognizeStatus = {...{
-            time: Date.now(),
-            value: value
-        }, ...extData};
+    startTimer(name) {
+        this.timers[name] = {
+            start: Date.now()
+        };
     }
 
-    applyRecognize(extData = null) {
-        if (this.recognizeStatus) {
-            this.cache.push({
-                name: 'recognize',
-                data: {...this.recognizeStatus, ...extData}
-            });
-            this.recognizeStatus = null;
+    stopTimer(name, extData = null) {
+        if (this.timers[name]) {
+            this.push(name, this.timers[name]);
+            delete this.timers[name];
+        }
+    }
+
+    updateTimer(name, extData = null) {
+
+        if (this.timers[name]) {
+            this.timers[name] = {
+                ...this.timers[name],
+                ...{delta: Date.now() - this.timers[name].start},
+                ...extData
+            }
         }
     }
 
