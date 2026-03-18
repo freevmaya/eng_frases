@@ -135,6 +135,7 @@ $lang = [
     'do_not_have_phrases' => 'Keine Sätze erhalten',
     'failed_to_load' => '%1 kann nicht geladen werden',
     'help_tips_recommendations' => 'Hilfe, Tipps und Tricks',
+    'advice_start' => "<h3>Beschreibung</h3>Ein Trainer zur Entwicklung der Hör- und Sprechfähigkeiten.<br> Enthält:<br> <ul> <li>Mehrere Wiedergabemodi für Sätze.</li> <li>Spracherkennung — Aussprachebewertung.</li> <li>Favoriten — Übung schwieriger Sätze.</li> <li>Quiz-Modus — Fokus auf Problembereiche in spielerischer Form.</li> </ul>",
     'advice_quiz_1' => 'Quiz-Modus.',
     'advice_quiz_2' => 'In diesem Modus:',
     'advice_quiz_3' => 'Schalten Sie die Wiedergabe ein',

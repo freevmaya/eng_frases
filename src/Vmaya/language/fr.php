@@ -135,6 +135,7 @@ $lang = [
     'do_not_have_phrases' => 'Aucune phrase reçue',
     'failed_to_load' => 'Impossible de charger %1',
     'help_tips_recommendations' => 'Aide, conseils et astuces',
+    'advice_start' => "<h3>Description</h3>Un entraîneur pour développer les compétences d'écoute et d'expression orale.<br> Comprend :<br> <ul> <li>Plusieurs modes de lecture de phrases.</li> <li>Reconnaissance vocale — évaluation de la prononciation.</li> <li>Favoris — pour travailler les phrases difficiles.</li> <li>Mode quiz — pour cibler les points faibles de manière ludique.</li> </ul>",
     'advice_quiz_1' => 'Mode \"Quiz\".',
     'advice_quiz_2' => 'Dans ce mode:',
     'advice_quiz_3' => 'Activer la lecture',

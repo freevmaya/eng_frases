@@ -2,7 +2,7 @@ class Tools {
 	constructor(parent) {
 
 		this.currentId = null;
-		this.layer = $(`<div class="tools bg-theme-gradient head control"></div>`);
+		this.layer = $(`<div class="tools bg-theme-gradient control"></div>`);
 
 		this.report_phrase_btn = $(`<a class="item" title="${Lang('report a phrase')}">
             <i class="bi bi-emoji-frown" title=""></i>
@@ -14,8 +14,18 @@ class Tools {
         </a>`);
         onTap(this.add_favorites_btn, this.toggleFovorite.bind(this));
 
+		if (typeof DEV != 'undefined') {
+
+			this.progress_btn = $(`<a class="item" title="${Lang('your_progress')}">
+	            <i class="bi bi-graph-up-arrow"></i>
+	        </a>`);
+	        onTap(this.progress_btn, this.reportProgress.bind(this));
+			this.layer.append(this.progress_btn);
+		}
+
 		this.layer.append(this.report_phrase_btn);
 		this.layer.append(this.add_favorites_btn);
+
 		parent.append(this.layer);
 
 		addSwipeClasses(this.layer);
@@ -31,6 +41,14 @@ class Tools {
             if (t.closest(this.layer).length == 0)
                 this.layer.removeClass('swipe-right');
         });
+	}
+
+	reportProgress() {
+		Ajax({
+			action: 'getStatistic'
+		}, (data)=>{
+			console.log(data);
+		});
 	}
 
 	reportPhrase() {

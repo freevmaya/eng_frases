@@ -1076,18 +1076,17 @@ footer {
 .app-display .tools {
     position: absolute;
     border-radius: 0 1em 1em 0;
-    margin-left: -45px;
-    width: 70px;
     margin-top: 20px;
     text-align: right;
     z-index: 1000;
     display: flex;
     gap: 8px;
-    transition: margin 0.5s ease;
+    transition: transform 0.5s ease;
+    transform: translateX(calc(15px - 100%));
 }
 
 .swipe-left {
-    margin-left: -45px;
+    transform: translateX(calc(15px - 100%));
 }
 
 .app-display .tools:hover {
@@ -1096,12 +1095,13 @@ footer {
 
 .app-display .tools:hover,
 .app-display .swipe-right {
-    margin-left: -12px;
+    transform: translateX(-12px);
 }
 
 .tools .item {
     cursor: pointer;
     color: var(--white);
+    padding: 0.5em 0.2em;
 }
 
 .tools .item:hover {

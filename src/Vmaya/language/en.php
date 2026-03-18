@@ -154,6 +154,7 @@ $lang = [
     
     // Advice/Tips
     'help_tips_recommendations' => 'Help, Tips and Recommendations',
+    'advice_start' => "<h3>Description</h3>A trainer for developing listening and speaking skills.<br> Includes:<br> <ul> <li>Several phrase playback modes.</li> <li>Speech recognition — pronunciation assessment.</li> <li>Favorites — practice challenging phrases.</li> <li>Quiz mode — focus on problem areas in a game-like format.</li> </ul>",
     'advice_1_1' => 'For effective memorization and automation of speech skills, we recommend alternating the playback sequence of Russian and English versions of phrases.',
     'advice_1_2' => 'This way you will train not only pronunciation automation but also fast auditory speech perception.',
     'advice_2_1' => 'In the settings, you will find all necessary parameters: pause between phrases, translation sequence, various voice options, repetitions, etc.',
