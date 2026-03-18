@@ -1,6 +1,6 @@
 
 class VKApp {
-	requireShareCount = 2;
+	requireShareCount = 3;
 	_haveAd = false;
 	constructor(app_id, source_user_id, source, user_phrases = null) {
 
