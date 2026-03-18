@@ -1293,8 +1293,12 @@ function Application() {
     function setCurrentPhraseIndex(index) {
         let newIndex = Math.max(0, Math.min(index, appData.currentPhraseList.length - 1));
 
-        if (state.currentPhraseIndex != newIndex)
+        if (state.currentPhraseIndex != newIndex) {
+            stat.applyRecognize({
+                phrase_id: state.currentPhraseIndex
+            });
             appData.quizAnswered    = false;
+        }
 
         state.currentPhraseIndex    = newIndex;
         state.indexInMode           = 0;
@@ -1314,10 +1318,8 @@ function Application() {
 
         $(window).trigger('set_current_phrase', appData.currentPhrase);
 
-        if (isPlaying()) {
-            stat.applyRecognize();
+        if (isPlaying())
             stat.push('cur_phrase', statParams());
-        }
     }
 
     function _speak(showLang, speakLang, then, genderVoice = null) {

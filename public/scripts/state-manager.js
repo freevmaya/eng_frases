@@ -271,11 +271,11 @@ class UserStat {
         }, ...extData};
     }
 
-    applyRecognize() {
+    applyRecognize(extData = null) {
         if (this.recognizeStatus) {
             this.cache.push({
                 name: 'recognize',
-                data: this.recognizeStatus
+                data: {...this.recognizeStatus, ...extData}
             });
         }
     }
