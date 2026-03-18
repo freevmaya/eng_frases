@@ -298,3 +298,6 @@
 <script src="<?=BASEURL?>scripts/sound.js<?=$v?>"></script>
 <script src="<?=BASEURL?>scripts/vrecognition.js<?=$v?>"></script>
 <script src="<?=BASEURL?>scripts/tools.js<?=$v?>"></script>
+<?if ($is_developer) {?>
+<script src="<?=BASEURL?>scripts/dev-units.js<?=$v?>"></script>
+<?}?>

@@ -100,6 +100,7 @@
 		</div>
 	    <?include('message.php')?>
 	    <?include('confirm.php')?>
+	    <?include('share-modal.php')?>
 		<script type="text/javascript">
 		    window.stateManager = new StateManager({
 		        use_server: <?=Page::getSession('user_id', false) ? 'true' : 'false'?>

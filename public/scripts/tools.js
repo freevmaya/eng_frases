@@ -72,6 +72,8 @@ class Tools {
 
 	toggleFovorite() {
 		let id = this.currentId ?? parseInt(stateManager.get('currentPhraseId'));
+		this.updateFavorite(!this.add_favorites_btn.find('i').hasClass('bi-bookmark-fill'));
+
 		Ajax({
 			action: 'toggleFovorite',
 			data: {

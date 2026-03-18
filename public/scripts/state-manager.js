@@ -33,7 +33,8 @@ class StateManager {
             backgroundPlayback: true,
             useSpeakPhrase: true,
             paid_use: {},
-            shared: []
+            shared: [],
+            sharedInCommunity: false
         };
         
         this.state = { ...this.DEFAULT_STATE };

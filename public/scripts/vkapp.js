@@ -1,6 +1,6 @@
 
 class VKApp {
-	requireShareCount = 3;
+	requireShareCount = 2;
 	_haveAd = false;
 	constructor(app_id, source_user_id, source, user_phrases = null) {
 
@@ -9,6 +9,7 @@ class VKApp {
 		this.source_user_id = source_user_id;
 		this.count_phrases = 0;
 		this.sharedSession = false;
+		this.groupLink = 'https://vk.com/club235452440';
 
 		$('body').addClass('vk_layout');
 
@@ -134,40 +135,96 @@ class VKApp {
 		});
 	}
 
+	showShareDialog() {
+
+		let requireCount = this.requireShareCount - stateManager.state.shared.length;
+
+	    let modal = $('#share-modal');
+	    modal.find('.content').html(Lang('share-confirm', [strEnum(requireCount, Lang('frend-time'))]));
+	    modal.find('.modal-title').text(Lang('attention'));
+        modal.find('.share').click(()=>{
+            this.shareApp(Lang('share-in-next-phrase'))
+				.then((result)=>{
+					let item = result[0];
+					if ((item.type == 'message') && (item.users.length > 0)) {
+
+						for (let i=0; i<item.users.length; i++) {
+							if (!stateManager.state.shared.includes(item.users[i].id)) {
+								stateManager.state.shared.push(item.users[i].id);
+								this.sharedSession = true;
+							}
+						}
+
+						if (this.sharedSession)
+							stateManager.saveState();
+
+						return;
+					}
+					this.sharedSession = true;
+					tracer.log(result);
+				});
+        });
+        modal.find('.to-group').click(()=>{
+        	window.open(this.groupLink, '_blank');
+        	this.sharedSession = true;
+        });
+        modal.find('.to-community').click(()=>{
+        	vkBridge.send('VKWebAppAddToCommunity')
+				.then((data) => { 
+					if (data.group_id) {
+					  	// Приложение установлено в сообщество
+						stateManager.state.sharedInCommunity = data.group_id;
+						stateManager.saveState();
+					}
+				})
+				.catch((error) => {
+					// Ошибка
+					tracer.log(error);
+				});
+        });
+	    modal.modal('show');
+
+
+	    /*
+		Confirm(Lang('share-confirm', [strEnum(requireCount, Lang('frend-time'))]))
+            .then(()=>{
+				this.shareApp(Lang('share-in-next-phrase'))
+					.then((result)=>{
+						let item = result[0];
+						if ((item.type == 'message') && (item.users.length > 0)) {
+
+							for (let i=0; i<item.users.length; i++) {
+								if (!stateManager.state.shared.includes(item.users[i].id)) {
+									stateManager.state.shared.push(item.users[i].id);
+									this.sharedSession = true;
+								}
+							}
+
+							if (this.sharedSession)
+								stateManager.saveState();
+
+							return;
+						}
+						this.sharedSession = true;
+						tracer.log(result);
+					});
+				});*/
+
+
+		$(window).trigger('stop-play');
+	}
+
 	onNextPhrase(e, data) {
 
 		if (typeof new_user != 'undefined')
 			return;
 
-		this.count_phrases++;
-		let requireCount = this.requireShareCount - stateManager.state.shared.length;
+		if (!stateManager.state.sharedInCommunity) {
+			this.count_phrases++;
+			let requireCount = this.requireShareCount - stateManager.state.shared.length;
 
-		if ((this.count_phrases >= 5) && !this.sharedSession && (requireCount > 0)) {
-			Confirm(Lang('share-confirm', [strEnum(requireCount, Lang('frend-time'))]))
-                .then(()=>{
-					this.shareApp(Lang('share-in-next-phrase'))
-						.then((result)=>{
-							let item = result[0];
-							if ((item.type == 'message') && (item.users.length > 0)) {
-
-								for (let i=0; i<item.users.length; i++) {
-									if (!stateManager.state.shared.includes(item.users[i].id)) {
-										stateManager.state.shared.push(item.users[i].id);
-										this.sharedSession = true;
-									}
-								}
-
-								if (this.sharedSession)
-									stateManager.saveState();
-
-								return;
-							}
-							this.sharedSession = true;
-							tracer.log(result);
-						});
-					});
-
-			$(window).trigger('stop-play');
+			if ((this.count_phrases >= 5) && !this.sharedSession && (requireCount > 0))
+				this.showShareDialog();
 		}
 	}
 
