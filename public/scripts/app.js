@@ -600,7 +600,8 @@ function Application() {
             stopPlayback();
         });
 
-        $(window).on('recognized', onRecognized.bind(this));
+        $(window).on('recognized', onRecognized);
+        $(window).on('pre_recognized', onPreRecognized);
 
         $(window).on('on_user_id', (e, user_id)=>{
             if (isNumeric(user_id))
@@ -685,6 +686,10 @@ function Application() {
         }
     }
 
+    function onPreRecognized(e, result) {
+        stat.setRecognize(result);
+    }
+
     function onRecognized(e, result, text) {
         if (isQuiz() && !appData.quizAnswered) {
             let quiz_block = elements.deskBlock.find('.quiz-block');
@@ -700,8 +705,6 @@ function Application() {
             }
             addScope(ok ? 1 : 0, ok ? 0 : 1);
         }
-
-        stat.setRecognize(result);
     }
 
     function isQuiz() {

@@ -360,11 +360,15 @@ class Ajax extends BaseAjax {
 			$result = [];
 			foreach ($data as $statItem) {
 
-				$time = ($statItem['data'] && isset($extData['time'])) ? $extData['time'] : time();
+
+				$clientTimestampMs = ($statItem['data'] && isset($statItem['data']['time'])) ? $statItem['data']['time'] : time() * 1000;
+				$clientTimestamp = floor($clientTimestampMs / 1000);
+				$date = new DateTime();
+				$date->setTimestamp($clientTimestamp);
 
 				$result[] = $model->Update([
 					'user_id' => $user_id,
-					'time' => date('Y-m-d H:i:s', $time),
+					'time' => $date->format('Y-m-d H:i:s'),
 					'name' => $statItem['name'],
 					'data' => $statItem['data']
 				]);

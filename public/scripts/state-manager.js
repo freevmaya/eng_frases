@@ -258,6 +258,7 @@ class UserStat {
         this.send = debounce(()=>{
             Ajax({
                 action: 'userStat',
+                timezone: getTimezone(),
                 data: this.cache
             });
             this.cache = [];
@@ -265,8 +266,9 @@ class UserStat {
     }
 
     setRecognize(value, extData = null) {
+        
         this.recognizeStatus = {...{
-            time: time(),
+            time: Date.now(),
             value: value
         }, ...extData};
     }
@@ -277,6 +279,7 @@ class UserStat {
                 name: 'recognize',
                 data: {...this.recognizeStatus, ...extData}
             });
+            this.recognizeStatus = null;
         }
     }
 
@@ -285,7 +288,7 @@ class UserStat {
             this.cache.push({
                 name: stat_name,
                 data: {
-                    ...{time: time()}, 
+                    ...{time: Date.now()}, 
                     ...json_data
                 }
             });

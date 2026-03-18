@@ -993,4 +993,14 @@ function getPreferredLanguage($availableLanguages = ['ru', 'en', 'de', 'fr'], $d
     
     return $default;
 }
+
+// Функция для перевода из любого пояса в серверный
+function toServerTimezone($datetime, $fromTimezone, $format='Y-m-d H:i:s') {
+    // Создаем объект в исходном часовом поясе
+    $date = new DateTime($datetime, new DateTimeZone($fromTimezone));
+    $serverTimezone = date_default_timezone_get();
+    $date->setTimezone(new DateTimeZone($serverTimezone));
+    
+    return $date->format($format);
+}
 ?>

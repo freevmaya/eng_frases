@@ -745,8 +745,8 @@ function DepartureTime(time) {
     return "";
 }
 
-function time() {
-    return Math.round(Date.now() / 1000);
+function getTimezone() {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
 }
 
 function getOrderInfo(order, callback = null) {
