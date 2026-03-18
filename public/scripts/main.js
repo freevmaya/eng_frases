@@ -745,6 +745,10 @@ function DepartureTime(time) {
     return "";
 }
 
+function time() {
+    return Math.round(Date.now() / 1000);
+}
+
 function getOrderInfo(order, callback = null) {
     let start = isStr(order.start) ? JSON.parse(order.start) : order.start;
     let finish = isStr(order.finish) ? JSON.parse(order.finish) : order.finish;

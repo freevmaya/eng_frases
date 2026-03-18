@@ -701,7 +701,7 @@ function Application() {
             addScope(ok ? 1 : 0, ok ? 0 : 1);
         }
 
-        stat.push('recognize_' + result, appData.currentPhrase.id);
+        stat.setRecognize(result);
     }
 
     function isQuiz() {
@@ -773,7 +773,7 @@ function Application() {
         setScore((progress.success ? progress.success : 0) + successAdd,
                 (progress.loss ? progress.loss : 0) + lossAdd);
 
-        stat.push(successAdd > 0 ? 'quiz_success' : 'quiz_loss', appData.currentPhrase.id);
+        stat.push(successAdd > 0 ? 'quiz_success' : 'quiz_loss', appData.currentPhrase.id, statParams());
     }
 
     function totalScore() {
@@ -1281,6 +1281,15 @@ function Application() {
         $(window).trigger('next_phrase', newIndex);
     }
 
+    function statParams() {
+        return {
+            phrase_id: appData.currentPhrase.id,
+            direction: state.direction,
+            type: state.currentListType,
+            pause: state.pauseBetweenPhrases
+        }
+    }
+
     function setCurrentPhraseIndex(index) {
         let newIndex = Math.max(0, Math.min(index, appData.currentPhraseList.length - 1));
 
@@ -1305,7 +1314,10 @@ function Application() {
 
         $(window).trigger('set_current_phrase', appData.currentPhrase);
 
-        stat.push('cur_phrase', appData.currentPhrase.id);
+        if (isPlaying()) {
+            stat.push('cur_phrase', statParams());
+            stat.applyRecognize();
+        }
     }
 
     function _speak(showLang, speakLang, then, genderVoice = null) {

@@ -253,6 +253,7 @@ class StateManager {
 
 class UserStat {
     constructor() {
+        this.recognizeStatus = null;
         this.cache = [];
         this.send = debounce(()=>{
             Ajax({
@@ -263,11 +264,30 @@ class UserStat {
         }, 5000);
     }
 
+    setRecognize(value, extData = null) {
+        this.recognizeStatus = {...{
+            time: time(),
+            value: value
+        }, ...extData};
+    }
+
+    applyRecognize() {
+        if (this.recognizeStatus) {
+            this.cache.push({
+                name: 'recognize',
+                data: this.recognizeStatus
+            });
+        }
+    }
+
     push(stat_name, json_data=null) {
         if (stateManager.config.use_server) {
             this.cache.push({
                 name: stat_name,
-                data: json_data
+                data: {
+                    ...{time: time()}, 
+                    ...json_data
+                }
             });
             this.send();
         }

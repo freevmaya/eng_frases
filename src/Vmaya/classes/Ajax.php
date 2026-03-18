@@ -358,12 +358,17 @@ class Ajax extends BaseAjax {
 			$model = new UserStatModel();
 
 			$result = [];
-			foreach ($data as $statItem)
+			foreach ($data as $statItem) {
+
+				$time = ($statItem['data'] && isset($extData['time'])) ? $extData['time'] : time();
+
 				$result[] = $model->Update([
 					'user_id' => $user_id,
+					'time' => date('Y-m-d H:i:s', $time),
 					'name' => $statItem['name'],
 					'data' => $statItem['data']
 				]);
+			}
 			return $result;
 		}
 
