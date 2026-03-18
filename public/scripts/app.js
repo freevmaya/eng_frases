@@ -1315,8 +1315,8 @@ function Application() {
         $(window).trigger('set_current_phrase', appData.currentPhrase);
 
         if (isPlaying()) {
-            stat.push('cur_phrase', statParams());
             stat.applyRecognize();
+            stat.push('cur_phrase', statParams());
         }
     }
 
