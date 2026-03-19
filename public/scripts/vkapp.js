@@ -137,6 +137,7 @@ class VKApp {
 
 	showShareDialog() {
 
+        this.sharedSession = true;
 		let requireCount = this.requireShareCount - stateManager.state.shared.length;
 
 	    let modal = $('#share-modal');
@@ -146,16 +147,17 @@ class VKApp {
             this.shareApp(Lang('share-in-next-phrase'))
 				.then((result)=>{
 					let item = result[0];
+					let added = false;
 					if ((item.type == 'message') && (item.users.length > 0)) {
 
 						for (let i=0; i<item.users.length; i++) {
 							if (!stateManager.state.shared.includes(item.users[i].id)) {
 								stateManager.state.shared.push(item.users[i].id);
-								this.sharedSession = true;
+								added = true;
 							}
 						}
 
-						if (this.sharedSession)
+						if (added)
 							stateManager.saveState();
 
 						return;
@@ -166,7 +168,6 @@ class VKApp {
         });
         modal.find('.to-group').click(()=>{
         	window.open(this.groupLink, '_blank');
-        	this.sharedSession = true;
         });
         modal.find('.to-community').click(()=>{
         	vkBridge.send('VKWebAppAddToCommunity')
