@@ -8,6 +8,14 @@ class UserPhraseStats {
     private mysqli $db;
     private int $userId;
     
+    // Константы для типов направлений
+    private const DIRECTION_LISTENING = 'listening'; // target-native (английский -> русский)
+    private const DIRECTION_SPEAKING = 'speaking';   // native-target (русский -> английский)
+    private const DIRECTION_QUIZ = 'quiz';
+    private const DIRECTION_DIALOG_PREPARE = 'dialog_prepare';
+    private const DIRECTION_DIALOG_EXAM = 'dialog_exam';
+    private const DIRECTION_BOTH = 'both'; // смешанные типы
+    
     /**
      * Конструктор
      * 
@@ -100,6 +108,7 @@ class UserPhraseStats {
                 'avg_pause' => $weekData['avg_pause'],
                 'types' => $weekData['types'],
                 'directions' => $weekData['directions'],
+                'directions_classified' => $weekData['directions_classified'],
                 'unique_types' => $weekData['unique_types']
             ];
         }
@@ -140,14 +149,16 @@ class UserPhraseStats {
                 'total_attempts' => $firstWeek['total'],
                 'avg_interval' => $firstWeek['avg_interval'],
                 'avg_pause' => $firstWeek['avg_pause'],
-                'types_count' => $firstWeek['unique_types']
+                'types_count' => $firstWeek['unique_types'],
+                'directions' => $firstWeek['directions_classified']
             ],
             'last_week' => [
                 'period' => $lastWeek['first_date'] . ' - ' . $lastWeek['last_date'],
                 'total_attempts' => $lastWeek['total'],
                 'avg_interval' => $lastWeek['avg_interval'],
                 'avg_pause' => $lastWeek['avg_pause'],
-                'types_count' => $lastWeek['unique_types']
+                'types_count' => $lastWeek['unique_types'],
+                'directions' => $lastWeek['directions_classified']
             ],
             'changes' => [
                 'attempts_change' => $lastWeek['total'] - $firstWeek['total'],
@@ -249,6 +260,107 @@ class UserPhraseStats {
     }
     
     /**
+     * Классифицировать направление
+     * 
+     * @param string $direction
+     * @return array ['type' => string, 'label' => string, 'emoji' => string]
+     */
+    private function classifyDirection(string $direction): array {
+        // Аудирование (английский -> русский)
+        if (in_array($direction, ['target-native', 'target-native-both', 'target2-native-both'])) {
+            return [
+                'type' => self::DIRECTION_LISTENING,
+                'label' => 'аудирование',
+                'emoji' => '👂'
+            ];
+        }
+        
+        // Говорение (русский -> английский)
+        if (in_array($direction, ['native-target', 'native-target2', 'native-target-both', 'native-target2-both'])) {
+            return [
+                'type' => self::DIRECTION_SPEAKING,
+                'label' => 'говорение',
+                'emoji' => '🗣️'
+            ];
+        }
+        
+        // Смешанные типы (и аудирование и говорение)
+        if (in_array($direction, ['target2-native-target-both'])) {
+            return [
+                'type' => self::DIRECTION_BOTH,
+                'label' => 'аудирование + говорение',
+                'emoji' => '🔄'
+            ];
+        }
+        
+        // Квиз
+        if ($direction === 'quiz') {
+            return [
+                'type' => self::DIRECTION_QUIZ,
+                'label' => 'квиз',
+                'emoji' => '❓'
+            ];
+        }
+        
+        // Диалоги
+        if ($direction === 'dialog_prepare') {
+            return [
+                'type' => self::DIRECTION_DIALOG_PREPARE,
+                'label' => 'подготовка к диалогу',
+                'emoji' => '📝'
+            ];
+        }
+        
+        if ($direction === 'dialog_exam') {
+            return [
+                'type' => self::DIRECTION_DIALOG_EXAM,
+                'label' => 'диалог',
+                'emoji' => '💬'
+            ];
+        }
+        
+        // По умолчанию
+        return [
+            'type' => 'unknown',
+            'label' => $direction,
+            'emoji' => '❓'
+        ];
+    }
+    
+    /**
+     * Получить статистику направлений
+     * 
+     * @param array $records
+     * @return array
+     */
+    private function getDirectionsStats(array $records): array {
+        $stats = [
+            'raw' => [],
+            'classified' => [],
+            'counts' => [
+                self::DIRECTION_LISTENING => 0,
+                self::DIRECTION_SPEAKING => 0,
+                self::DIRECTION_QUIZ => 0,
+                self::DIRECTION_DIALOG_PREPARE => 0,
+                self::DIRECTION_DIALOG_EXAM => 0,
+                self::DIRECTION_BOTH => 0,
+                'unknown' => 0
+            ]
+        ];
+        
+        foreach ($records as $record) {
+            $direction = $record['direction'];
+            $classified = $this->classifyDirection($direction);
+            
+            $stats['raw'][$direction] = true;
+            $stats['classified'][$classified['type']] = $classified;
+            $stats['counts'][$classified['type']]++;
+        }
+        
+        return $stats;
+    }
+    
+    /**
      * Форматировать summary одной недели
      */
     private function formatWeekSummary(array $weekData, int $totalRecords): string {
@@ -260,15 +372,30 @@ class UserPhraseStats {
         $parts[] = "⏱ Среднее время на фразу: {$weekData['avg_interval']} сек";
         $parts[] = "🤔 Средняя пауза: {$weekData['avg_pause']} сек";
         
-        if (!empty($weekData['directions'])) {
-            $directionsText = [];
-            if (in_array('target-native', $weekData['directions'])) {
-                $directionsText[] = 'аудирование';
+        if (!empty($weekData['directions_classified']['counts'])) {
+            $practice = [];
+            if ($weekData['directions_classified']['counts'][self::DIRECTION_LISTENING] > 0) {
+                $practice[] = '👂 аудирование';
             }
-            if (in_array('native-target', $weekData['directions'])) {
-                $directionsText[] = 'говорение';
+            if ($weekData['directions_classified']['counts'][self::DIRECTION_SPEAKING] > 0) {
+                $practice[] = '🗣️ говорение';
             }
-            $parts[] = "🎯 Практиковали: " . implode(' и ', $directionsText);
+            if ($weekData['directions_classified']['counts'][self::DIRECTION_QUIZ] > 0) {
+                $practice[] = '❓ квизы';
+            }
+            if ($weekData['directions_classified']['counts'][self::DIRECTION_DIALOG_PREPARE] > 0) {
+                $practice[] = '📝 подготовка диалогов';
+            }
+            if ($weekData['directions_classified']['counts'][self::DIRECTION_DIALOG_EXAM] > 0) {
+                $practice[] = '💬 диалоги';
+            }
+            if ($weekData['directions_classified']['counts'][self::DIRECTION_BOTH] > 0) {
+                $practice[] = '🔄 смешанные';
+            }
+            
+            if (!empty($practice)) {
+                $parts[] = "🎯 Практиковали: " . implode(', ', $practice);
+            }
         }
         
         return implode("\n", $parts);
@@ -295,9 +422,27 @@ class UserPhraseStats {
             $recs[] = "• 🐢 Темп занятий низкий. Постарайтесь отвечать чуть быстрее";
         }
         
-        if (count($weekData['directions']) < 2) {
-            $missing = in_array('target-native', $weekData['directions']) ? 'говорение' : 'аудирование';
-            $recs[] = "• 🔄 Добавьте практику {$missing} для баланса навыков";
+        // Анализ направлений
+        $hasListening = $weekData['directions_classified']['counts'][self::DIRECTION_LISTENING] > 0;
+        $hasSpeaking = $weekData['directions_classified']['counts'][self::DIRECTION_SPEAKING] > 0;
+        $hasQuiz = $weekData['directions_classified']['counts'][self::DIRECTION_QUIZ] > 0;
+        $hasDialog = $weekData['directions_classified']['counts'][self::DIRECTION_DIALOG_EXAM] > 0 ||
+                     $weekData['directions_classified']['counts'][self::DIRECTION_DIALOG_PREPARE] > 0;
+        
+        if (!$hasListening && !$hasSpeaking) {
+            $recs[] = "• 🎯 Попробуйте основные режимы: аудирование и говорение";
+        } elseif (!$hasListening) {
+            $recs[] = "• 👂 Добавьте практику аудирования (английский → русский)";
+        } elseif (!$hasSpeaking) {
+            $recs[] = "• 🗣️ Добавьте практику говорения (русский → английский)";
+        }
+        
+        if (!$hasQuiz && $weekData['total'] > 50) {
+            $recs[] = "• ❓ Попробуйте режим викторины для закрепления материала";
+        }
+        
+        if (!$hasDialog && $weekData['total'] > 100) {
+            $recs[] = "• 💬 Когда освоитесь, попробуйте диалоги для реальной практики";
         }
         
         if (empty($recs)) {
@@ -387,7 +532,46 @@ class UserPhraseStats {
         $lines[] = "  • Средняя пауза: {$last['avg_pause']} сек " . $this->getPauseEmoji($changes['pause']['direction']);
         $lines[] = "  • Тем: {$last['unique_types']} " . $this->getEmoji($changes['diversity']['direction']);
         
+        // Добавляем информацию о направлениях
+        $directionsLine = $this->formatDirectionsLine($last['directions_classified']);
+        if ($directionsLine) {
+            $lines[] = "";
+            $lines[] = $directionsLine;
+        }
+        
         return implode("\n", $lines);
+    }
+    
+    /**
+     * Форматировать строку с направлениями
+     */
+    private function formatDirectionsLine(array $directionsStats): string {
+        $active = [];
+        
+        if ($directionsStats['counts'][self::DIRECTION_LISTENING] > 0) {
+            $active[] = '👂 аудирование';
+        }
+        if ($directionsStats['counts'][self::DIRECTION_SPEAKING] > 0) {
+            $active[] = '🗣️ говорение';
+        }
+        if ($directionsStats['counts'][self::DIRECTION_QUIZ] > 0) {
+            $active[] = '❓ квизы';
+        }
+        if ($directionsStats['counts'][self::DIRECTION_DIALOG_PREPARE] > 0) {
+            $active[] = '📝 подготовка';
+        }
+        if ($directionsStats['counts'][self::DIRECTION_DIALOG_EXAM] > 0) {
+            $active[] = '💬 диалоги';
+        }
+        if ($directionsStats['counts'][self::DIRECTION_BOTH] > 0) {
+            $active[] = '🔄 смешанные';
+        }
+        
+        if (empty($active)) {
+            return '';
+        }
+        
+        return "🎯 Режимы: " . implode(', ', $active);
     }
     
     /**
@@ -458,9 +642,25 @@ class UserPhraseStats {
         }
         
         // Баланс направлений
-        if (count($lastWeek['directions']) < 2) {
-            $missing = in_array('target-native', $lastWeek['directions']) ? 'говорение' : 'аудирование';
-            $recs[] = "• 🔄 Добавьте практику {$missing} - это укрепит навык";
+        $hasListening = $lastWeek['directions_classified']['counts'][self::DIRECTION_LISTENING] > 0;
+        $hasSpeaking = $lastWeek['directions_classified']['counts'][self::DIRECTION_SPEAKING] > 0;
+        $hasQuiz = $lastWeek['directions_classified']['counts'][self::DIRECTION_QUIZ] > 0;
+        $hasDialog = $lastWeek['directions_classified']['counts'][self::DIRECTION_DIALOG_EXAM] > 0;
+        
+        if (!$hasListening && $hasSpeaking) {
+            $recs[] = "• 👂 Добавьте аудирование для лучшего восприятия на слух";
+        } elseif ($hasListening && !$hasSpeaking) {
+            $recs[] = "• 🗣️ Добавьте говорение - это закрепит активный словарь";
+        } elseif (!$hasListening && !$hasSpeaking) {
+            $recs[] = "• 🎯 Попробуйте основные режимы: аудирование и говорение";
+        }
+        
+        if (!$hasQuiz && $lastWeek['total'] > 30) {
+            $recs[] = "• ❓ Режим викторины поможет закрепить сложные темы";
+        }
+        
+        if (!$hasDialog && $lastWeek['total'] > 50) {
+            $recs[] = "• 💬 Попробуйте диалоги для практики в реальном контексте";
         }
         
         if (empty($recs)) {
@@ -651,6 +851,7 @@ class UserPhraseStats {
                 'avg_pause' => 0,
                 'types' => [],
                 'directions' => [],
+                'directions_classified' => $this->getDirectionsStats([]),
                 'unique_types' => 0,
                 'first_date' => null,
                 'last_date' => null,
@@ -667,28 +868,26 @@ class UserPhraseStats {
             }
         }
         
-        // Собираем типы фраз и направления
+        // Собираем типы фраз
         $types = [];
-        $directions = [];
         $totalPause = 0;
         
         foreach ($records as $record) {
             $types[$record['type']] = true;
-            $directions[$record['direction']] = true;
             $totalPause += $record['pause'];
         }
         
         $typesList = array_keys($types);
-        $directionsList = array_keys($directions);
+        $directionsStats = $this->getDirectionsStats($records);
         
         return [
             'total' => count($records),
             'avg_interval' => !empty($intervals) ? round(array_sum($intervals) / count($intervals), 2) : 0,
             'avg_pause' => round($totalPause / count($records), 2),
             'types' => $typesList,
-            'directions' => $directionsList,
+            'directions' => array_keys($directionsStats['raw']),
+            'directions_classified' => $directionsStats,
             'unique_types' => count($typesList),
-            'unique_directions' => count($directionsList),
             'first_date' => $records[0]['date'],
             'last_date' => $records[count($records)-1]['date'],
             'records' => $records
