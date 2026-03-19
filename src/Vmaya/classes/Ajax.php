@@ -388,7 +388,7 @@ class Ajax extends BaseAjax {
 
 			$stats = new UserPhraseStats($user_id);
 
-			$result = $stats->getLLMData();
+			$result = $stats->getHumanReadableProgress();
 
 			return $result;
 		}

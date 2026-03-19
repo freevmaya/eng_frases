@@ -64,6 +64,481 @@ class UserPhraseStats {
     }
     
     /**
+     * Получить данные для LLM
+     * 
+     * @param int $days Количество дней
+     * @return array Данные для промпта
+     */
+    public function getLLMData(int $days = 30): array {
+        $stats = $this->getWeeklyStats($days);
+        
+        if ($stats['total_records'] === 0) {
+            return [
+                'has_data' => false,
+                'message' => 'Нет данных за указанный период'
+            ];
+        }
+        
+        // Форматируем для LLM
+        $llmData = [
+            'period_days' => $days,
+            'total_records' => $stats['total_records'],
+            'weeks_count' => count($stats['weeks']),
+            'weeks' => []
+        ];
+        
+        foreach ($stats['weeks'] as $weekKey => $weekData) {
+            // Разбираем ключ недели (2025-12)
+            list($year, $weekNum) = explode('-', $weekKey);
+            
+            $llmData['weeks'][] = [
+                'year' => (int)$year,
+                'week' => (int)$weekNum,
+                'period' => $weekData['first_date'] . ' - ' . $weekData['last_date'],
+                'total_attempts' => $weekData['total'],
+                'avg_interval' => $weekData['avg_interval'],
+                'avg_pause' => $weekData['avg_pause'],
+                'types' => $weekData['types'],
+                'directions' => $weekData['directions'],
+                'unique_types' => $weekData['unique_types']
+            ];
+        }
+        
+        return $llmData;
+    }
+    
+    /**
+     * Получить сводку по прогрессу (сравнение первой и последней недели)
+     * 
+     * @param int $days Количество дней
+     * @return array Сводка прогресса
+     */
+    public function getProgressSummary(int $days = 30): array {
+        $stats = $this->getWeeklyStats($days);
+        
+        if ($stats['total_records'] === 0 || count($stats['weeks']) < 2) {
+            return [
+                'has_progress' => false,
+                'message' => 'Недостаточно данных для анализа прогресса'
+            ];
+        }
+        
+        $weeks = array_values($stats['weeks']);
+        $firstWeek = $weeks[0];
+        $lastWeek = $weeks[count($weeks) - 1];
+        
+        // Новые типы фраз
+        $newTypes = array_diff($lastWeek['types'], $firstWeek['types']);
+        
+        // Типы, которые перестали практиковаться
+        $lostTypes = array_diff($firstWeek['types'], $lastWeek['types']);
+        
+        return [
+            'has_progress' => true,
+            'first_week' => [
+                'period' => $firstWeek['first_date'] . ' - ' . $firstWeek['last_date'],
+                'total_attempts' => $firstWeek['total'],
+                'avg_interval' => $firstWeek['avg_interval'],
+                'avg_pause' => $firstWeek['avg_pause'],
+                'types_count' => $firstWeek['unique_types']
+            ],
+            'last_week' => [
+                'period' => $lastWeek['first_date'] . ' - ' . $lastWeek['last_date'],
+                'total_attempts' => $lastWeek['total'],
+                'avg_interval' => $lastWeek['avg_interval'],
+                'avg_pause' => $lastWeek['avg_pause'],
+                'types_count' => $lastWeek['unique_types']
+            ],
+            'changes' => [
+                'attempts_change' => $lastWeek['total'] - $firstWeek['total'],
+                'interval_change' => round($lastWeek['avg_interval'] - $firstWeek['avg_interval'], 2),
+                'pause_change' => round($lastWeek['avg_pause'] - $firstWeek['avg_pause'], 2),
+                'types_change' => $lastWeek['unique_types'] - $firstWeek['unique_types'],
+                'new_types' => array_values($newTypes),
+                'lost_types' => array_values($lostTypes)
+            ],
+            'trends' => [
+                'activity' => $lastWeek['total'] > $firstWeek['total'] ? 'increasing' : ($lastWeek['total'] < $firstWeek['total'] ? 'decreasing' : 'stable'),
+                'speed' => $lastWeek['avg_interval'] < $firstWeek['avg_interval'] ? 'faster' : ($lastWeek['avg_interval'] > $firstWeek['avg_interval'] ? 'slower' : 'stable'),
+                'pause' => $lastWeek['avg_pause'] < $firstWeek['avg_pause'] ? 'improving' : ($lastWeek['avg_pause'] > $firstWeek['avg_pause'] ? 'worsening' : 'stable'),
+                'diversity' => $lastWeek['unique_types'] > $firstWeek['unique_types'] ? 'expanding' : ($lastWeek['unique_types'] < $firstWeek['unique_types'] ? 'contracting' : 'stable')
+            ]
+        ];
+    }
+    
+    /**
+     * Получить человеко-читаемый отчет о прогрессе
+     * 
+     * @param int $days Количество дней для анализа
+     * @return array Отчет с прогрессом и рекомендацией
+     */
+    public function getHumanReadableProgress(int $days = 30): array {
+        $stats = $this->getWeeklyStats($days);
+        
+        if ($stats['total_records'] === 0) {
+            return [
+                'success' => false,
+                'message' => '😢 За этот период у вас пока нет занятий. Самое время начать!',
+                'progress' => null,
+                'recommendation' => 'Попробуйте позаниматься хотя бы 10-15 минут сегодня.'
+            ];
+        }
+        
+        if (count($stats['weeks']) < 2) {
+            // Только одна неделя данных
+            $weekData = reset($stats['weeks']); // первая (и единственная) неделя
+            
+            return [
+                'success' => true,
+                'message' => $this->formatWeekSummary($weekData, $stats['total_records']),
+                'progress' => null,
+                'recommendation' => $this->generateSingleWeekRecommendation($weekData)
+            ];
+        }
+        
+        // Сравниваем первую и последнюю неделю
+        $weeks = array_values($stats['weeks']);
+        $firstWeek = $weeks[0];
+        $lastWeek = $weeks[count($weeks) - 1];
+        
+        // Вычисляем изменения в процентах
+        $changes = [
+            'attempts' => $this->calculateChange($lastWeek['total'], $firstWeek['total']),
+            'interval' => $this->calculateChange($lastWeek['avg_interval'], $firstWeek['avg_interval'], true),
+            'pause' => $this->calculateChange($lastWeek['avg_pause'], $firstWeek['avg_pause'], true),
+            'diversity' => $this->calculateChange($lastWeek['unique_types'], $firstWeek['unique_types'])
+        ];
+        
+        // Формируем текстовое описание прогресса
+        $progressText = $this->formatProgressText($changes, $firstWeek, $lastWeek);
+        
+        // Генерируем рекомендацию
+        $recommendation = $this->generateRecommendation($changes, $lastWeek);
+        
+        // Формируем структурированный отчет
+        return [
+            'success' => true,
+            'message' => $progressText,
+            'progress' => [
+                'first_week' => [
+                    'period' => $firstWeek['first_date'] . ' - ' . $firstWeek['last_date'],
+                    'attempts' => $firstWeek['total'],
+                    'avg_interval' => $firstWeek['avg_interval'] . ' сек',
+                    'avg_pause' => $firstWeek['avg_pause'] . ' сек',
+                    'topics' => $firstWeek['unique_types']
+                ],
+                'last_week' => [
+                    'period' => $lastWeek['first_date'] . ' - ' . $lastWeek['last_date'],
+                    'attempts' => $lastWeek['total'],
+                    'avg_interval' => $lastWeek['avg_interval'] . ' сек',
+                    'avg_pause' => $lastWeek['avg_pause'] . ' сек',
+                    'topics' => $lastWeek['unique_types']
+                ],
+                'changes' => [
+                    'attempts' => $this->formatChangeWithArrow($changes['attempts']),
+                    'interval' => $this->formatChangeWithArrow($changes['interval'], true),
+                    'pause' => $this->formatChangeWithArrow($changes['pause'], true),
+                    'diversity' => $this->formatChangeWithArrow($changes['diversity']),
+                    'new_topics' => $this->getNewTopics($firstWeek, $lastWeek),
+                    'lost_topics' => $this->getLostTopics($firstWeek, $lastWeek)
+                ]
+            ],
+            'recommendation' => $recommendation,
+            'summary' => $this->getQuickSummary($changes, $lastWeek)
+        ];
+    }
+    
+    /**
+     * Форматировать summary одной недели
+     */
+    private function formatWeekSummary(array $weekData, int $totalRecords): string {
+        $daysActive = count(array_unique(array_column($weekData['records'] ?? [], 'date')));
+        
+        $parts = [];
+        $parts[] = "📊 За этот период вы выполнили {$totalRecords} упражнений";
+        $parts[] = "📝 Изучали " . $this->pluralize($weekData['unique_types'], 'тему', 'темы', 'тем');
+        $parts[] = "⏱ Среднее время на фразу: {$weekData['avg_interval']} сек";
+        $parts[] = "🤔 Средняя пауза: {$weekData['avg_pause']} сек";
+        
+        if (!empty($weekData['directions'])) {
+            $directionsText = [];
+            if (in_array('target-native', $weekData['directions'])) {
+                $directionsText[] = 'аудирование';
+            }
+            if (in_array('native-target', $weekData['directions'])) {
+                $directionsText[] = 'говорение';
+            }
+            $parts[] = "🎯 Практиковали: " . implode(' и ', $directionsText);
+        }
+        
+        return implode("\n", $parts);
+    }
+    
+    /**
+     * Сгенерировать рекомендацию для одной недели
+     */
+    private function generateSingleWeekRecommendation(array $weekData): string {
+        $recs = [];
+        
+        if ($weekData['total'] < 20) {
+            $recs[] = "• 🎯 Старайтесь заниматься чаще. Даже 10-15 минут в день дают прогресс";
+        }
+        
+        if ($weekData['unique_types'] < 3) {
+            $recs[] = "• 📚 Попробуйте добавлять новые темы. Вы фокусируетесь всего на " . 
+                      $this->pluralize($weekData['unique_types'], 'теме', 'темах', 'темах');
+        }
+        
+        if ($weekData['avg_interval'] < 3) {
+            $recs[] = "• ⚡ Вы очень быстро переключаетесь. Делайте микропаузы между фразами";
+        } elseif ($weekData['avg_interval'] > 8) {
+            $recs[] = "• 🐢 Темп занятий низкий. Постарайтесь отвечать чуть быстрее";
+        }
+        
+        if (count($weekData['directions']) < 2) {
+            $missing = in_array('target-native', $weekData['directions']) ? 'говорение' : 'аудирование';
+            $recs[] = "• 🔄 Добавьте практику {$missing} для баланса навыков";
+        }
+        
+        if (empty($recs)) {
+            $recs[] = "• 👍 Отличный старт! Продолжайте в том же духе";
+        }
+        
+        return "Рекомендации:\n" . implode("\n", $recs);
+    }
+    
+    /**
+     * Рассчитать процент изменения
+     */
+    private function calculateChange(float $new, float $old, bool $inverse = false): array {
+        if ($old == 0) return ['percent' => 0, 'direction' => 'same'];
+        
+        $percent = round((($new - $old) / $old) * 100, 1);
+        
+        // Для интервала и паузы: уменьшение = прогресс
+        if ($inverse) {
+            if ($percent < -0.1) {
+                $direction = 'up'; // улучшение (стало быстрее/меньше пауза)
+            } elseif ($percent > 0.1) {
+                $direction = 'down'; // ухудшение
+            } else {
+                $direction = 'same';
+            }
+        } else {
+            // Для попыток и разнообразия: увеличение = прогресс
+            if ($percent > 0.1) {
+                $direction = 'up';
+            } elseif ($percent < -0.1) {
+                $direction = 'down';
+            } else {
+                $direction = 'same';
+            }
+        }
+        
+        return [
+            'percent' => abs($percent),
+            'direction' => $direction,
+            'absolute' => round($new - $old, 1)
+        ];
+    }
+    
+    /**
+     * Форматировать изменение со стрелкой
+     */
+    private function formatChangeWithArrow(array $change, bool $inverse = false): string {
+        $arrows = [
+            'up' => $inverse ? '↓' : '↑',
+            'down' => $inverse ? '↑' : '↓',
+            'same' => '→'
+        ];
+        
+        $colors = [
+            'up' => $inverse ? '🔴' : '🟢',
+            'down' => $inverse ? '🟢' : '🔴',
+            'same' => '⚪'
+        ];
+        
+        $arrow = $arrows[$change['direction']];
+        $color = $colors[$change['direction']];
+        
+        if ($change['direction'] === 'same') {
+            return "{$color} без изменений";
+        }
+        
+        return "{$color} {$arrow} {$change['percent']}%";
+    }
+    
+    /**
+     * Форматировать текст прогресса
+     */
+    private function formatProgressText(array $changes, array $first, array $last): string {
+        $lines = [];
+        $lines[] = "📈 ВАШ ПРОГРЕСС ЗА ПЕРИОД";
+        $lines[] = "";
+        $lines[] = "Первая неделя ({$first['first_date']} - {$first['last_date']}):";
+        $lines[] = "  • Выполнено: {$first['total']} упражнений";
+        $lines[] = "  • Средний интервал: {$first['avg_interval']} сек";
+        $lines[] = "  • Средняя пауза: {$first['avg_pause']} сек";
+        $lines[] = "  • Тем: {$first['unique_types']}";
+        $lines[] = "";
+        $lines[] = "Последняя неделя ({$last['first_date']} - {$last['last_date']}):";
+        $lines[] = "  • Выполнено: {$last['total']} упражнений " . $this->getEmoji($changes['attempts']['direction']);
+        $lines[] = "  • Средний интервал: {$last['avg_interval']} сек " . $this->getIntervalEmoji($changes['interval']['direction']);
+        $lines[] = "  • Средняя пауза: {$last['avg_pause']} сек " . $this->getPauseEmoji($changes['pause']['direction']);
+        $lines[] = "  • Тем: {$last['unique_types']} " . $this->getEmoji($changes['diversity']['direction']);
+        
+        return implode("\n", $lines);
+    }
+    
+    /**
+     * Получить эмодзи для направления
+     */
+    private function getEmoji(string $direction): string {
+        return match($direction) {
+            'up' => '📈',
+            'down' => '📉',
+            default => '➡️'
+        };
+    }
+    
+    /**
+     * Получить эмодзи для интервала
+     */
+    private function getIntervalEmoji(string $direction): string {
+        return match($direction) {
+            'up' => '⚡', // стало быстрее (интервал уменьшился)
+            'down' => '🐢', // стало медленнее
+            default => '⏱️'
+        };
+    }
+    
+    /**
+     * Получить эмодзи для паузы
+     */
+    private function getPauseEmoji(string $direction): string {
+        return match($direction) {
+            'up' => '🤔➡️💪', // пауза уменьшилась = прогресс
+            'down' => '😓', // пауза увеличилась
+            default => '⏸️'
+        };
+    }
+    
+    /**
+     * Сгенерировать рекомендацию
+     */
+    private function generateRecommendation(array $changes, array $lastWeek): string {
+        $recs = [];
+        
+        // Анализ активности
+        if ($changes['attempts']['direction'] === 'down') {
+            $recs[] = "• 🔥 В последнюю неделю вы занимались меньше. Постарайтесь вернуть ритм!";
+        } elseif ($changes['attempts']['direction'] === 'up') {
+            $recs[] = "• 🌟 Отличный рост активности! Так держать!";
+        }
+        
+        // Анализ скорости
+        if ($changes['interval']['direction'] === 'up') {
+            $recs[] = "• ⚡ Вы стали отвечать быстрее! Мозг лучше обрабатывает информацию";
+        } elseif ($changes['interval']['direction'] === 'down') {
+            $recs[] = "• 🐢 Темп снизился. Возможно, темы стали сложнее - это нормально";
+        }
+        
+        // Анализ паузы
+        if ($changes['pause']['direction'] === 'up') {
+            $recs[] = "• 🎯 Пауза уменьшилась - вы быстрее вспоминаете перевод!";
+        } elseif ($changes['pause']['direction'] === 'down') {
+            $recs[] = "• 🤔 Пауза увеличилась. Сложные темы требуют больше времени на обдумывание";
+        }
+        
+        // Анализ разнообразия
+        if ($changes['diversity']['direction'] === 'up') {
+            $recs[] = "• 📚 Вы расширяете кругозор! Новые темы = новый уровень";
+        } elseif ($changes['diversity']['direction'] === 'down') {
+            $recs[] = "• 🎯 Сфокусируйтесь на новых темах, чтобы прогресс был разносторонним";
+        }
+        
+        // Баланс направлений
+        if (count($lastWeek['directions']) < 2) {
+            $missing = in_array('target-native', $lastWeek['directions']) ? 'говорение' : 'аудирование';
+            $recs[] = "• 🔄 Добавьте практику {$missing} - это укрепит навык";
+        }
+        
+        if (empty($recs)) {
+            $recs[] = "• 👍 Стабильность - признак мастерства! Продолжайте в том же духе";
+        }
+        
+        return implode("\n", $recs);
+    }
+    
+    /**
+     * Получить быструю сводку
+     */
+    private function getQuickSummary(array $changes, array $lastWeek): string {
+        $parts = [];
+        
+        // Общая оценка
+        $positive = 0;
+        $negative = 0;
+        
+        if ($changes['attempts']['direction'] === 'up') $positive++;
+        if ($changes['attempts']['direction'] === 'down') $negative++;
+        if ($changes['interval']['direction'] === 'up') $positive++;
+        if ($changes['interval']['direction'] === 'down') $negative++;
+        if ($changes['pause']['direction'] === 'up') $positive++;
+        if ($changes['pause']['direction'] === 'down') $negative++;
+        if ($changes['diversity']['direction'] === 'up') $positive++;
+        if ($changes['diversity']['direction'] === 'down') $negative++;
+        
+        if ($positive > $negative + 1) {
+            $parts[] = "🚀 Отличный прогресс!";
+        } elseif ($negative > $positive + 1) {
+            $parts[] = "💪 Нужно поднажать!";
+        } else {
+            $parts[] = "📊 Стабильное движение вперед";
+        }
+        
+        $parts[] = "На прошлой неделе: {$lastWeek['total']} упражнений, {$lastWeek['unique_types']} тем";
+        
+        return implode(" ", $parts);
+    }
+    
+    /**
+     * Получить новые темы
+     */
+    private function getNewTopics(array $first, array $last): array {
+        return array_values(array_diff($last['types'], $first['types']));
+    }
+    
+    /**
+     * Получить потерянные темы
+     */
+    private function getLostTopics(array $first, array $last): array {
+        return array_values(array_diff($first['types'], $last['types']));
+    }
+    
+    /**
+     * Плюрализация
+     */
+    private function pluralize(int $count, string $one, string $few, string $many): string {
+        $mod10 = $count % 10;
+        $mod100 = $count % 100;
+        
+        if ($mod100 >= 11 && $mod100 <= 19) {
+            return $count . ' ' . $many;
+        }
+        
+        if ($mod10 == 1) {
+            return $count . ' ' . $one;
+        }
+        
+        if ($mod10 >= 2 && $mod10 <= 4) {
+            return $count . ' ' . $few;
+        }
+        
+        return $count . ' ' . $many;
+    }
+    
+    /**
      * Получить записи из БД
      * 
      * @param int $days Количество дней
@@ -178,7 +653,8 @@ class UserPhraseStats {
                 'directions' => [],
                 'unique_types' => 0,
                 'first_date' => null,
-                'last_date' => null
+                'last_date' => null,
+                'records' => $records
             ];
         }
         
@@ -214,7 +690,8 @@ class UserPhraseStats {
             'unique_types' => count($typesList),
             'unique_directions' => count($directionsList),
             'first_date' => $records[0]['date'],
-            'last_date' => $records[count($records)-1]['date']
+            'last_date' => $records[count($records)-1]['date'],
+            'records' => $records
         ];
     }
     
@@ -235,136 +712,4 @@ class UserPhraseStats {
             'weeks' => []
         ];
     }
-    
-    /**
-     * Получить данные для LLM
-     * 
-     * @param int $days Количество дней
-     * @return array Данные для промпта
-     */
-    public function getLLMData(int $days = 30): array {
-        $stats = $this->getWeeklyStats($days);
-        
-        if ($stats['total_records'] === 0) {
-            return [
-                'has_data' => false,
-                'message' => 'Нет данных за указанный период'
-            ];
-        }
-        
-        // Форматируем для LLM
-        $llmData = [
-            'period_days' => $days,
-            'total_records' => $stats['total_records'],
-            'weeks_count' => count($stats['weeks']),
-            'weeks' => []
-        ];
-        
-        foreach ($stats['weeks'] as $weekKey => $weekData) {
-            // Разбираем ключ недели (2025-12)
-            list($year, $weekNum) = explode('-', $weekKey);
-            
-            $llmData['weeks'][] = [
-                'year' => (int)$year,
-                'week' => (int)$weekNum,
-                'period' => $weekData['first_date'] . ' - ' . $weekData['last_date'],
-                'total_attempts' => $weekData['total'],
-                'avg_interval' => $weekData['avg_interval'],
-                'avg_pause' => $weekData['avg_pause'],
-                'types' => $weekData['types'],
-                'directions' => $weekData['directions'],
-                'unique_types' => $weekData['unique_types']
-            ];
-        }
-        
-        return $llmData;
-    }
-    
-    /**
-     * Получить сводку по прогрессу (сравнение первой и последней недели)
-     * 
-     * @param int $days Количество дней
-     * @return array Сводка прогресса
-     */
-    public function getProgressSummary(int $days = 30): array {
-        $stats = $this->getWeeklyStats($days);
-        
-        if ($stats['total_records'] === 0 || count($stats['weeks']) < 2) {
-            return [
-                'has_progress' => false,
-                'message' => 'Недостаточно данных для анализа прогресса'
-            ];
-        }
-        
-        $weeks = array_values($stats['weeks']);
-        $firstWeek = $weeks[0];
-        $lastWeek = $weeks[count($weeks) - 1];
-        
-        // Новые типы фраз
-        $newTypes = array_diff($lastWeek['types'], $firstWeek['types']);
-        
-        // Типы, которые перестали практиковаться
-        $lostTypes = array_diff($firstWeek['types'], $lastWeek['types']);
-        
-        return [
-            'has_progress' => true,
-            'first_week' => [
-                'period' => $firstWeek['first_date'] . ' - ' . $firstWeek['last_date'],
-                'total_attempts' => $firstWeek['total'],
-                'avg_interval' => $firstWeek['avg_interval'],
-                'avg_pause' => $firstWeek['avg_pause'],
-                'types_count' => $firstWeek['unique_types']
-            ],
-            'last_week' => [
-                'period' => $lastWeek['first_date'] . ' - ' . $lastWeek['last_date'],
-                'total_attempts' => $lastWeek['total'],
-                'avg_interval' => $lastWeek['avg_interval'],
-                'avg_pause' => $lastWeek['avg_pause'],
-                'types_count' => $lastWeek['unique_types']
-            ],
-            'changes' => [
-                'attempts_change' => $lastWeek['total'] - $firstWeek['total'],
-                'interval_change' => round($lastWeek['avg_interval'] - $firstWeek['avg_interval'], 2),
-                'pause_change' => round($lastWeek['avg_pause'] - $firstWeek['avg_pause'], 2),
-                'types_change' => $lastWeek['unique_types'] - $firstWeek['unique_types'],
-                'new_types' => array_values($newTypes),
-                'lost_types' => array_values($lostTypes)
-            ],
-            'trends' => [
-                'activity' => $lastWeek['total'] > $firstWeek['total'] ? 'increasing' : ($lastWeek['total'] < $firstWeek['total'] ? 'decreasing' : 'stable'),
-                'speed' => $lastWeek['avg_interval'] < $firstWeek['avg_interval'] ? 'faster' : ($lastWeek['avg_interval'] > $firstWeek['avg_interval'] ? 'slower' : 'stable'),
-                'pause' => $lastWeek['avg_pause'] < $firstWeek['avg_pause'] ? 'improving' : ($lastWeek['avg_pause'] > $firstWeek['avg_pause'] ? 'worsening' : 'stable'),
-                'diversity' => $lastWeek['unique_types'] > $firstWeek['unique_types'] ? 'expanding' : ($lastWeek['unique_types'] < $firstWeek['unique_types'] ? 'contracting' : 'stable')
-            ]
-        ];
-    }
 }
-
-/**
- * Пример использования:
- */
-/*
-try {
-    // Создаем объект статистики
-    $stats = new UserPhraseStats(123);
-    
-    // Получаем статистику за 30 дней с разбивкой по неделям
-    $weeklyStats = $stats->getWeeklyStats(30);
-    
-    // Получаем данные для LLM
-    $llmData = $stats->getLLMData(30);
-    
-    // Получаем сводку прогресса
-    $progressSummary = $stats->getProgressSummary(30);
-    
-    // Выводим результаты
-    echo "<pre>";
-    print_r($weeklyStats);
-    print_r($llmData);
-    print_r($progressSummary);
-    echo "</pre>";
-    
-} catch (Exception $e) {
-    echo "Ошибка: " . $e->getMessage();
-}
-*/

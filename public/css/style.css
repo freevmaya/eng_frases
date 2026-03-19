@@ -1107,3 +1107,8 @@ footer {
 .tools .item:hover {
     color: var(--target);
 }
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}

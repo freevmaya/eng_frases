@@ -14,14 +14,11 @@ class Tools {
         </a>`);
         onTap(this.add_favorites_btn, this.toggleFovorite.bind(this));
 
-		if (typeof DEV != 'undefined') {
-
-			this.progress_btn = $(`<a class="item" title="${Lang('your_progress')}">
-	            <i class="bi bi-graph-up-arrow"></i>
-	        </a>`);
-	        onTap(this.progress_btn, this.reportProgress.bind(this));
-			this.layer.append(this.progress_btn);
-		}
+		this.progress_btn = $(`<a class="item" title="${Lang('your_progress')}">
+            <i class="bi bi-graph-up-arrow"></i>
+        </a>`);
+        onTap(this.progress_btn, this.reportProgress.bind(this));
+		this.layer.append(this.progress_btn);
 
 		this.layer.append(this.report_phrase_btn);
 		this.layer.append(this.add_favorites_btn);
@@ -47,7 +44,10 @@ class Tools {
 		Ajax({
 			action: 'getStatistic'
 		}, (data)=>{
-			console.log(data);
+			if (data.message) {
+				Alert(`<pre>${data.message}\n${data.recommendation}</pre>`, Lang('statistic'));
+			} else 
+				showAlert(Lang('too_few_statistics'));
 		});
 	}
 
