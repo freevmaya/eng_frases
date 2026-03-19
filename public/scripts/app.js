@@ -664,8 +664,9 @@ function Application() {
 
         $(window).on('favorites_list', (e)=>{
             updateFavorites();
-            if (phrasesData['_favorites'].length > 0)
+            if (phrasesData['_favorites'] && (phrasesData['_favorites'].length > 0))
                 setCurrentType('_favorites');
+            else showAlert(Lang('favorites_empty'));
         });
     }
 
@@ -680,9 +681,9 @@ function Application() {
                             items.push(item);
                     });
             });
-            phrasesData['_favorites'] = items;
-            if (items.length == 0)
-                showAlert(Lang('favorites_empty'));
+
+            if (items.length > 0)
+                phrasesData['_favorites'] = items;
         }
     }
 
