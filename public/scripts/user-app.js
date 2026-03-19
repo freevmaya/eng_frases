@@ -5,6 +5,13 @@ class UserApp {
 
 	init(source_id, source, a_user_data, phrases_list = null) {
 
+		if (source_id == 'new') {
+			let site_source_id = localStorage.getItem(source + '_source_id');
+			if (isNumeric(site_source_id)) {
+				source_id = parseInt(site_source_id);
+			}
+		}
+
 		Ajax({
 			action: 'initUser',
 			data: {
@@ -13,10 +20,13 @@ class UserApp {
 				user_data:  a_user_data
 			}
 		}).then((data)=>{
-			if (data && data.user_id) {
+			if (data && isNumeric(data.user_id)) {
 
-				this.user_id = data.user_id;
+				this.user_id = parseInt(data.user_id);
 				$(window).trigger('on_user_id', this.user_id);
+
+				if (isNumeric(data.source_id))
+					localStorage.setItem(source + '_source_id', parseInt(data.source_id));
 
 				if (data.redirect)
 					document.location.href = data.redirect;

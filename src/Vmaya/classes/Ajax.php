@@ -84,6 +84,8 @@ class Ajax extends BaseAjax {
 							$userModel->Delete($session_user_id);
 						}
 					}
+
+					$source_id = $user_id;
 				}
 
 	    	} else {
@@ -97,7 +99,8 @@ class Ajax extends BaseAjax {
 	    	Page::setSession('user_id', $user_id);
 
 	    	$result = [
-				'user_id'=>intval($user_id)
+				'user_id' => intval($user_id),
+				'source_id' => $source_id
 			];
 
     		if (Page::getSession('language', $language) != $language) {
@@ -385,7 +388,7 @@ class Ajax extends BaseAjax {
 
 			$stats = new UserPhraseStats($user_id);
 
-			$result = $stats->getStatsWithProgress();
+			$result = $stats->getLLMData();
 
 			return $result;
 		}

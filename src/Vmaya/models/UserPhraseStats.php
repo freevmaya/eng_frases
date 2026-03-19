@@ -1,19 +1,12 @@
 <?php
 
 /**
- * Класс для статистики пользователя по фразам с анализом прогресса
+ * Класс для статистики пользователя по фразам с анализом по неделям
  */
 class UserPhraseStats {
     
     private mysqli $db;
     private int $userId;
-    
-    // Внутренние периоды для разбивки
-    private const INNER_PERIODS = [
-        'day' => 1,
-        '3days' => 3,
-        'week' => 7
-    ];
     
     /**
      * Конструктор
@@ -27,58 +20,47 @@ class UserPhraseStats {
     }
     
     /**
-     * Получить статистику с разбивкой по внутренним периодам
+     * Получить статистику с разбивкой по неделям
      * 
-     * @param int $days Количество дней для анализа (минимум 7, максимум 90)
-     * @return array Статистика с разбивкой по периодам
+     * @param int $days Количество дней для анализа (минимум 7)
+     * @return array Статистика с разбивкой по неделям
      * @throws InvalidArgumentException
      */
-    public function getStatsWithProgress(int $days = 30): array {
+    public function getWeeklyStats(int $days = 30): array {
         // Валидация
         if ($days < 7) {
             throw new InvalidArgumentException("Period must be at least 7 days");
-        }
-        if ($days > 90) {
-            throw new InvalidArgumentException("Period must not exceed 90 days");
         }
         
         // Получаем все записи за указанный период
         $allRecords = $this->fetchRecords($days);
         
         if (empty($allRecords)) {
-            return $this->emptyProgressResponse($days);
+            return $this->emptyResponse($days);
         }
         
         // Парсим записи
         $parsedRecords = $this->parseRecords($allRecords);
         
-        // Разбиваем на внутренние периоды
-        $periodsData = $this->splitIntoPeriods($parsedRecords, $days);
+        // Разбиваем на недели
+        $weeklyData = $this->splitIntoWeeks($parsedRecords, $days);
         
-        // Рассчитываем статистику для каждого периода
-        $progress = [];
-        foreach ($periodsData as $periodName => $periodRecords) {
-            $progress[$periodName] = $this->calculatePeriodStats($periodRecords);
-        }
-        
-        // Добавляем общую статистику за весь период
-        $overall = $this->calculatePeriodStats($parsedRecords);
-        
-        // Анализируем прогресс
-        $trends = $this->analyzeProgress($progress);
-        
-        return [
+        // Рассчитываем статистику для каждой недели
+        $result = [
             'total_days' => $days,
+            'total_records' => count($parsedRecords),
             'date_range' => [
                 'from' => date('Y-m-d H:i:s', $parsedRecords[0]['timestamp']),
                 'to' => date('Y-m-d H:i:s', $parsedRecords[count($parsedRecords)-1]['timestamp'])
             ],
-            'total_records' => count($parsedRecords),
-            'overall' => $overall,
-            'progress_by_periods' => $progress,
-            'trends' => $trends,
-            'recommendations' => $this->generateRecommendations($trends, $overall)
+            'weeks' => []
         ];
+        
+        foreach ($weeklyData as $weekKey => $weekRecords) {
+            $result['weeks'][$weekKey] = $this->calculateWeekStats($weekRecords);
+        }
+        
+        return $result;
     }
     
     /**
@@ -114,7 +96,7 @@ class UserPhraseStats {
      * Парсинг JSON записей
      * 
      * @param array $records Сырые записи
-     * @return array Распарсенные записи с добавленной датой
+     * @return array Распарсенные записи
      */
     private function parseRecords(array $records): array {
         $parsed = [];
@@ -124,14 +106,16 @@ class UserPhraseStats {
             $dbTime = strtotime($record['time']);
             
             if ($data && isset($data['time'], $data['type'], $data['pause'], $data['direction'])) {
+                $timestamp = (int)($data['time'] / 1000); // из миллисекунд в секунды
+                
                 $parsed[] = [
-                    'timestamp' => (int)($data['time'] / 1000), // из миллисекунд в секунды
-                    'db_time' => $dbTime,
-                    'time_ms' => (int)$data['time'],
+                    'timestamp' => $timestamp,
+                    'datetime' => date('Y-m-d H:i:s', $timestamp),
+                    'date' => date('Y-m-d', $timestamp),
+                    'week' => $this->getWeekNumber($timestamp),
                     'type' => trim($data['type']),
                     'pause' => (float)$data['pause'],
-                    'direction' => $data['direction'],
-                    'date' => date('Y-m-d', $dbTime)
+                    'direction' => $data['direction']
                 ];
             }
         }
@@ -143,328 +127,123 @@ class UserPhraseStats {
     }
     
     /**
-     * Разбить записи на внутренние периоды
+     * Получить номер недели для метки времени
      * 
-     * @param array $records Все записи
-     * @param int $totalDays Общий период
-     * @return array Записи, сгруппированные по периодам
+     * @param int $timestamp
+     * @return string Номер недели в формате "Y-W"
      */
-    private function splitIntoPeriods(array $records, int $totalDays): array {
-        $now = time();
-        $startDate = $now - ($totalDays * 86400);
-        
-        $periods = [];
-        
-        // Создаем периоды от начала до конца для каждого типа внутреннего периода
-        foreach (self::INNER_PERIODS as $periodName => $periodDays) {
-            // Для каждого внутреннего периода создаем срезы
-            for ($offset = 0; $offset < $totalDays; $offset += $periodDays) {
-                $periodStart = $startDate + ($offset * 86400);
-                $periodEnd = min($periodStart + ($periodDays * 86400), $now);
-                
-                $periodKey = $periodName . '_' . date('Y-m-d', $periodStart);
-                
-                // Инициализируем период с пустым массивом записей
-                $periods[$periodKey] = [];
-            }
-        }
-        
-        // Распределяем записи по периодам
-        foreach ($records as $record) {
-            foreach (array_keys($periods) as $periodKey) {
-                // Извлекаем дату из ключа периода
-                $periodDate = substr($periodKey, strpos($periodKey, '_') + 1);
-                $periodStart = strtotime($periodDate);
-                
-                // Определяем тип периода из ключа
-                $periodType = substr($periodKey, 0, strpos($periodKey, '_'));
-                $periodDays = self::INNER_PERIODS[$periodType];
-                $periodEnd = $periodStart + ($periodDays * 86400);
-                
-                // Проверяем, попадает ли запись в этот период
-                if ($record['timestamp'] >= $periodStart && $record['timestamp'] < $periodEnd) {
-                    $periods[$periodKey][] = $record;
-                    break; // Запись попала в период, выходим из цикла
-                }
-            }
-        }
-        
-        // Фильтруем пустые периоды
-        $result = [];
-        foreach ($periods as $key => $periodRecords) {
-            if (!empty($periodRecords)) {
-                $result[$key] = $periodRecords;
-            }
-        }
-        
-        return $result;
+    private function getWeekNumber(int $timestamp): string {
+        return date('Y-W', $timestamp);
     }
     
     /**
-     * Рассчитать статистику для периода
+     * Разбить записи на недели
      * 
-     * @param array $records Записи периода
-     * @return array Статистика
+     * @param array $records Все записи
+     * @param int $totalDays Общий период
+     * @return array Записи, сгруппированные по неделям
      */
-    private function calculatePeriodStats(array $records): array {
+    private function splitIntoWeeks(array $records, int $totalDays): array {
+        $weeks = [];
+        
+        foreach ($records as $record) {
+            $weekKey = $record['week'];
+            
+            if (!isset($weeks[$weekKey])) {
+                $weeks[$weekKey] = [];
+            }
+            
+            $weeks[$weekKey][] = $record;
+        }
+        
+        // Сортируем недели по ключу
+        ksort($weeks);
+        
+        return $weeks;
+    }
+    
+    /**
+     * Рассчитать статистику для недели
+     * 
+     * @param array $records Записи за неделю
+     * @return array Статистика недели
+     */
+    private function calculateWeekStats(array $records): array {
         if (empty($records)) {
             return [
                 'total' => 0,
-                'by_type' => [],
+                'avg_interval' => 0,
                 'avg_pause' => 0,
+                'types' => [],
                 'directions' => [],
-                'intervals' => [
-                    'avg' => 0,
-                    'min' => 0,
-                    'max' => 0
-                ],
-                'unique_types' => 0
+                'unique_types' => 0,
+                'first_date' => null,
+                'last_date' => null
             ];
         }
         
-        // Рассчитываем интервалы (исключая БОЛЬШЕ 10 секунд)
+        // Рассчитываем интервалы между записями (<= 10 секунд)
         $intervals = [];
         for ($i = 1; $i < count($records); $i++) {
             $interval = $records[$i]['timestamp'] - $records[$i - 1]['timestamp'];
-            if ($interval <= 10) { // ТОЛЬКО интервалы <= 10 секунд
+            if ($interval <= 10) {
                 $intervals[] = $interval;
             }
         }
         
-        // Группируем по типам
-        $byType = [];
-        $totalPause = 0;
+        // Собираем типы фраз и направления
+        $types = [];
         $directions = [];
+        $totalPause = 0;
         
         foreach ($records as $record) {
-            $type = $record['type'];
-            $direction = $record['direction'];
-            
-            if (!isset($byType[$type])) {
-                $byType[$type] = [
-                    'count' => 0,
-                    'total_pause' => 0,
-                    'directions' => []
-                ];
-            }
-            
-            $byType[$type]['count']++;
-            $byType[$type]['total_pause'] += $record['pause'];
-            $byType[$type]['directions'][$direction] = true;
-            
+            $types[$record['type']] = true;
+            $directions[$record['direction']] = true;
             $totalPause += $record['pause'];
-            $directions[$direction] = true;
         }
         
-        // Рассчитываем средние для каждого типа
-        foreach ($byType as &$typeData) {
-            $typeData['avg_pause'] = round($typeData['total_pause'] / $typeData['count'], 2);
-            $typeData['directions'] = array_keys($typeData['directions']);
-            unset($typeData['total_pause']);
-        }
+        $typesList = array_keys($types);
+        $directionsList = array_keys($directions);
         
         return [
             'total' => count($records),
-            'by_type' => $byType,
+            'avg_interval' => !empty($intervals) ? round(array_sum($intervals) / count($intervals), 2) : 0,
             'avg_pause' => round($totalPause / count($records), 2),
-            'directions' => array_keys($directions),
-            'intervals' => [
-                'avg' => !empty($intervals) ? round(array_sum($intervals) / count($intervals), 2) : 0,
-                'min' => !empty($intervals) ? min($intervals) : 0,
-                'max' => !empty($intervals) ? max($intervals) : 0,
-                'count' => count($intervals)
-            ],
-            'unique_types' => count($byType)
+            'types' => $typesList,
+            'directions' => $directionsList,
+            'unique_types' => count($typesList),
+            'unique_directions' => count($directionsList),
+            'first_date' => $records[0]['date'],
+            'last_date' => $records[count($records)-1]['date']
         ];
     }
     
     /**
-     * Анализировать прогресс по периодам
-     * 
-     * @param array $progress Статистика по периодам
-     * @return array Тренды и прогресс
-     */
-    private function analyzeProgress(array $progress): array {
-        if (count($progress) < 2) {
-            return [
-                'has_progress' => false,
-                'message' => 'Недостаточно данных для анализа прогресса'
-            ];
-        }
-        
-        // Получаем первый и последний периоды для каждого типа внутреннего периода
-        $trends = [];
-        
-        foreach (self::INNER_PERIODS as $periodName => $_) {
-            $periodKeys = array_keys($progress);
-            $firstKey = null;
-            $lastKey = null;
-            
-            foreach ($periodKeys as $key) {
-                if (strpos($key, $periodName) === 0) {
-                    if ($firstKey === null) $firstKey = $key;
-                    $lastKey = $key;
-                }
-            }
-            
-            if ($firstKey && $lastKey && $firstKey !== $lastKey) {
-                $first = $progress[$firstKey];
-                $last = $progress[$lastKey];
-                
-                // Анализируем изменения
-                $totalChange = $last['total'] - $first['total'];
-                $pauseChange = $last['avg_pause'] - $first['avg_pause'];
-                $typesChange = $last['unique_types'] - $first['unique_types'];
-                
-                $trends[$periodName] = [
-                    'periods_compared' => [
-                        'first' => $firstKey,
-                        'last' => $lastKey
-                    ],
-                    'total_change' => $totalChange,
-                    'total_trend' => $totalChange > 0 ? 'up' : ($totalChange < 0 ? 'down' : 'stable'),
-                    'pause_change' => round($pauseChange, 2),
-                    'pause_trend' => $pauseChange < 0 ? 'improving' : ($pauseChange > 0 ? 'worsening' : 'stable'),
-                    'types_change' => $typesChange,
-                    'types_trend' => $typesChange > 0 ? 'expanding' : ($typesChange < 0 ? 'contracting' : 'stable'),
-                    
-                    // Дополнительный анализ по конкретным типам
-                    'topics_evolution' => $this->analyzeTopicsEvolution(
-                        $first['by_type'] ?? [],
-                        $last['by_type'] ?? []
-                    )
-                ];
-            }
-        }
-        
-        return $trends;
-    }
-    
-    /**
-     * Анализ эволюции тем
-     * 
-     * @param array $first Первый период
-     * @param array $last Последний период
-     * @return array Эволюция тем
-     */
-    private function analyzeTopicsEvolution(array $first, array $last): array {
-        $evolution = [];
-        
-        // Новые темы
-        $newTopics = array_diff(array_keys($last), array_keys($first));
-        foreach ($newTopics as $topic) {
-            $evolution['new_topics'][] = [
-                'topic' => $topic,
-                'count' => $last[$topic]['count']
-            ];
-        }
-        
-        // Исчезнувшие темы
-        $lostTopics = array_diff(array_keys($first), array_keys($last));
-        foreach ($lostTopics as $topic) {
-            $evolution['lost_topics'][] = [
-                'topic' => $topic,
-                'last_count' => $first[$topic]['count']
-            ];
-        }
-        
-        // Прогресс в существующих темах
-        $commonTopics = array_intersect(array_keys($first), array_keys($last));
-        foreach ($commonTopics as $topic) {
-            $firstCount = $first[$topic]['count'];
-            $lastCount = $last[$topic]['count'];
-            $change = $lastCount - $firstCount;
-            
-            $evolution['existing_topics'][] = [
-                'topic' => $topic,
-                'first_count' => $firstCount,
-                'last_count' => $lastCount,
-                'change' => $change,
-                'trend' => $change > 0 ? 'more_practice' : ($change < 0 ? 'less_practice' : 'stable'),
-                'avg_pause_change' => round(
-                    ($last[$topic]['avg_pause'] ?? 0) - ($first[$topic]['avg_pause'] ?? 0), 
-                    2
-                )
-            ];
-        }
-        
-        return $evolution;
-    }
-    
-    /**
-     * Генерация рекомендаций на основе трендов
-     * 
-     * @param array $trends Тренды
-     * @param array $overall Общая статистика
-     * @return array Рекомендации
-     */
-    private function generateRecommendations(array $trends, array $overall): array {
-        $recommendations = [];
-        
-        // Анализ темпа занятий
-        if ($overall['intervals']['avg'] < 3) {
-            $recommendations[] = "Вы очень быстро переключаетесь между фразами (менее 3 сек). "
-                . "Попробуйте делать небольшие паузы для лучшего усвоения.";
-        } elseif ($overall['intervals']['avg'] > 8) {
-            $recommendations[] = "Интервалы между фразами большие (>8 сек). "
-                . "Постарайтесь поддерживать более ритмичный темп занятий.";
-        }
-        
-        // Анализ разнообразия тем
-        if ($overall['unique_types'] < 3) {
-            $recommendations[] = "Вы фокусируетесь всего на {$overall['unique_types']} темах. "
-                . "Рекомендуем расширить спектр изучаемых грамматических конструкций.";
-        }
-        
-        // Анализ прогресса
-        foreach ($trends as $period => $trend) {
-            if (isset($trend['pause_trend']) && $trend['pause_trend'] === 'worsening') {
-                $recommendations[] = "Время паузы увеличивается. "
-                    . "Возможно, темы становятся сложнее - это нормально, продолжайте практиковаться.";
-            }
-            
-            if (isset($trend['topics_evolution']['new_topics']) && 
-                count($trend['topics_evolution']['new_topics']) > 0) {
-                $newTopics = array_column($trend['topics_evolution']['new_topics'], 'topic');
-                $recommendations[] = "Вы начали изучать новые темы: " . implode(', ', $newTopics) 
-                    . ". Отличный прогресс!";
-            }
-        }
-        
-        return $recommendations;
-    }
-    
-    /**
-     * Пустой ответ для прогресса
+     * Пустой ответ
      * 
      * @param int $days Запрошенный период
      * @return array Пустой результат
      */
-    private function emptyProgressResponse(int $days): array {
+    private function emptyResponse(int $days): array {
         return [
             'total_days' => $days,
+            'total_records' => 0,
             'date_range' => [
                 'from' => null,
                 'to' => null
             ],
-            'total_records' => 0,
-            'overall' => $this->calculatePeriodStats([]),
-            'progress_by_periods' => [],
-            'trends' => [],
-            'recommendations' => [
-                'Недостаточно данных для анализа. Начните заниматься, чтобы увидеть прогресс!'
-            ]
+            'weeks' => []
         ];
     }
     
     /**
-     * Получить данные для LLM с прогрессом
+     * Получить данные для LLM
      * 
      * @param int $days Количество дней
      * @return array Данные для промпта
      */
-    public function getLLMProgressData(int $days = 30): array {
-        $stats = $this->getStatsWithProgress($days);
+    public function getLLMData(int $days = 30): array {
+        $stats = $this->getWeeklyStats($days);
         
         if ($stats['total_records'] === 0) {
             return [
@@ -473,102 +252,119 @@ class UserPhraseStats {
             ];
         }
         
-        // Форматируем для LLM в соответствии с вашим промптом
+        // Форматируем для LLM
         $llmData = [
             'period_days' => $days,
-            'total_sessions' => $stats['overall']['total'],
-            'avg_pause' => $stats['overall']['avg_pause'],
-            'grammar_coverage' => $stats['overall']['unique_types'],
-            'progress_timeline' => []
+            'total_records' => $stats['total_records'],
+            'weeks_count' => count($stats['weeks']),
+            'weeks' => []
         ];
         
-        // Строим временную линию прогресса
-        foreach ($stats['progress_by_periods'] as $periodKey => $periodData) {
-            if (preg_match('/^(day|3days|week)_/', $periodKey, $matches)) {
-                $periodType = $matches[1];
-                
-                if (!isset($llmData['progress_timeline'][$periodType])) {
-                    $llmData['progress_timeline'][$periodType] = [];
-                }
-                
-                $topicData = [];
-                foreach ($periodData['by_type'] as $topic => $data) {
-                    $topicData[] = [
-                        'topic' => $topic,
-                        'attempts' => $data['count'],
-                        'avg_pause' => $data['avg_pause']
-                    ];
-                }
-                
-                $llmData['progress_timeline'][$periodType][] = [
-                    'period' => $periodKey,
-                    'total_attempts' => $periodData['total'],
-                    'avg_pause' => $periodData['avg_pause'],
-                    'topics_practiced' => $periodData['unique_types'],
-                    'by_topic' => $topicData
-                ];
-            }
+        foreach ($stats['weeks'] as $weekKey => $weekData) {
+            // Разбираем ключ недели (2025-12)
+            list($year, $weekNum) = explode('-', $weekKey);
+            
+            $llmData['weeks'][] = [
+                'year' => (int)$year,
+                'week' => (int)$weekNum,
+                'period' => $weekData['first_date'] . ' - ' . $weekData['last_date'],
+                'total_attempts' => $weekData['total'],
+                'avg_interval' => $weekData['avg_interval'],
+                'avg_pause' => $weekData['avg_pause'],
+                'types' => $weekData['types'],
+                'directions' => $weekData['directions'],
+                'unique_types' => $weekData['unique_types']
+            ];
         }
-        
-        // Добавляем тренды
-        $llmData['trends'] = [];
-        foreach ($stats['trends'] as $periodType => $trend) {
-            if (is_array($trend) && isset($trend['total_trend'])) {
-                $llmData['trends'][$periodType] = [
-                    'activity_trend' => $trend['total_trend'],
-                    'pause_trend' => $trend['pause_trend'],
-                    'topics_trend' => $trend['types_trend']
-                ];
-            }
-        }
-        
-        // Добавляем ключевые проблемы на основе данных
-        $llmData['key_issues'] = $this->identifyKeyIssues($stats);
-        
-        // Добавляем рекомендации
-        $llmData['recommendations'] = $stats['recommendations'];
         
         return $llmData;
     }
     
     /**
-     * Выявление ключевых проблем
+     * Получить сводку по прогрессу (сравнение первой и последней недели)
      * 
-     * @param array $stats Статистика
-     * @return array Проблемы
+     * @param int $days Количество дней
+     * @return array Сводка прогресса
      */
-    private function identifyKeyIssues(array $stats): array {
-        $issues = [];
+    public function getProgressSummary(int $days = 30): array {
+        $stats = $this->getWeeklyStats($days);
         
-        // Проблема 1: Неравномерное распределение тем
-        $topicCounts = [];
-        foreach ($stats['overall']['by_type'] as $type => $data) {
-            $topicCounts[] = $data['count'];
+        if ($stats['total_records'] === 0 || count($stats['weeks']) < 2) {
+            return [
+                'has_progress' => false,
+                'message' => 'Недостаточно данных для анализа прогресса'
+            ];
         }
         
-        if (!empty($topicCounts)) {
-            $max = max($topicCounts);
-            $min = min($topicCounts);
-            if ($max > $min * 3) {
-                $issues[] = "Сильный перекос в практике: некоторые темы практикуются в 3+ раза чаще других";
-            }
-        }
+        $weeks = array_values($stats['weeks']);
+        $firstWeek = $weeks[0];
+        $lastWeek = $weeks[count($weeks) - 1];
         
-        // Проблема 2: Растущее время паузы
-        foreach ($stats['trends'] as $trend) {
-            if (isset($trend['pause_trend']) && $trend['pause_trend'] === 'worsening') {
-                $issues[] = "Время обдумывания увеличивается - возможно, сложность растет быстрее навыков";
-                break;
-            }
-        }
+        // Новые типы фраз
+        $newTypes = array_diff($lastWeek['types'], $firstWeek['types']);
         
-        // Проблема 3: Мало направлений
-        if (count($stats['overall']['directions']) < 2) {
-            $issues[] = "Практика только в одном направлении ("
-                . implode(', ', $stats['overall']['directions']) 
-                . "). Рекомендуем чередовать оба направления для баланса навыков";
-        }
+        // Типы, которые перестали практиковаться
+        $lostTypes = array_diff($firstWeek['types'], $lastWeek['types']);
         
-        return $issues;
+        return [
+            'has_progress' => true,
+            'first_week' => [
+                'period' => $firstWeek['first_date'] . ' - ' . $firstWeek['last_date'],
+                'total_attempts' => $firstWeek['total'],
+                'avg_interval' => $firstWeek['avg_interval'],
+                'avg_pause' => $firstWeek['avg_pause'],
+                'types_count' => $firstWeek['unique_types']
+            ],
+            'last_week' => [
+                'period' => $lastWeek['first_date'] . ' - ' . $lastWeek['last_date'],
+                'total_attempts' => $lastWeek['total'],
+                'avg_interval' => $lastWeek['avg_interval'],
+                'avg_pause' => $lastWeek['avg_pause'],
+                'types_count' => $lastWeek['unique_types']
+            ],
+            'changes' => [
+                'attempts_change' => $lastWeek['total'] - $firstWeek['total'],
+                'interval_change' => round($lastWeek['avg_interval'] - $firstWeek['avg_interval'], 2),
+                'pause_change' => round($lastWeek['avg_pause'] - $firstWeek['avg_pause'], 2),
+                'types_change' => $lastWeek['unique_types'] - $firstWeek['unique_types'],
+                'new_types' => array_values($newTypes),
+                'lost_types' => array_values($lostTypes)
+            ],
+            'trends' => [
+                'activity' => $lastWeek['total'] > $firstWeek['total'] ? 'increasing' : ($lastWeek['total'] < $firstWeek['total'] ? 'decreasing' : 'stable'),
+                'speed' => $lastWeek['avg_interval'] < $firstWeek['avg_interval'] ? 'faster' : ($lastWeek['avg_interval'] > $firstWeek['avg_interval'] ? 'slower' : 'stable'),
+                'pause' => $lastWeek['avg_pause'] < $firstWeek['avg_pause'] ? 'improving' : ($lastWeek['avg_pause'] > $firstWeek['avg_pause'] ? 'worsening' : 'stable'),
+                'diversity' => $lastWeek['unique_types'] > $firstWeek['unique_types'] ? 'expanding' : ($lastWeek['unique_types'] < $firstWeek['unique_types'] ? 'contracting' : 'stable')
+            ]
+        ];
     }
 }
+
+/**
+ * Пример использования:
+ */
+/*
+try {
+    // Создаем объект статистики
+    $stats = new UserPhraseStats(123);
+    
+    // Получаем статистику за 30 дней с разбивкой по неделям
+    $weeklyStats = $stats->getWeeklyStats(30);
+    
+    // Получаем данные для LLM
+    $llmData = $stats->getLLMData(30);
+    
+    // Получаем сводку прогресса
+    $progressSummary = $stats->getProgressSummary(30);
+    
+    // Выводим результаты
+    echo "<pre>";
+    print_r($weeklyStats);
+    print_r($llmData);
+    print_r($progressSummary);
+    echo "</pre>";
+    
+} catch (Exception $e) {
+    echo "Ошибка: " . $e->getMessage();
+}
+*/
