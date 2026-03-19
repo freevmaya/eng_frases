@@ -382,19 +382,12 @@ class Ajax extends BaseAjax {
 	protected function getStatistic() {
 		GLOBAL $dbp;
 		if ($user_id = Page::getSession('user_id')) {
-			$query = "
-				SELECT 
-				    (UNIX_TIMESTAMP(MAX(us.time)) - UNIX_TIMESTAMP(MIN(us.time))) / (COUNT(*) - 1) AS avg_diff_seconds
-				FROM user_stat us
-				LEFT JOIN phrases p ON p.id = us.data
-				WHERE us.user_id = {$user_id} 
-				    AND us.time >= NOW() - INTERVAL 7 DAY
-				    AND p.id IS NOT NULL;
-			";
 
-			$items = $dbp->asArray($query);
+			$stats = new UserPhraseStats($user_id);
 
-			return $items;
+			$result = $stats->getStatsWithProgress();
+
+			return $result;
 		}
 
 		Page::Wrong();

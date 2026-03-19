@@ -1,7 +1,5 @@
 <?
 class UserStatModel extends BaseModel {
-
-	private static $model;
 	
 	protected function getTable() {
 		return 'user_stat';
