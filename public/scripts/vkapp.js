@@ -176,7 +176,8 @@ class VKApp {
 					  	// Приложение установлено в сообщество
 						stateManager.state.sharedInCommunity = data.group_id;
 						stateManager.saveState();
-					} else tracer.log(data);
+					}
+					tracer.log(data);
 				})
 				.catch((error) => {
 					// Ошибка
