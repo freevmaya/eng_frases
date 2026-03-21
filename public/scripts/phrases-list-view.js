@@ -84,7 +84,8 @@ class PhrasesListView {
     }
 
     favoriteItemAdd() {
-        return $(`<div class="item favorite-list"><a data-key="_favorites"><i class="bi bi-bookmark-fill"></i> ` + Lang("favorites") + `</a></div>`);
+        return $(`<div class="item favorite-list"><a data-key="_favorites"><i class="bi bi-bookmark-fill"></i> ` + 
+        	Lang("favorites") + `</a><button class="btn btn-sm"><i class="bi bi-trash"></i></button></div>`);
     }
 
     blockItemAdd() {
@@ -228,9 +229,24 @@ class PhrasesListView {
 	        });
 
 			if (isUserFolder) {
-		        body.append(this.favoriteItemAdd().click(()=>{
+				let fi = this.favoriteItemAdd();
+				fi.find('a').click(()=>{
 		        	$(window).trigger("favorites_list");
-		        }));
+		        });
+				fi.find('button').click(()=>{
+					Confirm(Lang('clear_favorites'))
+						.then(()=>{
+							Ajax({
+								action: 'clearFavorites'
+							}).then((data)=>{
+								if (data.result) {
+									window.phrase_favorites = [];
+									$(window).trigger('favorites_list');
+								}
+							});
+						});
+		        });
+		        body.append(fi);
 		        body.append(this.blockItemAdd().click(()=>{
 		        	$(window).trigger("add_user_list");
 		        }));

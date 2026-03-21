@@ -715,9 +715,9 @@ function Application() {
     }
 
     function updateFavorites() {
+        let items = [];
 
         if (isFavorites()) {
-            let items = [];
             Object.keys(phrasesData).forEach((key)=>{
                 if (key != '_favorites')
                     phrasesData[key].forEach((item)=>{
@@ -725,10 +725,9 @@ function Application() {
                             items.push(item);
                     });
             });
-
-            if (items.length > 0)
-                phrasesData['_favorites'] = items;
         }
+
+        phrasesData['_favorites'] = items;
     }
 
     function onPreRecognized(e, result) {

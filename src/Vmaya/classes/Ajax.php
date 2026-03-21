@@ -338,6 +338,14 @@ class Ajax extends BaseAjax {
 		Page::Wrong();
 	}
 
+	protected function clearFavorites() {
+		if ($user_id = Page::getSession('user_id')) {
+			return ["result" => (new UserFavorites())->DeleteWhere("user_id = {$user_id}")];
+		}
+
+		Page::Wrong();
+	}
+
 	protected function getFavorites($data) {
 		if ($user_id = Page::getSession('user_id'))
 			return ["items" => UserFavorites::getFavoritesPhrases($user_id)];

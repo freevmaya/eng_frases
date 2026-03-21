@@ -140,6 +140,11 @@ abstract class BaseModel {
 		return $value ? $dbp->line("SELECT * FROM {$this->getTable()} WHERE `{$idField}` LIKE '%{$value}%'") : $dbp->line("SELECT * FROM {$this->getTable()} LIMIT 1");
 	}
 
+	public function DeleteWhere($where) {
+		GLOBAL $dbp;
+		return $dbp->query("DELETE FROM {$this->getTable()} WHERE {$where}");
+	}
+
 	public function Delete($id, $idField = 'id') {		
 		GLOBAL $dbp;
 		return $dbp->bquery("DELETE FROM {$this->getTable()} WHERE `{$idField}`=?", $this->dbType($idField), [$id]);
