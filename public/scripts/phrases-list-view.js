@@ -234,17 +234,18 @@ class PhrasesListView {
 		        	$(window).trigger("favorites_list");
 		        });
 				fi.find('button').click(()=>{
-					Confirm(Lang('clear_favorites'))
-						.then(()=>{
-							Ajax({
-								action: 'clearFavorites'
-							}).then((data)=>{
-								if (data.result) {
-									window.phrase_favorites = [];
-									$(window).trigger('favorites_list');
-								}
+					if (window.phrase_favorites && (window.phrase_favorites.length > 0))
+						Confirm(Lang('clear_favorites'))
+							.then(()=>{
+								Ajax({
+									action: 'clearFavorites'
+								}).then((data)=>{
+									if (data.result) {
+										window.phrase_favorites = [];
+										$(window).trigger('favorites_list');
+									}
+								});
 							});
-						});
 		        });
 		        body.append(fi);
 		        body.append(this.blockItemAdd().click(()=>{
