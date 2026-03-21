@@ -338,6 +338,13 @@ class Ajax extends BaseAjax {
 		Page::Wrong();
 	}
 
+	protected function getFavorites($data) {
+		if ($user_id = Page::getSession('user_id'))
+			return ["items" => UserFavorites::getFavoritesPhrases($user_id)];
+
+		Page::Wrong();
+	}
+
 	protected function toggleFovorite($data) {
 		
 		if (($phrase_id = intval($data['phrase_id'])) && 

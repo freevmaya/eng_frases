@@ -10,7 +10,7 @@ class Main extends Page {
 		parent::__construct($userModel);
 
 		$userModel = new UserModel();
-
+		
 		if (DEV) {
 			if ($user_id = Page::getSession('user_id')) {
 				$user = $userModel->getItem($user_id);

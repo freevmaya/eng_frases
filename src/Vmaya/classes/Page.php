@@ -21,11 +21,17 @@ class Page {
 		Page::$current = $this;
 		$dbp = new mySQLProvider('localhost', _dbname_default, _dbuser, _dbpassword);
 
+		if (Page::getRequest('clear_user')) {
+			Page::unsetSession('user_id');
+			Page::unsetSession('user');
+		}
+
 		$user = Page::getSession('user');
+		/*
 		if (!$user && DEV) {
 			if ($user = $this->userModel->getItem(DEVUSER))
 				$this->setUser($user);
-		}
+		}*/
 
 		$language = DEFAULT_LANGUAGE;
 

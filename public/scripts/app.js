@@ -286,21 +286,43 @@ Phrase.createList = (sourceList, type)=>{
 function Application() {
     
     speechSynthesizer = new SpeechSynthesizer(SPEECH_CONFIG);
+    var initialized = false;
 
     var state;
     if (window.stateManager)
         stateManager = window.stateManager;
     else stateManager = new StateManager();
 
-    stateManager.loadState()
-        .then((a_state)=>{
-            state = a_state;
-            init();
-        })
-        .catch(()=>{
-            state = stateManager.getState();
-            init();
+    if (!window.user_id) {
+        $(window).on('on_user_id', (e, user_id)=>{
+            window.user_id = user_id;
+            stateManager.config.use_server = user_id != 0;
+            stateManager.loadState()
+                .then((a_state)=>{
+                    state = a_state;
+                    if (state.currentListType == '_favorites')
+                        loadFavorites(init);
+                    else {
+                        loadFavorites();
+                        init();
+                    }
+                })
+                .catch(()=>{
+                    state = stateManager.getState();
+                    init();
+                });
         });
+    } else {
+        stateManager.loadState()
+            .then((a_state)=>{
+                state = a_state;
+                init();
+            })
+            .catch(()=>{
+                state = stateManager.getState();
+                init();
+            });
+    }
 
     playerControls = new PlayerControls({
         autoHideDelay: 0
@@ -357,21 +379,39 @@ function Application() {
         recognition = new VRecognition(new SpeechRecognition());
     else $('#recognizeToggleForm').css('display', 'none');
 
+    function loadFavorites(resolve = null) {
+        if (!isFavorites())
+            Ajax({
+                action: 'getFavorites'
+            }).then((data)=>{
+                if (data.items)
+                    window.phrase_favorites = data.items;
+
+                if (resolve) resolve(window.phrase_favorites);
+            }).catch((e)=>{
+                if (resolve) resolve(false);
+            });
+        else if (resolve) resolve(window.phrase_favorites);
+    }
+
     function init() {
-        initElements();
-        setupEventListeners();
-        applyTvScreenState();
+        if (!initialized) {
+            initElements();
+            setupEventListeners();
+            applyTvScreenState();
 
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                if (!stateManager.isPaused && stateManager.isPlaying && !state.backgroundPlayback)
-                    stopPlayback();
-            }
-        });
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    if (!stateManager.isPaused && stateManager.isPlaying && !state.backgroundPlayback)
+                        stopPlayback();
+                }
+            });
 
-        if (phrasesData)
-            afterLoadList(phrasesData);
-        else loadList();
+            if (phrasesData)
+                afterLoadList(phrasesData);
+            else loadList();
+            initialized = true;
+        }
     }
 
     function initElements() {
@@ -670,9 +710,13 @@ function Application() {
         });
     }
 
+    function isFavorites() {
+        return (typeof phrase_favorites !== 'undefined') && !isEmpty(phrase_favorites);
+    }
+
     function updateFavorites() {
 
-        if (typeof phrase_favorites != 'undefined') {
+        if (isFavorites()) {
             let items = [];
             Object.keys(phrasesData).forEach((key)=>{
                 if (key != '_favorites')

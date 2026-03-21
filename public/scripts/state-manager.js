@@ -22,7 +22,7 @@ class StateManager {
             
             currentListKey: null,
             randomSeed: null,
-            showTvScreen: true,
+            showTvScreen: false,
             recognize: false,
 
             repeatLength: 5,
@@ -30,11 +30,12 @@ class StateManager {
 
             genderVoice: 'male',
 
-            backgroundPlayback: true,
+            backgroundPlayback: false,
             useSpeakPhrase: true,
             paid_use: {},
             shared: [],
-            sharedInCommunity: false
+            sharedInCommunity: false,
+            saveDirection: false
         };
         
         this.state = { ...this.DEFAULT_STATE };
@@ -114,7 +115,8 @@ class StateManager {
         if (this.isChanges()) {
             if (this.config.use_server)
                 this.try_saveStateToServer();
-            else this.saveStateLocale();
+            
+            this.saveStateLocale();
         }
     }
 

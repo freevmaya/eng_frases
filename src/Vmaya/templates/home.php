@@ -273,10 +273,11 @@
 </div>
 
 <script type="text/javascript">
-    var SPEECH_CONFIG = <?=SPEECH_CONFIG?>;
-    var LANGUAGE = '<?=Page::language()?>';
-    var TARGET_LANGUAGE = '<?=Page::getSession('TARGET_LANGUAGE', 'en')?>';
-    var AI_URL = '<?=AI_URL?>';
+    window.user_id = <?=Page::getSession('user_id', 0)?>;
+    const SPEECH_CONFIG = <?=SPEECH_CONFIG?>;
+    const LANGUAGE = '<?=Page::language()?>';
+    const TARGET_LANGUAGE = '<?=Page::getSession('TARGET_LANGUAGE', 'en')?>';
+    const AI_URL = '<?=AI_URL?>';
     const VOICES = <?=json_encode($voices)?>;
     <?if (isset(Page::$request['SPEECH_CONFIG'])) {?>
         Object.assign(SPEECH_CONFIG, <?=Page::$request['SPEECH_CONFIG']?>);
